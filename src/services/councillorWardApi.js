@@ -31,6 +31,24 @@ export const GetCouncillorWardDetailsIfoByAllWardsApi = createAsyncThunk(
   },
 );
 
+
+export const GetCouncillorWardDetailsIfoByCategoryApi = createAsyncThunk(
+  'api/CouncillorWard/GetCouncillorWardDetailsIfoByCategoryApi',
+  async () => {
+    try {
+      const response = await AxiosInstance.post(
+        'api/CouncillorWard/GetCouncillorWardDetailsIfoByAllCategories',
+      );
+      return response.data;
+
+    } catch (error) {
+      console.log('Error:', error.response.data);
+      return error.response.data;
+    }
+  },
+);
+
+
 export const GetCouncillorWardDetailsIfoByWardNo = createAsyncThunk(
   'api/GetCouncillorWardDetailsIfoByWardNo',
   async params => {

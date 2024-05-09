@@ -18,6 +18,7 @@ import createHealthCareSlice from './createHealthCareSlice';
 import councillorAllWardsSlice from './councillorAllWardsSlice';
 import MayorSelectedWardSlice from './MayorSelectedWardSlice';
 import MeterImageSlice from './MeterImageSlice';
+import OustandingCategoriesSlice from './OustandingCategoriesSlice';
 
 const store = configureStore({
   reducer: {
@@ -40,7 +41,8 @@ const store = configureStore({
     CategoriesReducer:CategoriesSlice.reducer,
     CouncillorAllWardsReducer:councillorAllWardsSlice.reducer,
     MayorSelectedWardReducer:MayorSelectedWardSlice.reducer,
-    MeterImageReducer:MeterImageSlice.reducer
+    MeterImageReducer:MeterImageSlice.reducer,
+    OustandingCategoriesReducer:OustandingCategoriesSlice.reducer,
 
   },
   middleware: getDefaultMiddleware => {

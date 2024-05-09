@@ -33,6 +33,12 @@ const MayorOutstandingDashboardScreen = () => {
                 wardType: "Outstanding",
             });
         }
+        else if(item.name=='CategoryList'){
+            navigation.navigate("CategoryOutstanding", {
+                title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle("Outstanding", "Oustanding Categories") : GetwardHeaderTitle("Outstanding", "Oustanding Categories"),
+                wardType: "OutstandingCategory",
+            });
+        }
 
     };
 
@@ -42,12 +48,6 @@ const MayorOutstandingDashboardScreen = () => {
                 {MayorOustandingDashboardList.map((item) => (
                     <TouchableOpacity key={item.id}
                         onPress={() =>
-                            // handleDetailsNavigation(
-                            //     'AllWards',
-                            //     'All Wards Oustanding',
-                            //     'AllWards',
-                            // )}
-
                             handleDetailsNavigation(item)}
                     >
                         <View style={styles.card}>

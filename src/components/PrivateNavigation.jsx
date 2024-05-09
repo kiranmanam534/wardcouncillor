@@ -23,6 +23,7 @@ import HealthCareScreen from '../screens/HealthCareScreen';
 import AllWardsOutstandingScreen from '../screens/AllWardsOutstandingScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import MayorOutstandingDashboardScreen from '../screens/MayorOutstandingDashboardScreen';
+import CategoryOutstandingScreen from '../screens/CategoryOutstandingScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -89,6 +90,14 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="MayorOutstandingDashboard"
         component={MayorOutstandingDashboardScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+      <PrivateStack.Screen
+        name="CategoryOutstanding"
+        component={CategoryOutstandingScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,
