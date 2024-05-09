@@ -54,10 +54,15 @@ export const GetCouncillorWardDetailsIfoByWardNo = createAsyncThunk(
   async params => {
     const { wardNo, wardType } = params;
     console.log(wardNo, wardType);
-    console.log( `api/CouncillorWard/GetCouncillorWardDetailsIfoByWardNo?WardNo=${wardNo}&type=${wardType}`)
+    let url = `api/CouncillorWard/GetCouncillorWardDetailsIfoByWardNo?WardNo=${wardNo}&type=${wardType}`;
+    if (wardType == 'OutstandingCategory') {
+      const encodedwardNo = encodeURIComponent(wardNo);
+      url = `api/CouncillorWard/GetCouncillorWardDetailsIfoByCategory?Category=${encodedwardNo}&type=${wardType}&search=''`;
+    }
+    console.log(url)
     try {
       const response = await AxiosInstance.post(
-        `api/CouncillorWard/GetCouncillorWardDetailsIfoByWardNo?WardNo=${wardNo}&type=${wardType}`,
+        url
       );
       return response.data;
 
@@ -67,6 +72,27 @@ export const GetCouncillorWardDetailsIfoByWardNo = createAsyncThunk(
     }
   },
 );
+
+
+// export const GetCouncillorWardDetailsIfoByCategoryByName = createAsyncThunk(
+//   'api/GetCouncillorWardDetailsIfoByCategoryByName',
+//   async params => {
+//     const { category, wardType } = params;
+//     console.log(category, wardType);
+//     console.log( `api/CouncillorWard/GetCouncillorWardDetailsIfoByCategoryByName?Category=${category}&type=${wardType}`)
+//     try {
+//       const response = await AxiosInstance.post(
+//         `api/CouncillorWard/GetCouncillorWardDetailsIfoByCategoryByName?Category=${category}&type=${wardType}`,
+//       );
+//       return response.data;
+
+//     } catch (error) {
+//       console.log('Error:', error.response.data);
+//       return error.response.data;
+//     }
+//   },
+// );
+
 
 export const GetCouncillorWardTownshipIfoByWardNo = createAsyncThunk(
   'api/CouncillorWard/GetCouncillorWardTownshipIfoByWardNo',

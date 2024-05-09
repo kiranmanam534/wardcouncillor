@@ -21,7 +21,7 @@ const CouncillorDetailsScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { wardType } = route.params;
-  // console.log(wardType)
+  console.log(wardType)
   const [showErrorModal, setShowErrorModal] = useState(false);
   const loggedUser = useSelector(state => state.loginReducer.items);
   const { items, isLoading, error, statusCode } = useSelector(
