@@ -10,7 +10,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
   // console.log(item.id,ImageId)
   
   const TownshipCardItem = () => {
-    if (wardType == 'Outstanding') {
+    if (['Outstanding','OutstandingCategory'].includes(wardType) ) {
       let phoneNumber = true;
       if (item.cellphonenumber === 'Not Available' || item.cellphonenumber == null) {
         phoneNumber = false;
@@ -57,6 +57,13 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Ward No</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.ward}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>{name}</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.red }}>
@@ -83,7 +90,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               },
             ]}>
             <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
-              Total Amount: {wardType == 'Outstanding'
+              Total Amount: {['Outstanding','OutstandingCategory'].includes(wardType)
                 ? formattedAmount(
                   parseFloat(item.totalAmount),
                   'en-ZA',

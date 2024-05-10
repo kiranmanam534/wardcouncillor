@@ -99,12 +99,16 @@ export const GetCouncillorWardTownshipIfoByWardNo = createAsyncThunk(
   async params => {
     const { wardNo, wardType, name, search } = params;
     console.log(wardNo, wardType, name, search);
-    console.log(
-      `api/CouncillorWard/GetCouncillorWardTownshipIfoByWardNo?WardNo=${wardNo}&type=${wardType}&name=${name}&search=${search}`,
-    );
+    let url = `api/CouncillorWard/GetCouncillorWardTownshipIfoByWardNo?WardNo=${wardNo}&type=${wardType}&name=${name}&search=${search}`;
+    if (wardType == 'OutstandingCategory') {
+      const encodedwardNo = encodeURIComponent(wardNo);
+      url = `api/CouncillorWard/GetCouncillorWardTownshipIfoByCategory?Category=${encodedwardNo}&type=${wardType}&name=${name}&search=${search}`;
+    }
+    console.log(url)
+
     try {
       const response = await AxiosInstance.post(
-        `api/CouncillorWard/GetCouncillorWardTownshipIfoByWardNo?WardNo=${wardNo}&type=${wardType}&name=${name}&search=${search}`,
+        url,
       );
 
       return response.data;
@@ -138,6 +142,10 @@ export const GetCouncillorWardTownshipMemberInfo = createAsyncThunk(
         URL = `api/Properties/get-property-category-members-data?wardNo=${wardNo}&category=${encodedName}&search=${search}&page=${page}&limit=${limit}`;
       } else if (wardType == 'MetersNotRead') {
         URL = `api/Meters/get-not-read-meters-members-data?wardNo=${wardNo}&service=${encodedName}&township=${encodedtownship}&search=${search}&page=${page}&limit=${limit}`;
+      }
+      else if (wardType == 'OutstandingCategory') {
+        const encodedwardNo = encodeURIComponent(wardNo);
+        URL = `api/Outstanding/get-outstanding-category-township-members-data?category=${encodedwardNo}&outstandingsDays=${encodedName}&township=${encodedtownship}&search=${search}&page=${page}&limit=${limit}`;
       }
       console.log(URL);
 

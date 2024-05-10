@@ -11,10 +11,11 @@ import {
   ActivityIndicator,
   Pressable,
   Image,
+  Platform,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import LoaderModal from '../components/LoaderModal';
@@ -33,6 +34,8 @@ import CardItemLoading from '../components/CardItemLoading';
 import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
 import BinaryImageModal from '../components/BinaryImageModal';
 import { MeterImageActions } from '../redux/MeterImageSlice';
+
+
 const CouncilloriViewScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -78,6 +81,19 @@ const CouncilloriViewScreen = ({ route }) => {
 
   console.log('isImageLoaded', isImageLoaded)
   console.log("binaryImage", imageError)
+
+  
+    // useLayoutEffect(() => {
+    //   if (Platform.OS == 'android') {
+    //   navigation.setOptions({
+    //     headerLargeTitle: true,
+    //     headerSearchBarOptions: {
+    //       placeholder: "Search"
+    //     }
+    //   });
+    // }
+
+    // }, [navigation])
 
   useEffect(() => {
     dispatch(

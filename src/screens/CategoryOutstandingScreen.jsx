@@ -41,12 +41,14 @@ const CategoryOutstandingScreen = ({ route }) => {
         //   );
 
         dispatch(MayorSelectedWardActions.selectedWardNo(name));
-        navigation.navigate('CouncillorDetails', {
-            title:
-                `${name} - Oustanding Debt`,
-            wardType: wardType,
-            // maylorSelectedWardNo: name,
-        });
+        if (name != 'N/A') {
+            navigation.navigate('CouncillorDetails', {
+                title:
+                    `${name} - Oustanding Debt`,
+                wardType: wardType,
+                // maylorSelectedWardNo: name,
+            });
+        }
     };
 
 
@@ -101,10 +103,11 @@ const CategoryOutstandingScreen = ({ route }) => {
                             isTownship={false}
                             wardType={wardType}
                             value={parseFloat(item.value)}
-                            isAmount={wardType == 'Outstanding' ? true : false}
+                            isAmount={['Outstanding', 'OutstandingCategory'].includes(wardType) ? true : false}
                             onPress={() => {
                                 navigateToDetail(wardType, item.name);
                             }}
+                            name={item.name}
                         />
                     ))}
             </ScrollView>

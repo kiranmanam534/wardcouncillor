@@ -120,7 +120,7 @@ const CouncillorDetailsScreen = ({ route }) => {
               isTownship={false}
               wardType={wardType}
               value={parseFloat(item.value)}
-              isAmount={wardType == 'Outstanding' ? true : false}
+              isAmount={['Outstanding','OutstandingCategory'].includes(wardType) ? true : false}
               onPress={() => {
                 navigateToDetail(wardType, item.name);
               }}

@@ -1,10 +1,10 @@
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import {Card, Title, Paragraph, Divider} from 'react-native-paper';
+import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import {Colors} from '../constant/Colors';
-import {formattedAmount} from '../utility/FormattedAmmount';
-import {wardTitle, wardValue} from '../utility/Commom';
+import { Colors } from '../constant/Colors';
+import { formattedAmount } from '../utility/FormattedAmmount';
+import { wardTitle, wardValue } from '../utility/Commom';
 
 const CardItem = ({
   title,
@@ -13,6 +13,7 @@ const CardItem = ({
   onPress,
   wardType,
   isTownship = false,
+  name
 }) => {
   return (
     <View style={styles.container}>
@@ -39,44 +40,46 @@ const CardItem = ({
             },
           ]}>
           {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
-          <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 8}]}>
+          <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
             {/* {wardType=='Outstanding' && } */}
-            {isAmount && wardType == 'Outstanding'
+            {isAmount && ['Outstanding', 'OutstandingCategory'].includes(wardType)
               ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
               : wardValue(wardType, value)}
           </Paragraph>
-          <View style={{marginTop: 15}}>
-            <TouchableOpacity
-              style={[
-                styles.btn,
-                {
-                  height: 30,
-                  width: 100,
-                  backgroundColor: Colors.white,
-                  borderRadius: 20,
-                },
-              ]}
-              onPress={onPress}>
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  flexDirection: 'row',
-                  // marginHorizontal: -20,
-                }}>
-                <Icon name="info-circle" size={20} color={Colors.blue} />
-                <Text
-                  style={[
-                    styles.text,
-                    {fontSize: 16, color: Colors.blue, paddingLeft: 10},
-                  ]}>
-                  View
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+          {name != 'N/A' &&
+            <View style={{ marginTop: 15 }}>
+              <TouchableOpacity
+                style={[
+                  styles.btn,
+                  {
+                    height: 30,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    borderRadius: 20,
+                  },
+                ]}
+                onPress={onPress}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    // marginHorizontal: -20,
+                  }}>
+                  <Icon name="info-circle" size={20} color={Colors.blue} />
+                  <Text
+                    style={[
+                      styles.text,
+                      { fontSize: 16, color: Colors.blue, paddingLeft: 10 },
+                    ]}>
+                    View
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          }
         </Card.Content>
       </Card>
     </View>
@@ -110,8 +113,8 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 2,
     fontSize: 18,
-    color:Colors.blue,
-    fontWeight:'600'
+    color: Colors.blue,
+    fontWeight: '600'
   },
   footer: {
     flex: 1,
