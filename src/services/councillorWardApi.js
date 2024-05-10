@@ -365,3 +365,23 @@ export const getMeterImageApi = createAsyncThunk(
     }
   },
 );
+
+
+
+
+export const GetDataLoadDetailsApi = createAsyncThunk(
+  'api/GetDataLoadDetails',
+  async (meterId, { rejectWithValue }) => {
+    console.log(`api/CouncillorWard/GetDataLoadDetails`);
+    try {
+      const response = await AxiosInstance.post(
+        `api/CouncillorWard/GetDataLoadDetails`
+      );
+      return response.data;
+    } catch (error) {
+      // console.log('Error:', error);
+      // console.log('Error:', error.response.data);
+      throw error.response.status;
+    }
+  },
+);
