@@ -15,7 +15,20 @@ const ShowMapModal = ({ route }) => {
     // useLayoutEffect(() => {
     //     navigation.setOptions({ headerBackTitleVisible: false });
     //   }, [navigation]);
+
+    const calculateDeltasForZoom = (zoomLevel) => {
+        const latDelta = 360 / Math.pow(2, zoomLevel);
+        const lonDelta = latDelta * 2;
+        return { latitudeDelta: latDelta, longitudeDelta: lonDelta };
+      };
     
+      // Set the desired maximum zoom level
+  const maxZoomLevel = 18;
+
+    
+  // Calculate latitude and longitude deltas for the desired maximum zoom level
+  const { latitudeDelta, longitudeDelta } = calculateDeltasForZoom(maxZoomLevel);
+
 
     const { lat, long,propertyName,propertyAccount } = route.params
     console.log(lat, long);
@@ -36,8 +49,8 @@ const ShowMapModal = ({ route }) => {
                 initialRegion={{
                     latitude: parseFloat(lat1),//-26.1989,
                     longitude: parseFloat(long1),//28.31262,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
+                    latitudeDelta: latitudeDelta,
+                    longitudeDelta: longitudeDelta,
                 }}
             >
                 <Marker
