@@ -9,9 +9,9 @@ import TestMapView from './TestMapView'
 const App = () => {
   return (
     <Provider store={store}>      
-    {/* <Navigation/> */}
+    <Navigation/>
     {/* <MyComponent/> */}
-    <TestMapView/>
+    {/* <TestMapView/> */}
     </Provider>
   )
 }

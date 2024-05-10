@@ -34,6 +34,8 @@ import CardItemLoading from '../components/CardItemLoading';
 import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
 import BinaryImageModal from '../components/BinaryImageModal';
 import { MeterImageActions } from '../redux/MeterImageSlice';
+import ShowMapModal from '../components/ShowMapModal';
+import TestMapView from '../../TestMapView';
 
 
 const CouncilloriViewScreen = ({ route }) => {
@@ -45,6 +47,7 @@ const CouncilloriViewScreen = ({ route }) => {
   const [searchText, setSearchText] = useState('');
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showImage, setShowImage] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
 
   const { title, wardType, name, township } = route.params;
@@ -82,18 +85,18 @@ const CouncilloriViewScreen = ({ route }) => {
   console.log('isImageLoaded', isImageLoaded)
   console.log("binaryImage", imageError)
 
-  
-    // useLayoutEffect(() => {
-    //   if (Platform.OS == 'android') {
-    //   navigation.setOptions({
-    //     headerLargeTitle: true,
-    //     headerSearchBarOptions: {
-    //       placeholder: "Search"
-    //     }
-    //   });
-    // }
 
-    // }, [navigation])
+  // useLayoutEffect(() => {
+  //   if (Platform.OS == 'android') {
+  //   navigation.setOptions({
+  //     headerLargeTitle: true,
+  //     headerSearchBarOptions: {
+  //       placeholder: "Search"
+  //     }
+  //   });
+  // }
+
+  // }, [navigation])
 
   useEffect(() => {
     dispatch(
@@ -159,6 +162,21 @@ const CouncilloriViewScreen = ({ route }) => {
 
     setShowImage(true)
     setSelectedImageId(meterId);
+  }
+
+
+  const openPropertyMap = (item) => {
+
+    console.log(item);
+    // setShowMap(true)
+    navigation.navigate("ShowPropertyMap",{
+      title: `Property Location`,
+      lat: item.locationlatitude,
+      long: item.locationlongitude,
+      propertyName:item.accountname,
+      propertyAccount:item.accountnumber
+      // township: township,
+    })
   }
 
   const showToast = (text1, text2, type, color) => {
@@ -263,6 +281,16 @@ const CouncilloriViewScreen = ({ route }) => {
           onClose={() => setShowImage(false)} // Function to handle modal close
         />}
 
+      {/* {showMap &&
+        <ShowMapModal
+          lat={37.78825} // Binary image data to be decoded
+          long={-122.4324}
+          visible={showMap} // Boolean to control the visibility of the modal
+          onClose={() => setShowMap(false)} // Function to handle modal close
+        />} */}
+
+        {/* <TestMapView/> */}
+
       {isLoading && (
         <FlatList
           data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
@@ -284,6 +312,9 @@ const CouncilloriViewScreen = ({ route }) => {
               }}
               showImage={() => {
                 openMeterImage(item?.id)
+              }}
+              showMap={() => {
+                openPropertyMap(item)
               }}
               imageLoading={imageLoading}
               ImageId={selectedImageId}

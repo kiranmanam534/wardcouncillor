@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const TestMapView= () => {
   return (
     <View style={styles.container}>
-      <MapView mapType={Platform.OS == "android" ? "standard" : "standard"}
+      <MapView 
+    //   provider={PROVIDER_GOOGLE}
+      mapType={Platform.OS == "android" ? "satellite" : "hybridFlyover"}
         style={styles.map}
         initialRegion={{
           latitude: 37.78825,
@@ -26,13 +28,13 @@ const TestMapView= () => {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
 });
 

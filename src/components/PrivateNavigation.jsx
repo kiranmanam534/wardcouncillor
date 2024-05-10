@@ -24,6 +24,7 @@ import AllWardsOutstandingScreen from '../screens/AllWardsOutstandingScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import MayorOutstandingDashboardScreen from '../screens/MayorOutstandingDashboardScreen';
 import CategoryOutstandingScreen from '../screens/CategoryOutstandingScreen';
+import ShowMapModal from './ShowMapModal';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -46,6 +47,7 @@ const PrivateNavigation = () => {
         // navigationBarHidden: true,
         navigationBarColor: Colors.primary,
         statusBarColor: Colors.primary,
+        headerBackTitleVisible: false,
         headerStyle: {
           backgroundColor: Colors.primary,
         },
@@ -193,6 +195,16 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="Healthcare"
         component={HealthCareScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+
+<PrivateStack.Screen
+        name="ShowPropertyMap"
+        component={ShowMapModal}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,

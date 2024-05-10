@@ -284,7 +284,7 @@ function HotspotScreen() {
                 fetchDetails={true} // you need this to fetch the details object onPress
                 placeholder="Search"
                 query={{
-                  key: "AIzaSyCG4Tc5v-7PBF4JO-6NKx2aX0xDNCZ4BVM",
+                  key: "AIzaSyAI6lFoXVFONS76oYT7XmjzOypAvJq6Kb4",
                   language: "en", // language of the results
                 }}
                 listViewDisplayed={true}

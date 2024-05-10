@@ -6,11 +6,11 @@ import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 import { Colors } from '../constant/Colors';
 import { formattedAmount } from '../utility/FormattedAmmount';
 
-const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, imageLoading,ImageId }) => {
+const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, imageLoading, ImageId, showMap }) => {
   // console.log(item.id,ImageId)
-  
+
   const TownshipCardItem = () => {
-    if (['Outstanding','OutstandingCategory'].includes(wardType) ) {
+    if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
       let phoneNumber = true;
       if (item.cellphonenumber === 'Not Available' || item.cellphonenumber == null) {
         phoneNumber = false;
@@ -90,7 +90,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               },
             ]}>
             <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
-              Total Amount: {['Outstanding','OutstandingCategory'].includes(wardType)
+              Total Amount: {['Outstanding', 'OutstandingCategory'].includes(wardType)
                 ? formattedAmount(
                   parseFloat(item.totalAmount),
                   'en-ZA',
@@ -120,10 +120,10 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                  {item.accounT_NO==ImageId ?
-                      <ActivityIndicator animatin color="#000" size="small" /> :
-                      <Icon name="send" size={20} color={Colors.blue} />}
-                 
+                  {item.accounT_NO == ImageId ?
+                    <ActivityIndicator animatin color="#000" size="small" /> :
+                    <Icon name="send" size={20} color={Colors.blue} />}
+
                   <Text
                     style={[
                       styles.text,
@@ -455,7 +455,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                       flexDirection: 'row',
                       // marginHorizontal: -20,
                     }}>
-                    {imageLoading&&item.id==ImageId ?
+                    {imageLoading && item.id == ImageId ?
                       <ActivityIndicator animatin color="#000" size="small" /> :
                       <Icon name="image" size={20} color={Colors.blue} />}
 
@@ -593,6 +593,13 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               <Title style={styles.title}>Account :{item.accountnumber}</Title>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Name</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.accountname}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Address</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
@@ -644,39 +651,44 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               },
             ]}>
             <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
-              Account Name : {item.accountname}
+              {/* Account Name : {item.accountname} */}
             </Paragraph>
-            {/* <View style={{marginTop: 15}}>
-              <TouchableOpacity
-                style={[
-                  styles.btn,
-                  {
-                    height: 30,
-                    width: 100,
-                    backgroundColor: Colors.white,
-                    borderRadius: 20,
-                  },
-                ]}>
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    flexDirection: 'row',
-                    // marginHorizontal: -20,
-                  }}>
-                  <Icon name="send" size={20} color={Colors.blue} />
-                  <Text
-                    style={[
-                      styles.text,
-                      {fontSize: 16, color: Colors.blue, paddingLeft: 5},
-                    ]}>
-                    Send
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View> */}
+            {item.locationlatitude && item.locationlongitude &&
+              <View style={{ marginTop: 15 }}>
+                <TouchableOpacity
+                  onPress={showMap}
+                  style={[
+                    styles.btn,
+                    {
+                      height: 30,
+                      width: 120,
+                      backgroundColor: Colors.white,
+                      borderRadius: 60,
+                    },
+                  ]}>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      flexDirection: 'row',
+                      // marginHorizontal: -20,
+                    }}>
+                    {/* {item.accountnumber==ImageId ?
+                      <ActivityIndicator animatin color="#000" size="small" /> :
+                      <Icon name="map-marker" size={25} color={Colors.blue} />} */}
+                    <Icon name="map-marker" size={25} color={Colors.blue} />
+                    <Text
+                      style={[
+                        styles.text,
+                        { fontSize: 16, color: Colors.blue, paddingLeft: 5 },
+                      ]}>
+                      View Map
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>}
           </Card.Content>
         </Card>
       );
