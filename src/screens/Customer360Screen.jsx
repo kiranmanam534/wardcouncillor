@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import { Colors } from '../constant/Colors';
 
 const Customer360Screen = () => {
@@ -50,21 +51,30 @@ const Customer360Screen = () => {
                 ))}
             </ScrollView> */}
             <ScrollView style={styles.container}>
-                <View style={styles.header}>
+                <View style={[styles.header, { paddingVertical: 2 }]}>
                     {/* <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} /> */}
-                    <Icon name="user" size={100} color={Colors.blue} />
-                    <Text style={styles.name}>{user.name}</Text>
-                    {/* <Text style={styles.username}>Category</Text>
-                    <Text style={styles.username}>Address</Text> */}
+                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
+                        <Icon name="user" size={50} color={Colors.blue} />
+                        <Text style={[styles.name, { padding: 5 }]}>{user.name}</Text>
+                    </View>
+                    <View style={{ alignSelf: 'flex-start', padding: 10 }}>
+                        <InfoRow icon="envelope" text="Category" />
+                        <InfoRow icon="info-circle" text="Mobile No" />
+                        <InfoRow icon="map-marker" text="Address" />
+                    </View>
                 </View>
-                <View style={styles.infoSection}>
+                {/* <View style={styles.infoSection}>
                     <Text style={styles.sectionTitle}>Customer Info</Text>
                     <InfoRow icon="envelope" text="Category" />
                     <InfoRow icon="info-circle" text="Mobile No" />
                     <InfoRow icon="map-marker" text="Address" />
-                </View>
+                </View> */}
                 <View style={styles.socialMediaSection}>
-                    <Text style={styles.sectionTitle}>Outstanding Amount</Text>
+                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <Text style={styles.sectionTitle}>Outstanding Amount</Text>
+                    </View>
+
                     <InfoRow icon="envelope" text="Total : R2323232" />
                     <InfoRow icon="info-circle" text="30 days : R232323" />
                     <InfoRow icon="map-marker" text="60 days : R232323" />
@@ -72,7 +82,10 @@ const Customer360Screen = () => {
                     <InfoRow icon="map-marker" text="120+ days : R232323" />
                 </View>
                 <View style={styles.socialMediaSection}>
-                    <Text style={styles.sectionTitle}>Meters</Text>
+                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <Text style={styles.sectionTitle}>Meters</Text>
+                    </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
                         <InfoRow icon="envelope" text="Meter No : 2323232" />
                         <InfoRow icon="info-circle" text="Status : Connected" />
@@ -89,7 +102,10 @@ const Customer360Screen = () => {
                     </View>
                 </View>
                 <View style={styles.socialMediaSection}>
-                    <Text style={styles.sectionTitle}>Properties</Text>
+                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <Text style={styles.sectionTitle}>Properties</Text>
+                    </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
                         <InfoRow icon="envelope" text="Name : psdsd" />
                         <InfoRow icon="info-circle" text="Cell No : 2223" />
@@ -107,7 +123,10 @@ const Customer360Screen = () => {
                 </View>
 
                 <View style={styles.socialMediaSection}>
-                    <Text style={styles.sectionTitle}>Interims</Text>
+                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <Text style={styles.sectionTitle}>Interims</Text>
+                    </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
                         <InfoRow icon="envelope" text="Meter No : 2323232" />
                         <InfoRow icon="envelope" text="Name : wewe" />
