@@ -399,6 +399,28 @@ const DashboardScreen = () => {
                     </View>
                   </Card.Actions>
                 </Card>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('Customer360', 'Customer 360', 'Customer360');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.red }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Customer 360"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {/* {parseInt(getValueByKey(items, 'Not Read Meters'))} */}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
               </View>
             </ScrollView>
           </View> : <ShowMessageData />

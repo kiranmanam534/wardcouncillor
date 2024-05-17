@@ -5,6 +5,9 @@ import { Provider } from 'react-redux'
 import store from './src/redux/store'
 import MyComponent from './src/Test'
 import TestMapView from './TestMapView'
+import PhotoCaptureScreen from './src/PhotoCaptureScreen'
+import CameraComponent from './src/TestCamera'
+import ProfileScreen from './src/TestProfileScreen'
 
 const App = () => {
   return (
@@ -12,6 +15,9 @@ const App = () => {
     <Navigation/>
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
+    {/* <PhotoCaptureScreen/> */}
+    {/* <CameraComponent/> */}
+    {/* <ProfileScreen/> */}
     </Provider>
   )
 }

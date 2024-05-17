@@ -88,6 +88,13 @@
 	<false/>
 	<key>GooglePlacesApiKey</key>
 	<string>AIzaSyB3fmNU63AUch1sk3b0rxddRBYLM3kkKUQ</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Camera.</string>
+
+	<!-- optionally, if you want to record audio: -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Microphone.</string>
 </dict>
 
 </plist>
