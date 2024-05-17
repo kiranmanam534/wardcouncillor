@@ -34,8 +34,8 @@ const Customer360Screen = () => {
                     style={{
                         position: 'absolute',
                         // paddingVertical: 17,
-                        top: 25,
-                        right: 15,
+                        top: 27,
+                        right: 25,
                         bottom: 0
                     }}>
                     <Icon name="search" size={25} color={Colors.blue} />
@@ -54,7 +54,7 @@ const Customer360Screen = () => {
                 <View style={[styles.header, { paddingVertical: 2 }]}>
                     {/* <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} /> */}
                     <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
-                        <Icon name="user" size={50} color={Colors.blue} />
+                        <Icon name="user" size={50} color={Colors.blue}  />
                         <Text style={[styles.name, { padding: 5 }]}>{user.name}</Text>
                     </View>
                     <View style={{ alignSelf: 'flex-start', padding: 10 }}>
@@ -70,8 +70,8 @@ const Customer360Screen = () => {
                     <InfoRow icon="map-marker" text="Address" />
                 </View> */}
                 <View style={styles.socialMediaSection}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                    <View style={{ flexDirection: 'row', marginLeft: -15,elevation:1 }}>
+                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Outstanding Amount</Text>
                     </View>
 
@@ -83,7 +83,7 @@ const Customer360Screen = () => {
                 </View>
                 <View style={styles.socialMediaSection}>
                     <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Meters</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
@@ -103,7 +103,7 @@ const Customer360Screen = () => {
                 </View>
                 <View style={styles.socialMediaSection}>
                     <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Properties</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
@@ -124,7 +124,7 @@ const Customer360Screen = () => {
 
                 <View style={styles.socialMediaSection}>
                     <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'play-arrow'} size={20} style={styles.infoIcon} />
+                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Interims</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
