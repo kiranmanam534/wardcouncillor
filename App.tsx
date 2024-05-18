@@ -8,6 +8,7 @@ import TestMapView from './TestMapView'
 import PhotoCaptureScreen from './src/PhotoCaptureScreen'
 import CameraComponent from './src/TestCamera'
 import ProfileScreen from './src/TestProfileScreen'
+import Customer360Screen from './src/screens/Customer360Screen'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
     {/* <PhotoCaptureScreen/> */}
     {/* <CameraComponent/> */}
     {/* <ProfileScreen/> */}
+    {/* <Customer360Screen/> */}
     </Provider>
   )
 }

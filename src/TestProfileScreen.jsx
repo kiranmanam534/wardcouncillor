@@ -1,141 +1,114 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 
-const ProfileScreen = () => {
-  const user = {
-    profilePicture: 'https://example.com/profile.jpg',
-    name: 'John Doe',
-    username: '@johndoe',
-    email: 'john@example.com',
-    bio: 'Developer, Tech Enthusiast',
-    location: 'San Francisco, CA',
-    website: 'https://johndoe.com',
-    socialMedia: {
-      twitter: 'johndoe',
-      linkedin: 'john-doe',
-    },
-    recentActivity: ['Posted a new blog', 'Joined a new group', 'Started a new project'],
-  };
-
+const ProfileScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} />
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.username}>{user.username}</Text>
+        <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} />
+        <Text style={styles.name}>John Doe</Text>
+        <Text style={styles.username}>@johndoe</Text>
+        <Text style={styles.bio}>This is a sample bio</Text>
       </View>
-      <View style={styles.infoSection}>
-        <InfoRow icon="envelope" text={user.email} />
-        <InfoRow icon="info-circle" text={user.bio} />
-        <InfoRow icon="map-marker" text={user.location} />
-        <InfoRow icon="link" text={user.website} />
+      <View style={styles.statsContainer}>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>120</Text>
+          <Text style={styles.statLabel}>Posts</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>15K</Text>
+          <Text style={styles.statLabel}>Followers</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>500</Text>
+          <Text style={styles.statLabel}>Following</Text>
+        </View>
       </View>
-      <View style={styles.socialMediaSection}>
-        <Text style={styles.sectionTitle}>Social Media</Text>
-        <SocialMediaIcon name="twitter" handle={user.socialMedia.twitter} />
-        <SocialMediaIcon name="linkedin" handle={user.socialMedia.linkedin} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EditProfile')}>
+          <Text style={styles.buttonText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.settingsButton]} onPress={() => navigation.navigate('Settings')}>
+          <Text style={styles.buttonText}>Settings</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.activitySection}>
-        <Text style={styles.sectionTitle}>Recent Activity</Text>
-        {user.recentActivity.map((activity, index) => (
-          <Text key={index} style={styles.activityItem}>{activity}</Text>
-        ))}
+      <View style={styles.contentContainer}>
+        {/* Add user content such as posts or galleries here */}
+        <Text style={styles.contentHeader}>User Posts</Text>
       </View>
     </ScrollView>
   );
 };
 
-const InfoRow = ({ icon, text }) => (
-  <View style={styles.infoRow}>
-    <Icon name={icon} size={20} style={styles.infoIcon} />
-    <Text style={styles.infoText}>{text}</Text>
-  </View>
-);
-
-const SocialMediaIcon = ({ name, handle }) => (
-  <TouchableOpacity style={styles.socialMediaIcon}>
-    <Icon name={name} size={20} style={styles.socialIcon} />
-    <Text style={styles.socialText}>@{handle}</Text>
-  </TouchableOpacity>
-);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
     alignItems: 'center',
-    backgroundColor: '#fff',
     padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
-  profilePicture: {
+  avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
+    marginBottom: 10,
   },
   name: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginTop: 10,
   },
   username: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'gray',
   },
-  infoSection: {
-    backgroundColor: '#fff',
-    padding: 20,
+  bio: {
+    fontSize: 14,
+    color: 'gray',
+    textAlign: 'center',
     marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
-  infoRow: {
+  statsContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
+  statBox: {
     alignItems: 'center',
-    marginBottom: 10,
   },
-  infoIcon: {
-    marginRight: 10,
-  },
-  infoText: {
-    fontSize: 16,
-  },
-  socialMediaSection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  sectionTitle: {
+  statNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
-  socialMediaIcon: {
+  statLabel: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  buttonContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'center',
+    marginVertical: 20,
   },
-  socialIcon: {
-    marginRight: 10,
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 10,
   },
-  socialText: {
+  settingsButton: {
+    backgroundColor: '#6c757d',
+  },
+  buttonText: {
+    color: '#fff',
     fontSize: 16,
   },
-  activitySection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+  contentContainer: {
+    paddingHorizontal: 20,
   },
-  activityItem: {
-    fontSize: 16,
+  contentHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
 });

@@ -1,9 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
+const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
 import { Colors } from '../constant/Colors';
+
+const screenWidth = Dimensions.get('window').width;
 
 const Customer360Screen = () => {
     const user = {
@@ -22,7 +25,6 @@ const Customer360Screen = () => {
     };
     return (
         <View style={styles1.container}>
-            {/* Fixed Header */}
             <View style={styles1.header}>
                 <TextInput
                     mode="outlined"
@@ -33,7 +35,6 @@ const Customer360Screen = () => {
                 <TouchableOpacity
                     style={{
                         position: 'absolute',
-                        // paddingVertical: 17,
                         top: 27,
                         right: 25,
                         bottom: 0
@@ -42,102 +43,95 @@ const Customer360Screen = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Scrollable Content */}
-            {/* <ScrollView contentContainerStyle={styles.scrollContent}>
-                {Array.from({ length: 50 }).map((_, index) => (
-                    <Text key={index} style={styles.text}>
-                        Item {index + 1}
-                    </Text>
-                ))}
-            </ScrollView> */}
             <ScrollView style={styles.container}>
-                <View style={[styles.header, { paddingVertical: 2 }]}>
-                    {/* <Image source={{ uri: user.profilePicture }} style={styles.profilePicture} /> */}
-                    <View style={{ flexDirection: 'row', alignSelf: 'flex-start' }}>
-                        <Icon name="user" size={50} color={Colors.blue}  />
-                        <Text style={[styles.name, { padding: 5 }]}>{user.name}</Text>
+
+
+                <View style={styles.header}>
+                    <View style={styles.box}>
+                        <Image source={logo} style={styles.img} />
                     </View>
-                    <View style={{ alignSelf: 'flex-start', padding: 10 }}>
-                        <InfoRow icon="envelope" text="Category" />
-                        <InfoRow icon="info-circle" text="Mobile No" />
-                        <InfoRow icon="map-marker" text="Address" />
-                    </View>
+                    {/* <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} /> */}
+                    <Text style={styles.name}>John Doe</Text>
+                    <Text style={styles.username}>Category</Text>
+                    <Text style={styles.bio}>8387387374</Text>
+                    <Text style={styles.bio}>Nellore,Ap,524137</Text>
                 </View>
-                {/* <View style={styles.infoSection}>
-                    <Text style={styles.sectionTitle}>Customer Info</Text>
-                    <InfoRow icon="envelope" text="Category" />
-                    <InfoRow icon="info-circle" text="Mobile No" />
-                    <InfoRow icon="map-marker" text="Address" />
-                </View> */}
-                <View style={styles.socialMediaSection}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15,elevation:1 }}>
-                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
+                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                    <View style={{ flexDirection: 'row',marginLeft:-15 }}>
+                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Outstanding Amount</Text>
                     </View>
-
-                    <InfoRow icon="envelope" text="Total : R2323232" />
-                    <InfoRow icon="info-circle" text="30 days : R232323" />
-                    <InfoRow icon="map-marker" text="60 days : R232323" />
-                    <InfoRow icon="map-marker" text="90 days : R232323" />
-                    <InfoRow icon="map-marker" text="120+ days : R232323" />
+                    <View style={[styles.socialMediaSection, { padding: 0 }]}>
+                    <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#1</Text>
+                        <InfoRow icon="info-circle" label={'30 days'} text="R232323" />
+                        <InfoRow icon="map-marker" label={'60 days'} text="R232323" />
+                        <InfoRow icon="map-marker" label={'90 days'} text="R232323" />
+                        <InfoRow icon="map-marker" label={'120+ days'} text="R232323" />
+                        <InfoRow icon="envelope" label={'Total'} text="R2323232" />
+                    </View>
                 </View>
-                <View style={styles.socialMediaSection}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
+                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                    <View style={{ flexDirection: 'row',marginLeft:-15 }}>
+                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Meters</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
-                        <InfoRow icon="envelope" text="Meter No : 2323232" />
-                        <InfoRow icon="info-circle" text="Status : Connected" />
-                        <InfoRow icon="map-marker" text="Address : dhgsh,dhsd" />
-                        <InfoRow icon="map-marker" text="Previous Reading : 232323" />
-                        <InfoRow icon="map-marker" text="Previous Reading Date : 2024-05-10" />
+                    <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#1</Text>
+                        <InfoRow icon="envelope" label={'Meter No'} text="2323232" />
+                        <InfoRow icon="info-circle" label={'Status'} text="Connected" />
+                        <InfoRow icon="map-marker" label={'Address'} text="dhgsh,dhsd" />
+                        <InfoRow icon="map-marker" label={'Previous Reading'} text="232323" />
+                        <InfoRow icon="map-marker" label={'Previous Reading Date'} text="2024-05-10" />
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
-                        <InfoRow icon="envelope" text="Meter No : 2323232" />
-                        <InfoRow icon="info-circle" text="Status : Connected" />
-                        <InfoRow icon="map-marker" text="Address : dhgsh,dhsd" />
-                        <InfoRow icon="map-marker" text="Previous Reading : 232323" />
-                        <InfoRow icon="map-marker" text="Previous Reading Date : 2024-05-10" />
+                    <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#2</Text>
+                        <InfoRow icon="envelope" label={'Meter No'} text="2323232" />
+                        <InfoRow icon="info-circle" label={'Status'} text="Connected" />
+                        <InfoRow icon="map-marker" label={'Address'} text="dhgsh,dhsd" />
+                        <InfoRow icon="map-marker" label={'Previous Reading'} text="232323" />
+                        <InfoRow icon="map-marker" label={'Previous Reading Date'} text="2024-05-10" />
                     </View>
                 </View>
-                <View style={styles.socialMediaSection}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
+                <View style={[styles.socialMediaSection, { borderBottomWidth: 0}]}>
+                    <View style={{ flexDirection: 'row',marginLeft:-15  }}>
+                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Properties</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
-                        <InfoRow icon="envelope" text="Name : psdsd" />
-                        <InfoRow icon="info-circle" text="Cell No : 2223" />
-                        <InfoRow icon="map-marker" text="Address : dhgsh,dhsd" />
-                        <InfoRow icon="map-marker" text="lat : 232323" />
-                        <InfoRow icon="map-marker" text="lng : 22322" />
+                        <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#1</Text>
+                        <InfoRow icon="envelope" label={'Name'} text="psdsd" />
+                        <InfoRow icon="info-circle" label={'Cell No'} text="2223" />
+                        <InfoRow icon="map-marker" label={'Address'} text="dhgsh,dhsd" />
+                        <InfoRow icon="map-marker" label={'lat'} text="232323" />
+                        <InfoRow icon="map-marker" label={'lng'} text="22322" />
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
-                        <InfoRow icon="envelope" text="Name : psdsd" />
-                        <InfoRow icon="info-circle" text="Cell No : 2223" />
-                        <InfoRow icon="map-marker" text="Address : dhgsh,dhsd" />
-                        <InfoRow icon="map-marker" text="lat : 232323" />
-                        <InfoRow icon="map-marker" text="lng : 22322" />
+                    <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#2</Text>
+                        <InfoRow icon="envelope" label={'Name'} text="psdsd" />
+                        <InfoRow icon="info-circle" label={'Cell No'} text="2223" />
+                        <InfoRow icon="map-marker" label={'Address'} text="dhgsh,dhsd" />
+                        <InfoRow icon="map-marker" label={'lat'} text="232323" />
+                        <InfoRow icon="map-marker" label={'lng'} text="22322" />
                     </View>
                 </View>
 
-                <View style={styles.socialMediaSection}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <MaterialIcon name={'keyboard-double-arrow-right'} size={20} style={styles.infoIcon} />
+                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                    <View style={{ flexDirection: 'row',marginLeft:-15 }}>
+                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
                         <Text style={styles.sectionTitle}>Interims</Text>
                     </View>
                     <View style={[styles.socialMediaSection, { padding: 0 }]}>
-                        <InfoRow icon="envelope" text="Meter No : 2323232" />
-                        <InfoRow icon="envelope" text="Name : wewe" />
-                        <InfoRow icon="info-circle" text="Reason : wsds" />
-                        <InfoRow icon="map-marker" text="Address : dhgsh,dhsd" />
-                        <InfoRow icon="map-marker" text="Service : Water(WA)" />
-                        <InfoRow icon="map-marker" text="Township : SKdlsd" />
-                        <InfoRow icon="envelope" text="CCA : Springs" />
-                        <InfoRow icon="envelope" text="Cycle : 9239" />
-                        <InfoRow icon="map-marker" text="Zone : weewe" />
-                        <InfoRow icon="map-marker" text="Cell No : 2232323" />
+                    <Text style={{padding:5,fontWeight:'600',fontSize:15,color:Colors.white,backgroundColor:Colors.blue}}>#1</Text>
+                        <InfoRow icon="envelope" label={'Meter No'} text="2323232" />
+                        <InfoRow icon="envelope" label={'Name'} text="wewe" />
+                        <InfoRow icon="info-circle" label={'Reason'} text="wsds" />
+                        <InfoRow icon="map-marker" label={'Address'} text="dhgsh,dhsd" />
+                        <InfoRow icon="map-marker" label={'Service'} text="Water(WA)" />
+                        <InfoRow icon="map-marker" label={'Township'} text="SKdlsd" />
+                        <InfoRow icon="envelope" label={'CCA'} text="Springs" />
+                        <InfoRow icon="envelope" label={'Cycle'} text="9239" />
+                        <InfoRow icon="map-marker" label={'Zone'} text="weewe" />
+                        <InfoRow icon="map-marker" label={'Cell No'} text="2232323" />
                     </View>
                 </View>
             </ScrollView>
@@ -146,9 +140,10 @@ const Customer360Screen = () => {
 };
 
 
-const InfoRow = ({ icon, text }) => (
+const InfoRow = ({ icon, text, label }) => (
     <View style={styles.infoRow}>
-        <Icon name={icon} size={20} style={styles.infoIcon} />
+        {/* <Icon name={icon} size={20} style={styles.infoIcon} /> */}
+        <Text style={styles.infoText}>{label}</Text>
         <Text style={styles.infoText}>{text}</Text>
     </View>
 );
@@ -169,7 +164,7 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         backgroundColor: '#fff',
-        padding: 20,
+        paddingBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
     },
@@ -196,8 +191,15 @@ const styles = StyleSheet.create({
     },
     infoRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
+        // alignItems: 'center',
+        justifyContent: 'space-between',
+        // marginBottom: 10,
+        padding: 5,
+        borderWidth: 0,
+        margin: 2,
+        backgroundColor: Colors.lightgray2,
+        borderRadius: 5
+
     },
     infoIcon: {
         marginRight: 10,
@@ -209,11 +211,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 20,
         marginTop: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        // borderBottomWidth: 1,
+        // borderBottomColor: Colors.yellow,
     },
     sectionTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 10,
         color: Colors.blue
@@ -240,6 +242,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
     },
+    box: {
+        width: screenWidth / 4,
+        height: screenWidth / 4,
+        borderWidth: 2, // Border width in pixels
+        borderColor: Colors.red,
+        borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.white,
+        alignSelf: 'center',
+        elevation: 1,
+        marginTop: 10
+    },
+    img: {
+        width: screenWidth / 3 - 60,
+        height: screenWidth / 3 - 60,
+        resizeMode: 'contain',
+    },
 });
 
 
@@ -260,6 +280,13 @@ const styles1 = StyleSheet.create({
         shadowOpacity: 0.5, // for iOS shadow
         shadowRadius: 2, // for iOS shadow
         zIndex: 10, // ensure it is above other components
+    },
+    avatar: {
+        width: 100,
+        height: 100,
+        borderWidth: 1,
+        borderRadius: 50,
+        // marginBottom: 10,
     },
     textInput: {
         height: 40,

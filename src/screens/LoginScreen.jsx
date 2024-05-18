@@ -74,17 +74,17 @@ export default function LoginScreen({ route }) {
     }
   }, [items]);
 
-  // useEffect(() => {
-  //   if (!isLoading && error) {
-  //     setShowErrorModal(true);
-  //   }
-  // }, [error, isLoading]);
+  useEffect(() => {
+    if (!isLoading && error) {
+      setShowErrorModal(true);
+    }
+  }, [error, isLoading]);
 
   const closeModal = () => {
     dispatch(authSliceActions.logout())
-    // setTimeout(() => {
-    //   setShowErrorModal(false);
-    // }, 500);
+    setTimeout(() => {
+      setShowErrorModal(false);
+    }, 500);
 
   };
 

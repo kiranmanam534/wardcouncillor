@@ -1,3 +1,4 @@
+
 export const Colors={
     primary:'#047245',
     blue:'#1F3C80',
@@ -5,5 +6,7 @@ export const Colors={
     black:'#272727',
     yellow:'#EEAF2C',
     white:'#ffffff',
-    lightgray :'#ECECEC'
+    lightgray :'#ECECEC',
+    lightgray1 :'#d3d3d3',
+    lightgray2 :'#f7f7f7',
 }
