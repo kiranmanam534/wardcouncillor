@@ -385,3 +385,25 @@ export const GetDataLoadDetailsApi = createAsyncThunk(
     }
   },
 );
+
+
+
+export const GetCustomer360DataApi = createAsyncThunk(
+  'api/GetCustomer360DataApi',
+  async params => {
+    const { wardNo, accountNo } = params;
+    console.log(wardNo, accountNo);
+    let url = `api/Customer360/get-customer360-data?wardNo=${wardNo}&accountNo=${accountNo}`;
+    console.log(url)
+    try {
+      const response = await AxiosInstance.get(
+        url
+      );
+      return response.data;
+
+    } catch (error) {
+      console.log('Error:', error.response.data);
+      throw error.response.status;
+    }
+  },
+);

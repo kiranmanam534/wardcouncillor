@@ -20,6 +20,7 @@ import MayorSelectedWardSlice from './MayorSelectedWardSlice';
 import MeterImageSlice from './MeterImageSlice';
 import OustandingCategoriesSlice from './OustandingCategoriesSlice';
 import DataLoadDetailsSlice from './DataLoadDetailsSlice';
+import customer360Slice from './customer360Slice';
 
 const store = configureStore({
   reducer: {
@@ -44,7 +45,8 @@ const store = configureStore({
     MayorSelectedWardReducer:MayorSelectedWardSlice.reducer,
     MeterImageReducer:MeterImageSlice.reducer,
     OustandingCategoriesReducer:OustandingCategoriesSlice.reducer,
-    DataLoadDetailsReducer:DataLoadDetailsSlice.reducer
+    DataLoadDetailsReducer:DataLoadDetailsSlice.reducer,
+    customer360Reducer:customer360Slice.reducer
 
   },
   middleware: getDefaultMiddleware => {
