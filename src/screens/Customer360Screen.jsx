@@ -315,8 +315,8 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     img: {
-        width: screenWidth / 3 - 60,
-        height: screenWidth / 3 - 60,
+        width: screenWidth / 3 - 70,
+        height: screenWidth / 3 - 70,
         resizeMode: 'contain',
     },
 });
