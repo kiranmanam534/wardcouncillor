@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -26,15 +26,10 @@ const Customer360Screen = () => {
     );
 
 
-    // useEffect(() => {
-    //     dispatch(customer360Actions.clearWards())
-    //     setTimeout(() => {
-    //         dispatch(
-    //             GetCustomer360DataApi(),
-    //         );
-    //     }, 100);
+    useEffect(() => {
+        dispatch(customer360Actions.clearWards())
 
-    // }, [loggedUser?.warD_NO]);
+    }, [loggedUser?.warD_NO]);
 
     const handleSerach = () => {
 
@@ -43,13 +38,13 @@ const Customer360Screen = () => {
     }
 
 
-    console.log("360==>", items?.customerData)
+    console.log("360==>", items)
 
 
 
-    if (isLoading) {
-        return <LoaderModal visible={isLoading} loadingText="Please wait, Data is Loading..." />;
-    }
+    // if (isLoading) {
+    //     return <LoaderModal visible={isLoading} loadingText="Please wait, Data is Loading..." />;
+    // }
 
     return (
         <View style={styles1.container}>
@@ -77,122 +72,128 @@ const Customer360Screen = () => {
                     <Icon name="search" size={25} color={Colors.blue} />
                 </TouchableOpacity>
             </View>
+            <LoaderModal visible={isLoading} loadingText="Please wait, Data is Loading..." />
 
-            <ScrollView style={styles.container}>
+            {items ?
+
+                <ScrollView style={styles.container}>
 
 
-                <View style={styles.header}>
-                    <View style={styles.box}>
-                        <Image source={logo} style={styles.img} />
-                    </View>
-                    {/* <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} /> */}
-                    <Text style={styles.name}>{items?.customerData[0]?.firstname} {items?.customerData[0]?.lastname}</Text>
-                    <Text style={styles.username}>{items?.customerData[0]?.category}</Text>
-                    {items?.customerData[0]?.cellphonenumber && <Text style={styles.bio}>{items?.customerData[0]?.cellphonenumber}</Text>}
-                    <Text style={styles.bio}>{items?.customerData[0]?.address}</Text>
-                </View>
-                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
-                        <Text style={styles.sectionTitle}>Outstanding Amount</Text>
-                    </View>
-                    {items?.outstandingData.length > 0 ?
-                        items?.outstandingData.map((item, index) => (
-                            <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                key={'Outstanding_' + index}>
-                                <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
-                                <InfoRow icon="info-circle" label={'30 days'} text={item?.days30Amount} />
-                                <InfoRow icon="map-marker" label={'60 days'} text={item?.days60Amount} />
-                                <InfoRow icon="map-marker" label={'90 days'} text={item?.days90Amount} />
-                                <InfoRow icon="map-marker" label={'120+ days'} text={item?.days120plusAmount} />
-                                <InfoRow icon="envelope" label={'Total'} text={item?.totalAmount} />
-                            </View>
-                        )) :
-                        <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                            <Text style={{ color: Colors.red }}>No data found!</Text>
+                    <View style={styles.header}>
+                        <View style={styles.box}>
+                            <Image source={logo} style={styles.img} />
                         </View>
-                    }
+                        {/* <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} /> */}
+                        <Text style={styles.name}>{items?.customerData[0]?.firstname} {items?.customerData[0]?.lastname}</Text>
+                        <Text style={styles.username}>{items?.customerData[0]?.category}</Text>
+                        {items?.customerData[0]?.cellphonenumber && <Text style={styles.bio}>{items?.customerData[0]?.cellphonenumber}</Text>}
+                        <Text style={styles.bio}>{items?.customerData[0]?.address}</Text>
+                    </View>
+                    <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                        <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                            <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+                            <Text style={styles.sectionTitle}>Outstanding Amount</Text>
+                        </View>
+                        {items?.outstandingData.length > 0 ?
+                            items?.outstandingData.map((item, index) => (
+                                <View style={[styles.socialMediaSection, { padding: 0 }]}
+                                    key={'Outstanding_' + index}>
+                                    <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
+                                    <InfoRow icon="info-circle" label={'30 days'} text={item?.days30Amount} />
+                                    <InfoRow icon="map-marker" label={'60 days'} text={item?.days60Amount} />
+                                    <InfoRow icon="map-marker" label={'90 days'} text={item?.days90Amount} />
+                                    <InfoRow icon="map-marker" label={'120+ days'} text={item?.days120plusAmount} />
+                                    <InfoRow icon="envelope" label={'Total'} text={item?.totalAmount} />
+                                </View>
+                            )) :
+                            <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
+                                <Text style={{ color: Colors.red }}>No data found!</Text>
+                            </View>
+                        }
 
-                </View>
-                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
-                        <Text style={styles.sectionTitle}>Meters</Text>
+                    </View>
+                    <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                        <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                            <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+                            <Text style={styles.sectionTitle}>Meters</Text>
+                        </View>
+
+                        {items?.meterData.length > 0 ?
+                            items?.meterData.map((item, index) => (
+                                <View style={[styles.socialMediaSection, { padding: 0 }]}
+                                    key={'Meter_' + index}>
+                                    <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
+                                    <InfoRow icon="envelope" label={'Meter No'} text={item?.meteR_NO} />
+                                    <InfoRow icon="info-circle" label={'Status'} text={item?.poD_STATUS} />
+                                    <InfoRow icon="map-marker" label={'Address'} text={item?.address} />
+                                    <InfoRow icon="map-marker" label={'Previous Reading'} text={item?.previouS_READING} />
+                                    <InfoRow icon="map-marker" label={'Previous Reading Date'} text={item?.readinG_TAKEN_DATE?.split(' ')[0]} />
+                                </View>
+                            )) :
+                            <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
+                                <Text style={{ color: Colors.red }}>No data found!</Text>
+                            </View>
+                        }
+
+
+                    </View>
+                    <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                        <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                            <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+                            <Text style={styles.sectionTitle}>Properties</Text>
+                        </View>
+                        {items?.propertyData.length > 0 ?
+                            items?.propertyData.map((item, index) => (
+                                <View style={[styles.socialMediaSection, { padding: 0 }]}
+                                    key={'Meter_' + index}>
+                                    <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
+                                    <InfoRow icon="envelope" label={'Name'} text={item?.accountname} />
+                                    <InfoRow icon="info-circle" label={'Cell No'} text={item?.cellphonenumber ? item?.cellphonenumber : 'N/A'} />
+                                    <InfoRow icon="map-marker" label={'Address'} text={item?.addressdetails} />
+                                    <InfoRow icon="map-marker" label={'Latitude'} text={item?.locationlatitude} />
+                                    <InfoRow icon="map-marker" label={'Longitude'} text={item?.locationlongitude} />
+                                </View>
+                            )) :
+                            <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
+                                <Text style={{ color: Colors.red }}>No data found!</Text>
+                            </View>
+                        }
+
                     </View>
 
-                    {items?.meterData.length > 0 ?
-                        items?.meterData.map((item, index) => (
-                            <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                key={'Meter_' + index}>
-                                <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
-                                <InfoRow icon="envelope" label={'Meter No'} text={item?.meteR_NO} />
-                                <InfoRow icon="info-circle" label={'Status'} text={item?.poD_STATUS} />
-                                <InfoRow icon="map-marker" label={'Address'} text={item?.address} />
-                                <InfoRow icon="map-marker" label={'Previous Reading'} text={item?.previouS_READING} />
-                                <InfoRow icon="map-marker" label={'Previous Reading Date'} text={item?.readinG_TAKEN_DATE?.split(' ')[0]} />
-                            </View>
-                        )) :
-                        <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                            <Text style={{ color: Colors.red }}>No data found!</Text>
+                    <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                        <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                            <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+                            <Text style={styles.sectionTitle}>Interims</Text>
                         </View>
-                    }
+
+                        {items?.interimsData.length > 0 ?
+                            items?.interimsData.map((item, index) => (
+                                <View style={[styles.socialMediaSection, { padding: 0 }]}
+                                    key={'Interims_' + index}>
+                                    <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
+                                    <InfoRow icon="envelope" label={'Meter No'} text={item?.meterNumber} />
+                                    <InfoRow icon="envelope" label={'Name'} text={item?.debtorName} />
+                                    <InfoRow icon="info-circle" label={'Service'} text={item?.serviceGroup} />
+                                    <InfoRow icon="info-circle" label={'Reason'} text={item?.interimsReason} />
+                                    <InfoRow icon="map-marker" label={'Township'} text={item?.township} />
+                                    <InfoRow icon="envelope" label={'CCA'} text={item?.cca} />
+                                    <InfoRow icon="envelope" label={'Cycle'} text={item?.cycle} />
+                                    <InfoRow icon="map-marker" label={'Zone'} text={item?.zoning} />
+                                    <InfoRow icon="map-marker" label={'Cell No'} text={item?.cellNo ? item?.cellNo : 'N/A'} />
+                                </View>
+                            )) :
+                            <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
+                                <Text style={{ color: Colors.red }}>No data found!</Text>
+                            </View>
+                        }
 
 
-                </View>
-                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
-                        <Text style={styles.sectionTitle}>Properties</Text>
                     </View>
-                    {items?.propertyData.length > 0 ?
-                        items?.propertyData.map((item, index) => (
-                            <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                key={'Meter_' + index}>
-                                <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
-                                <InfoRow icon="envelope" label={'Name'} text={item?.accountname} />
-                                <InfoRow icon="info-circle" label={'Cell No'} text={item?.cellphonenumber ? item?.cellphonenumber : 'N/A'} />
-                                <InfoRow icon="map-marker" label={'Address'} text={item?.addressdetails} />
-                                <InfoRow icon="map-marker" label={'Latitude'} text={item?.locationlatitude} />
-                                <InfoRow icon="map-marker" label={'Longitude'} text={item?.locationlongitude} />
-                            </View>
-                        )) :
-                        <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                            <Text style={{ color: Colors.red }}>No data found!</Text>
-                        </View>
-                    }
-
-                </View>
-
-                <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
-                    <View style={{ flexDirection: 'row', marginLeft: -15 }}>
-                        <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
-                        <Text style={styles.sectionTitle}>Interims</Text>
-                    </View>
-
-                    {items?.interimsData.length > 0 ?
-                        items?.interimsData.map((item, index) => (
-                            <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                key={'Interims_' + index}>
-                                <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
-                                <InfoRow icon="envelope" label={'Meter No'} text={item?.meterNumber} />
-                                <InfoRow icon="envelope" label={'Name'} text={item?.debtorName} />
-                                <InfoRow icon="info-circle" label={'Service'} text={item?.serviceGroup} />
-                                <InfoRow icon="info-circle" label={'Reason'} text={item?.interimsReason} />
-                                <InfoRow icon="map-marker" label={'Township'} text={item?.township} />
-                                <InfoRow icon="envelope" label={'CCA'} text={item?.cca} />
-                                <InfoRow icon="envelope" label={'Cycle'} text={item?.cycle} />
-                                <InfoRow icon="map-marker" label={'Zone'} text={item?.zoning} />
-                                <InfoRow icon="map-marker" label={'Cell No'} text={item?.cellNo ? item?.cellNo : 'N/A'} />
-                            </View>
-                        )) :
-                        <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                            <Text style={{ color: Colors.red }}>No data found!</Text>
-                        </View>
-                    }
-
-
-                </View>
-            </ScrollView>
+                </ScrollView>
+                : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: Colors.blue, fontSize: 16 }}>Please search with account number</Text>
+                </View>}
         </View>
     );
 };
