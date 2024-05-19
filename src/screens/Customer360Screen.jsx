@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetCustomer360DataApi } from '../services/councillorWardApi';
 import { customer360Actions } from '../redux/customer360Slice';
 import LoaderModal from '../components/LoaderModal';
+import CustomAlert from '../components/CustomAlert';
+import { formattedAmount } from '../utility/FormattedAmmount';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -17,6 +19,8 @@ const Customer360Screen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertErrorVisible, setIsAlertErrorVisible] = useState(false);
     const [searchKey, setSearchKey] = useState('');
 
     const loggedUser = useSelector(state => state.loginReducer.items);
@@ -32,19 +36,33 @@ const Customer360Screen = () => {
     }, [loggedUser?.warD_NO]);
 
     const handleSerach = () => {
-
+        dispatch(customer360Actions.clearWards())
+        setIsAlertErrorVisible(true);
         console.log(searchKey)
-        if(searchKey){
+        if (searchKey) {
             dispatch(GetCustomer360DataApi({ wardNo: loggedUser?.warD_NO, accountNo: searchKey }));
         }
-        else{
-            Alert.alert("Required!","Please enter valid account number!")
+        else {
+            //Alert.alert("Required!", "Please enter valid account number!")
+
+            setAlertVisible(true);
         }
-       
+
     }
+
+    const closeAlert = () => {
+        setAlertVisible(false);
+    };
+
+
+    const closeAlert1 = () => {
+        setIsAlertErrorVisible(false);
+    };
+
 
 
     console.log("360==>", items)
+
 
 
 
@@ -79,7 +97,12 @@ const Customer360Screen = () => {
                 </TouchableOpacity>
             </View>
             <LoaderModal visible={isLoading} loadingText="Please wait, Data is Loading..." />
-
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={closeAlert}
+                message="Please enter valid account number!"
+                imageSource={logo} // Replace with your image URL or local image source
+            />
             {items ?
                 (items?.outstandingData.length > 0 || items?.meterData.length > 0
                     || items?.propertyData.length > 0 || items?.interimsData.length > 0) ?
@@ -105,11 +128,37 @@ const Customer360Screen = () => {
                                     <View style={[styles.socialMediaSection, { padding: 0 }]}
                                         key={'Outstanding_' + index}>
                                         <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
-                                        <InfoRow icon="info-circle" label={'30 days'} text={item?.days30Amount} />
-                                        <InfoRow icon="map-marker" label={'60 days'} text={item?.days60Amount} />
-                                        <InfoRow icon="map-marker" label={'90 days'} text={item?.days90Amount} />
-                                        <InfoRow icon="map-marker" label={'120+ days'} text={item?.days120plusAmount} />
-                                        <InfoRow icon="envelope" label={'Total'} text={item?.totalAmount} />
+                                        <InfoRow icon="info-circle" label={'30 days'} text={formattedAmount(
+                                            parseFloat(item?.days30Amount),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="map-marker" label={'60 days'} text={formattedAmount(
+                                            parseFloat(item?.days60Amount),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="map-marker" label={'90 days'} text={formattedAmount(
+                                            parseFloat(item?.days90Amount),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="map-marker" label={'120+ days'} text={formattedAmount(
+                                            parseFloat(item?.days120plusAmount),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="envelope" label={'Total'} text={formattedAmount(
+                                            parseFloat(item?.totalAmount),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )}
+                                            type="outstanding total" />
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
@@ -197,11 +246,14 @@ const Customer360Screen = () => {
 
                         </View>
                     </ScrollView> :
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <Text style={{ color: Colors.blue, fontSize: 16 }}>The entered account number is
-                         <Text style={{color:Colors.red}}> ({searchKey}) </Text>
-                         doesn't exists, Please enter correct account number</Text>
-                    </View>
+                    <CustomAlert
+                        isVisible={isAlertErrorVisible}
+                        onClose={closeAlert1}
+                        message={`You entered account number is  "${searchKey}" doesn't exists.`}
+                        message1={'Please enter correct account number!'}
+                        imageSource={logo} // Replace with your image URL or local image source
+                    />
+
                 : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: Colors.blue, fontSize: 16 }}>Please search with account number</Text>
                 </View>}
@@ -210,11 +262,12 @@ const Customer360Screen = () => {
 };
 
 
-const InfoRow = ({ icon, text, label }) => (
+const InfoRow = ({ icon, text, label, type }) => (
+
     <View style={styles.infoRow}>
         {/* <Icon name={icon} size={20} style={styles.infoIcon} /> */}
-        <Text style={styles.infoText}>{label}</Text>
-        <Text style={styles.infoText}>{text}</Text>
+        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'),color: (type == 'outstanding total' ? Colors.primary : '') }]}>{label}</Text>
+        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'),color: (type == 'outstanding total' ? Colors.primary : '') }]}>{text}</Text>
     </View>
 );
 
