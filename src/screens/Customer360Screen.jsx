@@ -38,7 +38,7 @@ const Customer360Screen = () => {
             dispatch(GetCustomer360DataApi({ wardNo: loggedUser?.warD_NO, accountNo: searchKey }));
         }
         else{
-            Alert.alert("Required!","Please valid account number!")
+            Alert.alert("Required!","Please enter valid account number!")
         }
        
     }
