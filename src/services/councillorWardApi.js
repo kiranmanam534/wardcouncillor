@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from './api';
+import axios from 'axios';
 
 export const getCouncillorWardDashboardApi = createAsyncThunk(
   'api/getCouncillorWardDashboard',
@@ -403,6 +404,38 @@ export const GetCustomer360DataApi = createAsyncThunk(
 
     } catch (error) {
       console.log('Error:', error.response.data);
+      throw error.response.status;
+    }
+  },
+);
+
+
+
+export const GetPaymentHistoryApi = createAsyncThunk(
+  'api/GetPaymentHistoryApi',
+  async (accountNo) => {
+    console.log("GetPaymentHistoryApi",accountNo);
+    try {
+
+      // Your username and password
+      const username = 'justintimberlake';
+      const password = 'Passw0rd1@';
+
+      // Encode the credentials in base64
+      const credentials = btoa(`${username}:${password}`);
+      console.log(credentials)
+      let url = `https://siyakhokha.ekurhuleni.gov.za/api/mobile/getaccounthistory?accountNumber=${accountNo}`;
+      console.log(url)
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+        }
+      });
+
+      return response.data;
+
+    } catch (error) {
+      console.log('Error:', error);
       throw error.response.status;
     }
   },

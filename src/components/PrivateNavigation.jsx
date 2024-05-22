@@ -26,6 +26,7 @@ import MayorOutstandingDashboardScreen from '../screens/MayorOutstandingDashboar
 import CategoryOutstandingScreen from '../screens/CategoryOutstandingScreen';
 import ShowMapModal from './ShowMapModal';
 import Customer360Screen from '../screens/Customer360Screen';
+import PaymentHistoryScreen from '../screens/PaymentHistoryScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -215,6 +216,16 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="Customer360"
         component={Customer360Screen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+
+<PrivateStack.Screen
+        name="PaymentHistory"
+        component={PaymentHistoryScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,

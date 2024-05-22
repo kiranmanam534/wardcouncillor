@@ -21,7 +21,7 @@ const Customer360Screen = () => {
 
     const [isAlertVisible, setAlertVisible] = useState(false);
     const [isAlertErrorVisible, setIsAlertErrorVisible] = useState(false);
-    const [searchKey, setSearchKey] = useState('');
+    const [searchKey, setSearchKey] = useState('2100556270');
 
     const loggedUser = useSelector(state => state.loginReducer.items);
 
@@ -58,6 +58,11 @@ const Customer360Screen = () => {
     const closeAlert1 = () => {
         setIsAlertErrorVisible(false);
     };
+
+
+    const handlePaymentHistory = () => {
+        navigation.navigate('PaymentHistory', { title:'Payment History', accountNo: searchKey })
+    }
 
 
 
@@ -109,6 +114,12 @@ const Customer360Screen = () => {
                     <ScrollView style={styles.container}>
 
                         <View style={styles.header}>
+                            <View style={{ justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 10, top: 10 }}>
+                                <TouchableOpacity onPress={handlePaymentHistory}
+                                    style={{ alignContent: 'center', backgroundColor: Colors.primary, padding: 5, borderRadius: 5 }}>
+                                    <Text style={{ textAlign: 'right', color: Colors.white }}>Payment History</Text>
+                                </TouchableOpacity>
+                            </View>
                             <View style={styles.box}>
                                 <Image source={logo} style={styles.img} />
                             </View>
@@ -289,7 +300,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingBottom: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
+        borderBottomColor: Colors.primary,
     },
     profilePicture: {
         width: 100,

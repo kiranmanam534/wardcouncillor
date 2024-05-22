@@ -21,6 +21,7 @@ import MeterImageSlice from './MeterImageSlice';
 import OustandingCategoriesSlice from './OustandingCategoriesSlice';
 import DataLoadDetailsSlice from './DataLoadDetailsSlice';
 import customer360Slice from './customer360Slice';
+import PaymentHistorySlice from './PaymentHistorySlice';
 
 const store = configureStore({
   reducer: {
@@ -46,7 +47,8 @@ const store = configureStore({
     MeterImageReducer:MeterImageSlice.reducer,
     OustandingCategoriesReducer:OustandingCategoriesSlice.reducer,
     DataLoadDetailsReducer:DataLoadDetailsSlice.reducer,
-    customer360Reducer:customer360Slice.reducer
+    customer360Reducer:customer360Slice.reducer,
+    PaymentHistoryReducer:PaymentHistorySlice.reducer,
 
   },
   middleware: getDefaultMiddleware => {
