@@ -266,8 +266,8 @@ const InfoRow = ({ icon, text, label, type }) => (
 
     <View style={styles.infoRow}>
         {/* <Icon name={icon} size={20} style={styles.infoIcon} /> */}
-        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'),color: (type == 'outstanding total' ? Colors.primary : '') }]}>{label}</Text>
-        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'),color: (type == 'outstanding total' ? Colors.primary : '') }]}>{text}</Text>
+        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'), color: (type == 'outstanding total' ? Colors.primary : '') }]}>{label}</Text>
+        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'), color: (type == 'outstanding total' ? Colors.primary : '') }]}>{text}</Text>
     </View>
 );
 
