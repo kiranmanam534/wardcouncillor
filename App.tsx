@@ -9,17 +9,19 @@ import PhotoCaptureScreen from './src/PhotoCaptureScreen'
 import CameraComponent from './src/TestCamera'
 import ProfileScreen from './src/TestProfileScreen'
 import Customer360Screen from './src/screens/Customer360Screen'
+import Imagepickerscreen from './src/Imagepickerscreen'
 
 const App = () => {
   return (
     <Provider store={store}>      
-    <Navigation/>
+    {/* <Navigation/> */}
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
     {/* <CameraComponent/> */}
     {/* <ProfileScreen/> */}
     {/* <Customer360Screen/> */}
+    <Imagepickerscreen/>
     </Provider>
   )
 }
