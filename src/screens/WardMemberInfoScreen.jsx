@@ -1,4 +1,4 @@
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import WardMemberCard from '../components/WardMemberCard';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,7 +19,7 @@ const WardMemberInfoScreen = () => {
   //   console.log(filteredData);
 
   useEffect(() => {
-    dispatch(wardMemberInfo());
+    // dispatch(wardMemberInfo());
   }, [dispatch]);
 
   const [seconds, setSeconds] = useState(5); // Initial timeout value in seconds
@@ -84,7 +84,9 @@ const WardMemberInfoScreen = () => {
             Time Left: {minutes}:{remainingSeconds < 10 ? '0' : ''}
             {remainingSeconds}
           </Text>{' '}
-          or click on button to navigate dashboard{' '}
+          or click <TouchableOpacity  onPress={goToDashboard}>
+            <Text style={{color:Colors.primary}}>Dashboard</Text>
+          </TouchableOpacity> on button to navigate dashboard{' '}
         </Text>
       </View>
     </ScrollView>

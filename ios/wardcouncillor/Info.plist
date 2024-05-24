@@ -35,6 +35,10 @@
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to the photo library for selecting images</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to the capture image</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to video and microphone</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

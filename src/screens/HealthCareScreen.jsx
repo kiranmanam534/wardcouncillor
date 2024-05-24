@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import axios from 'axios';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -10,12 +11,35 @@ import ErrorModal from '../components/ErrorModal';
 import { CreateHealthCareApi } from '../services/councillorWardApi';
 import HealthCareValidationSchema from '../validation/HealthCareSchema';
 import { createHealthCareActions } from '../redux/createHealthCareSlice';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import CameraModal from '../components/CameraModal';
+import BinaryImageModal from '../components/BinaryImageModal';
+let launchImageLibrary = _launchImageLibrary;
+let launchCamera = _launchCamera;
+
 
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
 
 const screenWidth = Dimensions.get('window').width;
+
+
+
+
+
+// Utility function to chunk the data
+const chunkArray = (array, chunkSize) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+};
+
+
 
 function HealthCareScreen() {
 
@@ -36,6 +60,10 @@ function HealthCareScreen() {
   const [showDatePicker, setShowDatePicker] = useState('');
   const [showTimePicker, setShowTimePicker] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showCameraModal, setShowCameraModal] = useState(false);
+
+  const [viewBinaryImage, setViewBinaryImage] = useState(null);
+  const [isBinaryImage, setIsBinaryImage] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -90,7 +118,7 @@ function HealthCareScreen() {
     }
   }
 
-  
+
   const confoirmIOSDate = (fieldName) => {
     console.log(fieldName)
     toggleDatePicker('No');
@@ -118,6 +146,132 @@ function HealthCareScreen() {
   };
 
 
+  const [selectedImages, setSelectedImages] = useState([]);
+  // const [imageBinary, setImageBinary] = useState(null);
+
+
+  const [response, setResponse] = useState(null);
+
+  const openImagePicker = () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, handleResponse);
+  };
+
+  const handleCameraLaunch = () => {
+
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 2000,
+      maxWidth: 2000,
+
+    };
+
+    launchCamera(options, handleResponse);
+  };
+
+  const handleResponse = (response) => {
+    setShowCameraModal(false)
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('Image picker error: ', response.error);
+    } else {
+      console.log('====================================');
+      // console.log(response);
+      console.log('====================================');
+      let imageUri = response.uri || response.assets?.[0]?.uri;
+      // setSelectedImage(imageUri);
+
+      // Convert to binary
+      const asset = response.assets[0];
+      const binary = asset.base64;
+      const base64String = 'data:image/jpg;base64,' + binary;
+
+      // console.log(base64String)
+
+      const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
+      setSelectedImages([...selectedImages,
+      {
+        "id": 0,
+        "image": binary,
+        "extension": fileExtension,
+        "device": Platform.OS,
+        "useR_ID": loggedUser?.userid
+      }
+
+        //   {
+        //   "filename": response.assets?.[0]?.fileName,
+        //   "image": binary,
+        //   "extension": fileExtension
+        // }
+      ]);
+
+
+      // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+
+    }
+  };
+
+
+  const handlePostRequest = async (image, extension) => {
+    const url = 'http://196.41.72.247:8083/WardsCoreApi/api/Create/save-healthcare-attachment';
+    const data = {
+      "id": 1,
+      "image": image,
+      "extension": extension,
+      "device": "mobile",
+      "useR_ID": 1
+    };
+
+    try {
+      const res = await axios.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      setResponse(res.data);
+    } catch (error) {
+      console.error(error);
+      setResponse({ error: 'Something went wrong' });
+    }
+  };
+
+
+  const removeSelectedImage = (index) => {
+    setSelectedImages(
+      selectedImages.filter((item, index1) => {
+        return index1 != index
+      })
+    );
+  }
+
+
+  const viewImageonModal = (binaryImg) => {
+    setIsBinaryImage(true)
+    setViewBinaryImage(binaryImg)
+  }
+
+
+  const onCloseBinaryImageModal = (binaryImg) => {
+    setIsBinaryImage(false)
+  }
+
+
+
+  const closeCameraModal = () => {
+    setShowCameraModal(false);
+  };
+
+
+
+
   const handleSubmit = async () => {
     try {
 
@@ -127,20 +281,23 @@ function HealthCareScreen() {
       {
         "healthcarE_DATE": formValues.healthcarE_DATE,
         "location": formValues.location,
-        "latitude": Platform.OS == "ios" ? formValues.latitude : "0.00",
-        "longitude":Platform.OS == "ios" ? formValues.longitude : "0.00",
+        "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+        "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
         "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
         "expirY_DATE": formValues.healthcarE_DATE,
         "userid": loggedUser?.userid,
         "warD_NO": loggedUser?.warD_NO,
       }
 
+      let postData = {
+        "healthCareInputData": formData,
+        "imG_LIST": selectedImages
+      }
 
+      console.log('Form data:', postData);
 
-      console.log('Form data:', formData);
+      dispatch(CreateHealthCareApi(postData));
 
-      dispatch(CreateHealthCareApi(formData));
-      
 
     } catch (error) {
       // Validation failed, set errors
@@ -153,6 +310,7 @@ function HealthCareScreen() {
       setErrors(validationErrors);
     }
   };
+
 
 
 
@@ -203,25 +361,25 @@ function HealthCareScreen() {
         </View>
 
         <View style={styles.inputView}>
-          {Platform.OS == 'android' &&
-            <TextInput
-              mode="outlined"
-              label={'Location'}
-              style={{ backgroundColor: Colors.white }}
-              placeholder='Location'
-              value={
-                formValues.location
-              }
-              autoCorrect={false}
-              keyboardType='default'
-              autoCapitalize="none"
-              onChangeText={value => handleInputChange('location', value)}
-              placeholderTextColor={'#11182744'}
+          {/* {Platform.OS == 'android' && */}
+          <TextInput
+            mode="outlined"
+            label={'Location'}
+            style={{ backgroundColor: Colors.white }}
+            placeholder='Location'
+            value={
+              formValues.location
+            }
+            autoCorrect={false}
+            keyboardType='default'
+            autoCapitalize="none"
+            onChangeText={value => handleInputChange('location', value)}
+            placeholderTextColor={'#11182744'}
 
-            />
-          }
+          />
+          {/* } */}
 
-          {Platform.OS == 'ios' &&
+          {/* {Platform.OS == 'ios' &&
             <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
               <GooglePlacesAutocomplete
                 GooglePlacesDetailsQuery={{ fields: "geometry" }}
@@ -246,14 +404,14 @@ function HealthCareScreen() {
 
               />
             </View>
-          }
+          } */}
 
           {errors?.location && (
             <Text style={{ color: 'red' }}>{errors?.location}</Text>
           )}
         </View>
 
-      
+
 
         <View style={styles.inputView}>
           <TextInput
@@ -277,6 +435,66 @@ function HealthCareScreen() {
             <Text style={{ color: 'red' }}>{errors?.healthcarE_DETAILS}</Text>
           )}
         </View>
+        {/* 
+        <FlatList
+          data={chunkArray(selectedImages, 5)}
+          renderItem={renderRow}
+          keyExtractor={(item, index) => index.toString()}
+        /> */}
+
+        {chunkArray(selectedImages, 5).map((item, index1) => (
+          <View key={index1} style={styles.row}>
+            {item.map((subItem, index) => (
+              <View key={index} style={[styles.item, { position: 'relative' }]}
+
+              >
+                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                  <Image
+                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                    // style={{ flex: 1 }}
+                    width={40}
+                    height={40}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        ))}
+
+        {/* {selectedImages.map((item) => (
+          <Text>{item.filename}</Text>
+        ))} */}
+
+        {/* 
+
+        
+
+        {selectedImages.length > 0 &&
+          <View style={[styles.buttonView,{flexDirection:'row',justifyContent:'center',alignItems:'center'}]}>
+
+            {selectedImages.map((item) => (
+              <Image key={item.filename}
+                source={{ uri: item.image }}
+                style={{ flex: 1 }}
+                width={40}
+                height={40}
+              />
+            ))
+
+            }
+          </View>} */}
+
+        <View style={styles.buttonView}>
+          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+            <Icon name="camera" size={25} color={Colors.blue} />
+            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+              Capture image
+            </Text>
+          </Pressable>
+        </View>
 
         <View style={styles.buttonView}>
           <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -289,6 +507,20 @@ function HealthCareScreen() {
           </Pressable>
         </View>
 
+        <BinaryImageModal
+          visible={isBinaryImage}
+          onClose={onCloseBinaryImageModal}
+          binaryImageData={viewBinaryImage}
+        />
+
+
+
+        <CameraModal
+          isVisible={showCameraModal}
+          onClose={closeCameraModal}
+          openCamera={handleCameraLaunch}
+          openGallery={openImagePicker}
+        />
 
       </ScrollView>
       <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
@@ -395,6 +627,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 6,
   },
+  CameraButton: {
+    backgroundColor: Colors.white,
+    height: 45,
+    borderColor: Colors.black,
+    borderWidth: 0.5,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'center',
+    paddingLeft: 10
+  },
+  CameraText: {
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   mediaIcons: {
     flexDirection: 'row',
     gap: 15,
@@ -478,5 +726,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     color: Colors.black,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  item: {
+    flex: 1,
+    marginHorizontal: 5,
+    padding: 10,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
   },
 })

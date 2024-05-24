@@ -10,18 +10,22 @@ import CameraComponent from './src/TestCamera'
 import ProfileScreen from './src/TestProfileScreen'
 import Customer360Screen from './src/screens/Customer360Screen'
 import Imagepickerscreen from './src/Imagepickerscreen'
+import TestHomeScreen from './TestHomeScreen'
+import GoogleAutocompleteScreen from './GoogleAutocompleteScreen'
 
 const App = () => {
   return (
     <Provider store={store}>      
-    {/* <Navigation/> */}
+    <Navigation/>
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
     {/* <CameraComponent/> */}
     {/* <ProfileScreen/> */}
     {/* <Customer360Screen/> */}
-    <Imagepickerscreen/>
+    {/* <Imagepickerscreen/> */}
+    {/* <TestHomeScreen/> */}
+    {/* <GoogleAutocompleteScreen/> */}
     </Provider>
   )
 }
