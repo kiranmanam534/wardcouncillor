@@ -13,6 +13,7 @@ import HealthCareValidationSchema from '../validation/HealthCareSchema';
 import { createHealthCareActions } from '../redux/createHealthCareSlice';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
@@ -46,7 +47,7 @@ function HealthCareScreen() {
 
   const dispatch = useDispatch();
 
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState();
   const loggedUser = useSelector(state => state.loginReducer.items);
 
   const { data, isLoading, error, statusCode } = useSelector(
@@ -87,10 +88,6 @@ function HealthCareScreen() {
 
   }
 
-  const toggleTimePicker = (value) => {
-    setShowTimePicker(value)
-
-  }
 
   const onChageDatePicker = (event, selectedDate, fieldName) => {
     if (event.type == 'set') {
@@ -220,28 +217,6 @@ function HealthCareScreen() {
   };
 
 
-  const handlePostRequest = async (image, extension) => {
-    const url = 'http://196.41.72.247:8083/WardsCoreApi/api/Create/save-healthcare-attachment';
-    const data = {
-      "id": 1,
-      "image": image,
-      "extension": extension,
-      "device": "mobile",
-      "useR_ID": 1
-    };
-
-    try {
-      const res = await axios.post(url, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      setResponse(res.data);
-    } catch (error) {
-      console.error(error);
-      setResponse({ error: 'Something went wrong' });
-    }
-  };
 
 
   const removeSelectedImage = (index) => {
@@ -277,6 +252,7 @@ function HealthCareScreen() {
 
       await HealthCareValidationSchema.validate(formValues, { abortEarly: false });
 
+      if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
       let formData =
       {
         "healthcarE_DATE": formValues.healthcarE_DATE,
@@ -325,8 +301,11 @@ function HealthCareScreen() {
         onPress={() => {
           if (statusCode === 200) {
             // navigation.navigate('Home');
-            setFormValues({});
             dispatch(createHealthCareActions.clear());
+
+            setFormValues();
+            setSelectedImages([])
+            setErrors()
             closeModal();
           } else {
             closeModal();
@@ -339,20 +318,24 @@ function HealthCareScreen() {
         </View>
         <Text style={styles.title}>Create HealthCare</Text>
         <View style={styles.inputView}>
-          <Pressable onPress={() => { toggleDatePicker('healthcarE_DATE') }}>
+          <Pressable onPress={() => { toggleDatePicker('healthcarE_DATE') }}
+            style={{ position: 'relative' }}>
             <TextInput
               mode="outlined"
               label={'Healthcare Date'}
               style={{ backgroundColor: Colors.white }}
               placeholder='2024-01-01'
               value={
-                formValues.healthcarE_DATE
+                formValues?.healthcarE_DATE
               }
               onChangeText={value => handleInputChange('healthcarE_DATE', value)}
               placeholderTextColor={'#11182744'}
               editable={false}
               onPressIn={() => { toggleDatePicker('healthcarE_DATE') }}
             />
+            <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+              <Icon name="calendar" size={25} color={Colors.blue} />
+            </View>
           </Pressable>
           {errors?.healthcarE_DATE && (
             <Text style={{ color: 'red' }}>{errors?.healthcarE_DATE}</Text>
@@ -360,7 +343,7 @@ function HealthCareScreen() {
 
         </View>
 
-        <View style={styles.inputView}>
+        <View style={[styles.inputView, { position: 'relative' }]}>
           {/* {Platform.OS == 'android' && */}
           <TextInput
             mode="outlined"
@@ -368,7 +351,7 @@ function HealthCareScreen() {
             style={{ backgroundColor: Colors.white }}
             placeholder='Location'
             value={
-              formValues.location
+              formValues?.location ? (formValues?.location) : ''
             }
             autoCorrect={false}
             keyboardType='default'
@@ -377,6 +360,9 @@ function HealthCareScreen() {
             placeholderTextColor={'#11182744'}
 
           />
+          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <MaterialIcon name="my-location" size={25} color={Colors.blue} />
+          </View>
           {/* } */}
 
           {/* {Platform.OS == 'ios' &&
@@ -413,24 +399,29 @@ function HealthCareScreen() {
 
 
 
-        <View style={styles.inputView}>
+        <View style={[styles.inputView,{position:'relative'}]}>
           <TextInput
             mode="outlined"
             label={'Healthcare Details'}
             numberOfLines={5}
-            multiline
+            multiline={true}
             style={{ backgroundColor: Colors.white }}
             placeholder='Healthcare Details'
+            textAlignVertical="top" // Ensures text starts from the top of the input
             value={
-              formValues.healthcarE_DETAILS
+              formValues?.healthcarE_DETAILS ? (formValues?.healthcarE_DETAILS) : ''
             }
             autoCorrect={false}
             keyboardType='default'
             autoCapitalize="none"
             onChangeText={value => handleInputChange('healthcarE_DETAILS', value)}
             placeholderTextColor={'#11182744'}
+            height= {100}
 
           />
+           {/* <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <MaterialIcon name="details" size={25} color={Colors.blue} />
+          </View> */}
           {errors?.healthcarE_DETAILS && (
             <Text style={{ color: 'red' }}>{errors?.healthcarE_DETAILS}</Text>
           )}
@@ -491,7 +482,7 @@ function HealthCareScreen() {
           <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
             <Icon name="camera" size={25} color={Colors.blue} />
             <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture image
+              Capture images
             </Text>
           </Pressable>
         </View>
@@ -678,8 +669,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   img: {
-    width: screenWidth / 3 - 60,
-    height: screenWidth / 3 - 60,
+    width: screenWidth / 3 - 65,
+    height: screenWidth / 3 - 65,
     resizeMode: 'contain',
   },
   button1: {

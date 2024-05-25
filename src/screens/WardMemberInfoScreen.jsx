@@ -1,17 +1,17 @@
-import {Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import WardMemberCard from '../components/WardMemberCard';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {wardMemberInfo} from '../services/loginApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { wardMemberInfo } from '../services/loginApi';
 import LoaderModal from '../components/LoaderModal';
-import {Colors} from '../constant/Colors';
-import {authSliceActions} from '../redux/loginSlice';
+import { Colors } from '../constant/Colors';
+import { authSliceActions } from '../redux/loginSlice';
 
 const WardMemberInfoScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {items: wardMember, isLoading} = useSelector(
+  const { items: wardMember, isLoading } = useSelector(
     state => state.wardMemberReducer,
   );
   const loggedUser = useSelector(state => state.loginReducer.items);
@@ -58,7 +58,7 @@ const WardMemberInfoScreen = () => {
       ' ' +
       (filteredData && filteredData[0].Surname);
 
-      // console.log(filteredData)
+    // console.log(filteredData)
     dispatch(authSliceActions.getUserName(name));
   }, [dispatch, filteredData]);
 
@@ -66,30 +66,61 @@ const WardMemberInfoScreen = () => {
     return <LoaderModal visible={isLoading} loadingText="Please wait profile is Loading..." />;
   }
   return (
-    <ScrollView>
-      {filteredData &&
-        filteredData.map(item => (
-          <WardMemberCard
-            key={item.ID}
-            wardMember={item}
-            onPress={goToDashboard}
-          />
-        ))}
+    <>
+      {!filteredData &&
 
-      <View style={{padding: 20}}>
-        <Text>
-          Please wait until complete
-          <Text style={{color: Colors.red}}>
-            {' '}
-            Time Left: {minutes}:{remainingSeconds < 10 ? '0' : ''}
-            {remainingSeconds}
-          </Text>{' '}
-          or click <TouchableOpacity  onPress={goToDashboard}>
-            <Text style={{color:Colors.primary}}>Dashboard</Text>
-          </TouchableOpacity> on button to navigate dashboard{' '}
-        </Text>
-      </View>
-    </ScrollView>
+
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
+          <Text style={{ color: Colors.red }}>Something went wrong on profile loadig...</Text>
+
+          <View style={{ padding: 20 }}>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <Text>Please click on</Text>
+              <TouchableOpacity onPress={goToDashboard} style={{backgroundColor:Colors.primary,padding:5,borderRadius:5,marginHorizontal:10}}>
+                <Text style={{ color: Colors.white,marginHorizontal:5 }}>Dashboard</Text>
+              </TouchableOpacity>
+              <Text>to navigate dashboard.</Text>
+            </View>
+          </View>
+        </View>
+      }
+      {filteredData &&
+        <ScrollView>
+          {filteredData &&
+            filteredData.map(item => (
+              <WardMemberCard
+                key={item.ID}
+                wardMember={item}
+                onPress={goToDashboard}
+              />
+            ))}
+
+
+
+          <View style={{ padding: 20 }}>
+
+            <Text>
+              Please wait until complete
+              <Text style={{ color: Colors.red }}>
+                {' '}
+                Time Left:
+                {minutes >= 0 ? (minutes + ":" + r(remainingSeconds < 10 ? '0' : '') + remainingSeconds) : "00:00"}
+                {/* {minutes}:{remainingSeconds < 10 ? '0' : ''}
+            {remainingSeconds} */}
+              </Text>{'Or'}
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <Text>Please click on</Text>
+              <TouchableOpacity onPress={goToDashboard} style={{backgroundColor:Colors.primary,padding:5,borderRadius:5,marginHorizontal:10}}>
+                <Text style={{ color: Colors.white,marginHorizontal:5 }}>Dashboard</Text>
+              </TouchableOpacity>
+              <Text>to navigate dashboard.</Text>
+            </View>
+            </Text>
+          </View>
+        </ScrollView>
+      }
+    </>
   );
 };
 

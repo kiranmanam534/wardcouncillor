@@ -39,7 +39,7 @@ const MainDashboardScreen = () => {
         </Text>
       </View>
       <ScrollView>
-        <View style={[styles.container, { marginBottom: Platform.OS === 'ios' ? 120 : 120 }]}>
+        <View style={[styles.container, { marginBottom: Platform.OS === 'ios' ? 150 : 160 }]}>
           {MainDashboardList.map((item) => (
             <TouchableOpacity key={item.id} onPress={() => navigation.navigate(item.name, { title: item.title })}>
               <View style={styles.card}>
