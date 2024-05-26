@@ -6,12 +6,19 @@ const logo = require('./src/assets/images/Ekurhuleni-Logo-889x1024.png');
 
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
 
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const TestHomeScreen = () => {
+    const navigation = useNavigation();
+
+  const handleNavigation = (title) => {
+    // console.log(title)
+    navigation.navigate('SignIn', {title: title});
+  };
     return (
         <View style={{ flex: 1 }}>
             <ImageBackground
@@ -26,7 +33,9 @@ const TestHomeScreen = () => {
                 <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>Ekurhuleni, a Tsonga word that means “place of peace”</Text>
                 <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text>
 
-                <TouchableOpacity style={styles.btn}>
+                <TouchableOpacity style={styles.btn}
+              onPress={()=>{handleNavigation("ward councilor")}}
+                >
                     <Icon name="user-circle" size={25} color={Colors.white} />
                     <Text style={styles.text}> I'm a ward councilor</Text>
                 </TouchableOpacity>

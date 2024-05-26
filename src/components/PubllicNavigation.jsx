@@ -8,6 +8,7 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import {Colors} from '../constant/Colors';
 import SignupScreen from '../screens/SignupScreen';
+import TestHomeScreen from '../../TestHomeScreen';
 
 const PubllicNavigation = () => {
 
@@ -20,6 +21,7 @@ const PubllicNavigation = () => {
       // navigationBarHidden: true,
       navigationBarColor: Colors.primary,
       statusBarColor: Colors.primary,
+      headerBackTitleVisible: false,
       headerStyle: {
         backgroundColor: Colors.primary,
       },
@@ -36,7 +38,8 @@ const PubllicNavigation = () => {
     />
     <PublickStack.Screen
       name="Home"
-      component={HomeScreen}
+      // component={HomeScreen}
+      component={TestHomeScreen}
       options={{headerShown: false}}
     />
     <PublickStack.Screen
