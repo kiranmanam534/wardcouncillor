@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -16,13 +16,31 @@ import { getCategoriesApi } from '../services/masterDataApi';
 
 import RNPickerSelect from 'react-native-picker-select';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 // import RNPickerSelect, { defaultStyles } from './debug';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import BinaryImageModal from '../components/BinaryImageModal';
+import CameraModal from '../components/CameraModal';
+let launchImageLibrary = _launchImageLibrary;
+let launchCamera = _launchCamera;
+
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
 
 const screenWidth = Dimensions.get('window').width;
 
+
+
+// Utility function to chunk the data
+const chunkArray = (array, chunkSize) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+};
 
 function HotspotScreen() {
 
@@ -52,6 +70,12 @@ function HotspotScreen() {
   const [showDatePicker, setShowDatePicker] = useState('');
   const [showTimePicker, setShowTimePicker] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const [showCameraModal, setShowCameraModal] = useState(false);
+  const [viewBinaryImage, setViewBinaryImage] = useState(null);
+  const [isBinaryImage, setIsBinaryImage] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+
 
   const [errors, setErrors] = useState({});
 
@@ -152,17 +176,115 @@ function HotspotScreen() {
   };
 
 
+  const openImagePicker = () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, handleResponse);
+  };
+
+  const handleCameraLaunch = () => {
+
+    const options = {
+      mediaType: 'photo',
+      includeBase64: true,
+      maxHeight: 2000,
+      maxWidth: 2000,
+
+    };
+
+    launchCamera(options, handleResponse);
+  };
+
+  const handleResponse = (response) => {
+    setShowCameraModal(false)
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('Image picker error: ', response.error);
+    } else {
+      console.log('====================================');
+      // console.log(response);
+      console.log('====================================');
+      let imageUri = response.uri || response.assets?.[0]?.uri;
+      // setSelectedImage(imageUri);
+
+      // Convert to binary
+      const asset = response.assets[0];
+      const binary = asset.base64;
+      const base64String = 'data:image/jpg;base64,' + binary;
+
+      // console.log(base64String)
+
+      const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
+      setSelectedImages([...selectedImages,
+      {
+        "id": 0,
+        "image": binary,
+        "extension": fileExtension,
+        "device": Platform.OS,
+        "useR_ID": loggedUser?.userid
+      }
+
+        //   {
+        //   "filename": response.assets?.[0]?.fileName,
+        //   "image": binary,
+        //   "extension": fileExtension
+        // }
+      ]);
+
+
+      // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+
+    }
+  };
+
+
+
+
+  const removeSelectedImage = (index) => {
+    setSelectedImages(
+      selectedImages.filter((item, index1) => {
+        return index1 != index
+      })
+    );
+  }
+
+
+  const viewImageonModal = (binaryImg) => {
+    setIsBinaryImage(true)
+    setViewBinaryImage(binaryImg)
+  }
+
+
+  const onCloseBinaryImageModal = (binaryImg) => {
+    setIsBinaryImage(false)
+  }
+
+
+
+  const closeCameraModal = () => {
+    setShowCameraModal(false);
+  };
+
+
+
   const handleSubmit = async () => {
     try {
 
       await HotspotValidationSchema.validate(formValues, { abortEarly: false });
+      if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
 
       let formData =
       {
         "crimE_DATE": formValues.crimE_DATE,
         "location": formValues.location,
-        "latitude": Platform.OS == "ios" ? formValues.latitude : "0.00",
-        "longitude":Platform.OS == "ios" ? formValues.longitude : "0.00",
+        "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+        "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
         "crimE_TYPE": formValues.crimE_TYPE,
         "crimE_DETAILS": formValues.crimE_DETAILS,
         "expirY_DATE": formValues.crimE_DATE,
@@ -171,10 +293,16 @@ function HotspotScreen() {
       }
 
 
+      let postData = {
+        "hotspotInputData": formData,
+        "imG_LIST": selectedImages
+      }
+
+
 
       console.log('Form data:', formData);
 
-      dispatch(CreateHotspotApi(formData));
+      dispatch(CreateHotspotApi(postData));
 
 
     } catch (error) {
@@ -200,10 +328,11 @@ function HotspotScreen() {
         ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
         closeModal={closeModal}
         onPress={() => {
+          dispatch(createHotspotActions.clear());
           if (statusCode === 200) {
-            // navigation.navigate('Home');
-            setFormValues({});
-            dispatch(createHotspotActions.clear());
+            setFormValues();
+            setSelectedImages([])
+            setErrors()
             closeModal();
           } else {
             closeModal();
@@ -223,13 +352,16 @@ function HotspotScreen() {
               style={{ backgroundColor: Colors.white }}
               placeholder='2024-01-01'
               value={
-                formValues.crimE_DATE
+                formValues?.crimE_DATE
               }
               onChangeText={value => handleInputChange('crimE_DATE', value)}
               placeholderTextColor={'#11182744'}
               editable={false}
               onPressIn={() => { toggleDatePicker('crimE_DATE') }}
             />
+             <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+              <Icon name="calendar" size={25} color={Colors.blue} />
+            </View>
           </Pressable>
           {errors?.crimE_DATE && (
             <Text style={{ color: 'red' }}>{errors?.crimE_DATE}</Text>
@@ -259,25 +391,28 @@ function HotspotScreen() {
         </View> */}
 
         <View style={styles.inputView}>
-          {Platform.OS == 'android' &&
-            <TextInput
-              mode="outlined"
-              label={'Location'}
-              style={{ backgroundColor: Colors.white }}
-              placeholder='Location'
-              value={
-                formValues.location
-              }
-              autoCorrect={false}
-              keyboardType='default'
-              autoCapitalize="none"
-              onChangeText={value => handleInputChange('location', value)}
-              placeholderTextColor={'#11182744'}
+          {/* {Platform.OS == 'android' && */}
+          <TextInput
+            mode="outlined"
+            label={'Location'}
+            style={{ backgroundColor: Colors.white }}
+            placeholder='Location'
+            value={
+              formValues?.location ? (formValues?.location) : ''
+            }
+            autoCorrect={false}
+            keyboardType='default'
+            autoCapitalize="none"
+            onChangeText={value => handleInputChange('location', value)}
+            placeholderTextColor={'#11182744'}
 
-            />
-          }
+          />
+           <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <MaterialIcon name="my-location" size={25} color={Colors.blue} />
+          </View>
+          {/* } */}
 
-          {Platform.OS == 'ios' &&
+          {/* {Platform.OS == 'ios' &&
             <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
               <GooglePlacesAutocomplete
                 GooglePlacesDetailsQuery={{ fields: "geometry" }}
@@ -302,7 +437,7 @@ function HotspotScreen() {
 
               />
             </View>
-          }
+          } */}
 
           {errors?.location && (
             <Text style={{ color: 'red' }}>{errors?.location}</Text>
@@ -323,7 +458,9 @@ function HotspotScreen() {
                 right: 12,
               },
             }}
-            value={formValues.crimE_TYPE}
+            value={
+              formValues?.crimE_TYPE ? (formValues?.crimE_TYPE) : null
+            }
             useNativeAndroidPickerStyle={false}
             textInputProps={{ underlineColor: 'yellow' }}
             Icon={() => {
@@ -374,18 +511,52 @@ function HotspotScreen() {
             style={{ backgroundColor: Colors.white }}
             placeholder='Crime Details'
             value={
-              formValues.crimE_DETAILS
+              formValues?.crimE_DETAILS ? (formValues?.crimE_DETAILS) : ''
             }
             autoCorrect={false}
             keyboardType='default'
             autoCapitalize="none"
             onChangeText={value => handleInputChange('crimE_DETAILS', value)}
             placeholderTextColor={'#11182744'}
+            height={100}
+            textAlignVertical='top'
+
 
           />
           {errors?.crimE_DETAILS && (
             <Text style={{ color: 'red' }}>{errors?.crimE_DETAILS}</Text>
           )}
+        </View>
+
+        {chunkArray(selectedImages, 5).map((item, index1) => (
+          <View key={index1} style={styles.row}>
+            {item.map((subItem, index) => (
+              <View key={index} style={[styles.item, { position: 'relative' }]}
+
+              >
+                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                  <Image
+                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                    // style={{ flex: 1 }}
+                    width={40}
+                    height={40}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        ))}
+
+        <View style={styles.buttonView}>
+          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+            <Icon name="camera" size={25} color={Colors.blue} />
+            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+              Capture images
+            </Text>
+          </Pressable>
         </View>
 
         <View style={styles.buttonView}>
@@ -398,6 +569,21 @@ function HotspotScreen() {
             </Text>
           </Pressable>
         </View>
+
+        <BinaryImageModal
+          visible={isBinaryImage}
+          onClose={onCloseBinaryImageModal}
+          binaryImageData={viewBinaryImage}
+        />
+
+
+
+        <CameraModal
+          isVisible={showCameraModal}
+          onClose={closeCameraModal}
+          openCamera={handleCameraLaunch}
+          openGallery={openImagePicker}
+        />
 
 
       </ScrollView>
@@ -588,6 +774,35 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     color: Colors.black,
+  }
+  ,
+  CameraButton: {
+    backgroundColor: Colors.white,
+    height: 45,
+    borderColor: Colors.black,
+    borderWidth: 0.5,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'center',
+    paddingLeft: 10
+  },
+  CameraText: {
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  item: {
+    flex: 1,
+    marginHorizontal: 5,
+    padding: 10,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
   },
 });
 

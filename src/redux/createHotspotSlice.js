@@ -1,5 +1,5 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {CreateHotspotApi} from '../services/councillorWardApi';
+import { createSlice } from '@reduxjs/toolkit';
+import { CreateHotspotApi } from '../services/councillorWardApi';
 const createHotspotSlice = createSlice({
   name: 'CreateHotspotApi',
   initialState: {
@@ -25,9 +25,19 @@ const createHotspotSlice = createSlice({
         state.isLoading = false;
         console.log('fulfilled');
         console.log(action.payload);
-        state.items = action.payload;
-        state.error = action.payload.message;
-        state.statusCode = action.payload.statusCode;
+        if (action.payload.statusCode == 200) {
+          state.data = action.payload;
+          state.error = action.payload.message;
+          state.statusCode = action.payload.statusCode;
+        }
+        else {
+          console.log('====================================');
+          console.log('error');
+          console.log('====================================');
+          state.data = null;
+          state.error = "something went wrong!";
+          state.statusCode = 400;
+        }
       })
       .addCase(CreateHotspotApi.rejected, (state, action) => {
         state.isLoading = false;

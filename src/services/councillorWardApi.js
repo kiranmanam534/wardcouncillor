@@ -163,7 +163,7 @@ export const GetCouncillorWardTownshipMemberInfo = createAsyncThunk(
 export const CreateHotspotApi = createAsyncThunk(
   'api/CreateHotspotApi',
   async formData => {
-    console.log('api/CreateHotspotApi', formData);
+    // console.log('api/CreateHotspotApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-hotspot`,
@@ -188,7 +188,7 @@ export const CreateHotspotApi = createAsyncThunk(
 export const CreateRoadClosureApi = createAsyncThunk(
   'api/CreateRoadClosureApi',
   async formData => {
-    console.log('api/CreateRoadClosureApi', formData);
+    // console.log('api/CreateRoadClosureApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-road-clouser`,
@@ -214,7 +214,7 @@ export const CreateRoadClosureApi = createAsyncThunk(
 export const CreateMeetingsApi = createAsyncThunk(
   'api/CreateMeetingsApi',
   async formData => {
-    console.log('api/CreateMeetingsApi', formData);
+    // console.log('api/CreateMeetingsApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-meeting`,
@@ -240,7 +240,7 @@ export const CreateMeetingsApi = createAsyncThunk(
 export const CreateWorkshopApi = createAsyncThunk(
   'api/CreateWorkshopApi',
   async formData => {
-    console.log('api/CreateWorkshopApi', formData);
+    // console.log('api/CreateWorkshopApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-workshop`,
@@ -267,7 +267,7 @@ export const CreateWorkshopApi = createAsyncThunk(
 export const CreateMissingPersonApi = createAsyncThunk(
   'api/CreateMissingPersonApi',
   async formData => {
-    console.log('api/CreateMissingPersonApi', formData);
+    // console.log('api/CreateMissingPersonApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-missing-person`,
@@ -294,7 +294,7 @@ export const CreateMissingPersonApi = createAsyncThunk(
 export const CreateWarningsApi = createAsyncThunk(
   'api/CreateWarningsApi',
   async formData => {
-    console.log('api/CreateWarningsApi', formData);
+    // console.log('api/CreateWarningsApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-warning`,
@@ -321,7 +321,7 @@ export const CreateWarningsApi = createAsyncThunk(
 export const CreateHealthCareApi = createAsyncThunk(
   'api/CreateHealthCareApi',
   async formData => {
-    console.log('api/CreateHealthCareApi', formData);
+    // console.log('api/CreateHealthCareApi', formData);
     try {
       const response = await AxiosInstance.post(
         `/api/Create/save-healthcare`,

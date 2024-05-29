@@ -61,8 +61,8 @@ function HealthCareScreen() {
   const [showDatePicker, setShowDatePicker] = useState('');
   const [showTimePicker, setShowTimePicker] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [showCameraModal, setShowCameraModal] = useState(false);
 
+  const [showCameraModal, setShowCameraModal] = useState(false);
   const [viewBinaryImage, setViewBinaryImage] = useState(null);
   const [isBinaryImage, setIsBinaryImage] = useState(false);
 
@@ -299,10 +299,8 @@ function HealthCareScreen() {
         ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
         closeModal={closeModal}
         onPress={() => {
+          dispatch(createHealthCareActions.clear());
           if (statusCode === 200) {
-            // navigation.navigate('Home');
-            dispatch(createHealthCareActions.clear());
-
             setFormValues();
             setSelectedImages([])
             setErrors()

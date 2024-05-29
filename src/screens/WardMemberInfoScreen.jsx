@@ -19,7 +19,7 @@ const WardMemberInfoScreen = () => {
   //   console.log(filteredData);
 
   useEffect(() => {
-    // dispatch(wardMemberInfo());
+    dispatch(wardMemberInfo());
   }, [dispatch]);
 
   const [seconds, setSeconds] = useState(5); // Initial timeout value in seconds
@@ -77,8 +77,8 @@ const WardMemberInfoScreen = () => {
 
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <Text>Please click on</Text>
-              <TouchableOpacity onPress={goToDashboard} style={{backgroundColor:Colors.primary,padding:5,borderRadius:5,marginHorizontal:10}}>
-                <Text style={{ color: Colors.white,marginHorizontal:5 }}>Dashboard</Text>
+              <TouchableOpacity onPress={goToDashboard} style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 5, marginHorizontal: 10 }}>
+                <Text style={{ color: Colors.white, marginHorizontal: 5 }}>Dashboard</Text>
               </TouchableOpacity>
               <Text>to navigate dashboard.</Text>
             </View>
@@ -100,23 +100,27 @@ const WardMemberInfoScreen = () => {
 
           <View style={{ padding: 20 }}>
 
-            <Text>
-              Please wait until complete
-              <Text style={{ color: Colors.red }}>
-                {' '}
-                Time Left:
-                {minutes >= 0 ? (minutes + ":" + r(remainingSeconds < 10 ? '0' : '') + remainingSeconds) : "00:00"}
-                {/* {minutes}:{remainingSeconds < 10 ? '0' : ''}
+            <View>
+              <Text>
+                Please wait until complete
+                <Text style={{ color: Colors.red }}>
+                  {' '}
+                  Time Left:
+                  {minutes >= 0 ? (minutes + ":" + (remainingSeconds < 10 ? '0' : '') + remainingSeconds) : "00:00"}
+                  {/* {minutes}:{remainingSeconds < 10 ? '0' : ''}
             {remainingSeconds} */}
-              </Text>{'Or'}
-              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                </Text>
+              </Text>
+            </View>
+            <View style={{justifyContent:'center',alignItems:'center',marginVertical:10}}><Text>OR</Text></View>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <Text>Please click on</Text>
-              <TouchableOpacity onPress={goToDashboard} style={{backgroundColor:Colors.primary,padding:5,borderRadius:5,marginHorizontal:10}}>
-                <Text style={{ color: Colors.white,marginHorizontal:5 }}>Dashboard</Text>
+              <TouchableOpacity onPress={goToDashboard} style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 5, marginHorizontal: 10 }}>
+                <Text style={{ color: Colors.white, marginHorizontal: 5 }}>Dashboard</Text>
               </TouchableOpacity>
               <Text>to navigate dashboard.</Text>
             </View>
-            </Text>
+
           </View>
         </ScrollView>
       }
