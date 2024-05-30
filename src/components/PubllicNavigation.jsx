@@ -9,6 +9,7 @@ import LoginScreen from '../screens/LoginScreen';
 import {Colors} from '../constant/Colors';
 import SignupScreen from '../screens/SignupScreen';
 import TestHomeScreen from '../../TestHomeScreen';
+import SearchBarScreen from '../SearchBarScreen';
 
 const PubllicNavigation = () => {
 
@@ -56,6 +57,16 @@ const PubllicNavigation = () => {
       component={SignupScreen}
       options={({navigation, route}) => ({
         title: 'SIGN UP',
+        headerShown: true,
+      })}
+    />
+
+
+<PublickStack.Screen
+      name="SearchBar"
+      component={SearchBarScreen}
+      options={({navigation, route}) => ({
+        title: 'SearchBar',
         headerShown: true,
       })}
     />

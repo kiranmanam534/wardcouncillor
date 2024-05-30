@@ -12,6 +12,7 @@ import Customer360Screen from './src/screens/Customer360Screen'
 import Imagepickerscreen from './src/Imagepickerscreen'
 import TestHomeScreen from './TestHomeScreen'
 import GoogleAutocompleteScreen from './GoogleAutocompleteScreen'
+import SearchBarScreen from './src/SearchBarScreen'
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
     {/* <Imagepickerscreen/> */}
     {/* <TestHomeScreen/> */}
     {/* <GoogleAutocompleteScreen/> */}
+    {/* <SearchBarScreen/> */}
     </Provider>
   )
 }
