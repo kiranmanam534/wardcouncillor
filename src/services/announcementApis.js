@@ -29,8 +29,8 @@ export const GetAnnouncementVewInfoApi = createAsyncThunk(
 
             return response.data;
         } catch (error) {
-            console.log('Error:', error.response);
-            throw error.response;
+            console.log('Error:', error.response.data);
+            throw error.response.data;
         }
     },
 );

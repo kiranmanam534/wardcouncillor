@@ -28,6 +28,7 @@ import ShowMapModal from './ShowMapModal';
 import Customer360Screen from '../screens/Customer360Screen';
 import PaymentHistoryScreen from '../screens/PaymentHistoryScreen';
 import ViewAnnouncementScreen from '../screens/ViewAnnouncementScreen';
+import ViewImagesScreen from '../screens/ViewImagesScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -237,6 +238,15 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="ViewAnnouncement"
         component={ViewAnnouncementScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+      <PrivateStack.Screen
+        name="ViewImages"
+        component={ViewImagesScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,

@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
@@ -27,6 +28,7 @@ import CardItemLoading from '../components/CardItemLoading';
 import AnnouncemenCard from '../components/AnnouncemenCard';
 import { GetAnnouncementVewInfoApi } from '../services/announcementApis';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { Searchbar } from 'react-native-paper';
 
 
 const ViewAnnouncementScreen = ({ route }) => {
@@ -36,6 +38,9 @@ const ViewAnnouncementScreen = ({ route }) => {
     const [page, setPage] = useState(1);
 
     const [searchText, setSearchText] = useState('');
+    const [searchVisible, setSearchVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showSearchBox, setShowSearchBox] = useState(false);
 
     const { title } = route.params;
     console.log(title);
@@ -54,7 +59,26 @@ const ViewAnnouncementScreen = ({ route }) => {
 
 
 
+    const toggleSearchBar = () => {
+        setSearchVisible(!searchVisible);
+    };
+
+    const onChangeSearch = (query) => setSearchQuery(query);
+
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={toggleSearchBar} style={styles.searchButton}>
+                    {/* <Text style={styles.searchButtonText}>Search</Text> */}
+                    <Icon name="search" size={20} color={Colors.white} />
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, searchVisible]);
+
+
     useEffect(() => {
+        dispatch(AnnounceViewActions.clearAnnouncementsData())
         dispatch(
             GetAnnouncementVewInfoApi({
                 userId: loggedUser?.userid,
@@ -71,13 +95,6 @@ const ViewAnnouncementScreen = ({ route }) => {
     };
 
 
-    const handlePress = phoneNumber => {
-        if (phoneNumber != 'Not Available') Linking.openURL(`tel:${phoneNumber}`);
-    };
-
-
-
-
 
     const handleBottomSearchBox = value => {
         setSearchText(value);
@@ -85,7 +102,7 @@ const ViewAnnouncementScreen = ({ route }) => {
 
     const handleSearch = () => {
         // Implement search functionality here
-        dispatch(AnnounceViewActions.clearWardMemberData())
+        dispatch(AnnounceViewActions.clearAnnouncementsData())
         console.log('Searching for:', searchText);
         dispatch(
             GetAnnouncementVewInfoApi({
@@ -99,7 +116,14 @@ const ViewAnnouncementScreen = ({ route }) => {
     };
 
 
-   
+    const handleActions = (actionType, title, navigationName) => {
+        // Alert.alert(actionType)
+        if (actionType == 'Images') {
+            navigation.navigate(navigationName, { title: title })
+        }
+    }
+
+
 
 
 
@@ -120,6 +144,17 @@ const ViewAnnouncementScreen = ({ route }) => {
         <View style={{ flex: 1 }}>
 
 
+            {searchVisible && (
+                <BottomSearchBox
+                    onChangeText={handleBottomSearchBox}
+                    onPress={handleSearch}
+                    value={searchText}
+                    // setSearchText={setSearchText}
+                    placeholder={'search...'}
+                    isLoading={isLoading}
+                />
+            )}
+
 
             {memberStatusCode && memberStatusCode !== 200 &&
                 <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'} />}
@@ -127,6 +162,14 @@ const ViewAnnouncementScreen = ({ route }) => {
             {memberStatusCode && memberStatusCode === 200 && memberMessage === 'Data Not found' && items?.length == 0 && (
                 <ShowMessageCenter message={'No data found!'} />
             )}
+            {/* {searchVisible && (
+                <Searchbar
+                    placeholder="Search"
+                    onChangeText={onChangeSearch}
+                    value={searchQuery}
+                    style={styles.searchBar}
+                />
+            )} */}
 
 
 
@@ -147,9 +190,7 @@ const ViewAnnouncementScreen = ({ route }) => {
                         <AnnouncemenCard
                             type={title}
                             item={item}
-                            onPress={() => {
-                                // handlePress(item.cellphonenumber);
-                            }}
+                            onPress={handleActions}
                         />
                     )}
                     keyExtractor={(item, index) => index.toString()}
@@ -159,31 +200,33 @@ const ViewAnnouncementScreen = ({ route }) => {
                 />
             )}
 
-            <View
+            {/* <View
                 style={{
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
                 <Toast position="bottom" bottomOffset={20} />
-            </View>
+            </View> */}
 
-            {/* <Pressable style={styles.toggleButton} onPress={toggleSearchBox}>
-          <Ionicons
-            name={showSearchBox ? 'close' : 'search'}
-            size={30}
-            color={Colors.white}
-          />
-        </Pressable> */}
+            <Pressable style={styles.toggleButton}
+            onPress={toggleSearchBar}
+            >
+                <Ionicons
+                    name={searchVisible ? 'close' : 'search'}
+                    size={30}
+                    color={Colors.white}
+                />
+            </Pressable>
             {/* {showSearchBox && ( */}
-            <BottomSearchBox
+            {/* <BottomSearchBox
                 onChangeText={handleBottomSearchBox}
                 onPress={handleSearch}
                 value={searchText}
                 // setSearchText={setSearchText}
                 placeholder={'search by account or name...'}
                 isLoading={isLoading}
-            />
+            /> */}
             {/* )} */}
         </View>
     );
@@ -200,5 +243,16 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         padding: 10,
         elevation: 10,
+    },
+    searchButton: {
+        marginRight: 10,
+    },
+    searchButtonText: {
+        fontSize: 16,
+        color: 'blue',
+    },
+    searchBar: {
+        marginBottom: 16,
+        // backgroundColor:Colors.
     },
 });

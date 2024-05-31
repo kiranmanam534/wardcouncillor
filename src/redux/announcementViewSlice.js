@@ -11,7 +11,7 @@ const AnnouncementViewSlice = createSlice({
     statusCode: null
   },
   reducers: {
-    clearWardMemberData: (state, action) => {
+    clearAnnouncementsData: (state, action) => {
       state.isLoggedIn = false;
       state.items = [];
       state.announcementCount = 0;
@@ -51,12 +51,13 @@ const AnnouncementViewSlice = createSlice({
         (state, action) => {
           console.log("rejected")
           console.log(action.error)
+          console.log(action.payload)
           state.isLoading = false;
           state.error = action.error.message;
           state.announcementCount = 0;
           state.items = [];
           state.message = null;
-          state.statusCode = action.payload.statusCode
+          state.statusCode = action.error.message
         },
       );
   },
