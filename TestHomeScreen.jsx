@@ -31,7 +31,7 @@ const TestHomeScreen = () => {
 
                 <Text style={{ fontSize: 20, color: Colors.white, paddingTop: 10, fontWeight: 'bold' }}>WELCOME</Text>
                 <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>Ekurhuleni, a Tsonga word that means “place of peace”</Text>
-                <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text>
+                {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
 
                 <TouchableOpacity style={styles.btn}
               onPress={()=>{handleNavigation("ward councilor")}}

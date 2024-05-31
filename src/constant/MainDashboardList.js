@@ -11,13 +11,15 @@ export const MainDashboardList = [
     icon: (
       <MaterialIcon name="wifi-tethering" size={50} color={Colors.blue} />
     ),
-    name:'Hotspot'
+    name:'Hotspot',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 2,
     title: 'Road Clouser',
     icon: <MaterialIcon name="warning" size={50} color={Colors.blue} />,
-    name:'RoadClouser'
+    name:'RoadClouser',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 3,
@@ -29,7 +31,8 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Meetings'
+    name:'Meetings',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 4,
@@ -37,7 +40,8 @@ export const MainDashboardList = [
     icon: (
       <MaterialIcon name="person-search" size={50} color={Colors.blue} />
     ),
-    name:'MissingPerson'
+    name:'MissingPerson',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 5,
@@ -49,13 +53,15 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Workshop'
+    name:'Workshop',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 6,
     title: 'Healthcare',
     icon: <FontAwesome5 name="first-aid" size={50} color={Colors.blue} />,
-    name:'Healthcare'
+    name:'Healthcare',
+    viewName:'ViewAnnouncement'
   },
   {
     id: 7,
@@ -67,7 +73,8 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Warnings'
+    name:'Warnings',
+    viewName:'ViewAnnouncement'
   },
   // {
   //   id: 8,

@@ -17,7 +17,8 @@ const SplashScreen = () => {
       // Simulate loading time (e.g., fetching data, initializing resources)
       const timeout = setTimeout(() => {
         // Navigate to main screen after 2 seconds (adjust as needed)
-        navigation.replace('SearchBar');
+        // navigation.replace('SearchBar');
+        navigation.replace('Home');
       }, 2000);
   
       return () => clearTimeout(timeout);
