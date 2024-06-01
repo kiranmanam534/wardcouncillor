@@ -23,6 +23,7 @@ import DataLoadDetailsSlice from './DataLoadDetailsSlice';
 import customer360Slice from './customer360Slice';
 import PaymentHistorySlice from './PaymentHistorySlice';
 import AnnouncementViewSlice from './announcementViewSlice';
+import AnnouncementImagesSlice from './AnnouncementImagesSlice';
 
 const store = configureStore({
   reducer: {
@@ -51,6 +52,7 @@ const store = configureStore({
     customer360Reducer:customer360Slice.reducer,
     PaymentHistoryReducer:PaymentHistorySlice.reducer,
     announcementViewReducer:AnnouncementViewSlice.reducer,
+    AnnouncementImagesReducer:AnnouncementImagesSlice.reducer,
 
   },
   middleware: getDefaultMiddleware => {

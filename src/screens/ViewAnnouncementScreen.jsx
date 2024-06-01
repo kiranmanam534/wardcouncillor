@@ -116,10 +116,10 @@ const ViewAnnouncementScreen = ({ route }) => {
     };
 
 
-    const handleActions = (actionType, title, navigationName) => {
+    const handleActions = (actionType, title, navigationName,type,id) => {
         // Alert.alert(actionType)
         if (actionType == 'Images') {
-            navigation.navigate(navigationName, { title: title })
+            navigation.navigate(navigationName, { title: title,type:type,id:id })
         }
     }
 

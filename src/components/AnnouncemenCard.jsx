@@ -78,7 +78,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             ]}>
            <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                onPress={()=>{onPress('Edit','Healthcare Images','ViewImages')}}
+                onPress={()=>{onPress('Edit','Healthcare Images','ViewImages',"Healthcare",item.id)}}
                 style={[
                   styles.btn,
                   {
@@ -112,7 +112,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             </View>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                 onPress={()=>{onPress('Delete','Healthcare Images','ViewImages')}}
+                 onPress={()=>{onPress('Delete','Healthcare Images','ViewImages',"Healthcare",item.id)}}
                 style={[
                   styles.btn,
                   {
@@ -146,7 +146,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             </View>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                 onPress={()=>{onPress('Images','Healthcare Images','ViewImages')}}
+                 onPress={()=>{onPress('Images','Healthcare Images','ViewImages',"Healthcare",item.id)}}
                 style={[
                   styles.btn,
                   {
