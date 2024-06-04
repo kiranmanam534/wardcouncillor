@@ -47,16 +47,6 @@ const MainDashboardScreen = () => {
     console.log('====================================');
     console.log(navigationName);
     console.log('====================================');
-    // setSeletedSreen('')
-    // setShowAnnouncementModal(false);
-
-    // if (name == 'CREATE') {
-    //     navigation.navigate(seletedSreen.create, { title: seletedSreen.title })
-    // } else {
-    //   setTimeout(() => {
-    //     navigation.navigate(seletedSreen.view, { title: seletedSreen.title })
-    //   }, 100)
-    // }
     dispatch(AnnounceViewActions.clearAnnouncementsData())
 
     navigation.navigate(navigationName, { title: title })
@@ -112,13 +102,13 @@ const MainDashboardScreen = () => {
                 {item.id == showselectedSection &&
                   <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 15, width: '100%', borderTopWidth: 0.5, height: 60, borderTopColor: Colors.primary, paddingTop: 30 }}>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
-                      onPress={() => { handleNavigation(item.name, item.title) }}
+                      onPress={() => { handleNavigation(item.name, item.name) }}
                     >
                       <MaterialIcon name="assignment-add" size={25} color={Colors.blue} />
                       <Text style={[styles.message, { paddingVertical: 5 }]}>CREATE</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
-                      onPress={() => { handleNavigation(item.viewName, item.title) }}
+                      onPress={() => { handleNavigation(item.viewName, item.name) }}
                     >
                       <FontAwesome5 name="clipboard-list" size={25} color={Colors.blue} />
                       <Text style={[styles.message, { paddingVertical: 5 }]}>VIEW</Text>

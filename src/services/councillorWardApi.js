@@ -162,13 +162,20 @@ export const GetCouncillorWardTownshipMemberInfo = createAsyncThunk(
 
 export const CreateHotspotApi = createAsyncThunk(
   'api/CreateHotspotApi',
-  async formData => {
+  async params => {
     // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-hotspot';
+      if (type == 'edit') {
+        URL = '/api/hotspot/update-hotspot-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-hotspot`,
-        formData,
+        URL,
+        data,
       );
+
 
       console.log('response', response.status);
 

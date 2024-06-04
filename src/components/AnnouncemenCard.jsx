@@ -4,21 +4,179 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 
 import { Colors } from '../constant/Colors';
-import { formattedAmount } from '../utility/FormattedAmmount';
-
 const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
   // console.log(item.id,ImageId)
 
   const AnnouncemenCardItem = () => {
-    if (type == 'Healthcare') {
+    if (type == 'Hotspots') {
 
       return (
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
-            {/* <View style={styles.cardContent}>
-              <Icon name="user" size={30} color={Colors.blue} />
-              <Title style={styles.title}>Healthcare Date : 2024-05-24</Title>
-            </View> */}
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Date</Text>
+              <Text
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
+                : {item.crimE_DATE}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Location</Text>
+              <Text
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
+                : {item.location}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>GIS Location</Text>
+              <Text
+                style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
+                : {item.latitude}, {item.latitude}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Crime Type</Text>
+              <Text
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
+                : {item.crimE_TYPE}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Details</Text>
+              <Text
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
+                : {item.crimE_DETAILS}
+              </Text>
+            </View>
+          </Card.Content>
+          <Divider style={styles.divider} />
+          <Card.Content
+            style={[
+              styles.footer,
+              {
+                backgroundColor: Colors.blue,
+                borderBottomLeftRadius: 15,
+                borderBottomRightRadius: 15,
+                height: 50,
+                borderWidth: 2,
+                borderColor: Colors.yellow,
+              },
+            ]}>
+            <View style={{ marginTop: 15 }}>
+              <TouchableOpacity
+                onPress={() => { onPress('Edit', 'Edit Hotspots', 'Hotspots', "Hotspots", item) }}
+                style={[
+                  styles.btn,
+                  {
+                    height: 30,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    borderRadius: 20,
+                  },
+                ]}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    // marginHorizontal: -20,
+                  }}>
+
+                  <Icon name="edit" size={20} color={Colors.blue} />
+
+                  <Text
+                    style={[
+                      styles.text,
+                      { fontSize: 16, color: Colors.blue, paddingLeft: 5 },
+                    ]}>
+                    Edit
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 15 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  deletedID != item.id &&
+                    onPress('Delete', 'Hotspots', '', "Hotspots", item)
+                }}
+                style={[
+                  styles.btn,
+                  {
+                    height: 30,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    borderRadius: 20,
+                  },
+                ]}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    // marginHorizontal: -20,
+                  }}>
+                  {item.id == deletedID ? <ActivityIndicator size={10} color={Colors.blue} />
+                    : <Icon name="trash-o" size={20} color={Colors.blue} />
+                  }
+
+                  <Text
+                    style={[
+                      styles.text,
+                      { fontSize: 16, color: Colors.blue, paddingLeft: 5 },
+                    ]}>
+                    Delete
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 15 }}>
+              <TouchableOpacity
+                onPress={() => { onPress('Images', 'Hotspots Images', 'ViewImages', "Hotspots", item) }}
+                style={[
+                  styles.btn,
+                  {
+                    height: 30,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    borderRadius: 20,
+                  },
+                ]}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    // marginHorizontal: -20,
+                  }}>
+
+                  <Icon name="file-image-o" size={20} color={Colors.blue} />
+
+                  <Text
+                    style={[
+                      styles.text,
+                      { fontSize: 16, color: Colors.blue, paddingLeft: 5 },
+                    ]}>
+                    Images
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </Card.Content>
+        </Card>
+      );
+    }
+    else if (type == 'Healthcare') {
+
+      return (
+        <Card style={styles.card}>
+          <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Date</Text>
               <Text
@@ -40,12 +198,6 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.latitude}, {item.latitude}
               </Text>
             </View>
-            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Longitude</Text>
-              <Text style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
-                : {item.longitude}
-              </Text>
-            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -53,15 +205,6 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.healthcarE_DETAILS}
               </Text>
             </View>
-            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>
-                Ref No
-              </Text>
-              <Text
-                style={{ fontWeight: '500', fontSize: 15, color: Colors.blue }}>
-                : {item.refnumber}
-              </Text>
-            </View> */}
           </Card.Content>
           <Divider style={styles.divider} />
           <Card.Content

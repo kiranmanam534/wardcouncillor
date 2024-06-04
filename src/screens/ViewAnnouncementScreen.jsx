@@ -106,7 +106,7 @@ const ViewAnnouncementScreen = ({ route }) => {
                 type: title,
                 search: searchText,
                 page: pageNo,
-                limit: 3,
+                limit: 4,
             }),
         );
     }
@@ -122,6 +122,7 @@ const ViewAnnouncementScreen = ({ route }) => {
             // This effect will run when the screen is focused
             console.log('Screen is focused');
             dispatch(AnnounceViewActions.clearAnnouncementsData())
+            // if (announcementCount != 0 && announcementCount == 4) {}
             setPage(1);
             LoadAnouncements(1)
         }
@@ -147,7 +148,7 @@ const ViewAnnouncementScreen = ({ route }) => {
         console.log('====================================');
         console.log(page, announcementCount);
         console.log('====================================');
-        if (announcementCount != 0 && announcementCount == 3) {
+        if (announcementCount != 0 && announcementCount == 4) {
             setPage(page + 1);
             LoadAnouncements(page + 1);
 
@@ -159,10 +160,7 @@ const ViewAnnouncementScreen = ({ route }) => {
     const handleBottomSearchBox = value => {
         // dispatch(AnnounceViewActions.clearAnnouncementsData())
         console.log('Searching for:', value);
-        //    setTimeout(() => {
         setSearchText(value);
-        // setPage(1)
-        //    }, 200);
     };
 
     const handleSearch = () => {
@@ -170,21 +168,6 @@ const ViewAnnouncementScreen = ({ route }) => {
         console.log('Searching for:', searchText);
         setPage(1);
         LoadAnouncements(1);
-
-        // setTimeout(() => {
-        //     setPage1(1);
-        //     setIssearchClick(!IssearchClick)
-        //     // dispatch(
-        //     //     GetAnnouncementVewInfoApi({
-        //     //         userId: loggedUser?.userid,
-        //     //         type: title,
-        //     //         search: searchText,
-        //     //         page: 1,
-        //     //         limit: 10,
-        //     //     }),
-        //     // );
-        // }, 500);
-
     };
 
 
@@ -193,7 +176,7 @@ const ViewAnnouncementScreen = ({ route }) => {
         console.log(Id, type);
         let URL = '';
         if (type == 'Hotspots') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
+            URL = `api/Hotspot/delete-hotspot-data?ID=${Id}`;
         } else if (type == 'Healthcare') {
             URL = `api/Healthcare/delete-healthcare-data?ID=${Id}`;
         } else if (type == 'IMS') {
@@ -245,9 +228,6 @@ const ViewAnnouncementScreen = ({ route }) => {
 
                                             dispatch(AnnounceViewActions.clearAnnouncementsData())
                                             setTimeout(() => {
-                                                // setIssearchClick(!IssearchClick)
-                                                // setPage(1)
-                                                // setPage(1);
                                                 LoadAnouncements(1);
                                             }, 100);
                                             console.log('OK Pressed')
@@ -281,13 +261,6 @@ const ViewAnnouncementScreen = ({ route }) => {
             navigation.navigate(navigationName, { title: title, type: type, id: item.id })
         } else if (actionType == "Delete") {
             handleDeletePostRequest(item.id, type);
-            // dispatch(
-            //     DeleteAnnouncementApi({
-            //         Id: id,
-            //         type: title
-            //     }))
-
-
         } else if (actionType == 'Edit') {
             navigation.navigate(navigationName, { title: title, type: type, editItem: item })
         }

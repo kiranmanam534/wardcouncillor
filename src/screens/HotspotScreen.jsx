@@ -26,6 +26,8 @@ let launchCamera = _launchCamera;
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { useNavigation } from '@react-navigation/native';
 
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
 
@@ -42,10 +44,13 @@ const chunkArray = (array, chunkSize) => {
   return result;
 };
 
-function HotspotScreen() {
+function HotspotScreen({ route }) {
 
+  const { title, type, editItem } = route.params;
+  console.log(title, type, editItem);
 
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const [formValues, setFormValues] = useState({});
   const [favSport4, setFavSport4] = useState('')
@@ -95,6 +100,19 @@ function HotspotScreen() {
     }
 
   }, [Categories])
+
+
+
+  useEffect(() => {
+    if (editItem) {
+      setFormValues({
+        crimE_DATE: editItem.crimE_DATE,
+        crimE_TYPE: editItem.crimE_TYPE,
+        location: editItem.location,
+        crimE_DETAILS: editItem.crimE_DETAILS
+      })
+    }
+  }, [editItem])
 
 
   const handleInputChange = (fieldName, value) => {
@@ -173,6 +191,13 @@ function HotspotScreen() {
 
   const closeModal = () => {
     setShowErrorModal(false);
+
+    if (editItem) {
+      dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+      // navigation.goBack()
+      navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
+    }
   };
 
 
@@ -277,32 +302,59 @@ function HotspotScreen() {
     try {
 
       await HotspotValidationSchema.validate(formValues, { abortEarly: false });
-      if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
 
-      let formData =
-      {
-        "crimE_DATE": formValues.crimE_DATE,
-        "location": formValues.location,
-        "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-        "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-        "crimE_TYPE": formValues.crimE_TYPE,
-        "crimE_DETAILS": formValues.crimE_DETAILS,
-        "expirY_DATE": formValues.crimE_DATE,
-        "userid": loggedUser?.userid,
-        "warD_NO": loggedUser?.warD_NO,
+      if (editItem) {
+
+        let formdata = {
+          "id":editItem.id,
+          "crimE_DATE": formValues.crimE_DATE,
+          "refnumber": editItem.refnumber,
+          "location": formValues.location,
+          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "crimE_TYPE": formValues.crimE_TYPE,
+          "crimE_DETAILS": formValues.crimE_DETAILS,
+          // "expirY_DATE": formValues.crimE_DATE,
+          // "userid": loggedUser?.userid,
+          "warD_NO": loggedUser?.warD_NO,
+        }
+
+        dispatch(CreateHotspotApi({ data: formdata, type: 'edit' }));
+
+        console.log(formdata)
+
+      } else {
+
+        if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
+
+        let formData =
+        {
+          "crimE_DATE": formValues.crimE_DATE,
+          "location": formValues.location,
+          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "crimE_TYPE": formValues.crimE_TYPE,
+          "crimE_DETAILS": formValues.crimE_DETAILS,
+          "expirY_DATE": formValues.crimE_DATE,
+          "userid": loggedUser?.userid,
+          "warD_NO": loggedUser?.warD_NO,
+        }
+
+
+        let postData = {
+          "hotspotInputData": formData,
+          "imG_LIST": selectedImages
+        }
+
+
+
+        console.log('Form data:', formData);
+
+        dispatch(CreateHotspotApi({ data: postData, type: 'create' }));
+
       }
 
 
-      let postData = {
-        "hotspotInputData": formData,
-        "imG_LIST": selectedImages
-      }
-
-
-
-      console.log('Form data:', formData);
-
-      dispatch(CreateHotspotApi(postData));
 
 
     } catch (error) {
@@ -359,7 +411,7 @@ function HotspotScreen() {
               editable={false}
               onPressIn={() => { toggleDatePicker('crimE_DATE') }}
             />
-             <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
               <Icon name="calendar" size={25} color={Colors.blue} />
             </View>
           </Pressable>
@@ -407,7 +459,7 @@ function HotspotScreen() {
             placeholderTextColor={'#11182744'}
 
           />
-           <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
             <MaterialIcon name="my-location" size={25} color={Colors.blue} />
           </View>
           {/* } */}
@@ -549,15 +601,15 @@ function HotspotScreen() {
             ))}
           </View>
         ))}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+        {editItem ? null :
+          <View style={styles.buttonView}>
+            <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+              <Icon name="camera" size={25} color={Colors.blue} />
+              <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                Capture images
+              </Text>
+            </Pressable>
+          </View>}
 
         <View style={styles.buttonView}>
           <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -565,7 +617,7 @@ function HotspotScreen() {
               {isLoading && (
                 <ActivityIndicator size={20} color={Colors.white} />
               )}{' '}
-              SAVE
+              {editItem ? 'UPDATE' : 'SAVE'}
             </Text>
           </Pressable>
         </View>

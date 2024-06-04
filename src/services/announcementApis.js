@@ -9,7 +9,7 @@ export const GetAnnouncementVewInfoApi = createAsyncThunk(
             console.log(userId, type, page, limit, search);
             let URL = '';
             if (type == 'Hotspots') {
-                URL = `api/Healthcare/get-healthcare-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
+                URL = `api/Hotspot/get-hotspot-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
             } else if (type == 'Healthcare') {
                 URL = `api/Healthcare/get-healthcare-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
             } else if (type == 'IMS') {

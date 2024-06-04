@@ -56,7 +56,7 @@ const ViewImagesScreen = ({ route }) => {
         type: type
       }),
     );
-  }, [loggedUser?.userid, type]);
+  }, [loggedUser?.userid, type,id]);
 
 
   const ShowImage = ({ image }) => {

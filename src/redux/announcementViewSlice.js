@@ -33,7 +33,7 @@ const AnnouncementViewSlice = createSlice({
         (state, action) => {
           state.isLoading = false;
           console.log("fulfilled")
-          console.log(action.payload.data);
+          // console.log(action.payload.data);
           state.announcementCount = action.payload.data ? action.payload.data.length : 0;
           //   state.items = action.payload.data;
           if (action.payload.data && action.payload.data.length > 0) {

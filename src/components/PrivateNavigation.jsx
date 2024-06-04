@@ -143,7 +143,7 @@ const PrivateNavigation = () => {
       />
 
       <PrivateStack.Screen
-        name="Hotspot"
+        name="Hotspots"
         component={HotspotScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,

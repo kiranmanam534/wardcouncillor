@@ -11,7 +11,7 @@ export const MainDashboardList = [
     icon: (
       <MaterialIcon name="wifi-tethering" size={50} color={Colors.blue} />
     ),
-    name:'Hotspot',
+    name:'Hotspots',
     viewName:'ViewAnnouncement'
   },
   {
