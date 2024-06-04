@@ -19,6 +19,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import CameraModal from '../components/CameraModal';
 import BinaryImageModal from '../components/BinaryImageModal';
+import { useNavigation } from '@react-navigation/native';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -42,8 +44,11 @@ const chunkArray = (array, chunkSize) => {
 
 
 
-function HealthCareScreen() {
+function HealthCareScreen({ route }) {
 
+  const { title, type, editItem } = route.params;
+  console.log(title, type, editItem);
+  const navigation = useNavigation();
 
   const dispatch = useDispatch();
 
@@ -80,6 +85,17 @@ function HealthCareScreen() {
       [fieldName]: '',
     }));
   };
+
+
+  useEffect(() => {
+    if (editItem) {
+      setFormValues({
+        healthcarE_DATE: editItem.healthcarE_DATE,
+        location: editItem.location,
+        healthcarE_DETAILS: editItem.healthcarE_DETAILS
+      })
+    }
+  }, [editItem])
 
 
 
@@ -140,7 +156,16 @@ function HealthCareScreen() {
 
   const closeModal = () => {
     setShowErrorModal(false);
+
+    if (editItem) {
+      dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+      // navigation.goBack()
+      navigation.navigate('ViewAnnouncement', { title: "Healthcare",isEdit:true })
+    }
   };
+
+  
 
 
   const [selectedImages, setSelectedImages] = useState([]);
@@ -252,28 +277,45 @@ function HealthCareScreen() {
 
       await HealthCareValidationSchema.validate(formValues, { abortEarly: false });
 
-      if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
-      let formData =
-      {
-        "healthcarE_DATE": formValues.healthcarE_DATE,
-        "location": formValues.location,
-        "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-        "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-        "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
-        "expirY_DATE": formValues.healthcarE_DATE,
-        "userid": loggedUser?.userid,
-        "warD_NO": loggedUser?.warD_NO,
+      if (editItem) {
+
+        let formdata = {
+          "id": editItem.id,
+          "refnumber": editItem.refnumber,
+          "healthcarE_DATE": formValues.healthcarE_DATE,
+          "location": formValues.location,
+          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
+          "warD_NO": loggedUser?.warD_NO
+        }
+
+        dispatch(CreateHealthCareApi({ data: formdata, type: 'edit' }));
+
+        console.log(formdata)
+
+      } else {
+        if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
+        let formData =
+        {
+          "healthcarE_DATE": formValues.healthcarE_DATE,
+          "location": formValues.location,
+          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
+          "expirY_DATE": formValues.healthcarE_DATE,
+          "userid": loggedUser?.userid,
+          "warD_NO": loggedUser?.warD_NO,
+        }
+
+        let postData = {
+          "healthCareInputData": formData,
+          "imG_LIST": selectedImages
+        }
+
+        console.log('Form data:', postData);
+        dispatch(CreateHealthCareApi({ data: postData, type: 'create' }));
       }
-
-      let postData = {
-        "healthCareInputData": formData,
-        "imG_LIST": selectedImages
-      }
-
-      console.log('Form data:', postData);
-
-      dispatch(CreateHealthCareApi(postData));
-
 
     } catch (error) {
       // Validation failed, set errors
@@ -314,7 +356,10 @@ function HealthCareScreen() {
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />
         </View>
-        <Text style={styles.title}>Create HealthCare</Text>
+        <Text style={styles.title}>
+          {editItem ? 'Edit ' : 'Create '}
+          HealthCare
+        </Text>
         <View style={styles.inputView}>
           <Pressable onPress={() => { toggleDatePicker('healthcarE_DATE') }}
             style={{ position: 'relative' }}>
@@ -397,7 +442,7 @@ function HealthCareScreen() {
 
 
 
-        <View style={[styles.inputView,{position:'relative'}]}>
+        <View style={[styles.inputView, { position: 'relative' }]}>
           <TextInput
             mode="outlined"
             label={'Healthcare Details'}
@@ -414,10 +459,10 @@ function HealthCareScreen() {
             autoCapitalize="none"
             onChangeText={value => handleInputChange('healthcarE_DETAILS', value)}
             placeholderTextColor={'#11182744'}
-            height= {100}
+            height={100}
 
           />
-           {/* <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+          {/* <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
             <MaterialIcon name="details" size={25} color={Colors.blue} />
           </View> */}
           {errors?.healthcarE_DETAILS && (
@@ -475,15 +520,15 @@ function HealthCareScreen() {
 
             }
           </View>} */}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+        {editItem ? null :
+          <View style={styles.buttonView}>
+            <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+              <Icon name="camera" size={25} color={Colors.blue} />
+              <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                Capture images
+              </Text>
+            </Pressable>
+          </View>}
 
         <View style={styles.buttonView}>
           <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -491,7 +536,7 @@ function HealthCareScreen() {
               {isLoading && (
                 <ActivityIndicator size={20} color={Colors.white} />
               )}{' '}
-              SAVE
+              {editItem ? 'UPDATE' : 'SAVE'}
             </Text>
           </Pressable>
         </View>

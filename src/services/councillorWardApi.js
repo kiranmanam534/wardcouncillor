@@ -320,19 +320,26 @@ export const CreateWarningsApi = createAsyncThunk(
 
 export const CreateHealthCareApi = createAsyncThunk(
   'api/CreateHealthCareApi',
-  async formData => {
+  async params => {
     // console.log('api/CreateHealthCareApi', formData);
+
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-healthcare';
+      if (type == 'edit') {
+        URL = '/api/Healthcare/update-healthcare-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-healthcare`,
-        formData,
+        URL,
+        data,
       );
 
       console.log('response', response.status);
 
       return response.data;
     } catch (error) {
-      //   console.error('Error:', error.response.data);
+      console.log('Error:', error.response.data);
       return error.response.data;
       // Handle error here
       //   Alert.alert(
@@ -414,7 +421,7 @@ export const GetCustomer360DataApi = createAsyncThunk(
 export const GetPaymentHistoryApi = createAsyncThunk(
   'api/GetPaymentHistoryApi',
   async (accountNo) => {
-    console.log("GetPaymentHistoryApi",accountNo);
+    console.log("GetPaymentHistoryApi", accountNo);
     try {
 
       // Your username and password

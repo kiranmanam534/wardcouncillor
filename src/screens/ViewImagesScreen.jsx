@@ -52,7 +52,7 @@ const ViewImagesScreen = ({ route }) => {
     dispatch(AnnouncementImagesActions.clearAnnouncementsImagesData())
     dispatch(
       GetAnnouncementImagesApi({
-        userId: 11,//id,//loggedUser?.userid,
+        userId: id,//loggedUser?.userid,
         type: type
       }),
     );

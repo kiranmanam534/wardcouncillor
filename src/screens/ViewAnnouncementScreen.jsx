@@ -18,7 +18,7 @@ import Ionicons from 'react-native-vector-icons/dist/Ionicons';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { Colors } from '../constant/Colors';
 import BottomSearchBox from '../components/BottomSearchBox';
@@ -36,9 +36,12 @@ import LoaderModal from '../components/LoaderModal';
 const ViewAnnouncementScreen = ({ route }) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const isFocused = useIsFocused();
+
     const yourRef = useRef(null);
 
     const [page, setPage] = useState(1);
+    const [page1, setPage1] = useState(0);
 
     const [searchText, setSearchText] = useState('');
     const [IssearchClick, setIssearchClick] = useState(false);
@@ -49,7 +52,7 @@ const ViewAnnouncementScreen = ({ route }) => {
     const [showSearchBox, setShowSearchBox] = useState(false);
 
     const { title } = route.params;
-    console.log(title);
+    console.log("isFocused-----", title, isFocused);
 
 
     const {
@@ -95,23 +98,59 @@ const ViewAnnouncementScreen = ({ route }) => {
     // }, [navigation, searchVisible]);
 
 
-    useEffect(() => {
-        // dispatch(AnnounceViewActions.clearAnnouncementsData())
-        console.log("asas", page)
+    const LoadAnouncements = (pageNo) => {
+        console.log("asas", pageNo)
         dispatch(
             GetAnnouncementVewInfoApi({
                 userId: loggedUser?.userid,
                 type: title,
                 search: searchText,
-                page: page,
-                limit: 10,
+                page: pageNo,
+                limit: 3,
             }),
         );
-    }, [loggedUser?.userid, title, page, IssearchClick]);
+    }
+
+    // useEffect(() => {
+    //     LoadAnouncements(1);
+    // }, [loggedUser?.userid, title]);
+
+
+
+    useEffect(() => {
+        if (isFocused) {
+            // This effect will run when the screen is focused
+            console.log('Screen is focused');
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+            setPage(1);
+            LoadAnouncements(1)
+        }
+    }, [isFocused]);
+
+
+
+    // useEffect(() => {
+    //     // dispatch(AnnounceViewActions.clearAnnouncementsData())
+    //     console.log("asas", page)
+    //     dispatch(
+    //         GetAnnouncementVewInfoApi({
+    //             userId: loggedUser?.userid,
+    //             type: title,
+    //             search: searchText,
+    //             page: page,
+    //             limit: 3,
+    //         }),
+    //     );
+    // }, [loggedUser?.userid, title, page, IssearchClick]);
 
     const handleLoadMore = () => {
-        if (announcementCount != 0 && announcementCount == 10) {
+        console.log('====================================');
+        console.log(page, announcementCount);
+        console.log('====================================');
+        if (announcementCount != 0 && announcementCount == 3) {
             setPage(page + 1);
+            LoadAnouncements(page + 1);
+
         }
     };
 
@@ -129,20 +168,22 @@ const ViewAnnouncementScreen = ({ route }) => {
     const handleSearch = () => {
         dispatch(AnnounceViewActions.clearAnnouncementsData())
         console.log('Searching for:', searchText);
+        setPage(1);
+        LoadAnouncements(1);
 
-        setTimeout(() => {
-            setPage(1);
-            setIssearchClick(!IssearchClick)
-            // dispatch(
-            //     GetAnnouncementVewInfoApi({
-            //         userId: loggedUser?.userid,
-            //         type: title,
-            //         search: searchText,
-            //         page: 1,
-            //         limit: 10,
-            //     }),
-            // );
-        }, 100);
+        // setTimeout(() => {
+        //     setPage1(1);
+        //     setIssearchClick(!IssearchClick)
+        //     // dispatch(
+        //     //     GetAnnouncementVewInfoApi({
+        //     //         userId: loggedUser?.userid,
+        //     //         type: title,
+        //     //         search: searchText,
+        //     //         page: 1,
+        //     //         limit: 10,
+        //     //     }),
+        //     // );
+        // }, 500);
 
     };
 
@@ -201,11 +242,13 @@ const ViewAnnouncementScreen = ({ route }) => {
                                     {
                                         text: 'OK',
                                         onPress: async () => {
-                                           
+
                                             dispatch(AnnounceViewActions.clearAnnouncementsData())
                                             setTimeout(() => {
-                                                setIssearchClick(!IssearchClick)
-                                                setPage(1)
+                                                // setIssearchClick(!IssearchClick)
+                                                // setPage(1)
+                                                // setPage(1);
+                                                LoadAnouncements(1);
                                             }, 100);
                                             console.log('OK Pressed')
 
@@ -231,12 +274,13 @@ const ViewAnnouncementScreen = ({ route }) => {
     };
 
 
-    const handleActions = (actionType, title, navigationName, type, id) => {
+    const handleActions = (actionType, title, navigationName, type, item) => {
         // Alert.alert(actionType)
+        // console.log("type-->",item)
         if (actionType == 'Images') {
-            navigation.navigate(navigationName, { title: title, type: type, id: id })
+            navigation.navigate(navigationName, { title: title, type: type, id: item.id })
         } else if (actionType == "Delete") {
-            handleDeletePostRequest(id, type);
+            handleDeletePostRequest(item.id, type);
             // dispatch(
             //     DeleteAnnouncementApi({
             //         Id: id,
@@ -244,6 +288,8 @@ const ViewAnnouncementScreen = ({ route }) => {
             //     }))
 
 
+        } else if (actionType == 'Edit') {
+            navigation.navigate(navigationName, { title: title, type: type, editItem: item })
         }
     }
 

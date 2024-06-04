@@ -20,48 +20,48 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Title style={styles.title}>Healthcare Date : 2024-05-24</Title>
             </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Healthcare Date</Text>
+              <Text style={styles.contentText}>Date</Text>
               <Text
-                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.healthcarE_DATE}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Location</Text>
               <Text
-                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.location}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Latitude</Text>
+              <Text style={styles.contentText}>GIS Location</Text>
               <Text
-                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
-                : {item.latitude}
+                style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
+                : {item.latitude}, {item.latitude}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Longitude</Text>
-              <Text style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+              <Text style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.longitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
-                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.healthcarE_DETAILS}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>
                 Ref No
               </Text>
               <Text
-                style={{ fontWeight: '800', fontSize: 13, color: Colors.blue }}>
+                style={{ fontWeight: '500', fontSize: 15, color: Colors.blue }}>
                 : {item.refnumber}
               </Text>
-            </View>
+            </View> */}
           </Card.Content>
           <Divider style={styles.divider} />
           <Card.Content
@@ -78,7 +78,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
             ]}>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                onPress={() => { onPress('Edit', 'Healthcare Images', 'ViewImages', "Healthcare", item.id) }}
+                onPress={() => { onPress('Edit', 'Edit Healthcare', 'Healthcare', "Healthcare", item) }}
                 style={[
                   styles.btn,
                   {
@@ -114,7 +114,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <TouchableOpacity
                 onPress={() => {
                   deletedID != item.id &&
-                    onPress('Delete', 'Healthcare', '', "Healthcare", item.id)
+                    onPress('Delete', 'Healthcare', '', "Healthcare", item)
                 }}
                 style={[
                   styles.btn,
@@ -150,7 +150,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
             </View>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                onPress={() => { onPress('Images', 'Healthcare Images', 'ViewImages', "Healthcare", item.id) }}
+                onPress={() => { onPress('Images', 'Healthcare Images', 'ViewImages', "Healthcare", item) }}
                 style={[
                   styles.btn,
                   {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   card: {
     elevation: 1, // Add shadow
     borderRadius: 15, // Add border radius
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: Colors.primary,
   },
   cardContent: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   title: {
     paddingLeft: 10,
     color: Colors.blue,
-    fontWeight: '800',
+    fontWeight: '500',
     fontSize: 20,
   },
   footer: {
@@ -234,15 +234,15 @@ const styles = StyleSheet.create({
   },
   text: {
     color: Colors.white,
-    fontWeight: '800',
+    fontWeight: '500',
   },
   phoneNumber: {
     color: Colors.primary,
     textDecorationLine: 'underline',
   },
   contentText: {
-    fontWeight: '800',
-    fontSize: 13,
+    fontWeight: '500',
+    fontSize: 15,
     color: Colors.black,
     width: 90,
   },

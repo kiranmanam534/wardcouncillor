@@ -12,6 +12,8 @@ const createHotspotSlice = createSlice({
     clear: (state, action) => {
       state.error = null;
       state.statusCode = null;
+      state.isLoading = false;
+
     },
   },
 
