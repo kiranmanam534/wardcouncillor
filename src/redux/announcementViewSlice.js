@@ -37,6 +37,7 @@ const AnnouncementViewSlice = createSlice({
           state.announcementCount = action.payload.data ? action.payload.data.length : 0;
           //   state.items = action.payload.data;
           if (action.payload.data && action.payload.data.length > 0) {
+            // state.items = state.items.concat(action.payload.data);
             state.items = state.items.concat(action.payload.data);
           }
           console.log('state.items=>', state.items.length)

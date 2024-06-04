@@ -6,12 +6,12 @@ import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 import { Colors } from '../constant/Colors';
 import { formattedAmount } from '../utility/FormattedAmmount';
 
-const AnnouncemenCard = ({ item, type, onPress }) => {
+const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
   // console.log(item.id,ImageId)
 
   const AnnouncemenCardItem = () => {
-    if (type=='Healthcare') {
-      
+    if (type == 'Healthcare') {
+
       return (
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
@@ -23,27 +23,27 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
               <Text style={styles.contentText}>Healthcare Date</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
-               : {item.healthcarE_DATE}
+                : {item.healthcarE_DATE}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Location</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
-               : {item.location}
+                : {item.location}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Latitude</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
-              : {item.latitude}
+                : {item.latitude}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Longitude</Text>
               <Text style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
-              : {item.longitude}
+                : {item.longitude}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
@@ -55,7 +55,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>
-              Ref No
+                Ref No
               </Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.blue }}>
@@ -76,9 +76,9 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
                 borderColor: Colors.yellow,
               },
             ]}>
-           <View style={{ marginTop: 15 }}>
+            <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                onPress={()=>{onPress('Edit','Healthcare Images','ViewImages',"Healthcare",item.id)}}
+                onPress={() => { onPress('Edit', 'Healthcare Images', 'ViewImages', "Healthcare", item.id) }}
                 style={[
                   styles.btn,
                   {
@@ -97,8 +97,8 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                
-                    <Icon name="edit" size={20} color={Colors.blue} />
+
+                  <Icon name="edit" size={20} color={Colors.blue} />
 
                   <Text
                     style={[
@@ -112,7 +112,10 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             </View>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                 onPress={()=>{onPress('Delete','Healthcare Images','ViewImages',"Healthcare",item.id)}}
+                onPress={() => {
+                  deletedID != item.id &&
+                    onPress('Delete', 'Healthcare', '', "Healthcare", item.id)
+                }}
                 style={[
                   styles.btn,
                   {
@@ -131,8 +134,9 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                
-                    <Icon name="trash-o" size={20} color={Colors.blue} />
+                  {item.id == deletedID ? <ActivityIndicator size={10} color={Colors.blue} />
+                    : <Icon name="trash-o" size={20} color={Colors.blue} />
+                  }
 
                   <Text
                     style={[
@@ -146,7 +150,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
             </View>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                 onPress={()=>{onPress('Images','Healthcare Images','ViewImages',"Healthcare",item.id)}}
+                onPress={() => { onPress('Images', 'Healthcare Images', 'ViewImages', "Healthcare", item.id) }}
                 style={[
                   styles.btn,
                   {
@@ -165,8 +169,8 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                
-                    <Icon name="file-image-o" size={20} color={Colors.blue} />
+
+                  <Icon name="file-image-o" size={20} color={Colors.blue} />
 
                   <Text
                     style={[
@@ -181,7 +185,7 @@ const AnnouncemenCard = ({ item, type, onPress }) => {
           </Card.Content>
         </Card>
       );
-    } 
+    }
   };
 
   return (

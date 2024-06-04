@@ -10,6 +10,7 @@ import { Colors } from '../constant/Colors';
 import AnnounceModal from '../components/AnnounceModal';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/dist/FontAwesome5';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 
 
 const MainDashboardScreen = () => {
@@ -56,6 +57,7 @@ const MainDashboardScreen = () => {
     //     navigation.navigate(seletedSreen.view, { title: seletedSreen.title })
     //   }, 100)
     // }
+    dispatch(AnnounceViewActions.clearAnnouncementsData())
 
     navigation.navigate(navigationName, { title: title })
 
