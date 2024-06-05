@@ -329,7 +329,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         </Card>
       );
     }
-    else if (type == 'RoadClouser') {
+    else if (type == 'Road Closure') {
 
       return (
         <Card style={styles.card}>

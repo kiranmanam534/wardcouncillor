@@ -204,7 +204,7 @@ function RoadClousureScreen({ route }) {
             dispatch(AnnounceViewActions.clearAnnouncementsData())
 
             // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "RoadClouser", isEdit: true })
+            navigation.navigate('ViewAnnouncement', { title: "Road Closure", isEdit: true })
         }
     };
 
@@ -311,8 +311,8 @@ function RoadClousureScreen({ route }) {
             await CreateRoadClosureScrema.validate(formValues, { abortEarly: false });
             if (editItem) {
 
-                // let dd={
-                //     "id": 0,
+                // let formData={
+                //     "id": 7,
                 //     "refnumber": "string",
                 //     "roadclouseR_STARTDATE": "2024-06-05T16:55:21.947Z",
                 //     "roadclouseR_STARTTIME": "string",
@@ -344,9 +344,10 @@ function RoadClousureScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
+                console.log("Submitted--->",formData)
+
                 dispatch(CreateRoadClosureApi({ data: formData, type: 'edit' }));
 
-                console.log(formData)
 
             } else {
                 let formData =

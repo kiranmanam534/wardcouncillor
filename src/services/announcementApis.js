@@ -10,11 +10,11 @@ export const GetAnnouncementVewInfoApi = createAsyncThunk(
             let URL = '';
             if (type == 'Hotspots') {
                 URL = `api/Hotspot/get-hotspot-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
-            } else if (type == 'RoadClouser') {
+            } else if (type == 'Road Closure') {
                 URL = `api/RoadClosure/get-road-closure-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
             } else if (type == 'Meetings') {
                 URL = `api/Healthcare/get-healthcare-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
-            } else if (type == 'MissingPerson') {
+            } else if (type == 'Missing Person') {
                 URL = `api/Healthcare/get-healthcare-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
             } else if (type == 'Workshops') {
                 URL = `api/Healthcare/get-healthcare-data?UserID=${userId}&page=${page}&limit=${limit}&search=${search}`;
@@ -47,7 +47,7 @@ export const GetAnnouncementImagesApi = createAsyncThunk(
                 URL = `api/Healthcare/get-healthcare-image-data?ID=${userId}`;
             } else if (type == 'Healthcare') {
                 URL = `api/Healthcare/get-healthcare-image-data?ID=${userId}`;
-            } else if (type == 'RoadClouser') {
+            } else if (type == 'Road Closure') {
                 URL = `api/RoadClosure/get-road-closure-image-data?ID=${userId}`;
             } else if (type == 'Meter') {
                 URL = `api/Healthcare/get-healthcare-image-data?ID=${userId}`;

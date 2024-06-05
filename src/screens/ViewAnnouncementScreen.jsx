@@ -258,11 +258,11 @@ const ViewAnnouncementScreen = ({ route }) => {
         // Alert.alert(actionType)
         // console.log("type-->",item)
         if (actionType == 'Images') {
-            navigation.navigate(navigationName, { title: title, type: type, id: item.id })
+            navigation.navigate(navigationName, { title: title, type: title, id: item.id })
         } else if (actionType == "Delete") {
-            handleDeletePostRequest(item.id, type);
+            handleDeletePostRequest(item.id, title);
         } else if (actionType == 'Edit') {
-            navigation.navigate(navigationName, { title: title, type: type, editItem: item })
+            navigation.navigate(navigationName, { title: title, type: title, editItem: item })
         }
     }
 

@@ -102,13 +102,13 @@ const MainDashboardScreen = () => {
                 {item.id == showselectedSection &&
                   <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 15, width: '100%', borderTopWidth: 0.5, height: 60, borderTopColor: Colors.primary, paddingTop: 30 }}>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
-                      onPress={() => { handleNavigation(item.name, item.name) }}
+                      onPress={() => { handleNavigation(item.name, item.title) }}
                     >
                       <MaterialIcon name="assignment-add" size={25} color={Colors.blue} />
                       <Text style={[styles.message, { paddingVertical: 5 }]}>CREATE</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
-                      onPress={() => { handleNavigation(item.viewName, item.name) }}
+                      onPress={() => { handleNavigation(item.viewName, item.title) }}
                     >
                       <FontAwesome5 name="clipboard-list" size={25} color={Colors.blue} />
                       <Text style={[styles.message, { paddingVertical: 5 }]}>VIEW</Text>
