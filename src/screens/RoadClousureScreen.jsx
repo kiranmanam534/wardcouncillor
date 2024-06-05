@@ -21,6 +21,8 @@ import BinaryImageModal from '../components/BinaryImageModal';
 import CameraModal from '../components/CameraModal';
 
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -37,8 +39,11 @@ const chunkArray = (array, chunkSize) => {
     return result;
 };
 
-function RoadClousureScreen() {
+function RoadClousureScreen({ route }) {
 
+    const { title, type, editItem } = route.params;
+    console.log(title, type, editItem);
+    const navigation = useNavigation();
 
     const dispatch = useDispatch();
 
@@ -170,6 +175,23 @@ function RoadClousureScreen() {
         }, 50);
     }
 
+
+    useEffect(() => {
+        if (editItem) {
+
+            setFormValues({
+                roadclouseR_STARTDATE: editItem.roadclouseR_STARTDATE,
+                roadclouseR_STARTTIME: editItem.roadclouseR_STARTTIME,
+                roadclouseR_ENDDATE: editItem.roadclouseR_ENDDATE,
+                roadclouseR_ENDTIME: editItem.roadclouseR_ENDTIME,
+                location: editItem.location,
+                roaD_NAME: editItem.roaD_NAME,
+                roadclouseR_DETAILS: editItem.roadclouseR_DETAILS
+            })
+        }
+    }, [editItem])
+
+
     useEffect(() => {
         if (!isLoading && error) {
             setShowErrorModal(true);
@@ -178,6 +200,12 @@ function RoadClousureScreen() {
 
     const closeModal = () => {
         setShowErrorModal(false);
+        if (editItem) {
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+            // navigation.goBack()
+            navigation.navigate('ViewAnnouncement', { title: "RoadClouser", isEdit: true })
+        }
     };
 
 
@@ -281,55 +309,82 @@ function RoadClousureScreen() {
         try {
 
             await CreateRoadClosureScrema.validate(formValues, { abortEarly: false });
+            if (editItem) {
 
-            let formData =
-            {
-                "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
-                "roadclouseR_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
-                "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
-                "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
-                "location": formValues.location,
-                "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                "roaD_NAME": formValues.roaD_NAME,
-                "roadclouseR_DETAILS": formValues.roadclouseR_DETAILS,
-                "expirY_DATE": formValues.roadclouseR_ENDDATE,
-                "userid": loggedUser?.userid,
-                "warD_NO": loggedUser?.warD_NO
+                // let dd={
+                //     "id": 0,
+                //     "refnumber": "string",
+                //     "roadclouseR_STARTDATE": "2024-06-05T16:55:21.947Z",
+                //     "roadclouseR_STARTTIME": "string",
+                //     "roadclouseR_ENDDATE": "2024-06-05T16:55:21.947Z",
+                //     "roadclouseR_ENDTIME": "string",
+                //     "location": "string",
+                //     "latitude": "string",
+                //     "longitude": "string",
+                //     "roaD_NAME": "string",
+                //     "roadclouseR_DETAILS": "string",
+                //     "warD_NO": "string"
+                //   }
+
+                let formData =
+                {
+                    "id": editItem.id,
+                    "refnumber": editItem.refnumber,
+                    "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
+                    "roadclouseR_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
+                    "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
+                    "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "roaD_NAME": formValues.roaD_NAME,
+                    "roadclouseR_DETAILS": formValues.roadclouseR_DETAILS,
+                    // "expirY_DATE": formValues.roadclouseR_ENDDATE,
+                    // "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+
+                dispatch(CreateRoadClosureApi({ data: formData, type: 'edit' }));
+
+                console.log(formData)
+
+            } else {
+                let formData =
+                {
+                    "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
+                    "roadclouseR_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
+                    "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
+                    "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "roaD_NAME": formValues.roaD_NAME,
+                    "roadclouseR_DETAILS": formValues.roadclouseR_DETAILS,
+                    "expirY_DATE": formValues.roadclouseR_ENDDATE,
+                    "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+
+
+
+
+
+                // }
+
+
+                // formValues.expirY_DATE = formValues.roadclouseR_ENDDATE;
+
+                // formValues.roadclouseR_STARTTIME = new Date(formValues.roadclouseR_STARTTIME);
+                // formValues.roadclouseR_ENDTIME = new Date(formValues.roadclouseR_ENDTIME)
+
+                let postData = {
+                    "roadClouserInputData": formData,
+                    "imG_LIST": selectedImages
+                }
+                console.log('Form data:', formData);
+
+                dispatch(CreateRoadClosureApi({ data: postData, type: 'create' }));
             }
-            // {
-            //     roadclouseR_STARTDATE: formValues.roadclouseR_STARTDATE,
-            //     roadclouseR_STARTTIME: "2024-05-03T17:13:06.387Z",
-            //     roadclouseR_ENDTDATE: formValues.roadclouseR_STARTDATE,
-            //     roadclouseR_ENDTIME: "2024-05-03T17:13:06.387Z",
-            //     location: formValues.location,
-            //     roaD_NAME: formValues.roaD_NAME,
-            //     roadclouseR_DETAILS: formValues.roadclouseR_DETAILS,
-            //     LATITUDE: '0.00',
-            //     LONGITUDE: '0.00',
-            //     WARD_NO: '10',//loggedUser?.warD_NO,
-            //     expirY_DATE: formValues.roadclouseR_ENDDATE,
-            //     userid: '1'//loggedUser?.userid
-
-
-
-
-
-            // }
-
-
-            // formValues.expirY_DATE = formValues.roadclouseR_ENDDATE;
-
-            // formValues.roadclouseR_STARTTIME = new Date(formValues.roadclouseR_STARTTIME);
-            // formValues.roadclouseR_ENDTIME = new Date(formValues.roadclouseR_ENDTIME)
-
-            let postData = {
-                "roadClouserInputData": formData,
-                "imG_LIST": selectedImages
-            }
-            console.log('Form data:', formData);
-
-            dispatch(CreateRoadClosureApi(postData));
 
         } catch (error) {
             // Validation failed, set errors
@@ -369,7 +424,7 @@ function RoadClousureScreen() {
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
                 </View>
-                <Text style={styles.title}>Create Road Closure</Text>
+                <Text style={styles.title}> {editItem ? 'Edit ' : 'Create '} Road Closure</Text>
                 <View style={styles.inputView}>
                     <Pressable onPress={() => { toggleDatePicker('roadclouseR_STARTDATE') }}>
                         <TextInput
@@ -411,7 +466,7 @@ function RoadClousureScreen() {
                             editable={false}
                             onPressIn={() => { toggleTimePicker('roadclouseR_STARTTIME') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialIcon name="timer" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -547,9 +602,9 @@ function RoadClousureScreen() {
                         placeholderTextColor={'#11182744'}
 
                     />
-                     <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                            <Icon name="road" size={25} color={Colors.blue} />
-                        </View>
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <Icon name="road" size={25} color={Colors.blue} />
+                    </View>
                     {errors?.roaD_NAME && (
                         <Text style={{ color: 'red' }}>{errors?.roaD_NAME}</Text>
                     )}
@@ -581,35 +636,35 @@ function RoadClousureScreen() {
                 </View>
 
                 {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
+                    <View key={index1} style={styles.row}>
+                        {item.map((subItem, index) => (
+                            <View key={index} style={[styles.item, { position: 'relative' }]}
 
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
-                  <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
-                    // style={{ flex: 1 }}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+                            >
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                    <Image
+                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        // style={{ flex: 1 }}
+                                        width={40}
+                                        height={40}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                                    <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+                {editItem ? null :
+                    <View style={styles.buttonView}>
+                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                            <Icon name="camera" size={25} color={Colors.blue} />
+                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                                Capture images
+                            </Text>
+                        </Pressable>
+                    </View>}
 
                 <View style={styles.buttonView}>
                     <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -617,25 +672,25 @@ function RoadClousureScreen() {
                             {isLoading && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
-                            SAVE
+                            {editItem ? 'UPDATE' : 'SAVE'}
                         </Text>
                     </Pressable>
                 </View>
 
                 <BinaryImageModal
-          visible={isBinaryImage}
-          onClose={onCloseBinaryImageModal}
-          binaryImageData={viewBinaryImage}
-        />
+                    visible={isBinaryImage}
+                    onClose={onCloseBinaryImageModal}
+                    binaryImageData={viewBinaryImage}
+                />
 
 
 
-        <CameraModal
-          isVisible={showCameraModal}
-          onClose={closeCameraModal}
-          openCamera={handleCameraLaunch}
-          openGallery={openImagePicker}
-        />
+                <CameraModal
+                    isVisible={showCameraModal}
+                    onClose={closeCameraModal}
+                    openCamera={handleCameraLaunch}
+                    openGallery={openImagePicker}
+                />
 
 
             </ScrollView>
@@ -946,31 +1001,31 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     CameraButton: {
-      backgroundColor: Colors.white,
-      height: 45,
-      borderColor: Colors.black,
-      borderWidth: 0.5,
-      borderRadius: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      // justifyContent: 'center',
-      paddingLeft: 10
+        backgroundColor: Colors.white,
+        height: 45,
+        borderColor: Colors.black,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'center',
+        paddingLeft: 10
     },
     CameraText: {
-      color: Colors.primary,
-      fontSize: 18,
-      fontWeight: 'bold',
+        color: Colors.primary,
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     row: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
     },
     item: {
-      flex: 1,
-      marginHorizontal: 5,
-      padding: 10,
-      backgroundColor: Colors.white,
-      alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: Colors.white,
+        alignItems: 'center',
     },
 })

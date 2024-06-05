@@ -179,8 +179,8 @@ const ViewAnnouncementScreen = ({ route }) => {
             URL = `api/Hotspot/delete-hotspot-data?ID=${Id}`;
         } else if (type == 'Healthcare') {
             URL = `api/Healthcare/delete-healthcare-data?ID=${Id}`;
-        } else if (type == 'IMS') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
+        } else if (type == 'RoadClouser') {
+            URL = `api/RoadClosure/delete-road-closure-data?ID=${Id}`;
         } else if (type == 'Meter') {
             URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
         } else if (type == 'Customer') {

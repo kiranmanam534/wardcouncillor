@@ -194,13 +194,20 @@ export const CreateHotspotApi = createAsyncThunk(
 
 export const CreateRoadClosureApi = createAsyncThunk(
   'api/CreateRoadClosureApi',
-  async formData => {
-    // console.log('api/CreateRoadClosureApi', formData);
+  async params => {
+    // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-road-clouser';
+      if (type == 'edit') {
+        URL = '/api/RoadClosure/update-road-closure-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-road-clouser`,
-        formData,
+        URL,
+        data,
       );
+
 
       console.log('response', response.status);
 
