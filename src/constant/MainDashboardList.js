@@ -53,7 +53,7 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Workshop',
+    name:'Workshops',
     viewName:'ViewAnnouncement'
   },
   {

@@ -167,7 +167,7 @@ const PrivateNavigation = () => {
         })}
       />
       <PrivateStack.Screen
-        name="Workshop"
+        name="Workshops"
         component={WorkshopsScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,

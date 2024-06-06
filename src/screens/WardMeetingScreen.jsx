@@ -353,7 +353,7 @@ function WardMeetingScreen({ route }) {
                 }
                 console.log('Form data:', formData);
 
-                dispatch(CreateMeetingsApi({ data: formData, type: 'create' }));
+                dispatch(CreateMeetingsApi({ data: postData, type: 'create' }));
             }
 
         } catch (error) {

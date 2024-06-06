@@ -19,6 +19,8 @@ import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import BinaryImageModal from '../components/BinaryImageModal';
 import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -35,7 +37,12 @@ const chunkArray = (array, chunkSize) => {
     return result;
 };
 
-function MissingPersonsScreen() {
+function MissingPersonsScreen({ route }) {
+
+    const { title, type, editItem } = route.params;
+    console.log(title, type, editItem);
+    const navigation = useNavigation();
+
 
 
     const dispatch = useDispatch();
@@ -168,6 +175,19 @@ function MissingPersonsScreen() {
         }, 50);
     }
 
+
+    useEffect(() => {
+        if (editItem) {
+            setFormValues({
+                missinG_DATE: editItem.missinG_DATE,
+                missinG_TIME: editItem.missinG_TIME,
+                fulL_NAME: editItem.fulL_NAME,
+                location: editItem.location,
+                missingpersoN_DETAILS: editItem.missingpersoN_DETAILS
+            })
+        }
+    }, [editItem])
+
     useEffect(() => {
         if (!isLoading && error) {
             setShowErrorModal(true);
@@ -272,6 +292,13 @@ function MissingPersonsScreen() {
 
     const closeCameraModal = () => {
         setShowCameraModal(false);
+
+        if (editItem) {
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+            // navigation.goBack()
+            navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
+        }
     };
 
 
@@ -279,27 +306,49 @@ function MissingPersonsScreen() {
         try {
 
             await CreateMissingPersonSchema.validate(formValues, { abortEarly: false });
+            if (editItem) {
 
-            let formData =
-            {
-                "missinG_DATE": formValues.missinG_DATE,
-                "missinG_TIME": convertToDateTime(formValues.missinG_TIME),
-                "location": formValues.location,
-                "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                "fulL_NAME": formValues.fulL_NAME,
-                "missingpersoN_DETAILS": formValues.missingpersoN_DETAILS,
-                "expirY_DATE": formValues.missinG_DATE,
-                "userid": loggedUser?.userid,
-                "warD_NO": loggedUser?.warD_NO
-            }
-            let postData = {
-                "missingPersonInputData": formData,
-                "imG_LIST": selectedImages
-            }
-            console.log('Form data:', formData);
+                let formdata = {
+                    "id": editItem.id,
+                    "refnumber": editItem.refnumber,
+                    "missinG_DATE": formValues.missinG_DATE,
+                    "missinG_TIME": convertToDateTime(formValues.missinG_TIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "fulL_NAME": formValues.fulL_NAME,
+                    "missingpersoN_DETAILS": formValues.missingpersoN_DETAILS,
+                    // "expirY_DATE": formValues.missinG_DATE,
+                    // "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
 
-            dispatch(CreateMissingPersonApi(postData));
+                dispatch(CreateMissingPersonApi({ data: formdata, type: 'edit' }));
+
+                console.log(formdata)
+
+            } else {
+                let formData =
+                {
+                    "missinG_DATE": formValues.missinG_DATE,
+                    "missinG_TIME": convertToDateTime(formValues.missinG_TIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "fulL_NAME": formValues.fulL_NAME,
+                    "missingpersoN_DETAILS": formValues.missingpersoN_DETAILS,
+                    "expirY_DATE": formValues.missinG_DATE,
+                    "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+                let postData = {
+                    "missingPersonInputData": formData,
+                    "imG_LIST": selectedImages
+                }
+                console.log('Form data:', formData);
+
+                dispatch(CreateMissingPersonApi({ data: postData, type: 'create' }));
+            }
 
         } catch (error) {
             // Validation failed, set errors
@@ -340,7 +389,7 @@ function MissingPersonsScreen() {
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
                 </View>
-                <Text style={styles.title}>Create Missing Person</Text>
+                <Text style={styles.title}>  {editItem ? 'Edit ' : 'Create '} Missing Person</Text>
                 <View style={styles.inputView}>
                     <Pressable onPress={() => { toggleDatePicker('missinG_DATE') }}>
                         <TextInput
@@ -356,7 +405,7 @@ function MissingPersonsScreen() {
                             editable={false}
                             onPressIn={() => { toggleDatePicker('missinG_DATE') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="calendar" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -382,7 +431,7 @@ function MissingPersonsScreen() {
                             editable={false}
                             onPressIn={() => { toggleTimePicker('missinG_TIME') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialIcon name="timer" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -396,22 +445,22 @@ function MissingPersonsScreen() {
 
                 <View style={styles.inputView}>
                     {/* {Platform.OS == 'android' && */}
-                        <TextInput
-                            mode="outlined"
-                            label={'Location'}
-                            style={{ backgroundColor: Colors.white }}
-                            placeholder='Location'
-                            value={
-                                formValues?.location ? (formValues?.location) : ''
-                            }
-                            autoCorrect={false}
-                            keyboardType='default'
-                            autoCapitalize="none"
-                            onChangeText={value => handleInputChange('location', value)}
-                            placeholderTextColor={'#11182744'}
+                    <TextInput
+                        mode="outlined"
+                        label={'Location'}
+                        style={{ backgroundColor: Colors.white }}
+                        placeholder='Location'
+                        value={
+                            formValues?.location ? (formValues?.location) : ''
+                        }
+                        autoCorrect={false}
+                        keyboardType='default'
+                        autoCapitalize="none"
+                        onChangeText={value => handleInputChange('location', value)}
+                        placeholderTextColor={'#11182744'}
 
-                        />
-                          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                    />
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                         <MaterialIcon name="my-location" size={25} color={Colors.blue} />
                     </View>
                     {/* } */}
@@ -465,7 +514,7 @@ function MissingPersonsScreen() {
                         placeholderTextColor={'#11182744'}
 
                     />
-                      <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                         <Icon name="user" size={25} color={Colors.blue} />
                     </View>
                     {errors?.fulL_NAME && (
@@ -499,35 +548,35 @@ function MissingPersonsScreen() {
                 </View>
 
                 {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
+                    <View key={index1} style={styles.row}>
+                        {item.map((subItem, index) => (
+                            <View key={index} style={[styles.item, { position: 'relative' }]}
 
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
-                  <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
-                    // style={{ flex: 1 }}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+                            >
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                    <Image
+                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        // style={{ flex: 1 }}
+                                        width={40}
+                                        height={40}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                                    <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+                {editItem ? null :
+                <View style={styles.buttonView}>
+                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                        <Icon name="camera" size={25} color={Colors.blue} />
+                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                            Capture images
+                        </Text>
+                    </Pressable>
+                </View>}
 
                 <View style={styles.buttonView}>
                     <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -535,25 +584,25 @@ function MissingPersonsScreen() {
                             {isLoading && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
-                            SAVE
+                            {editItem ? 'UPDATE' : 'SAVE'}
                         </Text>
                     </Pressable>
                 </View>
 
                 <BinaryImageModal
-          visible={isBinaryImage}
-          onClose={onCloseBinaryImageModal}
-          binaryImageData={viewBinaryImage}
-        />
+                    visible={isBinaryImage}
+                    onClose={onCloseBinaryImageModal}
+                    binaryImageData={viewBinaryImage}
+                />
 
 
 
-        <CameraModal
-          isVisible={showCameraModal}
-          onClose={closeCameraModal}
-          openCamera={handleCameraLaunch}
-          openGallery={openImagePicker}
-        />
+                <CameraModal
+                    isVisible={showCameraModal}
+                    onClose={closeCameraModal}
+                    openCamera={handleCameraLaunch}
+                    openGallery={openImagePicker}
+                />
 
             </ScrollView>
             <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
@@ -784,31 +833,31 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     CameraButton: {
-      backgroundColor: Colors.white,
-      height: 45,
-      borderColor: Colors.black,
-      borderWidth: 0.5,
-      borderRadius: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      // justifyContent: 'center',
-      paddingLeft: 10
+        backgroundColor: Colors.white,
+        height: 45,
+        borderColor: Colors.black,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'center',
+        paddingLeft: 10
     },
     CameraText: {
-      color: Colors.primary,
-      fontSize: 18,
-      fontWeight: 'bold',
+        color: Colors.primary,
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     row: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
     },
     item: {
-      flex: 1,
-      marginHorizontal: 5,
-      padding: 10,
-      backgroundColor: Colors.white,
-      alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: Colors.white,
+        alignItems: 'center',
     },
 })

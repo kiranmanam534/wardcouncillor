@@ -765,7 +765,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
             ]}>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                onPress={() => { onPress('Edit', 'Edit Missing Person', 'Missing Person', "Missing Person", item) }}
+                onPress={() => { onPress('Edit', 'Edit Missing Person', 'MissingPerson', "Missing Person", item) }}
                 style={[
                   styles.btn,
                   {

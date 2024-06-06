@@ -19,6 +19,8 @@ import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import BinaryImageModal from '../components/BinaryImageModal';
 import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -35,7 +37,11 @@ const chunkArray = (array, chunkSize) => {
     return result;
 };
 
-function WarningssScreen() {
+function WarningssScreen({ route }) {
+
+    const { title, type, editItem } = route.params;
+    console.log(title, type, editItem);
+    const navigation = useNavigation();
 
 
     const dispatch = useDispatch();
@@ -168,6 +174,20 @@ function WarningssScreen() {
         }, 50);
     }
 
+
+    useEffect(() => {
+        if (editItem) {
+            setFormValues({
+                warninG_DATE: editItem.warninG_DATE,
+                warninG_TIME: editItem.warninG_TIME,
+                location: editItem.location,
+                typeofwarning: editItem.typeofwarning,
+                warninG_DETAILS: editItem.warninG_DETAILS
+            })
+        }
+    }, [editItem])
+
+
     useEffect(() => {
         if (!isLoading && error) {
             setShowErrorModal(true);
@@ -176,6 +196,13 @@ function WarningssScreen() {
 
     const closeModal = () => {
         setShowErrorModal(false);
+
+        if (editItem) {
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+            // navigation.goBack()
+            navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
+        }
     };
 
 
@@ -278,28 +305,48 @@ function WarningssScreen() {
         try {
 
             await CreateWarningsSchema.validate(formValues, { abortEarly: false });
+            if (editItem) {
 
-            let formData =
-            {
-                "warninG_DATE": formValues.warninG_DATE,
-                "warninG_TIME": convertToDateTime(formValues.warninG_TIME),
-                "location": formValues.location,
-                "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                "typeofwarning": formValues.typeofwarning,
-                "warninG_DETAILS": formValues.warninG_DETAILS,
-                "expirY_DATE": formValues.warninG_DATE,
-                "userid": loggedUser?.userid,
-                "warD_NO": loggedUser?.warD_NO
+                let formdata = {
+                    "id": editItem.id,
+                    "refnumber": editItem.refnumber,
+                    "warninG_DATE": formValues.warninG_DATE,
+                    "warninG_TIME": convertToDateTime(formValues.warninG_TIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "typeofwarning": formValues.typeofwarning,
+                    "warninG_DETAILS": formValues.warninG_DETAILS,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+
+                dispatch(CreateWarningsApi({ data: formdata, type: 'edit' }));
+
+                console.log(formdata)
+
+            } else {
+                let formData =
+                {
+                    "warninG_DATE": formValues.warninG_DATE,
+                    "warninG_TIME": convertToDateTime(formValues.warninG_TIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "typeofwarning": formValues.typeofwarning,
+                    "warninG_DETAILS": formValues.warninG_DETAILS,
+                    "expirY_DATE": formValues.warninG_DATE,
+                    "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+                let postData = {
+                    "warningInputData": formData,
+                    "imG_LIST": selectedImages
+                }
+
+                console.log('Form data:', formData);
+
+                dispatch(CreateWarningsApi({ data: postData, type: 'create' }));
             }
-            let postData = {
-                "warningInputData": formData,
-                "imG_LIST": selectedImages
-            }
-
-            console.log('Form data:', formData);
-
-            dispatch(CreateWarningsApi(postData));
 
         } catch (error) {
             // Validation failed, set errors
@@ -340,7 +387,7 @@ function WarningssScreen() {
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
                 </View>
-                <Text style={styles.title}>Create Warning</Text>
+                <Text style={styles.title}> {editItem ? 'Edit ' : 'Create '} Warning</Text>
                 <View style={styles.inputView}>
                     <Pressable onPress={() => { toggleDatePicker('warninG_DATE') }}>
                         <TextInput
@@ -356,7 +403,7 @@ function WarningssScreen() {
                             editable={false}
                             onPressIn={() => { toggleDatePicker('warninG_DATE') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="calendar" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -382,7 +429,7 @@ function WarningssScreen() {
                             editable={false}
                             onPressIn={() => { toggleTimePicker('warninG_TIME') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialIcon name="timer" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -396,22 +443,22 @@ function WarningssScreen() {
 
                 <View style={styles.inputView}>
                     {/* {Platform.OS == 'android' && */}
-                        <TextInput
-                            mode="outlined"
-                            label={'Location'}
-                            style={{ backgroundColor: Colors.white }}
-                            placeholder='Location'
-                            value={
-                                formValues?.location ? (formValues?.location) : ''
-                            }
-                            autoCorrect={false}
-                            keyboardType='default'
-                            autoCapitalize="none"
-                            onChangeText={value => handleInputChange('location', value)}
-                            placeholderTextColor={'#11182744'}
+                    <TextInput
+                        mode="outlined"
+                        label={'Location'}
+                        style={{ backgroundColor: Colors.white }}
+                        placeholder='Location'
+                        value={
+                            formValues?.location ? (formValues?.location) : ''
+                        }
+                        autoCorrect={false}
+                        keyboardType='default'
+                        autoCapitalize="none"
+                        onChangeText={value => handleInputChange('location', value)}
+                        placeholderTextColor={'#11182744'}
 
-                        />
-                          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                    />
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                         <MaterialIcon name="my-location" size={25} color={Colors.blue} />
                     </View>
                     {/* } */}
@@ -495,35 +542,35 @@ function WarningssScreen() {
                 </View>
 
                 {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
+                    <View key={index1} style={styles.row}>
+                        {item.map((subItem, index) => (
+                            <View key={index} style={[styles.item, { position: 'relative' }]}
 
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
-                  <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
-                    // style={{ flex: 1 }}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+                            >
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                    <Image
+                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        // style={{ flex: 1 }}
+                                        width={40}
+                                        height={40}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                                    <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+                {editItem ? null :
+                <View style={styles.buttonView}>
+                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                        <Icon name="camera" size={25} color={Colors.blue} />
+                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                            Capture images
+                        </Text>
+                    </Pressable>
+                </View>}
 
                 <View style={styles.buttonView}>
                     <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -531,25 +578,25 @@ function WarningssScreen() {
                             {isLoading && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
-                            SAVE
+                            {editItem ? 'UPDATE' : 'SAVE'}
                         </Text>
                     </Pressable>
                 </View>
 
                 <BinaryImageModal
-          visible={isBinaryImage}
-          onClose={onCloseBinaryImageModal}
-          binaryImageData={viewBinaryImage}
-        />
+                    visible={isBinaryImage}
+                    onClose={onCloseBinaryImageModal}
+                    binaryImageData={viewBinaryImage}
+                />
 
 
 
-        <CameraModal
-          isVisible={showCameraModal}
-          onClose={closeCameraModal}
-          openCamera={handleCameraLaunch}
-          openGallery={openImagePicker}
-        />
+                <CameraModal
+                    isVisible={showCameraModal}
+                    onClose={closeCameraModal}
+                    openCamera={handleCameraLaunch}
+                    openGallery={openImagePicker}
+                />
 
 
             </ScrollView>
@@ -781,31 +828,31 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     CameraButton: {
-      backgroundColor: Colors.white,
-      height: 45,
-      borderColor: Colors.black,
-      borderWidth: 0.5,
-      borderRadius: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      // justifyContent: 'center',
-      paddingLeft: 10
+        backgroundColor: Colors.white,
+        height: 45,
+        borderColor: Colors.black,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'center',
+        paddingLeft: 10
     },
     CameraText: {
-      color: Colors.primary,
-      fontSize: 18,
-      fontWeight: 'bold',
+        color: Colors.primary,
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     row: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
     },
     item: {
-      flex: 1,
-      marginHorizontal: 5,
-      padding: 10,
-      backgroundColor: Colors.white,
-      alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: Colors.white,
+        alignItems: 'center',
     },
 })
