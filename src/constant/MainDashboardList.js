@@ -18,7 +18,7 @@ export const MainDashboardList = [
     id: 2,
     title: 'Road Closure',
     icon: <MaterialIcon name="warning" size={50} color={Colors.blue} />,
-    name:'RoadClouser',
+    name:'RoadClosure',
     viewName:'ViewAnnouncement'
   },
   {

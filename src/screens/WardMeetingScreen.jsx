@@ -19,6 +19,8 @@ import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import BinaryImageModal from '../components/BinaryImageModal';
 import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { AnnounceViewActions } from '../redux/announcementViewSlice';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
@@ -34,7 +36,11 @@ const chunkArray = (array, chunkSize) => {
     return result;
 };
 
-function WardMeetingScreen() {
+function WardMeetingScreen({ route }) {
+
+    const { title, type, editItem } = route.params;
+    console.log(title, type, editItem);
+    const navigation = useNavigation();
 
 
     const dispatch = useDispatch();
@@ -60,6 +66,23 @@ function WardMeetingScreen() {
     const [selectedImages, setSelectedImages] = useState([]);
 
     const [errors, setErrors] = useState({});
+
+
+
+    useEffect(() => {
+        if (editItem) {
+            setFormValues({
+                meetinG_STARTDATE: editItem.meetinG_STARTDATE,
+                meetinG_STARTTIME: editItem.meetinG_STARTTIME,
+                meetinG_ENDDATE: editItem.meetinG_ENDDATE,
+                meetinG_ENDTIME: editItem.meetinG_ENDTIME,
+                location: editItem.location,
+                subject: editItem.subject,
+                meetinG_DETAILS: editItem.meetinG_DETAILS,
+            })
+        }
+    }, [editItem])
+
 
     const handleInputChange = (fieldName, value) => {
         console.log(fieldName, value)
@@ -175,6 +198,13 @@ function WardMeetingScreen() {
 
     const closeModal = () => {
         setShowErrorModal(false);
+
+        if (editItem) {
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+            // navigation.goBack()
+            navigation.navigate('ViewAnnouncement', { title: "Meetings", isEdit: true })
+        }
     };
 
 
@@ -278,29 +308,53 @@ function WardMeetingScreen() {
         try {
 
             await CreateMeetingScrema.validate(formValues, { abortEarly: false });
+            if (editItem) {
 
-            let formData =
-            {
-                "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
-                "meetinG_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
-                "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
-                "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
-                "location": formValues.location,
-                "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                "Subject": formValues.subject,
-                "meetinG_DETAILS": formValues.meetinG_DETAILS,
-                "expirY_DATE": formValues.meetinG_ENDDATE,
-                "userid": loggedUser?.userid,
-                "warD_NO": loggedUser?.warD_NO
-            }
-            let postData = {
-                "meetingInputData": formData,
-                "imG_LIST": selectedImages
-            }
-            console.log('Form data:', formData);
+                let formdata =
+                {
+                    "id": editItem.id,
+                    "refnumber": editItem.refnumber,
+                    "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
+                    "meetinG_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
+                    "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
+                    "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "Subject": formValues.subject,
+                    "meetinG_DETAILS": formValues.meetinG_DETAILS,
+                    // "expirY_DATE": formValues.meetinG_ENDDATE,
+                    // "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+                dispatch(CreateMeetingsApi({ data: formdata, type: 'edit' }));
 
-            dispatch(CreateMeetingsApi(postData));
+                console.log(formdata)
+
+            } else {
+                let formData =
+                {
+                    "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
+                    "meetinG_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
+                    "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
+                    "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
+                    "location": formValues.location,
+                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "Subject": formValues.subject,
+                    "meetinG_DETAILS": formValues.meetinG_DETAILS,
+                    "expirY_DATE": formValues.meetinG_ENDDATE,
+                    "userid": loggedUser?.userid,
+                    "warD_NO": loggedUser?.warD_NO
+                }
+                let postData = {
+                    "meetingInputData": formData,
+                    "imG_LIST": selectedImages
+                }
+                console.log('Form data:', formData);
+
+                dispatch(CreateMeetingsApi({ data: formData, type: 'create' }));
+            }
 
         } catch (error) {
             // Validation failed, set errors
@@ -324,13 +378,13 @@ function WardMeetingScreen() {
                 visible={showErrorModal}
                 ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
                 closeModal={closeModal}
-                onPress={() => { 
+                onPress={() => {
                     dispatch(createMeetingsActions.clear());
                     if (statusCode === 200) {
                         setFormValues();
                         setSelectedImages([])
                         setErrors()
-                       
+
                         closeModal();
                     } else {
                         closeModal();
@@ -341,7 +395,7 @@ function WardMeetingScreen() {
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
                 </View>
-                <Text style={styles.title}>Create Meeting</Text>
+                <Text style={styles.title}>{editItem ? 'Edit ' : 'Create '} Meeting</Text>
                 <View style={styles.inputView}>
                     <Pressable onPress={() => { toggleDatePicker('meetinG_STARTDATE') }}>
                         <TextInput
@@ -357,7 +411,7 @@ function WardMeetingScreen() {
                             editable={false}
                             onPressIn={() => { toggleDatePicker('meetinG_STARTDATE') }}
                         />
-                          <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="calendar" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -383,7 +437,7 @@ function WardMeetingScreen() {
                             editable={false}
                             onPressIn={() => { toggleTimePicker('meetinG_STARTTIME') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialIcon name="timer" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -410,7 +464,7 @@ function WardMeetingScreen() {
                             editable={false}
                             onPressIn={() => { toggleDatePicker('meetinG_ENDDATE') }}
                         />
-                          <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <Icon name="calendar" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -437,7 +491,7 @@ function WardMeetingScreen() {
                             editable={false}
                             onPressIn={() => { toggleTimePicker('meetinG_ENDTIME') }}
                         />
-                         <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                             <MaterialIcon name="timer" size={25} color={Colors.blue} />
                         </View>
                     </Pressable>
@@ -449,22 +503,22 @@ function WardMeetingScreen() {
 
                 <View style={styles.inputView}>
                     {/* {Platform.OS == 'android' && */}
-                        <TextInput
-                            mode="outlined"
-                            label={'Location'}
-                            style={{ backgroundColor: Colors.white }}
-                            placeholder='Location'
-                            value={
-                                formValues?.location ? (formValues?.location) : ''
-                            }
-                            autoCorrect={false}
-                            keyboardType='default'
-                            autoCapitalize="none"
-                            onChangeText={value => handleInputChange('location', value)}
-                            placeholderTextColor={'#11182744'}
+                    <TextInput
+                        mode="outlined"
+                        label={'Location'}
+                        style={{ backgroundColor: Colors.white }}
+                        placeholder='Location'
+                        value={
+                            formValues?.location ? (formValues?.location) : ''
+                        }
+                        autoCorrect={false}
+                        keyboardType='default'
+                        autoCapitalize="none"
+                        onChangeText={value => handleInputChange('location', value)}
+                        placeholderTextColor={'#11182744'}
 
-                        />
-                         <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                    />
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                         <MaterialIcon name="my-location" size={25} color={Colors.blue} />
                     </View>
                     {/* } */}
@@ -517,7 +571,7 @@ function WardMeetingScreen() {
                         placeholderTextColor={'#11182744'}
 
                     />
-                     <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                         <MaterialIcon name="subject" size={25} color={Colors.blue} />
                     </View>
                     {errors?.subject && (
@@ -551,35 +605,35 @@ function WardMeetingScreen() {
                 </View>
 
                 {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
+                    <View key={index1} style={styles.row}>
+                        {item.map((subItem, index) => (
+                            <View key={index} style={[styles.item, { position: 'relative' }]}
 
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
-                  <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
-                    // style={{ flex: 1 }}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        ))}
-
-        <View style={styles.buttonView}>
-          <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-            <Icon name="camera" size={25} color={Colors.blue} />
-            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-              Capture images
-            </Text>
-          </Pressable>
-        </View>
+                            >
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                    <Image
+                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        // style={{ flex: 1 }}
+                                        width={40}
+                                        height={40}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
+                                    <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+                {editItem ? null :
+                <View style={styles.buttonView}>
+                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                        <Icon name="camera" size={25} color={Colors.blue} />
+                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                            Capture images
+                        </Text>
+                    </Pressable>
+                </View>}
 
                 <View style={styles.buttonView}>
                     <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -587,25 +641,25 @@ function WardMeetingScreen() {
                             {isLoading && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
-                            SAVE
+                            {editItem ? 'UPDATE' : 'SAVE'}
                         </Text>
                     </Pressable>
                 </View>
 
                 <BinaryImageModal
-          visible={isBinaryImage}
-          onClose={onCloseBinaryImageModal}
-          binaryImageData={viewBinaryImage}
-        />
+                    visible={isBinaryImage}
+                    onClose={onCloseBinaryImageModal}
+                    binaryImageData={viewBinaryImage}
+                />
 
 
 
-        <CameraModal
-          isVisible={showCameraModal}
-          onClose={closeCameraModal}
-          openCamera={handleCameraLaunch}
-          openGallery={openImagePicker}
-        />
+                <CameraModal
+                    isVisible={showCameraModal}
+                    onClose={closeCameraModal}
+                    openCamera={handleCameraLaunch}
+                    openGallery={openImagePicker}
+                />
 
             </ScrollView>
             <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
@@ -915,31 +969,31 @@ const styles = StyleSheet.create({
         color: Colors.black,
     },
     CameraButton: {
-      backgroundColor: Colors.white,
-      height: 45,
-      borderColor: Colors.black,
-      borderWidth: 0.5,
-      borderRadius: 5,
-      flexDirection: 'row',
-      alignItems: 'center',
-      // justifyContent: 'center',
-      paddingLeft: 10
+        backgroundColor: Colors.white,
+        height: 45,
+        borderColor: Colors.black,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        // justifyContent: 'center',
+        paddingLeft: 10
     },
     CameraText: {
-      color: Colors.primary,
-      fontSize: 18,
-      fontWeight: 'bold',
+        color: Colors.primary,
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     row: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 10,
     },
     item: {
-      flex: 1,
-      marginHorizontal: 5,
-      padding: 10,
-      backgroundColor: Colors.white,
-      alignItems: 'center',
+        flex: 1,
+        marginHorizontal: 5,
+        padding: 10,
+        backgroundColor: Colors.white,
+        alignItems: 'center',
     },
 })

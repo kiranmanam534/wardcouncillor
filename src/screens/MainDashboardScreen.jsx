@@ -45,7 +45,7 @@ const MainDashboardScreen = () => {
 
   const handleNavigation = (navigationName, title) => {
     console.log('====================================');
-    console.log(navigationName);
+    console.log(navigationName,title);
     console.log('====================================');
     dispatch(AnnounceViewActions.clearAnnouncementsData())
 

@@ -227,14 +227,19 @@ export const CreateRoadClosureApi = createAsyncThunk(
 
 export const CreateMeetingsApi = createAsyncThunk(
   'api/CreateMeetingsApi',
-  async formData => {
-    // console.log('api/CreateMeetingsApi', formData);
+  async params => {
+    // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-meeting';
+      if (type == 'edit') {
+        URL = '/api/Meeting/update-meeting-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-meeting`,
-        formData,
+        URL,
+        data,
       );
-
       console.log('response', response.status);
 
       return response.data;
@@ -253,13 +258,20 @@ export const CreateMeetingsApi = createAsyncThunk(
 
 export const CreateWorkshopApi = createAsyncThunk(
   'api/CreateWorkshopApi',
-  async formData => {
-    // console.log('api/CreateWorkshopApi', formData);
+  async params => {
+    // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-workshop';
+      if (type == 'edit') {
+        URL = '/api/Workshop/update-workshop-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-workshop`,
-        formData,
+        URL,
+        data,
       );
+    
 
       console.log('response', response.status);
 
@@ -280,13 +292,20 @@ export const CreateWorkshopApi = createAsyncThunk(
 
 export const CreateMissingPersonApi = createAsyncThunk(
   'api/CreateMissingPersonApi',
-  async formData => {
-    // console.log('api/CreateMissingPersonApi', formData);
+  async params => {
+    // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-missing-person';
+      if (type == 'edit') {
+        URL = '/api/MissingPerson/update-missing-person-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-missing-person`,
-        formData,
+        URL,
+        data,
       );
+    
 
       console.log('response', response.status);
 
@@ -307,13 +326,20 @@ export const CreateMissingPersonApi = createAsyncThunk(
 
 export const CreateWarningsApi = createAsyncThunk(
   'api/CreateWarningsApi',
-  async formData => {
-    // console.log('api/CreateWarningsApi', formData);
+  async params => {
+    // console.log('api/CreateHotspotApi', formData);
+    const { data, type } = params;
+    console.log(data, type)
     try {
+      let URL = '/api/Create/save-warning';
+      if (type == 'edit') {
+        URL = '/api/Warning/update-warning-data';
+      }
       const response = await AxiosInstance.post(
-        `/api/Create/save-warning`,
-        formData,
+        URL,
+        data,
       );
+    
 
       console.log('response', response.status);
 

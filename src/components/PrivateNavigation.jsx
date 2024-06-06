@@ -151,7 +151,7 @@ const PrivateNavigation = () => {
         })}
       />
       <PrivateStack.Screen
-        name="RoadClouser"
+        name="RoadClosure"
         component={RoadClousureScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,

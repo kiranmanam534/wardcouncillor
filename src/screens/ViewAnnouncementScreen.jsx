@@ -179,16 +179,16 @@ const ViewAnnouncementScreen = ({ route }) => {
             URL = `api/Hotspot/delete-hotspot-data?ID=${Id}`;
         } else if (type == 'Healthcare') {
             URL = `api/Healthcare/delete-healthcare-data?ID=${Id}`;
-        } else if (type == 'RoadClouser') {
+        } else if (type == 'Road Closure') {
             URL = `api/RoadClosure/delete-road-closure-data?ID=${Id}`;
-        } else if (type == 'Meter') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
-        } else if (type == 'Customer') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
-        } else if (type == 'Property') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
-        } else if (type == 'MetersNotRead') {
-            URL = `api/Healthcare/get-healthcare-image-data?ID=${Id}`;
+        } else if (type == 'Meetings') {
+            URL = `api/Meeting/delete-meeting-data?ID=${Id}`;
+        } else if (type == 'Missing Person') {
+            URL = `api/MissingPerson/delete-missing-person-data?ID=${Id}`;
+        } else if (type == 'Workshops') {
+            URL = `api/Workshop/delete-workshop-data?ID=${Id}`;
+        } else if (type == 'Warnings') {
+            URL = `api/Warning/delete-warning-data?ID=${Id}`;
         }
         console.log(URL);
 
@@ -258,11 +258,11 @@ const ViewAnnouncementScreen = ({ route }) => {
         // Alert.alert(actionType)
         // console.log("type-->",item)
         if (actionType == 'Images') {
-            navigation.navigate(navigationName, { title: title, type: title, id: item.id })
+            navigation.navigate(navigationName, { title: title, type: type, id: item.id })
         } else if (actionType == "Delete") {
-            handleDeletePostRequest(item.id, title);
+            handleDeletePostRequest(item.id, type);
         } else if (actionType == 'Edit') {
-            navigation.navigate(navigationName, { title: title, type: title, editItem: item })
+            navigation.navigate(navigationName, { title: title, type: type, editItem: item })
         }
     }
 
