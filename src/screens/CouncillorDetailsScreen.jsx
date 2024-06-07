@@ -25,6 +25,7 @@ const CouncillorDetailsScreen = ({ route }) => {
   const { wardType } = route.params;
   console.log(wardType)
   const [showErrorModal, setShowErrorModal] = useState(false);
+  // const [OustandingItem, setOustandingItem] = useState([])
   const loggedUser = useSelector(state => state.loginReducer.items);
   const { items, isLoading, error, statusCode } = useSelector(
     state => state.WardOustandingReducer,
@@ -38,9 +39,16 @@ const CouncillorDetailsScreen = ({ route }) => {
 
 
 
+  // useEffect(()=>{
+  //   setOustandingItem(items)
+  // },[isLoading,items])
+
   const showOutstandingCharts = () => {
     // Alert.alert('showOutstandingCharts')
-    navigation.navigate('OustandingCharts',{title:'Oustanding Charts',itemData:items})
+    // console.log('====================================');
+    // console.log(OustandingItem);
+    // console.log('====================================');
+    navigation.navigate('OustandingCharts',{title:'Oustanding Charts'})
   };
   React.useLayoutEffect(() => {
     if (wardType == 'Outstanding') {

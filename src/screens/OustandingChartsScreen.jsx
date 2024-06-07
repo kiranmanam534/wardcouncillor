@@ -3,12 +3,17 @@ import { PieChart } from "react-native-gifted-charts";
 import { Colors } from "../constant/Colors";
 import { useEffect, useState } from "react";
 import { formattedAmount, formattedCurrency } from "../utility/FormattedAmmount";
+import { useSelector } from "react-redux";
 
 const OustandingChartsScreen = ({ route }) => {
 
+  const { items:OutstandingItems} = useSelector(
+    state => state.WardOustandingReducer,
+  );
 
-  const { title, itemData } = route.params;
-  console.log("itemData-----", title, itemData);
+
+  const { title } = route.params;
+  console.log("OutstandingItems----->", title, OutstandingItems);
 
   const [items, setItems] = useState([])
 
@@ -26,11 +31,11 @@ const OustandingChartsScreen = ({ route }) => {
   const sumReducer = (accumulator, currentValue) => accumulator + parseFloat(currentValue.value);
 
   // Calculate the sum using reduce()
-  const totalSum = itemData?.reduce(sumReducer, 0); // Initial value is 0
+  const totalSum = OutstandingItems?.reduce(sumReducer, 0); // Initial value is 0
 
   console.log('Total Sum:', totalSum); // Output: Total Sum: 60
   useEffect(() => {
-    itemData?.map((item, index) => {
+    OutstandingItems?.map((item, index) => {
       console.log(index, item)
       const newObject = { value: parseInt((parseFloat(item.value) * 100) / totalSum), color: PieColors[index] };
       setItems(prevData => [...prevData, newObject]);
@@ -38,6 +43,19 @@ const OustandingChartsScreen = ({ route }) => {
     });
 
   }, [])
+
+
+  const getFocusedIndex = () => {
+    let maxIndex = 0;
+    let maxValue = OutstandingItems[0].value;
+    OutstandingItems.forEach((item, index) => {
+      if (item.value > maxValue) {
+        maxValue = item.value;
+        maxIndex = index;
+      }
+    });
+    return maxIndex;
+  };
 
   console.log("items-----", items);
 
@@ -51,7 +69,7 @@ const OustandingChartsScreen = ({ route }) => {
     )} ( ${parseFloat((parseFloat(value) * 100) / totalSum).toFixed(2)} `
     return (
 
-      <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+      <View style={{ flexDirection: 'row', marginBottom: 12 }} key={text}>
         <View
           style={{
             height: 18,
@@ -117,6 +135,7 @@ const OustandingChartsScreen = ({ route }) => {
             strokeColor={Colors.white}
             strokeWidth={2}
             donut
+            sectionAutoFocus
             data={
               items
               // [
@@ -133,6 +152,11 @@ const OustandingChartsScreen = ({ route }) => {
             // showText
             // labelsPosition="mid"
             textSize={18}
+            focusOnPress
+            focusIndex={getFocusedIndex()}
+            // inwardExtraLengthForFocused={70}
+        extraRadiusForFocused={20}
+            
             // textBackgroundRadius={Colors.blue}
             showTextBackground={true}
             centerLabelComponent={() => {
@@ -154,7 +178,7 @@ const OustandingChartsScreen = ({ route }) => {
               justifyContent: 'space-evenly',
               marginTop: 20,
             }}>
-            {itemData.map((item, index) => (
+            {OutstandingItems.map((item, index) => (
               renderLegend(item.name, PieColors[index], item.value)
             ))}
             {/* {renderLegend('60 Days', 'lightgreen')}
