@@ -29,6 +29,7 @@ import Customer360Screen from '../screens/Customer360Screen';
 import PaymentHistoryScreen from '../screens/PaymentHistoryScreen';
 import ViewAnnouncementScreen from '../screens/ViewAnnouncementScreen';
 import ViewImagesScreen from '../screens/ViewImagesScreen';
+import OustandingChartsScreen from '../screens/OustandingChartsScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -247,6 +248,16 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="ViewImages"
         component={ViewImagesScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+
+<PrivateStack.Screen
+        name="OustandingCharts"
+        component={OustandingChartsScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,

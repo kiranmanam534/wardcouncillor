@@ -1,7 +1,9 @@
-import { View, StyleSheet, ScrollView, Alert, FlatList, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, FlatList, Text, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
+
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 import CardItem from '../components/CardItem';
 import { GetCouncillorWardDetailsIfoByWardNo } from '../services/councillorWardApi';
@@ -33,6 +35,26 @@ const CouncillorDetailsScreen = ({ route }) => {
   );
 
   console.log("mayorSelectedWardNo", mayorSelectedWardNo)
+
+
+
+  const showOutstandingCharts = () => {
+    // Alert.alert('showOutstandingCharts')
+    navigation.navigate('OustandingCharts',{title:'Oustanding Charts',itemData:items})
+  };
+  React.useLayoutEffect(() => {
+    if (wardType == 'Outstanding') {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={showOutstandingCharts} style={styles.searchButton}>
+            {/* <Text style={styles.searchButtonText}>Search</Text> */}
+            <Icon name="pie-chart" size={25} color={Colors.white} />
+          </TouchableOpacity>
+        ),
+      });
+    }
+  }, [navigation]);
+
   useEffect(() => {
     // getSelectedWardNoByType(wardType,loggedUser?.warD_NO,maylorSelectedWardNo)
     dispatch(councillorWardsActions.clearWards())
@@ -45,7 +67,7 @@ const CouncillorDetailsScreen = ({ route }) => {
       );
     }, 100);
 
-  }, [loggedUser?.warD_NO, wardType,mayorSelectedWardNo]);
+  }, [loggedUser?.warD_NO, wardType, mayorSelectedWardNo]);
 
   const navigateToDetail = (wardType, name) => {
     if (wardType === 'Property' || wardType === 'Customer') {
@@ -87,7 +109,7 @@ const CouncillorDetailsScreen = ({ route }) => {
     <>
 
       {statusCode && statusCode !== 200 &&
-        <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'}/>}
+        <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'} />}
 
       {statusCode && statusCode === 200 && items.length == 0 && (
         <ShowMessageCenter message={'No data found!'} />
@@ -120,7 +142,7 @@ const CouncillorDetailsScreen = ({ route }) => {
               isTownship={false}
               wardType={wardType}
               value={parseFloat(item.value)}
-              isAmount={['Outstanding','OutstandingCategory'].includes(wardType) ? true : false}
+              isAmount={['Outstanding', 'OutstandingCategory'].includes(wardType) ? true : false}
               onPress={() => {
                 navigateToDetail(wardType, item.name);
               }}

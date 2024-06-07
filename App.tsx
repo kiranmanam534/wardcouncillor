@@ -13,6 +13,7 @@ import Imagepickerscreen from './src/Imagepickerscreen'
 import TestHomeScreen from './TestHomeScreen'
 import GoogleAutocompleteScreen from './GoogleAutocompleteScreen'
 import SearchBarScreen from './src/SearchBarScreen'
+import TestCharts from './src/TestCharts'
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
     {/* <TestHomeScreen/> */}
     {/* <GoogleAutocompleteScreen/> */}
     {/* <SearchBarScreen/> */}
+    {/* <TestCharts/> */}
     </Provider>
   )
 }
