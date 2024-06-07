@@ -79,7 +79,7 @@ const OustandingChartsScreen = ({ route }) => {
         <View
           style={{
 
-            marginVertical: 100,
+            // marginVertical: 100,
             marginHorizontal: 5,
             borderRadius: 10,
             paddingVertical: 50,
