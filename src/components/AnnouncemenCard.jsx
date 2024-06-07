@@ -3,7 +3,9 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import { Card, Title, Paragraph, Divider } from 'react-native-paper';
 
+
 import { Colors } from '../constant/Colors';
+import { formatDateTime, formattedTime, getTime } from '../utility/formattedTime';
 const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
   // console.log(item.id,ImageId)
 
@@ -17,7 +19,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.crimE_DATE}
+                : {item.crimE_DATE && formatDateTime(item.crimE_DATE,'date')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
@@ -181,7 +183,7 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.healthcarE_DATE}
+                : {item.healthcarE_DATE && formatDateTime(item.healthcarE_DATE,'date')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
@@ -338,28 +340,28 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Satrt Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.roadclouseR_STARTDATE} 
+                : {item.roadclouseR_STARTDATE && formatDateTime(item.roadclouseR_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Satrt Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.roadclouseR_STARTTIME}
+                : {item.roadclouseR_STARTIME && formatDateTime(item.roadclouseR_STARTIME,'time')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.roadclouseR_ENDDATE}
+                : {item.roadclouseR_ENDDATE && formatDateTime(item.roadclouseR_ENDDATE,'date')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.roadclouseR_ENDTIME}
+                : {item.roadclouseR_ENDTIME && formatDateTime(item.roadclouseR_ENDTIME,'time')}
               </Text>
             </View>
 
@@ -524,28 +526,28 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Satrt Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.meetinG_STARTDATE} 
+                : {item.meetinG_STARTDATE && formatDateTime(item.meetinG_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Satrt Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.meetinG_STARTTIME}
+                : {item.meetinG_STARTIME && formatDateTime(item.meetinG_STARTIME,'time')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.meetinG_ENDDATE}
+                : {item.meetinG_ENDDATE && formatDateTime(item.meetinG_ENDDATE,'date')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.meetinG_ENDTIME}
+                : {item.meetinG_ENDTIME && formatDateTime(item.meetinG_ENDTIME,'time')}
               </Text>
             </View>
 
@@ -710,14 +712,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Satrt Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.missinG_DATE} 
+                : {item.missinG_DATE && formatDateTime(item.missinG_DATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Satrt Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.missinG_TIME}
+                : {item.missinG_TIME && formatDateTime(item.missinG_TIME,'time')}
               </Text>
             </View>
          
@@ -882,28 +884,28 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Satrt Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.workshoP_STARTDATE} 
+                : {item.workshoP_STARTDATE && formatDateTime(item.workshoP_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Satrt Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.workshoP_STARTIME}
+                : {item.workshoP_STARTIME && formatDateTime(item.workshoP_STARTIME,'time')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.workshoP_ENDDATE}
+                : {item.workshoP_ENDDATE && formatDateTime(item.workshoP_ENDDATE,'date')}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>End Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.workshoP_ENDTIME}
+                : {item.workshoP_ENDTIME && formatDateTime(item.workshoP_ENDTIME,'time')}
               </Text>
             </View>
 
@@ -1061,14 +1063,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
               <Text style={styles.contentText}>Satrt Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.warninG_DATE} 
+                : {item.warninG_DATE && formatDateTime(item.warninG_DATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Satrt Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
-                : {item.warninG_TIME}
+                : {item.warninG_TIME && formatDateTime(item.warninG_TIME,'time')}
               </Text>
             </View>
 

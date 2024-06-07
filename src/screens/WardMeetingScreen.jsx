@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { convertToDateTime, getTime } from '../utility/formattedTime';
+import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateMeetingsApi } from '../services/councillorWardApi';
@@ -72,10 +72,10 @@ function WardMeetingScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                meetinG_STARTDATE: editItem.meetinG_STARTDATE,
-                meetinG_STARTTIME: editItem.meetinG_STARTTIME,
-                meetinG_ENDDATE: editItem.meetinG_ENDDATE,
-                meetinG_ENDTIME: editItem.meetinG_ENDTIME,
+                meetinG_STARTDATE: editItem.meetinG_STARTDATE && formatDateTime(editItem.meetinG_STARTDATE,'date'),
+                meetinG_STARTTIME: editItem.meetinG_STARTIME && formatDateTime(editItem.meetinG_STARTIME,'time'),
+                meetinG_ENDDATE: editItem.meetinG_ENDDATE && formatDateTime(editItem.meetinG_ENDDATE,'date'),
+                meetinG_ENDTIME: editItem.meetinG_ENDTIME && formatDateTime(editItem.meetinG_ENDTIME,'time'),
                 location: editItem.location,
                 subject: editItem.subject,
                 meetinG_DETAILS: editItem.meetinG_DETAILS,
@@ -315,9 +315,9 @@ function WardMeetingScreen({ route }) {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
-                    "meetinG_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
+                    "meetinG_STARTIME": convertToDateTime(formValues.meetinG_STARTTIME).toJSON(),
                     "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
-                    "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
+                    "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME).toJSON(),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
                     "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
@@ -327,9 +327,10 @@ function WardMeetingScreen({ route }) {
                     // "userid": loggedUser?.userid,
                     "warD_NO": loggedUser?.warD_NO
                 }
-                dispatch(CreateMeetingsApi({ data: formdata, type: 'edit' }));
 
                 console.log(formdata)
+                dispatch(CreateMeetingsApi({ data: formdata, type: 'edit' }));
+
 
             } else {
                 let formData =

@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { convertToDateTime, getTime } from '../utility/formattedTime';
+import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateWorkshopApi } from '../services/councillorWardApi';
@@ -179,10 +179,10 @@ function WorkshopsScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                workshoP_STARTDATE: editItem.workshoP_STARTDATE,
-                workshoP_STARTTIME: editItem.workshoP_STARTTIME,
-                workshoP_ENDDATE: editItem.workshoP_ENDDATE,
-                workshoP_ENDTIME: editItem.workshoP_ENDTIME,
+                workshoP_STARTDATE: editItem.workshoP_STARTDATE && formatDateTime(editItem.workshoP_STARTDATE,'date'),
+                workshoP_STARTTIME: editItem.workshoP_STARTIME && formatDateTime(editItem.workshoP_STARTIME,'time'),
+                workshoP_ENDDATE: editItem.workshoP_ENDDATE && formatDateTime(editItem.workshoP_ENDDATE,'date'),
+                workshoP_ENDTIME: editItem.workshoP_ENDTIME && formatDateTime(editItem.workshoP_ENDTIME,'time'),
                 location: editItem.location,
                 subject: editItem.subject,
                 workshoP_DETAILS: editItem.workshoP_DETAILS,

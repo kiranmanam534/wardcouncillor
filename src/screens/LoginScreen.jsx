@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   Pressable,
@@ -48,7 +49,8 @@ export default function LoginScreen({ route }) {
   // );
   // const [password, setPassword] = useState('admin');
 
-  console.log(showErrorModal)
+
+  console.log(showErrorModal, error)
 
   const handleLogin = () => {
     console.log(username);
@@ -68,6 +70,7 @@ export default function LoginScreen({ route }) {
   // }, [error, isLoading]);
 
   useEffect(() => {
+    dispatch(authSliceActions.logout());
     if (items) {
       // navigation.navigate('Dashboard');
       dispatch(authSliceActions.login(items));
@@ -76,7 +79,8 @@ export default function LoginScreen({ route }) {
 
   useEffect(() => {
     if (!isLoading && error) {
-      setShowErrorModal(true);
+      // setShowErrorModal(true);
+      Alert.alert("Error", error == "Network error!" ? error : 'username and password wrong.')
     }
   }, [error, isLoading]);
 
@@ -329,7 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     alignSelf: 'center',
     elevation: 1,
-    marginTop:50
+    marginTop: 50
   },
   img: {
     width: screenWidth / 2 - 60,

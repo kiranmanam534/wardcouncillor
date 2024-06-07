@@ -244,7 +244,7 @@ export const CreateMeetingsApi = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      //   console.error('Error:', error.response.data);
+      console.error('Error:', error);
       return error.response.data;
       // Handle error here
       //   Alert.alert(

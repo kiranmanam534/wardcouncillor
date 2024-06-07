@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { convertToDateTime, getTime } from '../utility/formattedTime';
+import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateMissingPersonApi } from '../services/councillorWardApi';
@@ -179,8 +179,8 @@ function MissingPersonsScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                missinG_DATE: editItem.missinG_DATE,
-                missinG_TIME: editItem.missinG_TIME,
+                missinG_DATE: editItem.missinG_DATE && formatDateTime(editItem.missinG_DATE,'date'),
+                missinG_TIME: editItem.missinG_TIME && formatDateTime(editItem.missinG_TIME,'time'),
                 fulL_NAME: editItem.fulL_NAME,
                 location: editItem.location,
                 missingpersoN_DETAILS: editItem.missingpersoN_DETAILS
@@ -196,6 +196,12 @@ function MissingPersonsScreen({ route }) {
 
     const closeModal = () => {
         setShowErrorModal(false);
+        if (editItem) {
+            dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+            // navigation.goBack()
+            navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
+        }
     };
 
 
@@ -293,12 +299,6 @@ function MissingPersonsScreen({ route }) {
     const closeCameraModal = () => {
         setShowCameraModal(false);
 
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
-
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
-        }
     };
 
 
@@ -312,7 +312,7 @@ function MissingPersonsScreen({ route }) {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "missinG_DATE": formValues.missinG_DATE,
-                    "missinG_TIME": convertToDateTime(formValues.missinG_TIME),
+                    "missinG_TIME": convertToDateTime(formValues.missinG_TIME).toJSON(),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
                     "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",

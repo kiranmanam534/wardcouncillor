@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from './api';
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 export const loginApi = createAsyncThunk('api/auth/login', async data => {
   console.log('login.................', AxiosInstance.getUri());
@@ -8,8 +9,15 @@ export const loginApi = createAsyncThunk('api/auth/login', async data => {
     const response = await AxiosInstance.post('api/auth/login', data);
     return response.data;
   } catch (error) {
-    console.log('Error:', error.response.data);
-    throw error.response.data;
+    console.log('Error:', error);
+    if (error.code == 'ERR_NETWORK') {
+      // Alert.alert("Error", "Network error!")
+      // throw { error: { message: 'Network error' } };
+      throw error;
+    } else {
+
+      throw error.response.data;
+    }
   }
 });
 

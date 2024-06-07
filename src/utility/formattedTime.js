@@ -1,3 +1,6 @@
+import moment from 'moment';
+
+
 // Format the time to include AM/PM using toLocaleTimeString
 export const formattedTime = (time) => {
   return time.toLocaleTimeString('en-US', {
@@ -16,6 +19,25 @@ export const getTime = (date) => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   return `${formattedHours}:${formattedMinutes} ${ampm}`;
 };
+
+// Function to format the date-time string
+export const formatDateTime = (dateTimeString, type) => {
+  // const date = new Date(dateTimeString);
+  // let hours = date.getHours();
+  // const minutes = date.getMinutes();
+  // const seconds = date.getSeconds();
+  // const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  // hours = hours % 12;
+  // hours = hours ? hours : 12; // the hour '0' should be '12'
+  // const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+  // const strSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+  // const formattedTime = `${hours}:${strMinutes}:${strSeconds} ${ampm}`;
+  const date = new Date(dateTimeString);
+  const formattedTime = type == 'time' ? moment(date).format('hh:mm A') : moment(date).format('YYYY-MM-DD');
+  return formattedTime;
+}
 
 // Convert time string to Date object
 export const convertToDateTime = (timeString) => {

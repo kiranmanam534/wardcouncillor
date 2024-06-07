@@ -6,7 +6,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { convertToDateTime, getTime } from '../utility/formattedTime';
+import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateWarningsApi } from '../services/councillorWardApi';
@@ -178,8 +178,8 @@ function WarningssScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                warninG_DATE: editItem.warninG_DATE,
-                warninG_TIME: editItem.warninG_TIME,
+                warninG_DATE: editItem.warninG_DATE && formatDateTime(editItem.warninG_DATE,'date'),
+                warninG_TIME: editItem.warninG_TIME && formatDateTime(editItem.warninG_TIME,'time'),
                 location: editItem.location,
                 typeofwarning: editItem.typeofwarning,
                 warninG_DETAILS: editItem.warninG_DETAILS

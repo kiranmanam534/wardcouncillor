@@ -1,6 +1,6 @@
-import {createSlice} from '@reduxjs/toolkit';
-import {loginApi} from '../services/loginApi';
-import {storeData} from '../session/session';
+import { createSlice } from '@reduxjs/toolkit';
+import { loginApi } from '../services/loginApi';
+import { storeData } from '../session/session';
 
 const loginSlice = createSlice({
   name: 'auth/login',
@@ -24,7 +24,7 @@ const loginSlice = createSlice({
     logout: state => {
       state.isLoggedIn = false;
       state.items = null;
-      state.error=null
+      state.error = null
     },
   },
 
@@ -45,7 +45,7 @@ const loginSlice = createSlice({
         state.isLoading = false;
         console.log('rejected');
         console.log(action.error)
-        state.error = action.error?.message;
+        state.error = action.error.code == 'ERR_NETWORK' ? "Network error!" : action.error?.message;
       });
   },
 });

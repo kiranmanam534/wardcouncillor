@@ -76,9 +76,9 @@ const ViewAnnouncementScreen = ({ route }) => {
 
     // console.log("Delete ===>", isDeleteLoading, deleteMessage, deleteStatusCode);
 
-    // console.log('====================================');
-    // console.log(items);
-    // console.log('====================================');
+    console.log('====================================');
+    console.log(items);
+    console.log('====================================');
 
     const toggleSearchBar = () => {
         setSearchVisible(!searchVisible);

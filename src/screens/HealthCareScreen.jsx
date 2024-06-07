@@ -5,7 +5,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { getTime } from '../utility/formattedTime';
+import { formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateHealthCareApi } from '../services/councillorWardApi';
@@ -90,7 +90,7 @@ function HealthCareScreen({ route }) {
   useEffect(() => {
     if (editItem) {
       setFormValues({
-        healthcarE_DATE: editItem.healthcarE_DATE,
+        healthcarE_DATE: editItem.healthcarE_DATE && formatDateTime(editItem.healthcarE_DATE,'date'),
         location: editItem.location,
         healthcarE_DETAILS: editItem.healthcarE_DETAILS
       })

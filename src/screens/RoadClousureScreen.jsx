@@ -7,7 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Colors } from '../constant/Colors'
-import { convertToDateTime, getTime } from '../utility/formattedTime';
+import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import CreateRoadClosureScrema from '../validation/CreateRoadClosureSchema';
@@ -180,10 +180,10 @@ function RoadClousureScreen({ route }) {
         if (editItem) {
 
             setFormValues({
-                roadclouseR_STARTDATE: editItem.roadclouseR_STARTDATE,
-                roadclouseR_STARTTIME: editItem.roadclouseR_STARTTIME,
-                roadclouseR_ENDDATE: editItem.roadclouseR_ENDDATE,
-                roadclouseR_ENDTIME: editItem.roadclouseR_ENDTIME,
+                roadclouseR_STARTDATE: editItem.roadclouseR_STARTDATE && formatDateTime(editItem.roadclouseR_STARTDATE,'date'),
+                roadclouseR_STARTTIME: editItem.roadclouseR_STARTIME && formatDateTime(editItem.roadclouseR_STARTIME,'time'),
+                roadclouseR_ENDDATE: editItem.roadclouseR_ENDDATE && formatDateTime(editItem.roadclouseR_ENDDATE,'date'),
+                roadclouseR_ENDTIME: editItem.roadclouseR_ENDTIME && formatDateTime(editItem.roadclouseR_ENDTIME,'time'),
                 location: editItem.location,
                 roaD_NAME: editItem.roaD_NAME,
                 roadclouseR_DETAILS: editItem.roadclouseR_DETAILS
@@ -308,6 +308,8 @@ function RoadClousureScreen({ route }) {
     const handleSubmit = async () => {
         try {
 
+            console.log(formValues.roadclouseR_STARTDATE,convertToDateTime(formValues.roadclouseR_STARTTIME))
+
             await CreateRoadClosureScrema.validate(formValues, { abortEarly: false });
             if (editItem) {
 
@@ -331,9 +333,9 @@ function RoadClousureScreen({ route }) {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
-                    "roadclouseR_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
+                    "roadclouseR_STARTIME": convertToDateTime(formValues.roadclouseR_STARTTIME).toJSON(),
                     "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
-                    "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
+                    "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME).toJSON(),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
                     "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
@@ -345,6 +347,8 @@ function RoadClousureScreen({ route }) {
                 }
 
                 console.log("Submitted--->",formData)
+
+                // return false;
 
                 dispatch(CreateRoadClosureApi({ data: formData, type: 'edit' }));
 
