@@ -39,8 +39,8 @@ export default function LoginScreen({ route }) {
   const [isShowPwd, setIsShowPwd] = useState(true);
   const [click, setClick] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(useSelector(state => state.loginReducer.error ? true : false));
-  const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'councillor2@gmail.com');
-  // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'mayor@ekurhuleni.gov.za');
+  // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'councillor2@gmail.com');
+  const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'mayor@ekurhuleni.gov.za');
   const [password, setPassword] = useState(title === 'community member' ? 'P@ssword12*' : 'admin');
   // const [username, setUsername] = useState(
   //   title === 'community member'

@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView, Alert, FlatList, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, FlatList, Text, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +10,9 @@ import ShowMessageCenter from '../components/ShowMessageCenter';
 import { councillorAllWardsActions } from '../redux/councillorAllWardsSlice';
 import { MayorSelectedWardActions } from '../redux/MayorSelectedWardSlice';
 import { OustandingCategoriesActions } from '../redux/OustandingCategoriesSlice';
+
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import { Colors } from '../constant/Colors';
 
 const CategoryOutstandingScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -32,6 +35,28 @@ const CategoryOutstandingScreen = ({ route }) => {
         }, 100);
 
     }, [loggedUser?.warD_NO, wardType]);
+
+
+    React.useLayoutEffect(() => {
+        if (['Outstanding','OutstandingCategory'].includes(wardType)) {
+          navigation.setOptions({
+            headerRight: () => (
+              <TouchableOpacity onPress={showOutstandingCharts} style={styles.searchButton}>
+                {/* <Text style={styles.searchButtonText}>Search</Text> */}
+                <Icon name="pie-chart" size={25} color={Colors.white} />
+              </TouchableOpacity>
+            ),
+          });
+        }
+      }, [navigation]);
+
+      const showOutstandingCharts = () => {
+        // console.log('====================================');
+        // console.log(OustandingItem);
+        // console.log('====================================');
+        navigation.navigate('OutstandingCategoriesChart',{title:'Oustanding Categories Charts'})
+      };
+    
 
     const navigateToDetail = (wardType, name) => {
         // handleDetailsNavigation(

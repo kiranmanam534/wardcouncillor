@@ -51,7 +51,7 @@ const CouncillorDetailsScreen = ({ route }) => {
     navigation.navigate('OustandingCharts',{title:'Oustanding Charts'})
   };
   React.useLayoutEffect(() => {
-    if (wardType == 'Outstanding') {
+    if (['Outstanding'].includes(wardType)) {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity onPress={showOutstandingCharts} style={styles.searchButton}>

@@ -30,6 +30,7 @@ import PaymentHistoryScreen from '../screens/PaymentHistoryScreen';
 import ViewAnnouncementScreen from '../screens/ViewAnnouncementScreen';
 import ViewImagesScreen from '../screens/ViewImagesScreen';
 import OustandingChartsScreen from '../screens/OustandingChartsScreen';
+import OutstandingCategoriesChartScreen from '../screens/OutstandingCategoriesChartScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -256,8 +257,8 @@ const PrivateNavigation = () => {
 
 
 <PrivateStack.Screen
-        name="OustandingCharts"
-        component={OustandingChartsScreen}
+        name="OutstandingCategoriesChart"
+        component={OutstandingCategoriesChartScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,
