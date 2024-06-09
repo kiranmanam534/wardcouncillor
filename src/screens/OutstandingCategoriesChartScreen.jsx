@@ -117,7 +117,7 @@ const OutstandingCategoriesChartScreen = ({ route }) => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container,{marginTop:1}]}>
      <View style={{ margin: 10, backgroundColor: Colors.white, padding: 5, borderRadius: 5, }}>
             <Text
               style={{
@@ -138,7 +138,7 @@ const OutstandingCategoriesChartScreen = ({ route }) => {
               )}
             </Text> */}
           </View>
-     <View style={{marginVertical:40}}>
+     <View style={{margin:10,borderWidth:0.5,borderColor:Colors.white,padding:10}}>
      <BarChart
      barStyle={styles.barStyle}
         data={items}
