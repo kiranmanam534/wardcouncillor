@@ -48,10 +48,10 @@ const CouncillorDetailsScreen = ({ route }) => {
     // console.log('====================================');
     // console.log(OustandingItem);
     // console.log('====================================');
-    navigation.navigate('OustandingCharts',{title:'Oustanding Charts'})
+    navigation.navigate('OustandingCharts', { title: 'Oustanding Charts' })
   };
   React.useLayoutEffect(() => {
-    if (['Outstanding'].includes(wardType)) {
+    if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity onPress={showOutstandingCharts} style={styles.searchButton}>

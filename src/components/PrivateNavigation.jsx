@@ -256,7 +256,16 @@ const PrivateNavigation = () => {
       />
 
 
-<PrivateStack.Screen
+      <PrivateStack.Screen
+        name="OustandingCharts"
+        component={OustandingChartsScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+      <PrivateStack.Screen
         name="OutstandingCategoriesChart"
         component={OutstandingCategoriesChartScreen}
         options={({ navigation, route }) => ({
