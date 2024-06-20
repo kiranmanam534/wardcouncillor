@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -21,6 +21,8 @@ import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { apiUrl } from '../constant/CommonData';
+import axios from 'axios';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -48,13 +50,13 @@ function WorkshopsScreen({ route }) {
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({});
+    const [isSubmitted, setIsSubmitted] = useState(false)
     const loggedUser = useSelector(state => state.loginReducer.items);
 
-    const { data, isLoading, error, statusCode } = useSelector(
-        state => state.createWorkhopReducer,
-    );
+    // const { data, isLoading, error, statusCode } = useSelector(
+    //     state => state.createWorkhopReducer,
+    // );
 
-    console.log(statusCode, isLoading);
 
     const [date, setDate] = useState(new Date())
 
@@ -191,30 +193,12 @@ function WorkshopsScreen({ route }) {
     }, [editItem])
 
 
-    useEffect(() => {
-        if (!isLoading && error) {
-            setShowErrorModal(true);
-        }
-    }, [error, isLoading]);
-
-    const closeModal = () => {
-        setShowErrorModal(false);
-
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
-
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Workshops", isEdit: true })
-        }
-    };
-
-
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
         };
 
         launchImageLibrary(options, handleResponse);
@@ -224,9 +208,9 @@ function WorkshopsScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
 
         };
 
@@ -241,37 +225,7 @@ function WorkshopsScreen({ route }) {
             console.log('Image picker error: ', response.error);
         } else {
             console.log('====================================');
-            // console.log(response);
-            console.log('====================================');
-            let imageUri = response.uri || response.assets?.[0]?.uri;
-            // setSelectedImage(imageUri);
-
-            // Convert to binary
-            const asset = response.assets[0];
-            const binary = asset.base64;
-            const base64String = 'data:image/jpg;base64,' + binary;
-
-            // console.log(base64String)
-
-            const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-            setSelectedImages([...selectedImages,
-            {
-                "id": 0,
-                "image": binary,
-                "extension": fileExtension,
-                "device": Platform.OS,
-                "useR_ID": loggedUser?.userid
-            }
-
-                //   {
-                //   "filename": response.assets?.[0]?.fileName,
-                //   "image": binary,
-                //   "extension": fileExtension
-                // }
-            ]);
-
-
-            // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+            setSelectedImages([...selectedImages, response.assets]);
 
         }
     };
@@ -304,18 +258,45 @@ function WorkshopsScreen({ route }) {
         setShowCameraModal(false);
     };
 
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+                        if (type === 'Success' && !editItem) {
+                            dispatch(createWorkshopActions.clear());
+                            setFormValues();
+                            setSelectedImages([])
+                            setErrors()
+                        }
+                        else if (editItem) {
+                            dispatch(AnnounceViewActions.clearAnnouncementsData())
+                            navigation.navigate('ViewAnnouncement', { title: "Workshops", isEdit: true })
+                        }
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
     const handleSubmit = async () => {
         try {
 
             await CreateWorkshopSchema.validate(formValues, { abortEarly: false });
+            setIsSubmitted(true);
             if (editItem) {
 
-                let formdata = {
+                let data = {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "workshoP_STARTDATE": formValues.workshoP_STARTDATE,
                     "workshoP_STARTIME": convertToDateTime(formValues.workshoP_STARTTIME),
-                    "workshoP_ENDDATE": formValues.workshoP_STARTDATE,
+                    "workshoP_ENDDATE": formValues.workshoP_ENDDATE,
                     "workshoP_ENDTIME": convertToDateTime(formValues.workshoP_ENDTIME),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
@@ -324,32 +305,84 @@ function WorkshopsScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
-                dispatch(CreateWorkshopApi({ data: formdata, type: 'edit' }));
+                // dispatch(CreateWorkshopApi({ data: formdata, type: 'edit' }));
 
-                console.log(formdata)
+                console.log(data)
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Workshop/update-workshop-data`, data);
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Workshop has been updated successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
 
             } else {
-                let formData =
+                const formData = new FormData();
+                let postData =
                 {
-                    "workshoP_STARTDATE": formValues.workshoP_STARTDATE,
-                    "workshoP_STARTTIME": convertToDateTime(formValues.workshoP_STARTTIME),
-                    "workshoP_ENDDATE": formValues.workshoP_STARTDATE,
-                    "workshoP_ENDTIME": convertToDateTime(formValues.workshoP_ENDTIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "workshoP_DETAILS": formValues.workshoP_DETAILS,
-                    "expirY_DATE": formValues.workshoP_ENDDATE,
-                    "userid": loggedUser?.userid,
-                    "warD_NO": loggedUser?.warD_NO
+                    "WORKSHOP_STARTDATE": formValues.workshoP_STARTDATE,
+                    "WORKSHOP_STARTTIME": convertToDateTime(formValues.workshoP_STARTTIME),
+                    "WORKSHOP_ENDDATE": formValues.workshoP_ENDDATE,
+                    "WORKSHOP_ENDTIME": convertToDateTime(formValues.workshoP_ENDTIME),
+                    "LOCATION": formValues.location,
+                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "WORKSHOP_DETAILS": formValues.workshoP_DETAILS,
+                    "EXPIRY_DATE": formValues.workshoP_ENDDATE,
+                    "USERID": loggedUser?.userid,
+                    "WARD_NO": loggedUser?.warD_NO
                 }
-                let postData = {
-                    "workshopInputData": formData,
-                    "imG_LIST": selectedImages
-                }
-                console.log('Form data:', formData);
+                // let postData = {
+                //     "workshopInputData": formData,
+                //     "imG_LIST": selectedImages
+                // }
+                console.log('Form data:', postData);
 
-                dispatch(CreateWorkshopApi({ data: postData, type: 'create' }));
+                // dispatch(CreateWorkshopApi({ data: postData, type: 'create' }));
+                if (selectedImages.length > 0) {
+                    selectedImages.forEach((image, index) => {
+                        console.log(`image===> ${index}`, image)
+                        formData.append(`files`, {
+                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+                            type: image[0].type,
+                            name: image[0].fileName || `image_${index}.jpg`
+                        });
+                    });
+                }
+                formData.append("device", Platform.OS);
+                formData.append("workshopInputData", JSON.stringify(postData))
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Create/save-workshop`,
+
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+
+
+                        });
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Workshop has been saved successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
             }
 
         } catch (error) {
@@ -361,6 +394,7 @@ function WorkshopsScreen({ route }) {
                 console.log(e.message);
             });
             setErrors(validationErrors);
+            setIsSubmitted(false);
         }
     };
 
@@ -370,7 +404,7 @@ function WorkshopsScreen({ route }) {
 
 
         <SafeAreaView style={styles.container}>
-            <ErrorModal
+            {/* <ErrorModal
                 visible={showErrorModal}
                 ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
                 closeModal={closeModal}
@@ -386,7 +420,7 @@ function WorkshopsScreen({ route }) {
                         closeModal();
                     }
                 }}
-            />
+            /> */}
             <ScrollView>
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
@@ -583,9 +617,9 @@ function WorkshopsScreen({ route }) {
                             <View key={index} style={[styles.item, { position: 'relative' }]}
 
                             >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                                     <Image
-                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        source={{ uri: subItem[0].uri }}
                                         // style={{ flex: 1 }}
                                         width={40}
                                         height={40}
@@ -609,9 +643,11 @@ function WorkshopsScreen({ route }) {
                 </View>}
 
                 <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => handleSubmit()}>
+                    <Pressable style={styles.button} onPress={() => {
+                        if (!isSubmitted) { handleSubmit() }
+                    }}>
                         <Text style={styles.buttonText}>
-                            {isLoading && (
+                            {isSubmitted && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
                             {editItem ? 'UPDATE' : 'SAVE'}
@@ -621,6 +657,7 @@ function WorkshopsScreen({ route }) {
 
                 <BinaryImageModal
                     visible={isBinaryImage}
+                    isBinary={false}
                     onClose={onCloseBinaryImageModal}
                     binaryImageData={viewBinaryImage}
                 />

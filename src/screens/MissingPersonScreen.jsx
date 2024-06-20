@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -21,6 +21,8 @@ import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { apiUrl } from '../constant/CommonData';
+import axios from 'axios';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -54,18 +56,19 @@ function MissingPersonsScreen({ route }) {
         state => state.createMissingPersonReducer,
     );
 
-    console.log(statusCode, isLoading);
 
     const [date, setDate] = useState(new Date())
 
     const [showDatePicker, setShowDatePicker] = useState('');
     const [showTimePicker, setShowTimePicker] = useState('');
-    const [showErrorModal, setShowErrorModal] = useState(false);
+    // const [showErrorModal, setShowErrorModal] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false)
 
     const [showCameraModal, setShowCameraModal] = useState(false);
     const [viewBinaryImage, setViewBinaryImage] = useState(null);
     const [isBinaryImage, setIsBinaryImage] = useState(false);
     const [selectedImages, setSelectedImages] = useState([]);
+
 
     const [errors, setErrors] = useState({});
 
@@ -179,8 +182,8 @@ function MissingPersonsScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                missinG_DATE: editItem.missinG_DATE && formatDateTime(editItem.missinG_DATE,'date'),
-                missinG_TIME: editItem.missinG_TIME && formatDateTime(editItem.missinG_TIME,'time'),
+                missinG_DATE: editItem.missinG_DATE && formatDateTime(editItem.missinG_DATE, 'date'),
+                missinG_TIME: editItem.missinG_TIME && formatDateTime(editItem.missinG_TIME, 'time'),
                 fulL_NAME: editItem.fulL_NAME,
                 location: editItem.location,
                 missingpersoN_DETAILS: editItem.missingpersoN_DETAILS
@@ -188,29 +191,29 @@ function MissingPersonsScreen({ route }) {
         }
     }, [editItem])
 
-    useEffect(() => {
-        if (!isLoading && error) {
-            setShowErrorModal(true);
-        }
-    }, [error, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && error) {
+    //         setShowErrorModal(true);
+    //     }
+    // }, [error, isLoading]);
 
-    const closeModal = () => {
-        setShowErrorModal(false);
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
+    // const closeModal = () => {
+    //     setShowErrorModal(false);
+    //     if (editItem) {
+    //         dispatch(AnnounceViewActions.clearAnnouncementsData())
 
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
-        }
-    };
+    //         // navigation.goBack()
+    //         navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
+    //     }
+    // };
 
 
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
         };
 
         launchImageLibrary(options, handleResponse);
@@ -220,9 +223,9 @@ function MissingPersonsScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
 
         };
 
@@ -237,38 +240,7 @@ function MissingPersonsScreen({ route }) {
             console.log('Image picker error: ', response.error);
         } else {
             console.log('====================================');
-            // console.log(response);
-            console.log('====================================');
-            let imageUri = response.uri || response.assets?.[0]?.uri;
-            // setSelectedImage(imageUri);
-
-            // Convert to binary
-            const asset = response.assets[0];
-            const binary = asset.base64;
-            const base64String = 'data:image/jpg;base64,' + binary;
-
-            // console.log(base64String)
-
-            const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-            setSelectedImages([...selectedImages,
-            {
-                "id": 0,
-                "image": binary,
-                "extension": fileExtension,
-                "device": Platform.OS,
-                "useR_ID": loggedUser?.userid
-            }
-
-                //   {
-                //   "filename": response.assets?.[0]?.fileName,
-                //   "image": binary,
-                //   "extension": fileExtension
-                // }
-            ]);
-
-
-            // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
-
+            setSelectedImages([...selectedImages, response.assets]);
         }
     };
 
@@ -301,14 +273,41 @@ function MissingPersonsScreen({ route }) {
 
     };
 
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+                        if (type === 'Success' && !editItem) {
+                            dispatch(createMissingPersonActions.clear());
+                            setFormValues();
+                            setSelectedImages([])
+                            setErrors()
+                        }
+                        else if (editItem) {
+                            dispatch(AnnounceViewActions.clearAnnouncementsData())
+                            navigation.navigate('ViewAnnouncement', { title: "Missing Person", isEdit: true })
+                        }
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
 
     const handleSubmit = async () => {
         try {
 
             await CreateMissingPersonSchema.validate(formValues, { abortEarly: false });
+            setIsSubmitted(true);
             if (editItem) {
 
-                let formdata = {
+                let data = {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "missinG_DATE": formValues.missinG_DATE,
@@ -323,31 +322,84 @@ function MissingPersonsScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
-                dispatch(CreateMissingPersonApi({ data: formdata, type: 'edit' }));
+                // dispatch(CreateMissingPersonApi({ data: formdata, type: 'edit' }));
 
-                console.log(formdata)
+                console.log(data)
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/MissingPerson/update-missing-person-data`, data);
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Missing Person data has been updated successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
 
             } else {
-                let formData =
+                const formData = new FormData();
+                let postData =
                 {
-                    "missinG_DATE": formValues.missinG_DATE,
-                    "missinG_TIME": convertToDateTime(formValues.missinG_TIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "fulL_NAME": formValues.fulL_NAME,
-                    "missingpersoN_DETAILS": formValues.missingpersoN_DETAILS,
-                    "expirY_DATE": formValues.missinG_DATE,
-                    "userid": loggedUser?.userid,
-                    "warD_NO": loggedUser?.warD_NO
+                    "MISSING_DATE": formValues.missinG_DATE,
+                    "MISSING_TIME": convertToDateTime(formValues.missinG_TIME),
+                    "LOCATION": formValues.location,
+                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "FULL_NAME": formValues.fulL_NAME,
+                    "MISSINGPERSON_DETAILS": formValues.missingpersoN_DETAILS,
+                    "EXPIRY_DATE": formValues.missinG_DATE,
+                    "USERID": loggedUser?.userid,
+                    "WARD_NO": loggedUser?.warD_NO
                 }
-                let postData = {
-                    "missingPersonInputData": formData,
-                    "imG_LIST": selectedImages
-                }
-                console.log('Form data:', formData);
+                // let postData = {
+                //     "missingPersonInputData": formData,
+                //     "imG_LIST": selectedImages
+                // }
+                console.log('Form data:', postData);
 
-                dispatch(CreateMissingPersonApi({ data: postData, type: 'create' }));
+                // dispatch(CreateMissingPersonApi({ data: postData, type: 'create' }));
+
+                if (selectedImages.length > 0) {
+                    selectedImages.forEach((image, index) => {
+                        console.log(`image===> ${index}`, image)
+                        formData.append(`files`, {
+                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+                            type: image[0].type,
+                            name: image[0].fileName || `image_${index}.jpg`
+                        });
+                    });
+                }
+                formData.append("device", Platform.OS);
+                formData.append("missingPersonInputData", JSON.stringify(postData))
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Create/save-missing-person`,
+
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+
+
+                        });
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Missing Person data has been saved successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
             }
 
         } catch (error) {
@@ -368,7 +420,7 @@ function MissingPersonsScreen({ route }) {
 
 
         <SafeAreaView style={styles.container}>
-            <ErrorModal
+            {/* <ErrorModal
                 visible={showErrorModal}
                 ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
                 closeModal={closeModal}
@@ -384,7 +436,7 @@ function MissingPersonsScreen({ route }) {
                         closeModal();
                     }
                 }}
-            />
+            /> */}
             <ScrollView>
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
@@ -553,9 +605,9 @@ function MissingPersonsScreen({ route }) {
                             <View key={index} style={[styles.item, { position: 'relative' }]}
 
                             >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                                     <Image
-                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        source={{ uri: subItem[0].uri }}
                                         // style={{ flex: 1 }}
                                         width={40}
                                         height={40}
@@ -569,19 +621,21 @@ function MissingPersonsScreen({ route }) {
                     </View>
                 ))}
                 {editItem ? null :
-                <View style={styles.buttonView}>
-                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-                        <Icon name="camera" size={25} color={Colors.blue} />
-                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-                            Capture images
-                        </Text>
-                    </Pressable>
-                </View>}
+                    <View style={styles.buttonView}>
+                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                            <Icon name="camera" size={25} color={Colors.blue} />
+                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                                Capture images
+                            </Text>
+                        </Pressable>
+                    </View>}
 
                 <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => handleSubmit()}>
+                    <Pressable style={styles.button} onPress={() => {
+                        if (!isSubmitted) { handleSubmit() }
+                    }}>
                         <Text style={styles.buttonText}>
-                            {isLoading && (
+                            {isSubmitted && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
                             {editItem ? 'UPDATE' : 'SAVE'}
@@ -591,6 +645,7 @@ function MissingPersonsScreen({ route }) {
 
                 <BinaryImageModal
                     visible={isBinaryImage}
+                    isBinary={false}
                     onClose={onCloseBinaryImageModal}
                     binaryImageData={viewBinaryImage}
                 />

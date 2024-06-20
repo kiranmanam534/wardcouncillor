@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -23,6 +23,8 @@ import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { apiUrl } from '../constant/CommonData';
+import axios from 'axios';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -48,6 +50,7 @@ function RoadClousureScreen({ route }) {
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({});
+    const [isSubmitted, setIsSubmitted] = useState(false)
     const loggedUser = useSelector(state => state.loginReducer.items);
 
     const { data, isLoading, error, statusCode } = useSelector(
@@ -192,29 +195,29 @@ function RoadClousureScreen({ route }) {
     }, [editItem])
 
 
-    useEffect(() => {
-        if (!isLoading && error) {
-            setShowErrorModal(true);
-        }
-    }, [error, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && error) {
+    //         setShowErrorModal(true);
+    //     }
+    // }, [error, isLoading]);
 
-    const closeModal = () => {
-        setShowErrorModal(false);
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
+    // const closeModal = () => {
+    //     setShowErrorModal(false);
+    //     if (editItem) {
+    //         dispatch(AnnounceViewActions.clearAnnouncementsData())
 
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Road Closure", isEdit: true })
-        }
-    };
+    //         // navigation.goBack()
+    //         navigation.navigate('ViewAnnouncement', { title: "Road Closure", isEdit: true })
+    //     }
+    // };
 
 
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
         };
 
         launchImageLibrary(options, handleResponse);
@@ -224,9 +227,9 @@ function RoadClousureScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
 
         };
 
@@ -241,43 +244,10 @@ function RoadClousureScreen({ route }) {
             console.log('Image picker error: ', response.error);
         } else {
             console.log('====================================');
-            // console.log(response);
-            console.log('====================================');
-            let imageUri = response.uri || response.assets?.[0]?.uri;
-            // setSelectedImage(imageUri);
-
-            // Convert to binary
-            const asset = response.assets[0];
-            const binary = asset.base64;
-            const base64String = 'data:image/jpg;base64,' + binary;
-
-            // console.log(base64String)
-
-            const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-            setSelectedImages([...selectedImages,
-            {
-                "id": 0,
-                "image": binary,
-                "extension": fileExtension,
-                "device": Platform.OS,
-                "useR_ID": loggedUser?.userid
-            }
-
-                //   {
-                //   "filename": response.assets?.[0]?.fileName,
-                //   "image": binary,
-                //   "extension": fileExtension
-                // }
-            ]);
-
-
-            // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+            setSelectedImages([...selectedImages, response.assets]);
 
         }
     };
-
-
-
 
     const removeSelectedImage = (index) => {
         setSelectedImages(
@@ -286,7 +256,6 @@ function RoadClousureScreen({ route }) {
             })
         );
     }
-
 
     const viewImageonModal = (binaryImg) => {
         setIsBinaryImage(true)
@@ -298,43 +267,52 @@ function RoadClousureScreen({ route }) {
         setIsBinaryImage(false)
     }
 
-
-
     const closeCameraModal = () => {
         setShowCameraModal(false);
     };
 
 
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+                        if (type === 'Success' && !editItem) {
+                            dispatch(createRoadClosureActions.clear());
+                            setFormValues();
+                            setSelectedImages([])
+                            setErrors()
+                        }
+                        else if (editItem && type!=='Error') {
+                            dispatch(AnnounceViewActions.clearAnnouncementsData())
+                            navigation.navigate('ViewAnnouncement', { title: "Road Closure", isEdit: true })
+                        }
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
     const handleSubmit = async () => {
         try {
 
-            console.log(formValues.roadclouseR_STARTDATE,convertToDateTime(formValues.roadclouseR_STARTTIME))
+            // console.log(formValues.roadclouseR_STARTDATE,convertToDateTime(formValues.roadclouseR_STARTTIME))
 
             await CreateRoadClosureScrema.validate(formValues, { abortEarly: false });
+            setIsSubmitted(true);
             if (editItem) {
-
-                // let formData={
-                //     "id": 7,
-                //     "refnumber": "string",
-                //     "roadclouseR_STARTDATE": "2024-06-05T16:55:21.947Z",
-                //     "roadclouseR_STARTTIME": "string",
-                //     "roadclouseR_ENDDATE": "2024-06-05T16:55:21.947Z",
-                //     "roadclouseR_ENDTIME": "string",
-                //     "location": "string",
-                //     "latitude": "string",
-                //     "longitude": "string",
-                //     "roaD_NAME": "string",
-                //     "roadclouseR_DETAILS": "string",
-                //     "warD_NO": "string"
-                //   }
-
-                let formData =
+                let data =
                 {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
                     "roadclouseR_STARTIME": convertToDateTime(formValues.roadclouseR_STARTTIME).toJSON(),
-                    "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
+                    "roadclouseR_ENDDATE": formValues.roadclouseR_ENDDATE,
                     "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME).toJSON(),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
@@ -346,49 +324,90 @@ function RoadClousureScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
-                console.log("Submitted--->",formData)
+                console.log("Submitted--->",data)
 
                 // return false;
 
-                dispatch(CreateRoadClosureApi({ data: formData, type: 'edit' }));
+                // dispatch(CreateRoadClosureApi({ data: formData, type: 'edit' }));
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/RoadClosure/update-road-closure-data`, data);
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Road Closure has been updated successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
 
 
             } else {
-                let formData =
+               
+                const formData = new FormData();
+                let postData =
                 {
-                    "roadclouseR_STARTDATE": formValues.roadclouseR_STARTDATE,
-                    "roadclouseR_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
-                    "roadclouseR_ENDDATE": formValues.roadclouseR_STARTDATE,
-                    "roadclouseR_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "roaD_NAME": formValues.roaD_NAME,
-                    "roadclouseR_DETAILS": formValues.roadclouseR_DETAILS,
-                    "expirY_DATE": formValues.roadclouseR_ENDDATE,
-                    "userid": loggedUser?.userid,
-                    "warD_NO": loggedUser?.warD_NO
+                    "ROADCLOUSER_STARTDATE": formValues.roadclouseR_STARTDATE,
+                    "ROADCLOUSER_STARTTIME": convertToDateTime(formValues.roadclouseR_STARTTIME),
+                    "ROADCLOUSER_ENDDATE": formValues.roadclouseR_ENDDATE,
+                    "ROADCLOUSER_ENDTIME": convertToDateTime(formValues.roadclouseR_ENDTIME),
+                    "LOCATION": formValues.location,
+                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "ROAD_NAME": formValues.roaD_NAME,
+                    "ROADCLOUSER_DETAILS": formValues.roadclouseR_DETAILS,
+                    "EXPIRY_DATE": formValues.roadclouseR_ENDDATE,
+                    "USERID": loggedUser?.userid,
+                    "WARD_NO": loggedUser?.warD_NO
                 }
-
-
-
-
-
+                // let postData = {
+                //     "roadClouserInputData": formData,
+                //     "imG_LIST": selectedImages
                 // }
+                console.log('Form data:', postData);
 
+                // dispatch(CreateRoadClosureApi({ data: postData, type: 'create' }));
 
-                // formValues.expirY_DATE = formValues.roadclouseR_ENDDATE;
-
-                // formValues.roadclouseR_STARTTIME = new Date(formValues.roadclouseR_STARTTIME);
-                // formValues.roadclouseR_ENDTIME = new Date(formValues.roadclouseR_ENDTIME)
-
-                let postData = {
-                    "roadClouserInputData": formData,
-                    "imG_LIST": selectedImages
+                if (selectedImages.length > 0) {
+                    selectedImages.forEach((image, index) => {
+                        console.log(`image===> ${index}`, image)
+                        formData.append(`files`, {
+                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+                            type: image[0].type,
+                            name: image[0].fileName || `image_${index}.jpg`
+                        });
+                    });
                 }
-                console.log('Form data:', formData);
+                formData.append("device", Platform.OS);
+                formData.append("roadClouserInputData", JSON.stringify(postData))
 
-                dispatch(CreateRoadClosureApi({ data: postData, type: 'create' }));
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Create/save-road-clouser`,
+
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+
+
+                        });
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Meeting has been saved successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
             }
 
         } catch (error) {
@@ -400,6 +419,7 @@ function RoadClousureScreen({ route }) {
                 console.log(e.message);
             });
             setErrors(validationErrors);
+            setIsSubmitted(false);
         }
     };
 
@@ -409,7 +429,7 @@ function RoadClousureScreen({ route }) {
 
 
         <SafeAreaView style={styles.container}>
-            <ErrorModal
+            {/* <ErrorModal
                 visible={showErrorModal}
                 ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
                 closeModal={closeModal}
@@ -424,7 +444,7 @@ function RoadClousureScreen({ route }) {
                         closeModal();
                     }
                 }}
-            />
+            /> */}
             <ScrollView>
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
@@ -646,9 +666,9 @@ function RoadClousureScreen({ route }) {
                             <View key={index} style={[styles.item, { position: 'relative' }]}
 
                             >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                                     <Image
-                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        source={{ uri: subItem[0].uri }}
                                         // style={{ flex: 1 }}
                                         width={40}
                                         height={40}
@@ -672,9 +692,11 @@ function RoadClousureScreen({ route }) {
                     </View>}
 
                 <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => handleSubmit()}>
+                    <Pressable style={styles.button} onPress={() => {
+                        if (!isSubmitted) { handleSubmit() }
+                    }}>
                         <Text style={styles.buttonText}>
-                            {isLoading && (
+                            {isSubmitted && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
                             {editItem ? 'UPDATE' : 'SAVE'}
@@ -684,6 +706,7 @@ function RoadClousureScreen({ route }) {
 
                 <BinaryImageModal
                     visible={isBinaryImage}
+                    isBinary={false}
                     onClose={onCloseBinaryImageModal}
                     binaryImageData={viewBinaryImage}
                 />

@@ -14,31 +14,38 @@ import {
 } from 'react-native-app-auth';
 
 
-// const config = {
-//   issuer: 'https://102.130.113.92:9443/oauth2/token',
-//   clientId: 'ZfU9zZthjvNLV_gLXN1bNVlOUjoa',
-//   // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
-//   redirectUrl: 'wardcouncillor://oauth',  
-//   scopes: ['openid', 'profile', 'address', 'phone'],
-//   serviceConfiguration: {
-// 		authorizationEndpoint: 'https://102.130.113.92:9443/oauth2/authorize',
-// 		tokenEndpoint: 'https://102.130.113.92:9443/oauth2/accesstoken',
-// 		revocationEndpoint: 'https://102.130.113.92:9443/oauth2/deauthorize',
-//     // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
-// 	}
-// };
+const config1 = {
+  issuer: 'https://102.130.113.92:9443/oauth2/token',
+  clientId: 'ZfU9zZthjvNLV_gLXN1bNVlOUjoa',
+  // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
+  redirectUrl: 'wardcouncillor://oauth',  
+  scopes: ['openid', 'profile', 'address', 'phone'],
+  serviceConfiguration: {
+		authorizationEndpoint: 'https://102.130.113.92:9443/oauth2/authorize',
+		tokenEndpoint: 'https://102.130.113.92:9443/oauth2/accesstoken',
+		revocationEndpoint: 'https://102.130.113.92:9443/oauth2/deauthorize',
+    // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
+	}
+};
 
 const config = {
   issuer: 'https://coeiamtest.ekurhuleni.gov.za',
   clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
-  discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
-  redirectUrl: 'wardcouncillor://oauth',  
+  redirectUrl: 'com.wardcouncillor://oauth',
+  scopes: ['openid', 'profile', 'email'],
+};
+
+const config11 = {
+  issuer: 'https://coeiamtest.ekurhuleni.gov.za',
+  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+  // discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
+  redirectUrl: 'com.wardcouncillor://oauth',  
   scopes: ['openid', 'profile', 'address', 'phone'],
   serviceConfiguration: {
 		authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/authorize',
 		tokenEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/accesstoken',
 		revocationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/deauthorize',
-    discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
+    // discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
 	}
 };
 const config2 = {
@@ -55,13 +62,48 @@ const config2 = {
 
 export default function Test() {
 
+
+  const authenticate = async () => {
+    try {
+      const response = await fetch('https://coeiamtest.ekurhuleni.gov.za/oauth2/authorize', {
+        method: 'POST',
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
+        body: JSON.stringify({
+          issuer: 'https://coeiamtest.ekurhuleni.gov.za',
+          clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+          redirectUrl: 'wardcouncillor://oauth',
+          scopes: ['openid', 'profile', 'address', 'phone'],
+          serviceConfiguration: {
+            authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/authorize',
+            tokenEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/accesstoken',
+            revocationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/deauthorize',
+          }
+        }),
+      });
+      console.log('====================================');
+      console.log(response);
+      console.log('====================================');
+      const responseData = await response.text();
+      console.log('Raw response:', responseData);
+      const result = JSON.parse(responseData); // Assuming JSON response
+      console.log('Parsed result:', result);
+    } catch (error) {
+      console.error('Error fetching or parsing response:', JSON.stringify(error));
+    }
+  };
+
+
+
   const handleSubmitPress = async () => {
     console.log("here!!")
     try {
-      const result = await authorize(config);
-      // result includes accessToken, accessTokenExpirationDate and refreshToken
-      console.log("*************");
-      console.log("auth", result);
+      authenticate()
+      // const result = await authorize(config);
+      // // result includes accessToken, accessTokenExpirationDate and refreshToken
+      // console.log("*************");
+      // console.log("auth", result);
     } catch (error) {
       console.log("******authorizeError*******");
       console.log('====================================');

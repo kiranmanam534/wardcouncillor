@@ -52,17 +52,16 @@ function WardMeetingScreen({ route }) {
 
     const loggedUser = useSelector(state => state.loginReducer.items);
 
-    const { data, isLoading, error, statusCode } = useSelector(
-        state => state.createMeetingReducer,
-    );
+    // const { data, isLoading, error, statusCode } = useSelector(
+    //     state => state.createMeetingReducer,
+    // );
 
-    console.log(statusCode, isLoading);
 
     const [date, setDate] = useState(new Date())
 
     const [showDatePicker, setShowDatePicker] = useState('');
     const [showTimePicker, setShowTimePicker] = useState('');
-    const [showErrorModal, setShowErrorModal] = useState(false);
+    // const [showErrorModal, setShowErrorModal] = useState(false);
 
     const [showCameraModal, setShowCameraModal] = useState(false);
     const [viewBinaryImage, setViewBinaryImage] = useState(null);
@@ -194,22 +193,6 @@ function WardMeetingScreen({ route }) {
         }, 50);
     }
 
-    useEffect(() => {
-        if (!isLoading && error) {
-            setShowErrorModal(true);
-        }
-    }, [error, isLoading]);
-
-    const closeModal = () => {
-        setShowErrorModal(false);
-
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
-
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Meetings", isEdit: true })
-        }
-    };
 
 
     const openImagePicker = () => {
@@ -310,9 +293,8 @@ function WardMeetingScreen({ route }) {
         try {
 
             await CreateMeetingScrema.validate(formValues, { abortEarly: false });
+            setIsSubmitted(true);
             if (editItem) {
-                setIsSubmitted(true);
-
                 let data =
                 {
                     "id": editItem.id,
@@ -349,7 +331,6 @@ function WardMeetingScreen({ route }) {
                 }
 
             } else {
-                setIsSubmitted(true);
                 const formData = new FormData();
                 let postData =
                 {

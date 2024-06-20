@@ -27,9 +27,9 @@
       android:label="@string/app_name"
       android:icon="@mipmap/councillor_ward"
       android:roundIcon="@mipmap/councillor_ward"
-      android:allowBackup="false"
+      android:allowBackup="true"
       android:theme="@style/AppTheme"
-       android:usesCleartextTraffic="true">
+       android:usesCleartextTraffic="true"> 
       <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAI6lFoXVFONS76oYT7XmjzOypAvJq6Kb4"/>
@@ -45,17 +45,16 @@
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
          <intent-filter>
-    <action android:name="android.intent.action.VIEW" />
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-    <data
-      android:host="oauth"
-      android:scheme="wardcouncillor" />
-  </intent-filter>
-        <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+         <intent-filter>
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="com.wardcouncillor" />
+  </intent-filter>
+       
       </activity>
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
     <activity android:name="net.openid.appauth.RedirectUriReceiverActivity" android:exported="true"/>

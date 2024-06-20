@@ -21,6 +21,7 @@ import CameraModal from '../components/CameraModal';
 import BinaryImageModal from '../components/BinaryImageModal';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import { apiUrl } from '../constant/CommonData';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -53,13 +54,15 @@ function HealthCareScreen({ route }) {
   const dispatch = useDispatch();
 
   const [formValues, setFormValues] = useState();
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
   const loggedUser = useSelector(state => state.loginReducer.items);
 
-  const { data, isLoading, error, statusCode } = useSelector(
-    state => state.createHealthCareReducer,
-  );
+  // const { data, isLoading, error, statusCode } = useSelector(
+  //   state => state.createHealthCareReducer,
+  // );
 
-  console.log(statusCode, isLoading);
+  // console.log(statusCode, isLoading);
 
   const [date, setDate] = useState(new Date())
 
@@ -90,7 +93,7 @@ function HealthCareScreen({ route }) {
   useEffect(() => {
     if (editItem) {
       setFormValues({
-        healthcarE_DATE: editItem.healthcarE_DATE && formatDateTime(editItem.healthcarE_DATE,'date'),
+        healthcarE_DATE: editItem.healthcarE_DATE && formatDateTime(editItem.healthcarE_DATE, 'date'),
         location: editItem.location,
         healthcarE_DETAILS: editItem.healthcarE_DETAILS
       })
@@ -148,38 +151,37 @@ function HealthCareScreen({ route }) {
   }
 
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      setShowErrorModal(true);
-    }
-  }, [error, isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading && error) {
+  //     setShowErrorModal(true);
+  //   }
+  // }, [error, isLoading]);
 
-  const closeModal = () => {
-    setShowErrorModal(false);
+  // const closeModal = () => {
+  //   setShowErrorModal(false);
 
-    if (editItem) {
-      dispatch(AnnounceViewActions.clearAnnouncementsData())
+  //   if (editItem) {
+  //     dispatch(AnnounceViewActions.clearAnnouncementsData())
 
-      // navigation.goBack()
-      navigation.navigate('ViewAnnouncement', { title: "Healthcare",isEdit:true })
-    }
-  };
+  //     // navigation.goBack()
+  //     navigation.navigate('ViewAnnouncement', { title: "Healthcare",isEdit:true })
+  //   }
+  // };
 
-  
+
 
 
   const [selectedImages, setSelectedImages] = useState([]);
   // const [imageBinary, setImageBinary] = useState(null);
 
 
-  const [response, setResponse] = useState(null);
 
   const openImagePicker = () => {
     const options = {
       mediaType: 'photo',
-      includeBase64: true,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      // includeBase64: true,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
     };
 
     launchImageLibrary(options, handleResponse);
@@ -189,9 +191,9 @@ function HealthCareScreen({ route }) {
 
     const options = {
       mediaType: 'photo',
-      includeBase64: true,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      // includeBase64: true,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
 
     };
 
@@ -206,37 +208,7 @@ function HealthCareScreen({ route }) {
       console.log('Image picker error: ', response.error);
     } else {
       console.log('====================================');
-      // console.log(response);
-      console.log('====================================');
-      let imageUri = response.uri || response.assets?.[0]?.uri;
-      // setSelectedImage(imageUri);
-
-      // Convert to binary
-      const asset = response.assets[0];
-      const binary = asset.base64;
-      const base64String = 'data:image/jpg;base64,' + binary;
-
-      // console.log(base64String)
-
-      const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-      setSelectedImages([...selectedImages,
-      {
-        "id": 0,
-        "image": binary,
-        "extension": fileExtension,
-        "device": Platform.OS,
-        "useR_ID": loggedUser?.userid
-      }
-
-        //   {
-        //   "filename": response.assets?.[0]?.fileName,
-        //   "image": binary,
-        //   "extension": fileExtension
-        // }
-      ]);
-
-
-      // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+      setSelectedImages([...selectedImages, response.assets]);
 
     }
   };
@@ -269,6 +241,32 @@ function HealthCareScreen({ route }) {
     setShowCameraModal(false);
   };
 
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: "OK", onPress: () => {
+            console.log("OK Pressed")
+            if (type === 'Success' && !editItem) {
+              dispatch(createHealthCareActions.clear());
+              setFormValues();
+              setSelectedImages([])
+              setErrors()
+            }
+            else if (editItem) {
+              dispatch(AnnounceViewActions.clearAnnouncementsData())
+              navigation.navigate('ViewAnnouncement', { title: "Healthcare", isEdit: true })
+            }
+
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
 
 
 
@@ -276,10 +274,10 @@ function HealthCareScreen({ route }) {
     try {
 
       await HealthCareValidationSchema.validate(formValues, { abortEarly: false });
-
+      setIsSubmitted(true);
       if (editItem) {
 
-        let formdata = {
+        let data = {
           "id": editItem.id,
           "refnumber": editItem.refnumber,
           "healthcarE_DATE": formValues.healthcarE_DATE,
@@ -290,31 +288,83 @@ function HealthCareScreen({ route }) {
           "warD_NO": loggedUser?.warD_NO
         }
 
-        dispatch(CreateHealthCareApi({ data: formdata, type: 'edit' }));
+        // dispatch(CreateHealthCareApi({ data: formdata, type: 'edit' }));
 
-        console.log(formdata)
+        console.log(data)
+        try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(`${apiUrl}/api/Healthcare/update-healthcare-data`, data);
+          console.log(response.data);
+          setIsSubmitted(false);
+
+          ShowAlert("Success", "HealthCare has been updated successfully!")
+
+        } catch (error) {
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert("Error", "Something went wrong!")
+
+        }
 
       } else {
-        if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
-        let formData =
+        const formData = new FormData();
+        // if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
+        let postData =
         {
-          "healthcarE_DATE": formValues.healthcarE_DATE,
-          "location": formValues.location,
-          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
-          "expirY_DATE": formValues.healthcarE_DATE,
-          "userid": loggedUser?.userid,
-          "warD_NO": loggedUser?.warD_NO,
+          "HEALTHCARE_DATE": formValues.healthcarE_DATE,
+          "LOCATION": formValues.location,
+          "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "HEALTHCARE_DETAILS": formValues.healthcarE_DETAILS,
+          "EXPIRY_DATE": formValues.healthcarE_DATE,
+          "USERID": loggedUser?.userid,
+          "WARD_NO": loggedUser?.warD_NO,
         }
 
-        let postData = {
-          "healthCareInputData": formData,
-          "imG_LIST": selectedImages
-        }
+        // let postData = {
+        //   "healthCareInputData": formData,
+        //   "imG_LIST": selectedImages
+        // }
 
         console.log('Form data:', postData);
-        dispatch(CreateHealthCareApi({ data: postData, type: 'create' }));
+        // dispatch(CreateHealthCareApi({ data: postData, type: 'create' }));
+
+        if (selectedImages.length > 0) {
+          selectedImages.forEach((image, index) => {
+            console.log(`image===> ${index}`, image)
+            formData.append(`files`, {
+              uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+              type: image[0].type,
+              name: image[0].fileName || `image_${index}.jpg`
+            });
+          });
+        }
+        formData.append("device", Platform.OS);
+        formData.append("healthCareInputData", JSON.stringify(postData))
+
+        try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(`${apiUrl}/api/Create/save-healthcare`,
+
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+
+
+            });
+          console.log(response.data);
+          setIsSubmitted(false);
+
+          ShowAlert("Success", "HealthCare has been saved successfully!")
+
+        } catch (error) {
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert("Error", "Something went wrong!")
+
+        }
       }
 
     } catch (error) {
@@ -326,6 +376,8 @@ function HealthCareScreen({ route }) {
         console.log(e.message);
       });
       setErrors(validationErrors);
+      setIsSubmitted(false);
+
     }
   };
 
@@ -336,22 +388,6 @@ function HealthCareScreen({ route }) {
 
 
     <SafeAreaView style={styles.container}>
-      <ErrorModal
-        visible={showErrorModal}
-        ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
-        closeModal={closeModal}
-        onPress={() => {
-          dispatch(createHealthCareActions.clear());
-          if (statusCode === 200) {
-            setFormValues();
-            setSelectedImages([])
-            setErrors()
-            closeModal();
-          } else {
-            closeModal();
-          }
-        }}
-      />
       <ScrollView>
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />
@@ -482,9 +518,9 @@ function HealthCareScreen({ route }) {
               <View key={index} style={[styles.item, { position: 'relative' }]}
 
               >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                   <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                    source={{ uri: subItem[0].uri }}
                     // style={{ flex: 1 }}
                     width={40}
                     height={40}
@@ -531,9 +567,11 @@ function HealthCareScreen({ route }) {
           </View>}
 
         <View style={styles.buttonView}>
-          <Pressable style={styles.button} onPress={() => handleSubmit()}>
+          <Pressable style={styles.button} onPress={() => {
+            if (!isSubmitted) { handleSubmit() }
+          }}>
             <Text style={styles.buttonText}>
-              {isLoading && (
+              {isSubmitted && (
                 <ActivityIndicator size={20} color={Colors.white} />
               )}{' '}
               {editItem ? 'UPDATE' : 'SAVE'}
@@ -543,6 +581,7 @@ function HealthCareScreen({ route }) {
 
         <BinaryImageModal
           visible={isBinaryImage}
+          isBinary={false}
           onClose={onCloseBinaryImageModal}
           binaryImageData={viewBinaryImage}
         />

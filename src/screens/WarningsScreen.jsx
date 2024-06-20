@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -21,6 +21,8 @@ import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import axios from 'axios';
+import { apiUrl } from '../constant/CommonData';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -47,13 +49,14 @@ function WarningssScreen({ route }) {
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({});
+    const [isSubmitted, setIsSubmitted] = useState(false)
     const loggedUser = useSelector(state => state.loginReducer.items);
 
-    const { data, isLoading, error, statusCode } = useSelector(
-        state => state.createWarningsReducer,
-    );
+    // const { data, isLoading, error, statusCode } = useSelector(
+    //     state => state.createWarningsReducer,
+    // );
 
-    console.log(statusCode, isLoading);
+    // console.log(statusCode, isLoading);
 
     const [date, setDate] = useState(new Date())
 
@@ -178,8 +181,8 @@ function WarningssScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                warninG_DATE: editItem.warninG_DATE && formatDateTime(editItem.warninG_DATE,'date'),
-                warninG_TIME: editItem.warninG_TIME && formatDateTime(editItem.warninG_TIME,'time'),
+                warninG_DATE: editItem.warninG_DATE && formatDateTime(editItem.warninG_DATE, 'date'),
+                warninG_TIME: editItem.warninG_TIME && formatDateTime(editItem.warninG_TIME, 'time'),
                 location: editItem.location,
                 typeofwarning: editItem.typeofwarning,
                 warninG_DETAILS: editItem.warninG_DETAILS
@@ -188,30 +191,30 @@ function WarningssScreen({ route }) {
     }, [editItem])
 
 
-    useEffect(() => {
-        if (!isLoading && error) {
-            setShowErrorModal(true);
-        }
-    }, [error, isLoading]);
+    // useEffect(() => {
+    //     if (!isLoading && error) {
+    //         setShowErrorModal(true);
+    //     }
+    // }, [error, isLoading]);
 
-    const closeModal = () => {
-        setShowErrorModal(false);
+    // const closeModal = () => {
+    //     setShowErrorModal(false);
 
-        if (editItem) {
-            dispatch(AnnounceViewActions.clearAnnouncementsData())
+    //     if (editItem) {
+    //         dispatch(AnnounceViewActions.clearAnnouncementsData())
 
-            // navigation.goBack()
-            navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
-        }
-    };
+    //         // navigation.goBack()
+    //         navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
+    //     }
+    // };
 
 
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
         };
 
         launchImageLibrary(options, handleResponse);
@@ -221,9 +224,9 @@ function WarningssScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
 
         };
 
@@ -238,37 +241,7 @@ function WarningssScreen({ route }) {
             console.log('Image picker error: ', response.error);
         } else {
             console.log('====================================');
-            // console.log(response);
-            console.log('====================================');
-            let imageUri = response.uri || response.assets?.[0]?.uri;
-            // setSelectedImage(imageUri);
-
-            // Convert to binary
-            const asset = response.assets[0];
-            const binary = asset.base64;
-            const base64String = 'data:image/jpg;base64,' + binary;
-
-            // console.log(base64String)
-
-            const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-            setSelectedImages([...selectedImages,
-            {
-                "id": 0,
-                "image": binary,
-                "extension": fileExtension,
-                "device": Platform.OS,
-                "useR_ID": loggedUser?.userid
-            }
-
-                //   {
-                //   "filename": response.assets?.[0]?.fileName,
-                //   "image": binary,
-                //   "extension": fileExtension
-                // }
-            ]);
-
-
-            // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+            setSelectedImages([...selectedImages, response.assets]);
 
         }
     };
@@ -301,13 +274,42 @@ function WarningssScreen({ route }) {
         setShowCameraModal(false);
     };
 
+
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+                        if (type === 'Success' && !editItem) {
+                            dispatch(createWarningsActions.clear());
+                            setFormValues();
+                            setSelectedImages([])
+                            setErrors()
+                        }
+                        else if (editItem) {
+                            dispatch(AnnounceViewActions.clearAnnouncementsData())
+                            navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
+                        }
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
+
     const handleSubmit = async () => {
         try {
 
             await CreateWarningsSchema.validate(formValues, { abortEarly: false });
+            setIsSubmitted(true);
             if (editItem) {
 
-                let formdata = {
+                let data = {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "warninG_DATE": formValues.warninG_DATE,
@@ -320,32 +322,85 @@ function WarningssScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
-                dispatch(CreateWarningsApi({ data: formdata, type: 'edit' }));
+                // dispatch(CreateWarningsApi({ data: formdata, type: 'edit' }));
 
-                console.log(formdata)
+                console.log(data)
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Warning/update-warning-data`, data);
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Warning has been updated successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
 
             } else {
-                let formData =
+                const formData = new FormData();
+                let postData =
                 {
-                    "warninG_DATE": formValues.warninG_DATE,
-                    "warninG_TIME": convertToDateTime(formValues.warninG_TIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "typeofwarning": formValues.typeofwarning,
-                    "warninG_DETAILS": formValues.warninG_DETAILS,
-                    "expirY_DATE": formValues.warninG_DATE,
-                    "userid": loggedUser?.userid,
-                    "warD_NO": loggedUser?.warD_NO
+                    "WARNING_DATE": formValues.warninG_DATE,
+                    "WARNING_TIME": convertToDateTime(formValues.warninG_TIME),
+                    "LOCATION": formValues.location,
+                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "TYPEOFWARNING": formValues.typeofwarning,
+                    "WARNING_DETAILS": formValues.warninG_DETAILS,
+                    "EXPIRY_DATE": formValues.warninG_DATE,
+                    "USERID": loggedUser?.userid,
+                    "WARD_NO": loggedUser?.warD_NO
                 }
-                let postData = {
-                    "warningInputData": formData,
-                    "imG_LIST": selectedImages
+                // let postData = {
+                //     "warningInputData": formData,
+                //     "imG_LIST": selectedImages
+                // }
+
+                console.log('Form data:', postData);
+
+                // dispatch(CreateWarningsApi({ data: postData, type: 'create' }));
+
+                if (selectedImages.length > 0) {
+                    selectedImages.forEach((image, index) => {
+                        console.log(`image===> ${index}`, image)
+                        formData.append(`files`, {
+                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+                            type: image[0].type,
+                            name: image[0].fileName || `image_${index}.jpg`
+                        });
+                    });
                 }
+                formData.append("device", Platform.OS);
+                formData.append("warningInputData", JSON.stringify(postData))
 
-                console.log('Form data:', formData);
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Create/save-warning`,
 
-                dispatch(CreateWarningsApi({ data: postData, type: 'create' }));
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+
+
+                        });
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Warning has been saved successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
             }
 
         } catch (error) {
@@ -366,23 +421,6 @@ function WarningssScreen({ route }) {
 
 
         <SafeAreaView style={styles.container}>
-            <ErrorModal
-                visible={showErrorModal}
-                ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
-                closeModal={closeModal}
-                onPress={() => {
-                    dispatch(createWarningsActions.clear());
-                    if (statusCode === 200) {
-                        setFormValues();
-                        setSelectedImages([])
-                        setErrors()
-
-                        closeModal();
-                    } else {
-                        closeModal();
-                    }
-                }}
-            />
             <ScrollView>
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
@@ -547,9 +585,9 @@ function WarningssScreen({ route }) {
                             <View key={index} style={[styles.item, { position: 'relative' }]}
 
                             >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                                     <Image
-                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        source={{ uri: subItem[0].uri }}
                                         // style={{ flex: 1 }}
                                         width={40}
                                         height={40}
@@ -563,19 +601,21 @@ function WarningssScreen({ route }) {
                     </View>
                 ))}
                 {editItem ? null :
-                <View style={styles.buttonView}>
-                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-                        <Icon name="camera" size={25} color={Colors.blue} />
-                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-                            Capture images
-                        </Text>
-                    </Pressable>
-                </View>}
+                    <View style={styles.buttonView}>
+                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                            <Icon name="camera" size={25} color={Colors.blue} />
+                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                                Capture images
+                            </Text>
+                        </Pressable>
+                    </View>}
 
                 <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => handleSubmit()}>
+                    <Pressable style={styles.button} onPress={() => {
+                        if (!isSubmitted) { handleSubmit() }
+                    }}>
                         <Text style={styles.buttonText}>
-                            {isLoading && (
+                            {isSubmitted && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
                             {editItem ? 'UPDATE' : 'SAVE'}
@@ -585,6 +625,7 @@ function WarningssScreen({ route }) {
 
                 <BinaryImageModal
                     visible={isBinaryImage}
+                    isBinary={false}
                     onClose={onCloseBinaryImageModal}
                     binaryImageData={viewBinaryImage}
                 />
