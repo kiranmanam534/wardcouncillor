@@ -14,6 +14,8 @@ import TestHomeScreen from './TestHomeScreen'
 import GoogleAutocompleteScreen from './GoogleAutocompleteScreen'
 import SearchBarScreen from './src/SearchBarScreen'
 import TestCharts from './src/TestCharts'
+import Test from './src/Test'
+import CallLocalApi from './src/CallLocalApi'
 
 const App = () => {
   return (
@@ -30,6 +32,8 @@ const App = () => {
     {/* <GoogleAutocompleteScreen/> */}
     {/* <SearchBarScreen/> */}
     {/* <TestCharts/> */}
+    {/* <Test/> */}
+    {/* <CallLocalApi/> */}
     </Provider>
   )
 }

@@ -4,7 +4,7 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { getTime } from '../utility/formattedTime';
+import { formatDateTime, getTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
 import { CreateHotspotApi } from '../services/councillorWardApi';
@@ -28,6 +28,11 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
+import mime from 'mime'
+import { apiUrl } from '../constant/CommonData';
+
 
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
 
@@ -53,7 +58,7 @@ function HotspotScreen({ route }) {
   const navigation = useNavigation();
 
   const [formValues, setFormValues] = useState({});
-  const [favSport4, setFavSport4] = useState('')
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [sports1, setSports1] = useState([])
 
   const loggedUser = useSelector(state => state.loginReducer.items);
@@ -106,7 +111,7 @@ function HotspotScreen({ route }) {
   useEffect(() => {
     if (editItem) {
       setFormValues({
-        crimE_DATE: editItem.crimE_DATE,
+        crimE_DATE: editItem.crimE_DATE && formatDateTime(editItem.crimE_DATE, 'date'),
         crimE_TYPE: editItem.crimE_TYPE,
         location: editItem.location,
         crimE_DETAILS: editItem.crimE_DETAILS
@@ -135,10 +140,10 @@ function HotspotScreen({ route }) {
 
   }
 
-  const toggleTimePicker = (value) => {
-    setShowTimePicker(value)
+  // const toggleTimePicker = (value) => {
+  //   setShowTimePicker(value)
 
-  }
+  // }
 
   const onChageDatePicker = (event, selectedDate, fieldName) => {
     if (event.type == 'set') {
@@ -183,30 +188,31 @@ function HotspotScreen({ route }) {
   }
 
 
-  useEffect(() => {
-    if (!isLoading && error) {
-      setShowErrorModal(true);
-    }
-  }, [error, isLoading]);
+  // useEffect(() => {
+  //   if (!isLoading && error) {
+  //     setShowErrorModal(true);
+  //   }
+  // }, [error, isLoading]);
 
-  const closeModal = () => {
-    setShowErrorModal(false);
+  // const closeModal = () => {
+  //   setShowErrorModal(false);
 
-    if (editItem) {
-      dispatch(AnnounceViewActions.clearAnnouncementsData())
+  //   if (editItem) {
+  //     dispatch(AnnounceViewActions.clearAnnouncementsData())
 
-      // navigation.goBack()
-      navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
-    }
-  };
+  //     // navigation.goBack()
+  //     navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
+  //   }
+  // };
 
 
   const openImagePicker = () => {
     const options = {
       mediaType: 'photo',
-      includeBase64: true,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      // includeBase64: false,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
+      // selectionLimit: 0
     };
 
     launchImageLibrary(options, handleResponse);
@@ -216,9 +222,10 @@ function HotspotScreen({ route }) {
 
     const options = {
       mediaType: 'photo',
-      includeBase64: true,
-      maxHeight: 2000,
-      maxWidth: 2000,
+      // includeBase64: false,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
+      // selectionLimit: 0
 
     };
 
@@ -233,34 +240,33 @@ function HotspotScreen({ route }) {
       console.log('Image picker error: ', response.error);
     } else {
       console.log('====================================');
-      // console.log(response);
+      console.log(response.assets);
       console.log('====================================');
-      let imageUri = response.uri || response.assets?.[0]?.uri;
+      // let imageUri = response.uri || response.assets?.[0]?.uri;
       // setSelectedImage(imageUri);
 
+
+
       // Convert to binary
-      const asset = response.assets[0];
-      const binary = asset.base64;
-      const base64String = 'data:image/jpg;base64,' + binary;
+      // const asset = response.assets[0];
+      // const binary = asset.base64;
+      // const base64String = 'data:image/jpg;base64,' + binary;
 
       // console.log(base64String)
 
-      const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-      setSelectedImages([...selectedImages,
-      {
-        "id": 0,
-        "image": binary,
-        "extension": fileExtension,
-        "device": Platform.OS,
-        "useR_ID": loggedUser?.userid
-      }
+      // const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
+      // setSelectedImages([...selectedImages,
+      // {
+      //   "id": 0,
+      //   "image": binary,
+      //   "extension": fileExtension,
+      //   "device": Platform.OS,
+      //   "useR_ID": loggedUser?.userid
+      // }
+      // ]);
 
-        //   {
-        //   "filename": response.assets?.[0]?.fileName,
-        //   "image": binary,
-        //   "extension": fileExtension
-        // }
-      ]);
+      setSelectedImages([...selectedImages, response.assets]);
+
 
 
       // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
@@ -296,17 +302,43 @@ function HotspotScreen({ route }) {
     setShowCameraModal(false);
   };
 
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: "OK", onPress: () => {
+            console.log("OK Pressed")
+            if (type === 'Success' && !editItem) {
+              dispatch(createHotspotActions.clear());
+              setFormValues();
+              setSelectedImages([])
+              setErrors()
+            }
+            else if (editItem) {
+              dispatch(AnnounceViewActions.clearAnnouncementsData())
+              navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
+            }
+
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
 
 
   const handleSubmit = async () => {
     try {
 
       await HotspotValidationSchema.validate(formValues, { abortEarly: false });
-
       if (editItem) {
+        setIsSubmitted(true);
 
-        let formdata = {
-          "id":editItem.id,
+        let data = {
+          "id": editItem.id,
           "crimE_DATE": formValues.crimE_DATE,
           "refnumber": editItem.refnumber,
           "location": formValues.location,
@@ -319,38 +351,89 @@ function HotspotScreen({ route }) {
           "warD_NO": loggedUser?.warD_NO,
         }
 
-        dispatch(CreateHotspotApi({ data: formdata, type: 'edit' }));
+        // dispatch(CreateHotspotApi({ data: formdata, type: 'edit' }));
 
-        console.log(formdata)
+        console.log(data)
 
+        try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(`${apiUrl}/api/hotspot/update-hotspot-data`, data);
+          console.log(response.data);
+          setIsSubmitted(false);
+
+          ShowAlert("Success", "Hotspot has been updated successfully!")
+
+        } catch (error) {
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert("Error", "Something went wrong!")
+
+        }
       } else {
 
-        if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
+        setIsSubmitted(true);
 
-        let formData =
-        {
-          "crimE_DATE": formValues.crimE_DATE,
-          "location": formValues.location,
-          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "crimE_TYPE": formValues.crimE_TYPE,
-          "crimE_DETAILS": formValues.crimE_DETAILS,
-          "expirY_DATE": formValues.crimE_DATE,
-          "userid": loggedUser?.userid,
-          "warD_NO": loggedUser?.warD_NO,
-        }
 
+        const formData = new FormData();
+
+        // if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
 
         let postData = {
-          "hotspotInputData": formData,
-          "imG_LIST": selectedImages
+          "CRIME_DATE": formValues.crimE_DATE,
+          "LOCATION": formValues.location,
+          "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+          "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+          "CRIME_TYPE": formValues.crimE_TYPE,
+          "CRIME_DETAILS": formValues.crimE_DETAILS,
+          "EXPIRY_DATE": formValues.crimE_DATE,
+          "USERID": loggedUser?.userid,
+          "WARD_NO": loggedUser?.warD_NO,
         }
 
 
+        // let postData = {
+        //   "hotspotInputData": formData1,
+        //   "imG_LIST": selectedImages
+        // }
 
-        console.log('Form data:', formData);
+        if (selectedImages.length > 0) {
+          selectedImages.forEach((image, index) => {
+            console.log(`image===> ${index}`, image)
+            formData.append(`files`, {
+              uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+              type: image[0].type,
+              name: image[0].fileName || `image_${index}.jpg`
+            });
+          });
+        }
+        formData.append("device", Platform.OS);
+        formData.append("hotspotInputData", JSON.stringify(postData))
 
-        dispatch(CreateHotspotApi({ data: postData, type: 'create' }));
+        try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(`${apiUrl}/api/Create/save-hotspot`,
+
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+
+
+            });
+          console.log(response.data);
+          setIsSubmitted(false);
+
+          ShowAlert("Success", "Hotspot has been saved successfully!")
+
+        } catch (error) {
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert("Error", "Something went wrong!")
+
+        }
+
+        //dispatch(CreateHotspotApi({ data: formData, type: 'create' }));
 
       }
 
@@ -360,6 +443,7 @@ function HotspotScreen({ route }) {
     } catch (error) {
       // Validation failed, set errors
       console.log(error)
+      setIsSubmitted(false);
       const validationErrors = {};
       error.inner.forEach(e => {
         validationErrors[e.path] = e.message;
@@ -371,11 +455,12 @@ function HotspotScreen({ route }) {
 
 
 
+
   return (
 
 
     <SafeAreaView style={styles.container}>
-      <ErrorModal
+      {/* <ErrorModal
         visible={showErrorModal}
         ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
         closeModal={closeModal}
@@ -390,12 +475,13 @@ function HotspotScreen({ route }) {
             closeModal();
           }
         }}
-      />
+      /> */}
       <ScrollView>
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />
         </View>
-        <Text style={styles.title}>Create Hotspot</Text>
+        <Text style={styles.title}>
+          {editItem ? "Update" : "Create"} Hotspot</Text>
         <View style={styles.inputView}>
           <Pressable onPress={() => { toggleDatePicker('crimE_DATE') }}>
             <TextInput
@@ -584,11 +670,12 @@ function HotspotScreen({ route }) {
           <View key={index1} style={styles.row}>
             {item.map((subItem, index) => (
               <View key={index} style={[styles.item, { position: 'relative' }]}
-
               >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                {/* <Text>  {JSON.stringify(subItem[0].uri)}</Text> */}
+                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                   <Image
-                    source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                    // source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                    source={{ uri: subItem[0].uri }}
                     // style={{ flex: 1 }}
                     width={40}
                     height={40}
@@ -612,9 +699,11 @@ function HotspotScreen({ route }) {
           </View>}
 
         <View style={styles.buttonView}>
-          <Pressable style={styles.button} onPress={() => handleSubmit()}>
+          <Pressable style={styles.button} onPress={() => {
+            if (!isSubmitted) { handleSubmit() }
+          }}>
             <Text style={styles.buttonText}>
-              {isLoading && (
+              {isSubmitted && (
                 <ActivityIndicator size={20} color={Colors.white} />
               )}{' '}
               {editItem ? 'UPDATE' : 'SAVE'}
@@ -624,6 +713,7 @@ function HotspotScreen({ route }) {
 
         <BinaryImageModal
           visible={isBinaryImage}
+          isBinary={false}
           onClose={onCloseBinaryImageModal}
           binaryImageData={viewBinaryImage}
         />

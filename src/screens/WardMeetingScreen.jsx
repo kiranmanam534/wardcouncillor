@@ -1,7 +1,7 @@
 
 
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
@@ -21,6 +21,8 @@ import CameraModal from '../components/CameraModal';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import axios from 'axios';
+import { apiUrl } from '../constant/CommonData';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
@@ -46,6 +48,8 @@ function WardMeetingScreen({ route }) {
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({});
+    const [isSubmitted, setIsSubmitted] = useState(false)
+
     const loggedUser = useSelector(state => state.loginReducer.items);
 
     const { data, isLoading, error, statusCode } = useSelector(
@@ -72,10 +76,10 @@ function WardMeetingScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                meetinG_STARTDATE: editItem.meetinG_STARTDATE && formatDateTime(editItem.meetinG_STARTDATE,'date'),
-                meetinG_STARTTIME: editItem.meetinG_STARTIME && formatDateTime(editItem.meetinG_STARTIME,'time'),
-                meetinG_ENDDATE: editItem.meetinG_ENDDATE && formatDateTime(editItem.meetinG_ENDDATE,'date'),
-                meetinG_ENDTIME: editItem.meetinG_ENDTIME && formatDateTime(editItem.meetinG_ENDTIME,'time'),
+                meetinG_STARTDATE: editItem.meetinG_STARTDATE && formatDateTime(editItem.meetinG_STARTDATE, 'date'),
+                meetinG_STARTTIME: editItem.meetinG_STARTIME && formatDateTime(editItem.meetinG_STARTIME, 'time'),
+                meetinG_ENDDATE: editItem.meetinG_ENDDATE && formatDateTime(editItem.meetinG_ENDDATE, 'date'),
+                meetinG_ENDTIME: editItem.meetinG_ENDTIME && formatDateTime(editItem.meetinG_ENDTIME, 'time'),
                 location: editItem.location,
                 subject: editItem.subject,
                 meetinG_DETAILS: editItem.meetinG_DETAILS,
@@ -211,9 +215,9 @@ function WardMeetingScreen({ route }) {
     const openImagePicker = () => {
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
         };
 
         launchImageLibrary(options, handleResponse);
@@ -223,9 +227,9 @@ function WardMeetingScreen({ route }) {
 
         const options = {
             mediaType: 'photo',
-            includeBase64: true,
-            maxHeight: 2000,
-            maxWidth: 2000,
+            // includeBase64: true,
+            // maxHeight: 2000,
+            // maxWidth: 2000,
 
         };
 
@@ -242,35 +246,7 @@ function WardMeetingScreen({ route }) {
             console.log('====================================');
             // console.log(response);
             console.log('====================================');
-            let imageUri = response.uri || response.assets?.[0]?.uri;
-            // setSelectedImage(imageUri);
-
-            // Convert to binary
-            const asset = response.assets[0];
-            const binary = asset.base64;
-            const base64String = 'data:image/jpg;base64,' + binary;
-
-            // console.log(base64String)
-
-            const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-            setSelectedImages([...selectedImages,
-            {
-                "id": 0,
-                "image": binary,
-                "extension": fileExtension,
-                "device": Platform.OS,
-                "useR_ID": loggedUser?.userid
-            }
-
-                //   {
-                //   "filename": response.assets?.[0]?.fileName,
-                //   "image": binary,
-                //   "extension": fileExtension
-                // }
-            ]);
-
-
-            // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
+            setSelectedImages([...selectedImages, response.assets]);
 
         }
     };
@@ -303,20 +279,47 @@ function WardMeetingScreen({ route }) {
         setShowCameraModal(false);
     };
 
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+                        if (type === 'Success' && !editItem) {
+                            dispatch(createMeetingsActions.clear());
+                            setFormValues();
+                            setSelectedImages([])
+                            setErrors()
+                        }
+                        else if (editItem) {
+                            dispatch(AnnounceViewActions.clearAnnouncementsData())
+                            navigation.navigate('ViewAnnouncement', { title: "Meetings", isEdit: true })
+                        }
+
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    }
+
 
     const handleSubmit = async () => {
         try {
 
             await CreateMeetingScrema.validate(formValues, { abortEarly: false });
             if (editItem) {
+                setIsSubmitted(true);
 
-                let formdata =
+                let data =
                 {
                     "id": editItem.id,
                     "refnumber": editItem.refnumber,
                     "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
                     "meetinG_STARTIME": convertToDateTime(formValues.meetinG_STARTTIME).toJSON(),
-                    "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
+                    "meetinG_ENDDATE": formValues.meetinG_ENDDATE,
                     "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME).toJSON(),
                     "location": formValues.location,
                     "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
@@ -328,33 +331,85 @@ function WardMeetingScreen({ route }) {
                     "warD_NO": loggedUser?.warD_NO
                 }
 
-                console.log(formdata)
-                dispatch(CreateMeetingsApi({ data: formdata, type: 'edit' }));
+                console.log(data)
+                // dispatch(CreateMeetingsApi({ data: formdata, type: 'edit' }));
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Meeting/update-meeting-data`, data);
+                    console.log(response.data);
+                    setIsSubmitted(false);
 
+                    ShowAlert("Success", "Meeting has been updated successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
 
             } else {
-                let formData =
+                setIsSubmitted(true);
+                const formData = new FormData();
+                let postData =
                 {
-                    "meetinG_STARTDATE": formValues.meetinG_STARTDATE,
-                    "meetinG_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
-                    "meetinG_ENDDATE": formValues.meetinG_STARTDATE,
-                    "meetinG_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "Subject": formValues.subject,
-                    "meetinG_DETAILS": formValues.meetinG_DETAILS,
-                    "expirY_DATE": formValues.meetinG_ENDDATE,
-                    "userid": loggedUser?.userid,
-                    "warD_NO": loggedUser?.warD_NO
+                    "MEETING_STARTDATE": formValues.meetinG_STARTDATE,
+                    "MEETING_STARTTIME": convertToDateTime(formValues.meetinG_STARTTIME),
+                    "MEETING_ENDDATE": formValues.meetinG_ENDDATE,
+                    "MEETING_ENDTIME": convertToDateTime(formValues.meetinG_ENDTIME),
+                    "LOCATION": formValues.location,
+                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
+                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
+                    "SUBJECT": formValues.subject,
+                    "MEETING_DETAILS": formValues.meetinG_DETAILS,
+                    "EXPIRY_DATE": formValues.meetinG_ENDDATE,
+                    "USERID": loggedUser?.userid,
+                    "WARD_NO": loggedUser?.warD_NO
                 }
-                let postData = {
-                    "meetingInputData": formData,
-                    "imG_LIST": selectedImages
-                }
-                console.log('Form data:', formData);
+                // let postData = {
+                //     "meetingInputData": formData,
+                //     "imG_LIST": selectedImages
+                // }
+                console.log('Form data:', postData);
 
-                dispatch(CreateMeetingsApi({ data: postData, type: 'create' }));
+                // dispatch(CreateMeetingsApi({ data: postData, type: 'create' }));
+
+                if (selectedImages.length > 0) {
+                    selectedImages.forEach((image, index) => {
+                        console.log(`image===> ${index}`, image)
+                        formData.append(`files`, {
+                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+                            type: image[0].type,
+                            name: image[0].fileName || `image_${index}.jpg`
+                        });
+                    });
+                }
+                formData.append("device", Platform.OS);
+                formData.append("meetingInputData", JSON.stringify(postData))
+
+                try {
+                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+                    const response = await axios.post(`${apiUrl}/api/Create/save-meeting`,
+
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+
+
+                        });
+                    console.log(response.data);
+                    setIsSubmitted(false);
+
+                    ShowAlert("Success", "Meeting has been saved successfully!")
+
+                } catch (error) {
+                    console.log(error);
+                    setIsSubmitted(false);
+                    ShowAlert("Error", "Something went wrong!")
+
+                }
             }
 
         } catch (error) {
@@ -366,6 +421,7 @@ function WardMeetingScreen({ route }) {
                 console.log(e.message);
             });
             setErrors(validationErrors);
+            setIsSubmitted(false);
         }
     };
 
@@ -375,7 +431,7 @@ function WardMeetingScreen({ route }) {
 
 
         <SafeAreaView style={styles.container}>
-            <ErrorModal
+            {/* <ErrorModal
                 visible={showErrorModal}
                 ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
                 closeModal={closeModal}
@@ -391,7 +447,7 @@ function WardMeetingScreen({ route }) {
                         closeModal();
                     }
                 }}
-            />
+            /> */}
             <ScrollView>
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
@@ -611,9 +667,9 @@ function WardMeetingScreen({ route }) {
                             <View key={index} style={[styles.item, { position: 'relative' }]}
 
                             >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem.image) }}>
+                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                                     <Image
-                                        source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
+                                        source={{ uri: subItem[0].uri }}
                                         // style={{ flex: 1 }}
                                         width={40}
                                         height={40}
@@ -627,19 +683,22 @@ function WardMeetingScreen({ route }) {
                     </View>
                 ))}
                 {editItem ? null :
-                <View style={styles.buttonView}>
-                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-                        <Icon name="camera" size={25} color={Colors.blue} />
-                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-                            Capture images
-                        </Text>
-                    </Pressable>
-                </View>}
+                    <View style={styles.buttonView}>
+                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                            <Icon name="camera" size={25} color={Colors.blue} />
+                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                                Capture images
+                            </Text>
+                        </Pressable>
+                    </View>}
 
                 <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => handleSubmit()}>
+                    <Pressable style={styles.button} onPress={() => {
+                        if (!isSubmitted) { handleSubmit() }
+                    }
+                    }>
                         <Text style={styles.buttonText}>
-                            {isLoading && (
+                            {isSubmitted && (
                                 <ActivityIndicator size={20} color={Colors.white} />
                             )}{' '}
                             {editItem ? 'UPDATE' : 'SAVE'}
@@ -649,6 +708,7 @@ function WardMeetingScreen({ route }) {
 
                 <BinaryImageModal
                     visible={isBinaryImage}
+                    isBinary={false}
                     onClose={onCloseBinaryImageModal}
                     binaryImageData={viewBinaryImage}
                 />

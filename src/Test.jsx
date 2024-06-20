@@ -1,57 +1,110 @@
-import React, { useEffect, useState } from 'react';
-import { View, Button, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-// import Toast from 'react-native-simple-toast';
-import Toast from 'react-native-toast-message';
-import { Colors } from './constant/Colors';
+import {
+  Image, StyleSheet, Platform, Button,
+  View,
+  SafeAreaView,
+  Text,
+  Alert,
+} from 'react-native';
+
+import {
+  authorize,
+  refresh,
+  revoke,
+  prefetchConfiguration,
+} from 'react-native-app-auth';
 
 
-const MyComponent = () => {
-  const [date, setDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
+// const config = {
+//   issuer: 'https://102.130.113.92:9443/oauth2/token',
+//   clientId: 'ZfU9zZthjvNLV_gLXN1bNVlOUjoa',
+//   // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
+//   redirectUrl: 'wardcouncillor://oauth',  
+//   scopes: ['openid', 'profile', 'address', 'phone'],
+//   serviceConfiguration: {
+// 		authorizationEndpoint: 'https://102.130.113.92:9443/oauth2/authorize',
+// 		tokenEndpoint: 'https://102.130.113.92:9443/oauth2/accesstoken',
+// 		revocationEndpoint: 'https://102.130.113.92:9443/oauth2/deauthorize',
+//     // discoveryUrl :'https://102.130.113.92:9443/oauth2/token/.well-known/openid-configuration',
+// 	}
+// };
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowPicker(Platform.OS === 'ios'); // Hide picker on iOS after selection
-    setDate(currentDate);
-  };
-
-  const showDateTimePicker = () => {
-    setShowPicker(true);
-  };
-  Toast.show({
-    type: 'error',
-    position: 'bottom',
-    text1: 'text1',
-    text2: "text2",
-    visibilityTime: 3000,
-    text1Style: { color: Colors.blue, fontSize: 15 },
-    text2Style: { color: Colors.blue, fontSize: 13 },
-  });
-  useEffect(()=>{
-    
-  },[])
-//   Toast.show('This is a toast.');
-// Toast.show('This is a long toast.', Toast.LONG);
-
-  return (
-
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button onPress={showDateTimePicker} title="Show DateTimePicker" />
-      {showPicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date" // Change the mode to 'date' or 'time' if needed
-          is24Hour={true}
-          display="spinner"
-          onChange={onChange}
-        />
-      )}
-
-        {/* <Toast position="bottom" bottomOffset={20} /> */}
-    </View>
-  );
+const config = {
+  issuer: 'https://coeiamtest.ekurhuleni.gov.za',
+  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+  discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
+  redirectUrl: 'wardcouncillor://oauth',  
+  scopes: ['openid', 'profile', 'address', 'phone'],
+  serviceConfiguration: {
+		authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/authorize',
+		tokenEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/accesstoken',
+		revocationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/deauthorize',
+    discoveryUrl :'https://coeiamtest.ekurhuleni.gov.za/.well-known/openid-configuration',
+	}
+};
+const config2 = {
+  issuer: 'https://coeiamtest.ekurhuleni.gov.za',
+  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+  redirectUrl: 'wardcouncillor://oauth',
+  scopes: ['openid', 'profile', 'address', 'phone'],
+  serviceConfiguration: {
+    authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/authorize',
+    tokenEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/accesstoken',
+    revocationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/deauthorize',
+  }
 };
 
-export default MyComponent;
+export default function Test() {
+
+  const handleSubmitPress = async () => {
+    console.log("here!!")
+    try {
+      const result = await authorize(config);
+      // result includes accessToken, accessTokenExpirationDate and refreshToken
+      console.log("*************");
+      console.log("auth", result);
+    } catch (error) {
+      console.log("******authorizeError*******");
+      console.log('====================================');
+      console.log(error);
+      console.log('====================================');
+      // console.log(JSON.stringify(error));
+      //Alert.alert('Failed to log in', ""+JSON.stringify(error));
+    }
+  }
+
+
+
+  return (
+    <View>
+      <View style={styles.titleContainer}>
+        <Text type="title">Welcome!</Text>
+      </View>
+      <View style={styles.stepContainer}>
+        <Text type="subtitle">SSO WSO2 IAM</Text>
+        <Button
+          title="SSO"
+          onPress={handleSubmitPress}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
+  },
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+  },
+});

@@ -14,17 +14,20 @@ const decodeBinaryImage = (binaryImageData) => {
     return `data:image/jpeg;base64,${binaryImageData}`; // Example: data URI
 };
 
-const BinaryImageModal = ({ binaryImageData, visible, onClose }) => {
+const BinaryImageModal = ({ binaryImageData, visible, onClose, isBinary }) => {
     const [decodedImage, setDecodedImage] = useState(null);
 
-    //   console.log(binaryImageData)
+    console.log("binaryImageData", binaryImageData)
+    console.log('====================================');
+    console.log(isBinary);
+    console.log('====================================');
     // Decode the binary image data when the modal becomes visible
     React.useEffect(() => {
-        if (visible) {
+        if (visible && isBinary) {
             const imageUri = decodeBinaryImage(binaryImageData);
             setDecodedImage(imageUri);
         }
-    }, [binaryImageData, visible]);
+    }, [binaryImageData, visible, isBinary]);
 
     //   return (
     //     <Modal visible={visible} onRequestClose={onClose}>
@@ -49,8 +52,11 @@ const BinaryImageModal = ({ binaryImageData, visible, onClose }) => {
                             <MaterialCommunityIcon name="close-circle" size={50} color={Colors.red} />
                         </TouchableOpacity>
                     </View>
-                    {decodedImage &&
-                        <Image source={{ uri: decodedImage }} style={{ width: screenWidth - 50, height: screenWidth }} />}
+                    {/* <Image source={{ uri: binaryImageData }} style={{ width: screenWidth - 50, height: screenWidth }} /> */}
+
+                    {isBinary ?
+                        <Image source={{ uri: decodedImage }} style={{ width: screenWidth - 50, height: screenWidth }} /> :
+                        <Image source={{ uri: binaryImageData }} style={{ width: screenWidth - 50, height: screenWidth }} />}
                 </View>
             </View>
         </Modal>

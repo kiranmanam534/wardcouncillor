@@ -167,13 +167,18 @@ export const CreateHotspotApi = createAsyncThunk(
     const { data, type } = params;
     console.log(data, type)
     try {
-      let URL = '/api/Create/save-hotspot';
+      let URL = '/api/Create/save-hotspot1';
       if (type == 'edit') {
         URL = '/api/hotspot/update-hotspot-data';
       }
       const response = await AxiosInstance.post(
         URL,
         data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
       );
 
 
@@ -181,7 +186,7 @@ export const CreateHotspotApi = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      //   console.error('Error:', error.response.data);
+      console.log('Error:', error);
       return error.response.data;
       // Handle error here
       //   Alert.alert(
@@ -271,7 +276,7 @@ export const CreateWorkshopApi = createAsyncThunk(
         URL,
         data,
       );
-    
+
 
       console.log('response', response.status);
 
@@ -305,7 +310,7 @@ export const CreateMissingPersonApi = createAsyncThunk(
         URL,
         data,
       );
-    
+
 
       console.log('response', response.status);
 
@@ -339,7 +344,7 @@ export const CreateWarningsApi = createAsyncThunk(
         URL,
         data,
       );
-    
+
 
       console.log('response', response.status);
 

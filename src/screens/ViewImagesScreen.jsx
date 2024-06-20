@@ -72,8 +72,10 @@ const ViewImagesScreen = ({ route }) => {
                 <Image
                   width='100%'
                   height={200}
-                  source={{ uri: 'data:image/jpg;base64,' + image }
-                  } />
+                  source={{ uri:image }}
+                  
+                   />
+                  
               </View>
               {/* <Divider style={styles.divider} />
               <Card.Content
