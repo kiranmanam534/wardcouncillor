@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
@@ -27,6 +28,7 @@ const ViewImagesScreen = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const [loading, setLoading] = useState(true);
 
   const { title, type, id } = route.params;
   console.log(type, title, id);
@@ -76,7 +78,13 @@ const ViewImagesScreen = ({ route }) => {
                   source={{ uri:image }}
                   
                    /> */}
-
+                   {/* {loading && (
+          <ActivityIndicator
+            style={styles.loader}
+            size="large"
+            color="#0000ff"
+          />
+        )} */}
 
               <FastImage
                 style={{ width: '100%', height: 200 }}
@@ -85,6 +93,8 @@ const ViewImagesScreen = ({ route }) => {
                   priority: FastImage.priority.high,
                 }}
                 resizeMode={FastImage.resizeMode.cover}
+                // onLoadStart={() => setLoading(true)}
+                // onLoadEnd={() => setLoading(false)}
               />
 
             </View>
@@ -320,5 +330,9 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
+  },
+  loader: {
+    position: 'absolute',
+    zIndex: 1,
   },
 });
