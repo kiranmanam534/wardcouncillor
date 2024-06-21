@@ -21,6 +21,7 @@ import { Searchbar } from 'react-native-paper';
 import { AnnouncementImagesActions } from '../redux/AnnouncementImagesSlice';
 import { isBase64 } from '../utility/IsBase64';
 import { Card, Title, Paragraph, Divider } from 'react-native-paper';
+import FastImage from 'react-native-fast-image'
 
 const ViewImagesScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -56,7 +57,7 @@ const ViewImagesScreen = ({ route }) => {
         type: type
       }),
     );
-  }, [loggedUser?.userid, type,id]);
+  }, [loggedUser?.userid, type, id]);
 
 
   const ShowImage = ({ image }) => {
@@ -64,20 +65,30 @@ const ViewImagesScreen = ({ route }) => {
     return (
       <>
         {/* {isBase64(image) ? */}
-          <View style={{ margin: 5 }}>
+        <View style={{ margin: 5 }}>
 
-            <Card style={styles.card}>
-              <View style={{ padding: 5 }}>
+          <Card style={styles.card}>
+            <View style={{ padding: 5 }}>
 
-                <Image
+              {/* <Image
                   width='100%'
                   height={200}
                   source={{ uri:image }}
                   
-                   />
-                  
-              </View>
-              {/* <Divider style={styles.divider} />
+                   /> */}
+
+
+              <FastImage
+                style={{ width: '100%', height: 200 }}
+                source={{
+                  uri: image,
+                  priority: FastImage.priority.high,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+
+            </View>
+            {/* <Divider style={styles.divider} />
               <Card.Content
                 style={[
                   styles.footer,
@@ -190,10 +201,10 @@ const ViewImagesScreen = ({ route }) => {
                   </TouchableOpacity>
                 </View>
               </Card.Content> */}
-            </Card>
+          </Card>
 
-          </View>
-         
+        </View>
+
       </>
     )
   }
@@ -305,5 +316,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.black,
     width: 90,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });

@@ -4,18 +4,14 @@ import { TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { FormateDate } from '../utility/FormateDate'
 import { Colors } from '../constant/Colors'
-import { formatDateTime, getTime } from '../utility/formattedTime';
+import { formatDateTime } from '../utility/formattedTime';
 import { useDispatch, useSelector } from 'react-redux';
-import ErrorModal from '../components/ErrorModal';
-import { CreateHotspotApi } from '../services/councillorWardApi';
-import { createRoadClosureActions } from '../redux/createRoadClosureSlice';
 import HotspotValidationSchema from '../validation/HotspotSchema';
 import { createHotspotActions } from '../redux/createHotspotSlice';
-import { Picker } from '@react-native-picker/picker';
 import { getCategoriesApi } from '../services/masterDataApi';
 
 import RNPickerSelect from 'react-native-picker-select';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+// import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
 // import RNPickerSelect, { defaultStyles } from './debug';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -30,7 +26,6 @@ import { AnnounceViewActions } from '../redux/announcementViewSlice';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-import mime from 'mime'
 import { apiUrl } from '../constant/CommonData';
 
 
@@ -52,7 +47,7 @@ const chunkArray = (array, chunkSize) => {
 function HotspotScreen({ route }) {
 
   const { title, type, editItem } = route.params;
-  console.log(title, type, editItem);
+  // console.log(title, type, editItem);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -61,35 +56,22 @@ function HotspotScreen({ route }) {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [sports1, setSports1] = useState([])
 
-  const loggedUser = useSelector(state => state.loginReducer.items);
-
-  const { items: Categories, isLoading: categoriesLodaing, error: categoryError, statusCode: categoryStatusCode } = useSelector(
-    state => state.CategoriesReducer,
-  );
-
-
-
-  const { data, isLoading, error, statusCode } = useSelector(
-    state => state.createHotspotReducer,
-  );
-
-  console.log(statusCode, isLoading);
-
   const [date, setDate] = useState(new Date())
 
   const [showDatePicker, setShowDatePicker] = useState('');
-  const [showTimePicker, setShowTimePicker] = useState('');
-  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [viewBinaryImage, setViewBinaryImage] = useState(null);
   const [isBinaryImage, setIsBinaryImage] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
-
-
   const [errors, setErrors] = useState({});
 
 
+  const loggedUser = useSelector(state => state.loginReducer.items);
+
+  const { items: Categories, isLoading: categoriesLodaing, error: categoryError, statusCode: categoryStatusCode } = useSelector(
+    state => state.CategoriesReducer,
+  );
 
   useEffect(() => {
     dispatch(getCategoriesApi('Hotspots'));
@@ -140,11 +122,6 @@ function HotspotScreen({ route }) {
 
   }
 
-  // const toggleTimePicker = (value) => {
-  //   setShowTimePicker(value)
-
-  // }
-
   const onChageDatePicker = (event, selectedDate, fieldName) => {
     if (event.type == 'set') {
       const currentDate = selectedDate;
@@ -188,23 +165,6 @@ function HotspotScreen({ route }) {
   }
 
 
-  // useEffect(() => {
-  //   if (!isLoading && error) {
-  //     setShowErrorModal(true);
-  //   }
-  // }, [error, isLoading]);
-
-  // const closeModal = () => {
-  //   setShowErrorModal(false);
-
-  //   if (editItem) {
-  //     dispatch(AnnounceViewActions.clearAnnouncementsData())
-
-  //     // navigation.goBack()
-  //     navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
-  //   }
-  // };
-
 
   const openImagePicker = () => {
     const options = {
@@ -239,37 +199,9 @@ function HotspotScreen({ route }) {
     } else if (response.error) {
       console.log('Image picker error: ', response.error);
     } else {
-      console.log('====================================');
-      console.log(response.assets);
-      console.log('====================================');
-      // let imageUri = response.uri || response.assets?.[0]?.uri;
-      // setSelectedImage(imageUri);
-
-
-
-      // Convert to binary
-      // const asset = response.assets[0];
-      // const binary = asset.base64;
-      // const base64String = 'data:image/jpg;base64,' + binary;
-
-      // console.log(base64String)
-
-      // const fileExtension = response.assets?.[0]?.fileName.split('.')[1];
-      // setSelectedImages([...selectedImages,
-      // {
-      //   "id": 0,
-      //   "image": binary,
-      //   "extension": fileExtension,
-      //   "device": Platform.OS,
-      //   "useR_ID": loggedUser?.userid
-      // }
-      // ]);
-
+      // console.log(response.assets);
+      
       setSelectedImages([...selectedImages, response.assets]);
-
-
-
-      // handlePostRequest(base64String, response.assets?.[0]?.fileName.split('.')[1])
 
     }
   };
@@ -460,22 +392,6 @@ function HotspotScreen({ route }) {
 
 
     <SafeAreaView style={styles.container}>
-      {/* <ErrorModal
-        visible={showErrorModal}
-        ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
-        closeModal={closeModal}
-        onPress={() => {
-          dispatch(createHotspotActions.clear());
-          if (statusCode === 200) {
-            setFormValues();
-            setSelectedImages([])
-            setErrors()
-            closeModal();
-          } else {
-            closeModal();
-          }
-        }}
-      /> */}
       <ScrollView>
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />
@@ -506,27 +422,6 @@ function HotspotScreen({ route }) {
           )}
 
         </View>
-
-        {/* <View style={styles.inputView}>
-          <TextInput
-            mode="outlined"
-            label={'Location'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Location'
-            value={
-              formValues.location
-            }
-            autoCorrect={false}
-            keyboardType='default'
-            autoCapitalize="none"
-            onChangeText={value => handleInputChange('location', value)}
-            placeholderTextColor={'#11182744'}
-
-          />
-          {errors?.location && (
-            <Text style={{ color: 'red' }}>{errors?.location}</Text>
-          )}
-        </View> */}
 
         <View style={styles.inputView}>
           {/* {Platform.OS == 'android' && */}
@@ -671,12 +566,9 @@ function HotspotScreen({ route }) {
             {item.map((subItem, index) => (
               <View key={index} style={[styles.item, { position: 'relative' }]}
               >
-                {/* <Text>  {JSON.stringify(subItem[0].uri)}</Text> */}
                 <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
                   <Image
-                    // source={{ uri: 'data:image/jpg;base64,' + subItem.image }}
                     source={{ uri: subItem[0].uri }}
-                    // style={{ flex: 1 }}
                     width={40}
                     height={40}
                   />
@@ -783,7 +675,6 @@ export default HotspotScreen
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     flex: 1,
     marginTop: 10,
     position: 'relative'
@@ -791,7 +682,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    // textTransform: 'uppercase',
     textAlign: 'center',
     paddingVertical: 20,
     color: Colors.primary,
@@ -926,7 +816,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'center',
     paddingLeft: 10
   },
   CameraText: {

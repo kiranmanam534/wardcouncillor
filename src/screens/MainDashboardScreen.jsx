@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Platform, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, Platform, TouchableOpacity } from 'react-native';
 
-import MainDashboardItemIcon from '../components/MainDashboardItemIcon';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { MainDashboardList } from '../constant/MainDashboardList';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Colors } from '../constant/Colors';
-import AnnounceModal from '../components/AnnounceModal';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import FontAwesome5 from 'react-native-vector-icons/dist/FontAwesome5';
 import { AnnounceViewActions } from '../redux/announcementViewSlice';
@@ -16,36 +14,18 @@ import { AnnounceViewActions } from '../redux/announcementViewSlice';
 const MainDashboardScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
-  const [seletedSreen, setSeletedSreen] = useState('');
   const [showselectedSection, setShowselectedSection] = useState('');
-
-
-  const loggedUser = useSelector(state => state.loginReducer.items);
 
   const loggedUserNme = useSelector(state => state.loginReducer.loggedUserName);
 
-  const { items, isLoading, error } = useSelector(
-    state => state.WardDashboardReducer,
-  );
-
-
-  // const closeAnnouncementModal = () => {
-  //   setSeletedSreen('')
-  //   setShowAnnouncementModal(false);
-  // };
-
-
   const openAnnouncementModal = (item) => {
-    // setSeletedSreen({ create: item.name, view: item.viewName, title: item.title })
-    // setShowAnnouncementModal(true);
     setShowselectedSection(item.id)
   };
 
 
   const handleNavigation = (navigationName, title) => {
     console.log('====================================');
-    console.log(navigationName,title);
+    console.log(navigationName, title);
     console.log('====================================');
     dispatch(AnnounceViewActions.clearAnnouncementsData())
 
@@ -58,19 +38,28 @@ const MainDashboardScreen = () => {
     <View style={styles.container}>
       <View
         style={{
-          borderBottomWidth: 1,
+          borderBottomWidth: 2,
           width: '100%',
-          borderBottomColor: Colors.primary,
+          borderColor: Colors.yellow,
+          backgroundColor: Colors.primary,
+          marginLeft: 30,
+          borderTopLeftRadius: 20,
+          justifyContent:'center',
+          padding:10
+         
+
         }}>
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 17,
             fontWeight: '800',
-            color: Colors.black,
-            paddingVertical: 20,
+            color: Colors.white,
+            // padding: 20,
           }}>
-          {/* Hello, {loggedUser?.name} {loggedUser?.surname} */}
-          Hello, {loggedUserNme}
+           <Icon name="user" size={20} color={Colors.yellow} />{'  '}
+        Hello, <Text style={{ color: Colors.white }}>{loggedUserNme}</Text>
+        
+         
         </Text>
       </View>
       <ScrollView>
@@ -78,14 +67,12 @@ const MainDashboardScreen = () => {
           {MainDashboardList.map((item) => (
             <TouchableOpacity key={item.id} onPress={
               () => openAnnouncementModal(item)
-              // NavigateViewScreen(item.name, item.title)
             }>
               <View style={styles.card}>
                 <View style={{
                   flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
                 }}>
                   <View style={styles.iconContainer}>
-                    {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
                     {item.icon}
                   </View>
                   <View style={styles.content}>
@@ -121,29 +108,17 @@ const MainDashboardScreen = () => {
           ))}
         </View>
       </ScrollView>
-
-      {/* 
-      <AnnounceModal
-        isVisible={showAnnouncementModal}
-        onPress={handleNavigation}
-        onClose={closeAnnouncementModal}
-      /> */}
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     paddingVertical: 5,
     justifyContent: 'center'
 
   },
   card: {
-    // flexDirection: 'row',
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: "#f1f1f2",
     borderRadius: 10,
     padding: 10,
