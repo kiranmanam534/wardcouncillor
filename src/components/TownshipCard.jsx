@@ -223,7 +223,8 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
             </Paragraph>
             <View style={{ marginTop: 15 }}>
               <TouchableOpacity
-                style={[
+               onPress={sendSMS}
+               style={[
                   styles.btn,
                   {
                     height: 30,
@@ -241,7 +242,10 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                  <Icon name="send" size={20} color={Colors.blue} />
+                 {item.accountNumber == ImageId ?
+                    <ActivityIndicator animatin color="#000" size="small" /> :
+                    <Icon name="send" size={20} color={Colors.blue} />}
+
                   <Text
                     style={[
                       styles.text,
@@ -299,13 +303,13 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                 : {item.serviceType}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Department</Text>
               <Text
                 style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
                 : {item.department}
               </Text>
-            </View>
+            </View> */}
           </Card.Content>
           <Divider style={styles.divider} />
           <Card.Content
@@ -321,16 +325,23 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
               },
             ]}>
             <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
-              {wardType == 'Outstanding'
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={[styles.contentText,{color:Colors.white}]}>Department : </Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13,color:Colors.white}}>
+                {item.department}
+              </Text>
+            </View>
+              {/* {wardType == 'Outstanding'
                 ? formattedAmount(
                   parseFloat(item.daysAmount),
                   'en-ZA',
                   'ZAR',
                   'currency',
                 )
-                : item.daysAmount}
+                : item.daysAmount} */}
             </Paragraph>
-            <View style={{ marginTop: 15 }}>
+            {/* <View style={{ marginTop: 15 }}>
               <TouchableOpacity
                 style={[
                   styles.btn,
@@ -360,7 +371,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                   </Text>
                 </View>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </Card.Content>
         </Card>
       );

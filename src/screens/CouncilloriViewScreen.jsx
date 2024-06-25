@@ -82,8 +82,15 @@ const CouncilloriViewScreen = ({ route }) => {
 
   const { isLoading: imageLoading, error: imageError, image: binaryImage, isSuccess: isImageLoaded } = useSelector(state => state.MeterImageReducer);
 
-  console.log('isImageLoaded', isImageLoaded)
-  console.log("binaryImage", imageError)
+  // console.log('isImageLoaded', isImageLoaded)
+  // console.log("binaryImage", imageError)
+
+  let searchPlaceholderText = 'search by account or name...';
+  if (wardType == 'IMS') {
+    searchPlaceholderText = 'search by incident number...';
+  } else if (wardType == 'Meter') {
+    searchPlaceholderText = 'search by account or name or meter...';
+  }
 
 
   // useLayoutEffect(() => {
@@ -128,27 +135,70 @@ const CouncilloriViewScreen = ({ route }) => {
   //   setShowErrorModal(false);
   // };
 
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: "OK", onPress: () => {
+            console.log("OK Pressed")
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }
+
+
   const handleSMS = item => {
-    console.log(item.accounT_NO)
-    let days_label = '';
-    if (name === 'D30_DAYS') days_label = '30 days amount';
-    if (name === 'D60_DAYS') days_label = '60 days amount';
-    if (name === 'D90_DAYS') days_label = '90 days amount';
-    if (name === 'D120_PLUS') days_label = '120+ days amount';
-    let message = `Hi ${item.customeR_NAME.trim()}, Your outstanding ${days_label} is R${formattedCurrency(
-      parseFloat(item.daysAmount),
-      'en-ZA',
-      'ZAR',
-      'currency',
-    )} and Your outstanding total amount is R${formattedCurrency(
-      parseFloat(item.totalAmount),
-      'en-ZA',
-      'ZAR',
-      'currency',
-    )}`;
-    // console.log(message)
-    dispatch(smsApi({ item, msg: message }));
-    setSelectedImageId(item.accounT_NO);
+    console.log(wardType + " ==> ", item)
+    if (wardType == 'Outstanding') {
+      if (item.cellphonenumber && item.cellphonenumber != 'Not Available') {
+        let days_label = '';
+        if (name === 'D30_DAYS') days_label = '30 days amount';
+        if (name === 'D60_DAYS') days_label = '60 days amount';
+        if (name === 'D90_DAYS') days_label = '90 days amount';
+        if (name === 'D120_PLUS') days_label = '120+ days amount';
+        let message = `Hi ${item.customeR_NAME.trim()}, Your outstanding ${days_label} is R${formattedCurrency(
+          parseFloat(item.daysAmount),
+          'en-ZA',
+          'ZAR',
+          'currency',
+        )} and Your outstanding total amount is R${formattedCurrency(
+          parseFloat(item.totalAmount),
+          'en-ZA',
+          'ZAR',
+          'currency',
+        )}`;
+        // console.log(message)
+        const requestBody = {
+          recipientNumber: item.cellphonenumber,
+          message: message.toString(),
+          campaign: 'Outstanding Amount',
+        };
+        dispatch(smsApi({ requestBody: requestBody }));
+        setSelectedImageId(item.accounT_NO);
+      }
+      else {
+        ShowAlert("Warning!", "Mobile number should not be empty!")
+      }
+    } else {
+      if (item.cellNo && item.cellphonenumber != 'Not Available') {
+        let message = `Hi ${item.debtorName.trim()}, Your Meter No : ${item.meterNumber} is  for ${item.accountNumber}}`;
+        const requestBody = {
+          recipientNumber: item.cellphonenumber,//'0739007893',//item.cellphonenumber
+          message: message.toString(),
+          campaign: 'Interims',
+        };
+        dispatch(smsApi({ requestBody: requestBody }));
+        setSelectedImageId(item.accountNumber);
+      } else {
+        ShowAlert("Warning!", "Mobile number should not be empty!")
+      }
+    }
+
+
     // setShowErrorModal(true);
   };
 
@@ -169,12 +219,12 @@ const CouncilloriViewScreen = ({ route }) => {
 
     console.log(item);
     // setShowMap(true)
-    navigation.navigate("ShowPropertyMap",{
+    navigation.navigate("ShowPropertyMap", {
       title: `Property Location`,
       lat: item.locationlatitude,
       long: item.locationlongitude,
-      propertyName:item.accountname,
-      propertyAccount:item.accountnumber
+      propertyName: item.accountname,
+      propertyAccount: item.accountnumber
       // township: township,
     })
   }
@@ -289,7 +339,7 @@ const CouncilloriViewScreen = ({ route }) => {
           onClose={() => setShowMap(false)} // Function to handle modal close
         />} */}
 
-        {/* <TestMapView/> */}
+      {/* <TestMapView/> */}
 
       {isLoading && (
         <FlatList
@@ -352,7 +402,7 @@ const CouncilloriViewScreen = ({ route }) => {
         onPress={handleSearch}
         value={searchText}
         // setSearchText={setSearchText}
-        placeholder={'search by account or name...'}
+        placeholder={searchPlaceholderText}
         isLoading={isLoading}
       />
       {/* )} */}

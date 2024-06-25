@@ -1,16 +1,10 @@
-import {createAsyncThunk} from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const smsApi = createAsyncThunk('api/sms', async params => {
   // Define your request body data
-  const {item, msg} = params;
-  console.log(item.cellphonenumber)
-  console.log(msg)
-  const requestBody = {
-    recipientNumber: '0739007893',
-    message: msg.toString(),
-    campaign: 'Outstanding Amount',
-  };
+  const { requestBody } = params;
+  console.log(requestBody)
 
   // console.log(JSON.stringify(requestBody));
   const response = await axios(

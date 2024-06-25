@@ -40,6 +40,7 @@ const PrivateNavigation = () => {
 
 
   const loggedUser = useSelector(state => state.loginReducer.items);
+  console.log("Navigation", loggedUser.warD_NO)
 
   const handleLogout = () => {
     clearData();
@@ -68,7 +69,7 @@ const PrivateNavigation = () => {
 
         component={WardMemberInfoScreen}
         options={({ navigation, route }) => ({
-          title: 'COUNCILLOR INFO',
+          title: loggedUser.warD_NO == 0 ? 'MAYOR INFO' : 'COUNCILLOR INFO',
           headerShown: true,
           headerTitleAlign: 'center',
           navigationBarHidden: true,

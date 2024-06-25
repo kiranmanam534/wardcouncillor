@@ -33,11 +33,11 @@ const TestHomeScreen = () => {
                 <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>Ekurhuleni, a Tsonga word that means “place of peace”</Text>
                 {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
 
-                <TouchableOpacity style={styles.btn}
-              onPress={()=>{handleNavigation("ward councilor")}}
+                <TouchableOpacity style={[styles.btn,{width:150,justifyContent:'center'}]}
+              onPress={()=>{handleNavigation("Mayor / Councillor")}}
                 >
-                    <Icon name="user-circle" size={25} color={Colors.white} />
-                    <Text style={styles.text}> I'm a ward councilor</Text>
+                    <Icon name="user-circle" size={20} color={Colors.white} />
+                    <Text style={styles.text}>LOGIN</Text>
                 </TouchableOpacity>
             </ImageBackground>
 

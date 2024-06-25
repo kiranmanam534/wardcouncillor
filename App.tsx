@@ -20,7 +20,7 @@ import CallLocalApi from './src/CallLocalApi'
 const App = () => {
   return (
     <Provider store={store}>      
-    {/* <Navigation/> */}
+    <Navigation/>
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -32,7 +32,7 @@ const App = () => {
     {/* <GoogleAutocompleteScreen/> */}
     {/* <SearchBarScreen/> */}
     {/* <TestCharts/> */}
-    <Test/>
+    {/* <Test/> */}
     {/* <CallLocalApi/> */}
     </Provider>
   )

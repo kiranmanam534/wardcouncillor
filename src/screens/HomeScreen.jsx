@@ -41,7 +41,7 @@ const HomeScreen = () => {
           <Text style={styles.text}> I'm a community member</Text>
         </TouchableOpacity> */}
 
-        <TouchableOpacity onPress={()=>{handleNavigation("ward councilor")}} style={styles.btn}>
+        <TouchableOpacity onPress={()=>{handleNavigation("ward councillor")}} style={styles.btn}>
           <Icon name="user-circle" size={25} color={Colors.yellow} />
           <Text style={styles.text}> I'm a ward councillor</Text>
         </TouchableOpacity>

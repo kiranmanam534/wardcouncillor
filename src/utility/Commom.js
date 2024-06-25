@@ -14,7 +14,7 @@ export const wardTitle = (wardType, title, isTownship = false) => {
     }
   } else if (wardType == 'Interims') {
     if (!isTownship) {
-      title = 'Category : ' + title + ' months';
+      title = 'Category ' + title + ' months';
     }
   }
   else if (wardType == 'Meter') {

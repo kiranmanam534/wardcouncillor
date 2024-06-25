@@ -21,7 +21,7 @@ const Customer360Screen = () => {
 
     const [isAlertVisible, setAlertVisible] = useState(false);
     const [isAlertErrorVisible, setIsAlertErrorVisible] = useState(false);
-    const [searchKey, setSearchKey] = useState('2100556270');
+    const [searchKey, setSearchKey] = useState();
 
     const loggedUser = useSelector(state => state.loginReducer.items);
 
@@ -128,6 +128,7 @@ const Customer360Screen = () => {
                             <Text style={styles.username}>{items?.customerData[0]?.category}</Text>
                             {items?.customerData[0]?.cellphonenumber && <Text style={styles.bio}>{items?.customerData[0]?.cellphonenumber}</Text>}
                             <Text style={styles.bio}>{items?.customerData[0]?.address}</Text>
+                            <Text style={[styles.bio,{fontWeight:'700'}]}>Ward : {items?.outstandingData[0]?.ward}</Text>
                         </View>
                         <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
                             <View style={{ flexDirection: 'row', marginLeft: -15 }}>
@@ -260,7 +261,7 @@ const Customer360Screen = () => {
                     <CustomAlert
                         isVisible={isAlertErrorVisible}
                         onClose={closeAlert1}
-                        message={`You entered account number is  "${searchKey}" doesn't exists.`}
+                        message={`You entered account number is  "${searchKey}" doesn't exists${loggedUser?.warD_NO!=0 ?' under ward no:' +loggedUser?.warD_NO +'.':'.'}`}
                         message1={'Please enter correct account number!'}
                         imageSource={logo} // Replace with your image URL or local image source
                     />
