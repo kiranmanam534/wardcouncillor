@@ -28,6 +28,18 @@ const config_new = {
 };
 
 
+
+const config = {
+  redirectUrl: 'wardcouncillor://oauthredirect', // Make sure this matches your custom scheme
+  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+  scopes: ['openid', 'profile', 'email'],
+  serviceConfiguration: {
+    authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/token',
+    tokenEndpoint: 'https://oauth2.googleapis.com/token',
+    revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+  },
+};
+
 export default function Test() {
 
   const handleSubmitPress = async () => {

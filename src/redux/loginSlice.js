@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { loginApi } from '../services/loginApi';
 import { storeData } from '../session/session';
+import { Alert } from 'react-native';
 
 const loginSlice = createSlice({
   name: 'auth/login',
@@ -20,6 +21,11 @@ const loginSlice = createSlice({
     },
     getUserName: (state, action) => {
       state.loggedUserName = action.payload;
+    },
+    setLoggedUser: (state, action) => {
+      state.isLoggedIn = true;
+      state.items = action.payload;
+      storeData('loggedUser', JSON.stringify(action.payload));
     },
     logout: state => {
       state.isLoggedIn = false;

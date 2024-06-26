@@ -73,7 +73,25 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>wardcouncillor:/oauthredirect</string> <!-- Use your custom scheme here -->
+		</array>
+	</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>wardcouncillor:/oauthredirect</string> <!-- Use your custom scheme here -->
+	<string>F7aubwPETI6TBfCGuUNajDtbreka</string> <!-- Use the correct OAuth provider scheme -->
+	</array>
+
 </dict>
 </plist>
