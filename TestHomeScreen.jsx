@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Dimensions, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, Image, ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 
 import {
@@ -155,7 +155,12 @@ const TestHomeScreen = () => {
             console.log("isInternetReachable", state.isInternetReachable)
             console.log('====================================');
             if (state.isInternetReachable !== false) {
-                IAMLogin();
+                if (Platform.OS == 'ios') {
+                    handleNavigation("Mayor / Councillor");
+                }
+                else {
+                    IAMLogin();
+                }
             } else {
                 ShowAlert("Network!", "Please check your network!")
             }

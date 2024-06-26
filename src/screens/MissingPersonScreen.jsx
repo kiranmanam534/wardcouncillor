@@ -45,7 +45,8 @@ function MissingPersonsScreen({ route }) {
     console.log(title, type, editItem);
     const navigation = useNavigation();
 
-
+ // Set the maximum date to today
+ const today = new Date();
 
     const dispatch = useDispatch();
 
@@ -668,6 +669,7 @@ function MissingPersonsScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
+                            maximumDate={today}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,

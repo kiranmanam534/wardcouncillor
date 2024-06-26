@@ -51,6 +51,12 @@ function RoadClousureScreen({ route }) {
 
     const [formValues, setFormValues] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false)
+
+      // Set the maximum date to today
+    const today = new Date();
+    const [selectedStartDate, setSelectedStartDate] = useState(today);
+    const [selectedEndDate, setSelectedEndDate] = useState(null);
+
     const loggedUser = useSelector(state => state.loginReducer.items);
 
     const { data, isLoading, error, statusCode } = useSelector(
@@ -101,7 +107,11 @@ function RoadClousureScreen({ route }) {
         if (event.type == 'set') {
             const currentDate = selectedDate;
             setDate(currentDate)
-
+            if (fieldName == 'roadclouseR_STARTDATE') {
+                setSelectedStartDate(currentDate);
+            } else if (fieldName == 'roadclouseR_ENDDATE') {
+                setSelectedEndDate(currentDate);
+            }
             if (Platform.OS == 'android') {
                 toggleDatePicker('NO');
                 setTimeout(() => {
@@ -730,6 +740,8 @@ function RoadClousureScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
+                            minimumDate={today}
+                            maximumDate={selectedEndDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,
@@ -812,6 +824,7 @@ function RoadClousureScreen({ route }) {
                             display='spinner'
                             // minimumDate={new Date(formValues?.roadclouseR_STARTDATE)}
                             value={date}
+                            minimumDate={selectedStartDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,

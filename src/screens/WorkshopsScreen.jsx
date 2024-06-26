@@ -44,6 +44,12 @@ function WorkshopsScreen({ route }) {
     const { title, type, editItem } = route.params;
     console.log(title, type, editItem);
     const navigation = useNavigation();
+    // Set the maximum date to today
+    const today = new Date();
+
+
+    const [selectedStartDate, setSelectedStartDate] = useState(today);
+    const [selectedEndDate, setSelectedEndDate] = useState(null);
 
 
 
@@ -100,6 +106,11 @@ function WorkshopsScreen({ route }) {
         if (event.type == 'set') {
             const currentDate = selectedDate;
             setDate(currentDate)
+            if (fieldName == 'workshoP_STARTDATE') {
+                setSelectedStartDate(currentDate);
+            } else if (fieldName == 'workshoP_ENDDATE') {
+                setSelectedEndDate(currentDate);
+            }
 
             if (Platform.OS == 'android') {
                 toggleDatePicker('NO');
@@ -181,10 +192,10 @@ function WorkshopsScreen({ route }) {
     useEffect(() => {
         if (editItem) {
             setFormValues({
-                workshoP_STARTDATE: editItem.workshoP_STARTDATE && formatDateTime(editItem.workshoP_STARTDATE,'date'),
-                workshoP_STARTTIME: editItem.workshoP_STARTIME && formatDateTime(editItem.workshoP_STARTIME,'time'),
-                workshoP_ENDDATE: editItem.workshoP_ENDDATE && formatDateTime(editItem.workshoP_ENDDATE,'date'),
-                workshoP_ENDTIME: editItem.workshoP_ENDTIME && formatDateTime(editItem.workshoP_ENDTIME,'time'),
+                workshoP_STARTDATE: editItem.workshoP_STARTDATE && formatDateTime(editItem.workshoP_STARTDATE, 'date'),
+                workshoP_STARTTIME: editItem.workshoP_STARTIME && formatDateTime(editItem.workshoP_STARTIME, 'time'),
+                workshoP_ENDDATE: editItem.workshoP_ENDDATE && formatDateTime(editItem.workshoP_ENDDATE, 'date'),
+                workshoP_ENDTIME: editItem.workshoP_ENDTIME && formatDateTime(editItem.workshoP_ENDTIME, 'time'),
                 location: editItem.location,
                 subject: editItem.subject,
                 workshoP_DETAILS: editItem.workshoP_DETAILS,
@@ -633,14 +644,14 @@ function WorkshopsScreen({ route }) {
                     </View>
                 ))}
                 {editItem ? null :
-                <View style={styles.buttonView}>
-                    <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-                        <Icon name="camera" size={25} color={Colors.blue} />
-                        <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-                            Capture images
-                        </Text>
-                    </Pressable>
-                </View>}
+                    <View style={styles.buttonView}>
+                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+                            <Icon name="camera" size={25} color={Colors.blue} />
+                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+                                Capture images
+                            </Text>
+                        </Pressable>
+                    </View>}
 
                 <View style={styles.buttonView}>
                     <Pressable style={styles.button} onPress={() => {
@@ -681,6 +692,8 @@ function WorkshopsScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
+                            minimumDate={today}
+                            maximumDate={selectedEndDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,
@@ -763,6 +776,7 @@ function WorkshopsScreen({ route }) {
                             display='spinner'
                             // minimumDate={new Date(formValues?.workshoP_STARTDATE)}
                             value={date}
+                            minimumDate={selectedStartDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,

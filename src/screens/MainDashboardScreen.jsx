@@ -16,6 +16,8 @@ const MainDashboardScreen = () => {
   const dispatch = useDispatch();
   const [showselectedSection, setShowselectedSection] = useState('');
 
+  const loggedUser = useSelector(state => state.loginReducer.items);
+
   const loggedUserNme = useSelector(state => state.loginReducer.loggedUserName);
 
   const openAnnouncementModal = (item) => {
@@ -35,8 +37,8 @@ const MainDashboardScreen = () => {
 
 
   return (
-    <View style={styles.container}>
-      <View
+    <View style={[styles.container,{marginHorizontal:5}]}>
+      {/* <View
         style={{
           borderBottomWidth: 2,
           width: '100%',
@@ -61,7 +63,41 @@ const MainDashboardScreen = () => {
         
          
         </Text>
-      </View>
+      </View> */}
+      <View
+            style={{
+              marginVertical: 5,
+              borderBottomWidth: 2,
+              width: '100%',
+              // height:40,
+              borderBottomColor: Colors.yellow,
+              backgroundColor: Colors.primary,
+              justifyContent: 'center',
+              borderRadius: 10,
+              padding: 5
+            }}>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '600',
+                color: Colors.white,
+                paddingLeft: 5
+              }}>
+              <Icon name="user" size={17} color={Colors.yellow} />{'  '}
+              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
+
+
+            </Text>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: Colors.white,
+             textAlign:'right',
+             paddingRight:10
+            }}>Ward : {loggedUser?.warD_NO}</Text>
+
+          </View>
+
       <ScrollView>
         <View style={[styles.container, { marginBottom: Platform.OS === 'ios' ? 150 : 160 }]}>
           {MainDashboardList.map((item) => (

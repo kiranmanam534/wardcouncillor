@@ -52,6 +52,9 @@ function HotspotScreen({ route }) {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  // Set the maximum date to today
+  const today = new Date();
+
   const [formValues, setFormValues] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [sports1, setSports1] = useState([])
@@ -629,6 +632,7 @@ function HotspotScreen({ route }) {
               mode='date'
               display='spinner'
               value={date}
+              maximumDate={today}
               onChange={(event, selectedDate) =>
                 onChageDatePicker(
                   event,

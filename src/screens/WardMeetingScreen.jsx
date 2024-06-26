@@ -52,6 +52,12 @@ function WardMeetingScreen({ route }) {
 
     const loggedUser = useSelector(state => state.loginReducer.items);
 
+
+    // Set the maximum date to today
+    const today = new Date();
+    const [selectedStartDate, setSelectedStartDate] = useState(today);
+    const [selectedEndDate, setSelectedEndDate] = useState(null);
+
     // const { data, isLoading, error, statusCode } = useSelector(
     //     state => state.createMeetingReducer,
     // );
@@ -116,7 +122,11 @@ function WardMeetingScreen({ route }) {
         if (event.type == 'set') {
             const currentDate = selectedDate;
             setDate(currentDate)
-
+            if (fieldName == 'meetinG_STARTDATE') {
+                setSelectedStartDate(currentDate);
+            } else if (fieldName == 'meetinG_ENDTIME') {
+                setSelectedEndDate(currentDate);
+            }
             if (Platform.OS == 'android') {
                 toggleDatePicker('NO');
                 setTimeout(() => {
@@ -712,6 +722,8 @@ function WardMeetingScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
+                            minimumDate={today}
+                            maximumDate={selectedEndDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,
@@ -794,6 +806,7 @@ function WardMeetingScreen({ route }) {
                             display='spinner'
                             // minimumDate={new Date(formValues?.meetinG_STARTDATE)}
                             value={date}
+                            minimumDate={selectedStartDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,

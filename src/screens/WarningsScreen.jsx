@@ -45,7 +45,8 @@ function WarningssScreen({ route }) {
     console.log(title, type, editItem);
     const navigation = useNavigation();
 
-
+    // Set the maximum date to today
+    const today = new Date();
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({});
@@ -649,6 +650,7 @@ function WarningssScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
+                            minimumDate={today}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(
                                     event,

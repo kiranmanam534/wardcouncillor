@@ -111,33 +111,40 @@ const DashboardScreen = () => {
 
   const ShowMessageData = () => {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
+      <View style={styles.container}>
         <View
-          style={{
-            borderBottomWidth: 2,
-            width: '100%',
-            borderColor: Colors.yellow,
-            backgroundColor: Colors.primary,
-            marginLeft: 30,
-            borderTopLeftRadius: 20,
-            justifyContent: 'center',
-            padding: 10
-
-
-          }}>
-          <Text
             style={{
-              fontSize: 17,
-              fontWeight: '800',
-              color: Colors.white,
-              // padding: 20,
+              marginVertical: 5,
+              borderBottomWidth: 2,
+              width: '100%',
+              // height:40,
+              borderBottomColor: Colors.yellow,
+              backgroundColor: Colors.primary,
+              justifyContent: 'center',
+              borderRadius: 10,
+              padding: 5
             }}>
-            <Icon name="user" size={20} color={Colors.yellow} />{'  '}
-            Hello, <Text style={{ color: Colors.white }}>{loggedUserNme}</Text>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '600',
+                color: Colors.white,
+                paddingLeft: 5
+              }}>
+              <Icon name="user" size={17} color={Colors.yellow} />{'  '}
+              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
 
 
-          </Text>
-        </View>
+            </Text>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: Colors.white,
+             textAlign:'right',
+             paddingRight:10
+            }}>Ward : {loggedUser?.warD_NO}</Text>
+
+          </View>
 
         <View style={[styles1.container]}>
           <View style={styles1.card}>
@@ -209,15 +216,23 @@ const DashboardScreen = () => {
             <Text
               style={{
                 fontSize: 17,
-                fontWeight: '800',
+                fontWeight: '600',
                 color: Colors.white,
-                paddingLeft:5
+                paddingLeft: 5
               }}>
               <Icon name="user" size={17} color={Colors.yellow} />{'  '}
-              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme}</Text>
+              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
 
 
             </Text>
+            <Text style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: Colors.white,
+             textAlign:'right',
+             paddingRight:10
+            }}>Ward : {loggedUser?.warD_NO}</Text>
+
           </View>
           <ScrollView>
             <View style={styles.row}>

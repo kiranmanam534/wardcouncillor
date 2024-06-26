@@ -50,6 +50,8 @@ function HealthCareScreen({ route }) {
   const { title, type, editItem } = route.params;
   console.log(title, type, editItem);
   const navigation = useNavigation();
+   // Set the maximum date to today
+   const today = new Date();
 
   const dispatch = useDispatch();
 
@@ -604,6 +606,7 @@ function HealthCareScreen({ route }) {
               mode='date'
               display='spinner'
               value={date}
+              minimumDate={today}
               onChange={(event, selectedDate) =>
                 onChageDatePicker(
                   event,
