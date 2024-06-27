@@ -29,7 +29,7 @@ const PaymentHistoryScreen = ({ route }) => {
 
     useEffect(() => {
         dispatch(PaymentHistoryActions.clearWards())
-        dispatch(GetPaymentHistoryApi('1704613583'))
+        dispatch(GetPaymentHistoryApi(accountNo))
 
     }, [loggedUser?.warD_NO]);
 

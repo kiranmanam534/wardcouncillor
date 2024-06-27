@@ -1,7 +1,6 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import <React/RCTLinkingManager.h>
 
 // #import <GoogleMaps/GoogleMaps.h>
 
@@ -20,11 +19,31 @@
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-// Add this method to handle the OAuth redirect
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+
+- (BOOL) application: (UIApplication *)application
+             openURL: (NSURL *)url
+             options: (NSDictionary<UIApplicationOpenURLOptionsKey, id> *) options
+{
+  if ([self.authorizationFlowManagerDelegate resumeExternalUserAgentFlowWithURL:url]) {
+    return YES;
+  }
   return [RCTLinkingManager application:application openURL:url options:options];
 }
 
+- (BOOL) application: (UIApplication *) application
+continueUserActivity: (nonnull NSUserActivity *)userActivity
+  restorationHandler: (nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+  if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+    if (self.authorizationFlowManagerDelegate) {
+      BOOL resumableAuth = [self.authorizationFlowManagerDelegate resumeExternalUserAgentFlowWithURL:userActivity.webpageURL];
+      if (resumableAuth) {
+        return YES;
+      }
+    }
+  }
+  return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+}
 
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

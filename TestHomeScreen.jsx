@@ -76,15 +76,47 @@ const TestHomeScreen = () => {
             setIAMAuthenticate(false);
 
         } catch (error) {
-            console.log(error)
-            const errorData = error?.response?.data;
-            console.log(error.response.data);
-            setIAMAuthenticate(false);
-            if (errorData?.statusCode === 401) {
-                ShowAlert("Error", "User doesn't exist in database!")
+
+            if (axios.isAxiosError(error)) {
+                // Alert.alert(error.code)
+                console.log('Axios Error Message:', error.message);
+                console.log('Axios Error Code:', error.code);
+
+                if (error.response) {
+                    // Server responded with a status other than 200 range
+                    console.log('Response Data:', error.response.data);
+                    console.log('Response Status:', error.response.status);
+                } else if (error.request) {
+                    // Request was made but no response was received
+                    console.log('Request:', error.request);
+                } else {
+                    // Something happened in setting up the request
+                    console.log('Error Message:', error.message);
+                }
+
+                if (error.code == 'ERR_NETWORK') {
+                    ShowAlert("Network Error!", "Please check your network!")
+                } else if (error.code == 'ERR_BAD_REQUEST') {
+                    ShowAlert("Authentication", "User doesn't exist in database!")
+                }
+                else {
+                    ShowAlert("Error", "Something went wrong!")
+                }
+                setIAMAuthenticate(false);
             } else {
-                ShowAlert("Error", "Something went wrong!")
+                console.log('General Error:', error);
+                const errorData = error?.response?.data;
+                console.log("error.response.data===>", error.response.data);
+
+                if (errorData?.statusCode === 401) {
+                    ShowAlert("Error", "User doesn't exist in database!")
+                } else {
+                    ShowAlert("Error", "Something went wrong!")
+                }
+
+                setIAMAuthenticate(false);
             }
+
         }
     }
 
@@ -154,20 +186,25 @@ const TestHomeScreen = () => {
             console.log(state);
             console.log("isInternetReachable", state.isInternetReachable)
             console.log('====================================');
-            if (state.isInternetReachable !== false) {
-                if (Platform.OS == 'ios') {
-                    handleNavigation("Mayor / Councillor");
-                }
-                else {
-                    IAMLogin();
-                }
+
+            if (state.isInternetReachable !== false && state.isInternetReachable != null) {
+                 IAMLogin();
+                // if (Platform.OS == 'ios' && state.isInternetReachable != null) {
+                //     // handleNavigation("Mayor / Councillor");
+                //     IAMLogin();
+                // }
+                // else if (Platform.OS == 'android') {
+                //     IAMLogin();
+                // } else {
+                //     ShowAlert("Network!", "Please check your network!")
+                // }
             } else {
                 ShowAlert("Network!", "Please check your network!")
             }
         })
             .catch(error => {
                 console.error('Error fetching network status:', error);
-                ShowAlert("Network!", "Please check your network!")
+                ShowAlert("Network Error!", "Please check your network!")
             });
 
 

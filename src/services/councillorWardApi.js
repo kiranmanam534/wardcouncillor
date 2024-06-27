@@ -470,13 +470,15 @@ export const GetPaymentHistoryApi = createAsyncThunk(
     try {
 
       // Your username and password
-      const username = 'justintimberlake';
-      const password = 'Passw0rd1@';
+      const username = 'Jaykay';
+      const password = 'c8P@ssw0rd1';
 
       // Encode the credentials in base64
       const credentials = btoa(`${username}:${password}`);
       console.log(credentials)
-      let url = `https://siyakhokha.ekurhuleni.gov.za/api/mobile/getaccounthistory?accountNumber=${accountNo}`;
+      // https://siyakhokha.ekurhuleni.gov.za/api/mobile/getaccounthistorybyaccountnumber?accountNumber=1709038356
+
+      let url = `https://siyakhokha.ekurhuleni.gov.za/api/mobile/getaccounthistorybyaccountnumber?accountNumber=${accountNo}`;
       console.log(url)
       const response = await axios.get(url, {
         headers: {
