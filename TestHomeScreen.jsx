@@ -165,7 +165,7 @@ const TestHomeScreen = () => {
             };
 
             // Handle the specific error message
-            if (error.message === 'User cancelled flow') {
+            if (error.message === 'User cancelled flow' || error.message=="The operation couldn’t be completed. (org.openid.appauth.general error -3.)") {
                 // You can add more custom properties if needed
                 errorObject.message = 'The user has cancelled the authentication process.';
             }
@@ -187,7 +187,7 @@ const TestHomeScreen = () => {
             console.log("isInternetReachable", state.isInternetReachable)
             console.log('====================================');
 
-            if (state.isInternetReachable !== false && state.isInternetReachable != null) {
+            if (state.isInternetReachable !== false) {
                  IAMLogin();
                 // if (Platform.OS == 'ios' && state.isInternetReachable != null) {
                 //     // handleNavigation("Mayor / Councillor");
