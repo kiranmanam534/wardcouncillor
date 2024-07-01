@@ -98,7 +98,7 @@ const WardMemberInfoScreen = () => {
 
 
 
-          <View style={{ padding: 20 }}>
+          {/* <View style={{ padding: 20 }}>
 
             <View>
               <Text>
@@ -107,8 +107,6 @@ const WardMemberInfoScreen = () => {
                   {' '}
                   Time Left:
                   {minutes >= 0 ? (minutes + ":" + (remainingSeconds < 10 ? '0' : '') + remainingSeconds) : "00:00"}
-                  {/* {minutes}:{remainingSeconds < 10 ? '0' : ''}
-            {remainingSeconds} */}
                 </Text>
               </Text>
             </View>
@@ -121,7 +119,7 @@ const WardMemberInfoScreen = () => {
               <Text>to navigate dashboard.</Text>
             </View>
 
-          </View>
+          </View> */}
         </ScrollView>
       }
     </>
