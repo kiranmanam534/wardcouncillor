@@ -441,6 +441,42 @@ const DashboardScreen = () => {
                 </Card.Actions>
               </Card>
             </View>
+            <View style={styles.row}>
+            <Card
+                onPress={() => {
+                  // handleDetailsNavigation('Collections', 'Collections', 'Collections');
+                  if (loggedUser?.warD_NO == 0) {
+                    handleDetailsNavigation(
+                      'Collections',
+                      'Collections',
+                      'Collections',
+                    );
+                  } else {
+                    handleDetailsNavigation(
+                      'CollectionsBarChart',
+                      'Collections Bar chart',
+                      'Collections',
+                    );
+                  }
+                }}
+                style={[styles.card, { backgroundColor: Colors.primary }]}
+                mode="outlined">
+                <Card.Title
+                  title="Collections"
+                  titleStyle={{ color: Colors.white, fontSize: 14 }}
+                />
+                <Card.Content>
+                  <Text></Text>
+                  <Text variant="titleLarge" style={styles.text}>
+                  </Text>
+                </Card.Content>
+                <Card.Actions>
+                  <View style={styles.button}>
+                    <Text style={styles.buttonText}>View</Text>
+                  </View>
+                </Card.Actions>
+              </Card>
+            </View>
           </ScrollView>
         </View>
       }

@@ -53,7 +53,7 @@ const CardItem = ({
                   styles.btn,
                   {
                     height: 30,
-                    width: 100,
+                    width: wardType=='Collections'?130:100,
                     backgroundColor: Colors.white,
                     borderRadius: 20,
                   },
@@ -68,13 +68,13 @@ const CardItem = ({
                     flexDirection: 'row',
                     // marginHorizontal: -20,
                   }}>
-                  <Icon name="info-circle" size={20} color={Colors.blue} />
+                  <Icon name={wardType=='Collections'?"bar-chart-o":"info-circle"} size={20} color={Colors.blue} />
                   <Text
                     style={[
                       styles.text,
-                      { fontSize: 16, color: Colors.blue, paddingLeft: 10 },
+                      { fontSize: 16, color: Colors.blue, paddingLeft: wardType=='Collections'?5:10 },
                     ]}>
-                    View
+                    {wardType=='Collections'?'View Chart':'View'}
                   </Text>
                 </View>
               </TouchableOpacity>

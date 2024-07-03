@@ -31,6 +31,9 @@ import ViewAnnouncementScreen from '../screens/ViewAnnouncementScreen';
 import ViewImagesScreen from '../screens/ViewImagesScreen';
 import OustandingChartsScreen from '../screens/OustandingChartsScreen';
 import OutstandingCategoriesChartScreen from '../screens/OutstandingCategoriesChartScreen';
+import CollectionsScreen from '../screens/CollectionsScreen';
+import WardWiseCollections from '../screens/WardWiseCollections';
+import CollectionsBarChartScreen from '../screens/CollectionsBarChartScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -115,6 +118,15 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="AllWards"
         component={AllWardsOutstandingScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+      <PrivateStack.Screen
+        name="WardWiseCollections"
+        component={WardWiseCollections}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,
@@ -219,6 +231,14 @@ const PrivateNavigation = () => {
       />
 
       <PrivateStack.Screen
+        name="Collections"
+        component={CollectionsScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+      <PrivateStack.Screen
         name="Customer360"
         component={Customer360Screen}
         options={({ navigation, route }) => ({
@@ -269,6 +289,16 @@ const PrivateNavigation = () => {
       <PrivateStack.Screen
         name="OutstandingCategoriesChart"
         component={OutstandingCategoriesChartScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
+
+
+      <PrivateStack.Screen
+        name="CollectionsBarChart"
+        component={CollectionsBarChartScreen}
         options={({ navigation, route }) => ({
           title: route.params.title,
           headerShown: true,

@@ -120,3 +120,23 @@ export const MayorOustandingDashboardList = [
     name:'CategoryList'
   }
 ];
+
+
+
+export const CollectionsDashboardList = [
+  {
+    id: 1,
+    title: 'Month wise collections',
+    icon: (
+      <MaterialCommunityIcons name="calendar" size={50} color={Colors.blue} />
+    ),
+    name:'MonthWiseCollections'
+  },
+  {
+    id: 2,
+    title: 'Ward wise collections',
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    name:'WardCollections'
+  }
+];
+
