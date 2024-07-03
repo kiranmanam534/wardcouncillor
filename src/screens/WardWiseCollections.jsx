@@ -8,6 +8,7 @@ import CardItem from '../components/CardItem';
 import { GetCouncillorWardDetailsIfoByAllWardsApi, GetCouncillorWardDetailsIfoByWardNo } from '../services/councillorWardApi';
 
 import {
+    GetwardHeaderTitle,
     GetwardHeaderTownshipTitle,
 } from '../utility/Commom';
 import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
@@ -35,10 +36,10 @@ console.log(wardType)
 
 
     const navigateToDetail = (wardType, name) => {
-        navigation.navigate('CouncillorDetails', {
-            title:
-                `${name} - Oustanding Debt`,
-            wardType: wardType
+        navigation.navigate("CollectionsBarChart", {
+            title: 'Ward : '+name + ' - ' + GetwardHeaderTitle("Collections", "Collections Barchat") ,
+            wardType: "Collections",
+            selectedWardNo:name
         });
     };
 
@@ -102,8 +103,8 @@ console.log(wardType)
                             title={"Ward No: " + item.name}
                             isTownship={false}
                             wardType={wardType}
-                            value={parseFloat(item.value)}
-                            isAmount={false}
+                            value={Math.abs(parseFloat(item.value))}
+                            isAmount={true}
                             onPress={() => {
                                 navigateToDetail(wardType, item.name);
                             }}

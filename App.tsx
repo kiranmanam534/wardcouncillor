@@ -16,6 +16,7 @@ import SearchBarScreen from './src/SearchBarScreen'
 import TestCharts from './src/TestCharts'
 import Test from './src/Test'
 import CallLocalApi from './src/CallLocalApi'
+import TestBarchart from './src/screens/TestBarchart'
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
     {/* <TestCharts/> */}
     {/* <Test/> */}
     {/* <CallLocalApi/> */}
+    {/* <TestBarchart/> */}
     </Provider>
   )
 }

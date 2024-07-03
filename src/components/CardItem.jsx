@@ -42,7 +42,7 @@ const CardItem = ({
           {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
           <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
             {/* {wardType=='Outstanding' && } */}
-            {isAmount && ['Outstanding', 'OutstandingCategory'].includes(wardType)
+            {isAmount && ['Outstanding', 'OutstandingCategory','Collections'].includes(wardType)
               ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
               : wardValue(wardType, value)}
           </Paragraph>
