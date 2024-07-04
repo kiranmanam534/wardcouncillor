@@ -137,6 +137,12 @@ export const CollectionsDashboardList = [
     title: 'Ward wise collections',
     icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
     name:'WardCollections'
+  },
+  {
+    id: 3,
+    title: 'Collections Summary',
+    icon: <MaterialCommunityIcons name="tablet-dashboard" size={50} color={Colors.blue} />,
+    name:'CollectionsSummary'
   }
 ];
 

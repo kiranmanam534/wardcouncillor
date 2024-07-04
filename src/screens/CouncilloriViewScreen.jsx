@@ -327,6 +327,7 @@ const CouncilloriViewScreen = ({ route }) => {
       {isImageLoaded && binaryImage &&
         <BinaryImageModal
           binaryImageData={binaryImage} // Binary image data to be decoded
+          isBinary={true}
           visible={showImage} // Boolean to control the visibility of the modal
           onClose={() => setShowImage(false)} // Function to handle modal close
         />}

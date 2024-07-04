@@ -32,6 +32,11 @@ const CollectionsScreen = () => {
                 title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle("Collections", "Collections Barchat") : GetwardHeaderTitle("Collections", "Ward wise collections"),
                 wardType: "Collections",
             });
+        }else if (item.name == 'CollectionsSummary') {
+            navigation.navigate("CollectionsSummary", {
+                title: GetwardHeaderTitle("Collections", "Collections Summaey"),
+                wardType: "Collections",
+            });
         }
 
     };
