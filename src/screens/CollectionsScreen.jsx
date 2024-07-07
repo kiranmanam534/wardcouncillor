@@ -37,6 +37,11 @@ const CollectionsScreen = () => {
                 title: GetwardHeaderTitle("Collections", "Collections Summaey"),
                 wardType: "Collections",
             });
+        }else if (item.name == 'WardsWiseComparison') {
+            navigation.navigate("WardsWiseComparison", {
+                title: GetwardHeaderTitle("Wards Comparision", "Wards Comparision"),
+                wardType: "Wards Comparision",
+            });
         }
 
     };

@@ -27,7 +27,7 @@ const CollectionsBarChartScreen = ({ route }) => {
     const [IsSubmitted, setIsSubmitted] = useState(false);
     const [statusCode, setStatusCode] = useState(null);
     const [WardCollectionsData, setWardCollectionsData] = useState([]);
-    const [maxAbsValue, setMaxAbsValue] = useState([]);
+    const [maxAbsValue, setMaxAbsValue] = useState();
     const loggedUser = useSelector(state => state.loginReducer.items);
 
     console.log(loggedUser?.warD_NO, wardType,selectedWardNo)

@@ -113,38 +113,38 @@ const DashboardScreen = () => {
     return (
       <View style={styles.container}>
         <View
+          style={{
+            marginVertical: 5,
+            borderBottomWidth: 2,
+            width: '100%',
+            // height:40,
+            borderBottomColor: Colors.yellow,
+            backgroundColor: Colors.primary,
+            justifyContent: 'center',
+            borderRadius: 10,
+            padding: 5
+          }}>
+          <Text
             style={{
-              marginVertical: 5,
-              borderBottomWidth: 2,
-              width: '100%',
-              // height:40,
-              borderBottomColor: Colors.yellow,
-              backgroundColor: Colors.primary,
-              justifyContent: 'center',
-              borderRadius: 10,
-              padding: 5
-            }}>
-            <Text
-              style={{
-                fontSize: 17,
-                fontWeight: '600',
-                color: Colors.white,
-                paddingLeft: 5
-              }}>
-              <Icon name="user" size={17} color={Colors.yellow} />{'  '}
-              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
-
-
-            </Text>
-            <Text style={{
               fontSize: 17,
               fontWeight: '600',
               color: Colors.white,
-             textAlign:'right',
-             paddingRight:10
-            }}>Ward : {loggedUser?.warD_NO}</Text>
+              paddingLeft: 5
+            }}>
+            <Icon name="user" size={17} color={Colors.yellow} />{'  '}
+            Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
 
-          </View>
+
+          </Text>
+          <Text style={{
+            fontSize: 17,
+            fontWeight: '600',
+            color: Colors.white,
+            textAlign: 'right',
+            paddingRight: 10
+          }}>Ward : {loggedUser?.warD_NO}</Text>
+
+        </View>
 
         <View style={[styles1.container]}>
           <View style={styles1.card}>
@@ -229,253 +229,292 @@ const DashboardScreen = () => {
               fontSize: 17,
               fontWeight: '600',
               color: Colors.white,
-             textAlign:'right',
-             paddingRight:10
-            }}>Ward : {loggedUser?.warD_NO}</Text>
-
+              textAlign: 'right',
+              paddingRight: 10
+            }}>
+              Ward : {loggedUser?.warD_NO}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                // fontWeight: '800',
+                color: Colors.white,
+                textAlign: 'right'
+              }}>
+              Last data refreshed: {DataMaintaince?.value}
+            </Text>
           </View>
           <ScrollView>
-            <View style={styles.row}>
-              <Card
-                onPress={() => {
+            <View style={{ marginBottom: 150 }}>
+              <View style={styles.row}>
+                <Card
+                  onPress={() => {
 
-                  if (loggedUser?.warD_NO == 0) {
-                    handleDetailsNavigation(
-                      'MayorOutstandingDashboard',
-                      'Oustanding Dashboard',
-                      'Outstanding',
-                    );
-                  } else {
+                    if (loggedUser?.warD_NO == 0) {
+                      handleDetailsNavigation(
+                        'MayorOutstandingDashboard',
+                        'Oustanding Dashboard',
+                        'Outstanding',
+                      );
+                    } else {
+                      handleDetailsNavigation(
+                        'CouncillorDetails',
+                        'Oustanding Debt',
+                        'Outstanding',
+                      );
+                    }
+
+
+
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Outstanding Debt"
+                    titleNumberOfLines={2}
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {formattedAmount(
+                        parseFloat(getValueByKey(items, 'Outstanding Amount')),
+                        'en-ZA',
+                        'ZAR',
+                        'currency',
+                      )}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={[styles.buttonText]}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+                <Card
+                  onPress={() => {
                     handleDetailsNavigation(
                       'CouncillorDetails',
-                      'Oustanding Debt',
-                      'Outstanding',
+                      'Interims',
+                      'Interims',
                     );
-                  }
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  mode="outlined">
+                  <Card.Title title="Interims" titleStyle={{ color: Colors.white, fontSize: 14 }} />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'Interims'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+              </View>
+              <View style={styles.row}>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('CouncillorDetails', 'Incidents/Complaints', 'IMS');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.blue }]}
+                  mode="outlined">
+                  <Card.Title title="Incidents/Complaints" titleStyle={{ color: Colors.white, fontSize: 14 }} titleNumberOfLines={2} />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'IMS'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('CouncillorDetails', 'Total Water and Electricity Meters', 'Meter');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.red }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Total Water and Electricity Meters"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleNumberOfLines={2}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseFloat(getValueByKey(items, 'Water and Electricity Meters'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+              </View>
+              <View style={styles.row}>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('CouncillorDetails', 'City’s Total Properties', 'Property');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="City’s Total Properties" titleNumberOfLines={2}
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'Total Properties'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={[styles.buttonText]}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('CouncillorDetails', 'City’s Total Customers', 'Customer');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="City’s Total Customers" titleNumberOfLines={2}
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'Total Customers'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
 
+              </View>
 
-
-                }}
-                style={[styles.card, { backgroundColor: Colors.primary }]}
-                mode="outlined">
-                <Card.Title
-                  title="Outstanding Debt"
-                  titleNumberOfLines={2}
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {formattedAmount(
-                      parseFloat(getValueByKey(items, 'Outstanding Amount')),
-                      'en-ZA',
-                      'ZAR',
-                      'currency',
-                    )}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={[styles.buttonText]}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation(
-                    'CouncillorDetails',
-                    'Interims',
-                    'Interims',
-                  );
-                }}
-                style={[styles.card, { backgroundColor: Colors.yellow }]}
-                mode="outlined">
-                <Card.Title title="Interims" titleStyle={{ color: Colors.white, fontSize: 14 }} />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseInt(getValueByKey(items, 'Interims'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-            </View>
-            <View style={styles.row}>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('CouncillorDetails', 'Incidents/Complaints', 'IMS');
-                }}
-                style={[styles.card, { backgroundColor: Colors.blue }]}
-                mode="outlined">
-                <Card.Title title="Incidents/Complaints" titleStyle={{ color: Colors.white, fontSize: 14 }} titleNumberOfLines={2} />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseInt(getValueByKey(items, 'IMS'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('CouncillorDetails', 'Total Water and Electricity Meters', 'Meter');
-                }}
-                style={[styles.card, { backgroundColor: Colors.red }]}
-                mode="outlined">
-                <Card.Title
-                  title="Total Water and Electricity Meters"
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                  titleNumberOfLines={2}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseFloat(getValueByKey(items, 'Water and Electricity Meters'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-            </View>
-            <View style={styles.row}>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('CouncillorDetails', 'City’s Total Properties', 'Property');
-                }}
-                style={[styles.card, { backgroundColor: Colors.primary }]}
-                mode="outlined">
-                <Card.Title
-                  title="City’s Total Properties" titleNumberOfLines={2}
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseInt(getValueByKey(items, 'Total Properties'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={[styles.buttonText]}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('CouncillorDetails', 'City’s Total Customers', 'Customer');
-                }}
-                style={[styles.card, { backgroundColor: Colors.yellow }]}
-                mode="outlined">
-                <Card.Title
-                  title="City’s Total Customers" titleNumberOfLines={2}
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseInt(getValueByKey(items, 'Total Customers'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-
-            </View>
-
-            <View style={styles.row}>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('CouncillorDetails', 'Meters Not Read', 'MetersNotRead');
-                }}
-                style={[styles.card, { backgroundColor: Colors.blue }]}
-                mode="outlined">
-                <Card.Title
-                  title="Meters Not Read"
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                    {parseInt(getValueByKey(items, 'Not Read Meters'))}
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-              <Card
-                onPress={() => {
-                  handleDetailsNavigation('Customer360', 'Customer 360', 'Customer360');
-                }}
-                style={[styles.card, { backgroundColor: Colors.red }]}
-                mode="outlined">
-                <Card.Title
-                  title="Customer 360"
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
-            </View>
-            <View style={styles.row}>
-            <Card
-                onPress={() => {
-                  // handleDetailsNavigation('Collections', 'Collections', 'Collections');
-                  if (loggedUser?.warD_NO == 0) {
-                    handleDetailsNavigation(
-                      'Collections',
-                      'Collections',
-                      'Collections',
-                    );
-                  } else {
-                    handleDetailsNavigation(
-                      'CollectionsBarChart',
-                      'Collections Bar chart',
-                      'Collections',
-                    );
-                  }
-                }}
-                style={[styles.card, { backgroundColor: Colors.primary }]}
-                mode="outlined">
-                <Card.Title
-                  title="Collections"
-                  titleStyle={{ color: Colors.white, fontSize: 14 }}
-                />
-                <Card.Content>
-                  <Text></Text>
-                  <Text variant="titleLarge" style={styles.text}>
-                  </Text>
-                </Card.Content>
-                <Card.Actions>
-                  <View style={styles.button}>
-                    <Text style={styles.buttonText}>View</Text>
-                  </View>
-                </Card.Actions>
-              </Card>
+              <View style={styles.row}>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('CouncillorDetails', 'Meters Not Read', 'MetersNotRead');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.blue }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Meters Not Read"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'Not Read Meters'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation('Customer360', 'Customer 360', 'Customer360');
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.red }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Customer 360"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+              </View>
+              <View style={styles.row}>
+                <Card
+                  onPress={() => {
+                    // handleDetailsNavigation('Collections', 'Collections', 'Collections');
+                    if (loggedUser?.warD_NO == 0) {
+                      handleDetailsNavigation(
+                        'Collections',
+                        'Collections',
+                        'Collections',
+                      );
+                    } else {
+                      handleDetailsNavigation(
+                        'CollectionsBarChart',
+                        'Collections Bar chart',
+                        'Collections',
+                      );
+                    }
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Collections"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+                {/* {loggedUser?.warD_NO == 0 &&
+                  <Card
+                    onPress={() => {
+                      handleDetailsNavigation(
+                        'WardsWiseComparison',
+                        'Wards Comparision',
+                        'Wards Comparision',
+                      );
+                    }}
+                    style={[styles.card, { backgroundColor: Colors.blue }]}
+                    mode="outlined">
+                    <Card.Title
+                      title="Wards Comparision"
+                      titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    />
+                    <Card.Content>
+                      <Text></Text>
+                      <Text variant="titleLarge" style={styles.text}>
+                      </Text>
+                    </Card.Content>
+                    <Card.Actions>
+                      <View style={styles.button}>
+                        <Text style={styles.buttonText}>View</Text>
+                      </View>
+                    </Card.Actions>
+                  </Card>
+                } */}
+              </View>
             </View>
           </ScrollView>
         </View>

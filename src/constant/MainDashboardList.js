@@ -143,6 +143,12 @@ export const CollectionsDashboardList = [
     title: 'Collections Summary',
     icon: <MaterialCommunityIcons name="tablet-dashboard" size={50} color={Colors.blue} />,
     name:'CollectionsSummary'
+  },
+  {
+    id: 4,
+    title: 'Wards Comparision',
+    icon: <MaterialCommunityIcons name="compare-horizontal" size={50} color={Colors.blue} />,
+    name:'WardsWiseComparison'
   }
 ];
 

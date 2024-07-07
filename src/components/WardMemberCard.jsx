@@ -22,14 +22,15 @@ const WardMemberCard = ({wardMember, onPress}) => {
     <View style={styles.container}>
       <Card style={styles.card}>
         <View style={styles.box}>
-          {wardMember?.Councillor_Picture ? (
+          {/* {wardMember?.Councillor_Picture ? (
             <Image
               source={{uri: wardMember?.Councillor_Picture}}
               style={styles.img}
             />
           ) : (
             <Icon name="user" size={100} color={Colors.blue} />
-          )}
+          )} */}
+          <Icon name="user" size={100} color={Colors.blue} />
         </View>
         <Card.Content style={{paddingRight: 80, paddingTop: 20}}>
           <View style={styles.cardContent}>

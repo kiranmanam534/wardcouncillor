@@ -173,7 +173,7 @@ const CouncilloriViewScreen = ({ route }) => {
         )}`;
         // console.log(message)
         const requestBody = {
-          recipientNumber: item.cellphonenumber,
+          recipientNumber: '0739007893',//item.cellphonenumber,
           message: message.toString(),
           campaign: 'Outstanding Amount',
         };
@@ -187,7 +187,7 @@ const CouncilloriViewScreen = ({ route }) => {
       if (item.cellNo && item.cellphonenumber != 'Not Available') {
         let message = `Hi ${item.debtorName.trim()}, Your Meter No : ${item.meterNumber} is  for ${item.accountNumber}}`;
         const requestBody = {
-          recipientNumber: item.cellphonenumber,//'0739007893',//item.cellphonenumber
+          recipientNumber: '0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
           message: message.toString(),
           campaign: 'Interims',
         };

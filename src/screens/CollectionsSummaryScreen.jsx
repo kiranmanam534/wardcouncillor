@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions, Alert, FlatList, Platform } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -43,7 +43,7 @@ const CollectionsSummaryScreen = () => {
     const [IsSubmitted, setIsSubmitted] = useState(false);
     const [statusCode, setStatusCode] = useState(null);
     const [WardCollectionsData, setWardCollectionsData] = useState([]);
-    const [selectedMonth, setSelectedMonth] = useState('January');
+    const [selectedMonth, setSelectedMonth] = useState('');
     const [pickerVisible, setPickerVisible] = useState(false);
 
     const loggedUser = useSelector(state => state.loginReducer.items);
@@ -83,9 +83,8 @@ const CollectionsSummaryScreen = () => {
 
 
     useEffect(() => {
-
-        getWardwiseCollections(selectedMonth)
-    }, [selectedMonth]);
+        // getWardwiseCollections(selectedMonth)
+    }, []);
 
 
     const handleInputChange = () => {
@@ -96,11 +95,23 @@ const CollectionsSummaryScreen = () => {
     };
 
 
-    const handleValueChange = (value) => {
-
-        console.log('Selected month:', value);
+    const handleValueChange = useCallback((value) => {
+        console.log("Value changed to: ", value);
         setSelectedMonth(value);
-    };
+        if(Platform.OS=='android'){
+            getWardwiseCollections(value)
+        }
+        // getWardwiseCollections(value)
+        // setValue(value);
+    }, []);
+
+
+    // const handleValueChange = (value) => {
+
+    //     console.log('Selected month:', value);
+    //     // setSelectedMonth(value);
+    //     getWardwiseCollections(value)
+    // };
 
 
 
@@ -124,8 +135,8 @@ const CollectionsSummaryScreen = () => {
                 <View style={styles.inputView}>
                     <RNPickerSelect
                         value={selectedMonth}
-                        onValueChange={(value) => handleValueChange(value)}
-                        // onDonePress={handleInputChange}
+                        onValueChange={handleValueChange}
+                        onDonePress={handleInputChange}
                         items={months}
                         placeholder={{
                             label: 'Select a month...',
@@ -140,6 +151,7 @@ const CollectionsSummaryScreen = () => {
                         }}
                         useNativeAndroidPickerStyle={false}
                         textInputProps={{ underlineColor: 'yellow' }}
+                        doneText={Platform.OS === 'ios' ? 'Done' : null}
 
                         Icon={() => {
                             return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
