@@ -7,8 +7,9 @@ export const smsApi = createAsyncThunk('api/sms', async params => {
   console.log(requestBody)
 
   // console.log(JSON.stringify(requestBody));
+  const url = 'http://129.232.208.13/GrapeVine/api/sms/send'; // 'http://129.232.208.13/InfobipAPI/api/sms/send'
   const response = await axios(
-    'http://129.232.208.13/InfobipAPI/api/sms/send',
+    url,
     {
       method: 'POST',
       data: requestBody,

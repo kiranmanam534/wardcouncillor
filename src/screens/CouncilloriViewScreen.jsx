@@ -175,7 +175,7 @@ const CouncilloriViewScreen = ({ route }) => {
         const requestBody = {
           recipientNumber: '0739007893',//item.cellphonenumber,
           message: message.toString(),
-          campaign: 'Outstanding Amount',
+          // campaign: 'Outstanding Amount',
         };
         dispatch(smsApi({ requestBody: requestBody }));
         setSelectedImageId(item.accounT_NO);
@@ -189,7 +189,7 @@ const CouncilloriViewScreen = ({ route }) => {
         const requestBody = {
           recipientNumber: '0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
           message: message.toString(),
-          campaign: 'Interims',
+          // campaign: 'Interims',
         };
         dispatch(smsApi({ requestBody: requestBody }));
         setSelectedImageId(item.accountNumber);
