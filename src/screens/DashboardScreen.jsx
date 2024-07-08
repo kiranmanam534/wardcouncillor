@@ -63,7 +63,7 @@ const DashboardScreen = () => {
       const response = await axios.post(`${apiUrl}/api/CouncillorWard/GetDataLoadDetails`);
       console.log(response.data.data);
       const res = response.data.data;
-      if (res[0].name === 'LOADED') {
+      if (res[0].name == 'LOADED') {
         console.log(res[0]);
         setIsDataMaintaince(false);
         setDataMaintaince(res[0]);

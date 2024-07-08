@@ -319,18 +319,19 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                 backgroundColor: Colors.blue,
                 borderBottomLeftRadius: 15,
                 borderBottomRightRadius: 15,
-                height: 50,
+                // height: 50,
                 borderWidth: 2,
                 borderColor: Colors.yellow,
+                padding:10
               },
             ]}>
-            <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={[styles.contentText,{color:Colors.white}]}>Department : </Text>
-              <Text
+            {/* <Paragraph style={[styles.text, { fontSize: 13,flexDirection: 'row', justifyContent:'center',alignItems:'center',borderWidth:1 }]}> */}
+            <View style={{ flex:1,width:'100%'}}>
+              <Text style={[styles.contentText,{color:Colors.white,width:'100%'}]}>Department : {item.department}</Text>
+              {/* <Text
                 style={{ fontWeight: '800', fontSize: 13,color:Colors.white}}>
                 {item.department}
-              </Text>
+              </Text> */}
             </View>
               {/* {wardType == 'Outstanding'
                 ? formattedAmount(
@@ -340,7 +341,7 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
                   'currency',
                 )
                 : item.daysAmount} */}
-            </Paragraph>
+            {/* </Paragraph> */}
             {/* <View style={{ marginTop: 15 }}>
               <TouchableOpacity
                 style={[

@@ -1,5 +1,5 @@
 export const wardTitle = (wardType, title, isTownship = false) => {
-  if (wardType == 'Outstanding') {
+  if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
     if (title == 'D30_DAYS') {
       title = 'Outstanding 30 days';
     }
@@ -30,7 +30,7 @@ export const wardTitle = (wardType, title, isTownship = false) => {
 };
 
 export const GetwardHeaderTitle = (wardType, title) => {
-  if (wardType == 'Outstanding') {
+  if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
     if (title == 'D30_DAYS') {
       title = 'Outstanding 30 days';
     }
@@ -53,7 +53,7 @@ export const GetwardHeaderTitle = (wardType, title) => {
 };
 
 export const GetwardHeaderTownshipTitle = (wardType, title) => {
-  if (wardType == 'Outstanding') {
+  if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
     if (title == 'D30_DAYS') {
       title = 'Outstanding 30 days';
     }

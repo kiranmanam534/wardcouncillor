@@ -153,7 +153,7 @@ const CouncilloriViewScreen = ({ route }) => {
 
   const handleSMS = item => {
     console.log(wardType + " ==> ", item)
-    if (wardType == 'Outstanding') {
+    if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
       if (item.cellphonenumber && item.cellphonenumber != 'Not Available') {
         let days_label = '';
         if (name === 'D30_DAYS') days_label = '30 days amount';
@@ -184,7 +184,7 @@ const CouncilloriViewScreen = ({ route }) => {
         ShowAlert("Warning!", "Mobile number should not be empty!")
       }
     } else {
-      if (item.cellNo && item.cellphonenumber != 'Not Available') {
+      if (item.cellNo && item.cellNo != 'Not Available') {
         let message = `Hi ${item.debtorName.trim()}, Your Meter No : ${item.meterNumber} is  for ${item.accountNumber}}`;
         const requestBody = {
           recipientNumber: '0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber

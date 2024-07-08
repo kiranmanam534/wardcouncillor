@@ -187,7 +187,7 @@ const WardsWiseComparisonScreen = () => {
                         fontWeight: 'bold',
                         textAlign: 'center',
                     }}>
-                    Ward comparision(Millions)
+                    Wards comparision
                 </Text>
                 <View
                     style={{
