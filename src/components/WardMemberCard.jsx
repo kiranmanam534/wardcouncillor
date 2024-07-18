@@ -11,7 +11,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {Card, Title, Paragraph, Divider} from 'react-native-paper';
 
-const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('../assets/images/COE_logo_portrait.png');
 import {Colors} from '../constant/Colors';
 
 const screenWidth = Dimensions.get('window').width;
@@ -207,12 +207,12 @@ const styles = StyleSheet.create({
   box: {
     width: screenWidth / 2,
     height: screenWidth / 2,
-    borderWidth: 2, // Border width in pixels
-    borderColor: Colors.red,
+    borderWidth: 1, // Border width in pixels
+    borderColor: Colors.white,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.primary,
     alignSelf: 'center',
     elevation: 1,
     marginTop: 10,

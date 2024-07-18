@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import {Dimensions} from 'react-native';
 import { Colors } from '../constant/Colors';
-const logo = require("../assets/images/Ekurhuleni-Logo-889x1024.png")
+const logo = require("../assets/images/COE_logo_portrait.png")
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     borderRadius:(screenWidth-50)/2, // Border radius (optional)
     alignItems:'center',
     justifyContent:'center',
-    backgroundColor:Colors.white,
+    backgroundColor:Colors.primary,
     elevation:1
   },
   img: {

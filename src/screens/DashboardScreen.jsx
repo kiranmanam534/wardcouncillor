@@ -27,7 +27,7 @@ import { apiUrl } from '../constant/CommonData';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('../assets/images/COE_logo_portrait.png');
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -603,12 +603,12 @@ const styles1 = StyleSheet.create({
   box: {
     width: 70,
     height: 70,
-    borderWidth: 2, // Border width in pixels
-    borderColor: Colors.red,
+    borderWidth: 1, // Border width in pixels
+    borderColor: Colors.white,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.primary,
     alignSelf: 'center',
     elevation: 1,
   },

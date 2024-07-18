@@ -25,7 +25,7 @@ import axios from 'axios';
 import { apiUrl } from '../constant/CommonData';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
-const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('../assets/images/COE_logo_portrait.png');
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -964,12 +964,12 @@ const styles = StyleSheet.create({
     box: {
         width: screenWidth / 4,
         height: screenWidth / 4,
-        borderWidth: 2, // Border width in pixels
-        borderColor: Colors.red,
+        borderWidth: 1, // Border width in pixels
+        borderColor: Colors.white,
         borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.primary,
         elevation: 1,
         alignSelf: 'center',
     },

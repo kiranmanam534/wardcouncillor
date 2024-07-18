@@ -3,7 +3,7 @@ import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
-const logo = require('../assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('../assets/images/COE_logo_portrait.png');
 import { Colors } from '../constant/Colors';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -380,12 +380,12 @@ const styles = StyleSheet.create({
     box: {
         width: screenWidth / 4,
         height: screenWidth / 4,
-        borderWidth: 2, // Border width in pixels
-        borderColor: Colors.red,
+        borderWidth: 1, // Border width in pixels
+        borderColor: Colors.white,
         borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.primary,
         alignSelf: 'center',
         elevation: 1,
         marginTop: 10

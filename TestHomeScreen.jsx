@@ -12,7 +12,7 @@ import { Buffer } from "buffer";
 
 import { Colors } from './src/constant/Colors';
 const banner = require('./src/assets/images/germiston-lake-banner.jpg');
-const logo = require('./src/assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('./src/assets/images/COE_logo_portrait.png');
 
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -221,7 +221,7 @@ const TestHomeScreen = () => {
                     <Image source={logo} style={styles.img} />
                 </View>
 
-                <Text style={{ fontSize: 20, color: Colors.white, paddingTop: 10, fontWeight: 'bold' }}>WELCOME</Text>
+                <Text style={{ fontSize: 20, color: Colors.yellow, paddingTop: 10, fontWeight: 'bold' }}>WELCOME</Text>
                 <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>Ekurhuleni, a Tsonga word that means “place of peace”</Text>
                 {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
 
@@ -254,14 +254,14 @@ const styles = StyleSheet.create({
     },
 
     box: {
-        width: screenWidth / 2,
-        height: screenWidth / 2,
-        borderWidth: 2, // Border width in pixels
-        borderColor: Colors.red,
-        borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
+        // width: screenWidth / 2,
+        // height: screenWidth / 2,
+        // borderWidth: 1, // Border width in pixels
+        // borderColor: Colors.lightgray,
+        // borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.primary,
         elevation: 1,
         alignSelf: 'center',
     },

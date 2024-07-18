@@ -62,12 +62,12 @@ const styles = StyleSheet.create({
     box: {
         width: 80,
         height: 80,
-        borderWidth: 2, // Border width in pixels
-        borderColor: Colors.red,
+        borderWidth: 1, // Border width in pixels
+        borderColor: Colors.white,
         borderRadius: 40, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.primary,
         alignSelf: 'center',
         marginBottom: 10
     },

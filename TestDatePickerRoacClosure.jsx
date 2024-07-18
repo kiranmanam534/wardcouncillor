@@ -13,7 +13,7 @@ import { CreateRoadClosureApi } from './src/services/councillorWardApi';
 import ErrorModal from './src/components/ErrorModal';
 import { createRoadClosureActions } from './src/redux/createRoadClosureSlice';
 
-const logo = require('./src/assets/images/Ekurhuleni-Logo-889x1024.png');
+const logo = require('./src/assets/images/COE_logo_portrait.png');
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -663,12 +663,12 @@ const styles = StyleSheet.create({
     box: {
         width: screenWidth / 4,
         height: screenWidth / 4,
-        borderWidth: 2, // Border width in pixels
-        borderColor: Colors.red,
-        borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.white,
+        borderWidth: 1, // Border width in pixels
+    borderColor: Colors.white,
+    borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
         elevation: 1,
         alignSelf: 'center',
     },
