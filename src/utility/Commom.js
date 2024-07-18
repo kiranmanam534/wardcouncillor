@@ -23,6 +23,12 @@ export const wardTitle = (wardType, title, isTownship = false) => {
     }else if (title==="WA") {
       title = `Water(${title})`;
     }
+  }else if (wardType == 'MetersNotRead') {
+    if (title==="EL") {
+      title = `Electricity(${title})`;
+    }else if (title==="WA") {
+      title = `Water(${title})`;
+    }
   }
   
 
@@ -47,7 +53,7 @@ export const GetwardHeaderTitle = (wardType, title) => {
     title = wardType + ' Categories';
   } else if (wardType == 'IMS') {
     title = wardType + ' Departments';
-  }
+  } 
 
   return title;
 };
@@ -76,6 +82,12 @@ export const GetwardHeaderTownshipTitle = (wardType, title) => {
       title = `Electricity(${title}) Townships`;
     }else if (title==="WA") {
       title = `Water(${title}) Townships`;
+    }
+  }else if (wardType == 'MetersNotRead') {
+    if (title==="EL") {
+      title = `Electricity(${title})`;
+    }else if (title==="WA") {
+      title = `Water(${title})`;
     }
   }
 

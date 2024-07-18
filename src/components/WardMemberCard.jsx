@@ -39,11 +39,20 @@ const WardMemberCard = ({wardMember, onPress}) => {
               {wardMember?.FirstName} {wardMember?.Surname}
             </Title>
           </View>
+          
+          
           <View style={{flexDirection: 'row', paddingTop: 20}}>
             <Text style={styles.contentText}>Ward No</Text>
             <Text
               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
               : {wardMember?.WardNo}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', paddingTop: 10}}>
+            <Text style={styles.contentText}>Gender</Text>
+            <Text
+              style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+              : {wardMember.Gender == 'M' ? 'Male' : 'Female'}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
@@ -101,9 +110,9 @@ const WardMemberCard = ({wardMember, onPress}) => {
               borderColor: Colors.yellow,
             },
           ]}>
-          <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>
+          {/* <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>
             {wardMember.Gender == 'M' ? 'Male' : 'Female'}
-          </Paragraph>
+          </Paragraph> */}
           <View style={{marginTop: 15}}>
             <TouchableOpacity
               onPress={onPress}

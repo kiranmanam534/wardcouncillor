@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions, Alert, FlatList, Platform } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Image, Dimensions, Alert, FlatList, Platform, Button } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
@@ -17,12 +17,19 @@ import axios from 'axios';
 import RNPickerSelect from 'react-native-picker-select';
 import { DataTable } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
+import CustomButton from '../components/CustomButton';
 
 const screenWidth = Dimensions.get('window').width;
 
 
 
 const CollectionsSummaryScreen = () => {
+    const currentYear = new Date().getFullYear();
+    const startYear = currentYear - 2;
+    const years = Array.from(
+        { length: currentYear - startYear + 1 },
+        (v, i) => ({ label: (startYear + i).toString(), value: (startYear + i) })
+    );
 
     const months = [
         { label: 'January', value: 'January' },
@@ -39,26 +46,32 @@ const CollectionsSummaryScreen = () => {
         { label: 'December', value: 'December' },
     ];
 
+    const [formValues, setFormValues] = useState({});
 
     const [IsSubmitted, setIsSubmitted] = useState(false);
     const [statusCode, setStatusCode] = useState(null);
     const [WardCollectionsData, setWardCollectionsData] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
+    // const [Years, setYears] = useState([]);
+    const [isMonthEnable, setisMonthEnable] = useState(false);
     const [pickerVisible, setPickerVisible] = useState(false);
 
     const loggedUser = useSelector(state => state.loginReducer.items);
 
 
-    const getWardwiseCollections = async (month) => {
+    const getWardwiseCollections = async (year1,month) => {
         // console.log(month)
         setIsSubmitted(true);
         setStatusCode(null);
         try {
             const search = '';
             const currentYear = new Date().getFullYear();
-            console.log(currentYear); // This will log the current year, e.g., 2024
+
+            console.log("=======>", month, year1); // This will log the current year, e.g., 2024
             // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-            const response = await axios.get(`${apiUrl}/api/Collection/get-ward-wise-monthly-collections?Year=${currentYear}&Month=${month}`);
+            console.log(`${apiUrl}/api/Collection/get-ward-wise-monthly-collections?Year=${year1}&Month=${month}`)
+            const response = await axios.get(`${apiUrl}/api/Collection/get-ward-wise-monthly-collections?Year=${year1}&Month=${month}`);
             console.log(response.data);
 
             setStatusCode(response.status);
@@ -82,28 +95,93 @@ const CollectionsSummaryScreen = () => {
     }
 
 
-    useEffect(() => {
-        // getWardwiseCollections(selectedMonth)
+    // useEffect(() => {
+    //     // Generate an array of years from 2000 to 2024
+    //     const currentYear = new Date().getFullYear();
+    //     const startYear = currentYear - 2;
+    //     const years = Array.from(
+    //         { length: currentYear - startYear + 1 },
+    //         (v, i) => ({ label: (startYear + i).toString(), value: (startYear + i) })
+    //     );
+    //     setYears(years);
+
+    // }, []);
+
+
+
+    const handleInputChangeYear = () => {
+        console.log("IOS Year", formValues?.year)
+        // setSelectedMonth('')
+        // setSelectedYear(selectedYear);
+        setisMonthEnable(formValues?.year ? true : false)
+    };
+
+
+
+    const handleValueChangeYear = useCallback((value, fieldName) => {
+        console.log("Year Value changed to: ", value, fieldName);
+        setFormValues({
+            'month': ''
+        });
+
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [fieldName]: value,
+        }));
+        // setSelectedYear(value);
+        // setSelectedMonth('')
+        // setisMonthEnable(value ? true : false)
     }, []);
 
 
     const handleInputChange = () => {
-        console.log("IOS", selectedMonth)
-
-
-        getWardwiseCollections(selectedMonth)
+        console.log("IOS month - year", formValues)
+        // getWardwiseCollections(selectedMonth, selectedYear)
     };
 
+    const handleValueChange = useCallback((value, fieldName) => {
+        console.log(fieldName, value)
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [fieldName]: value,
+        }));
 
-    const handleValueChange = useCallback((value) => {
-        console.log("Value changed to: ", value);
-        setSelectedMonth(value);
-        if(Platform.OS=='android'){
-            getWardwiseCollections(value)
-        }
-        // getWardwiseCollections(value)
-        // setValue(value);
+
+        // // setSelectedMonth(value);
+        // if (Platform.OS == 'android') {
+        //     getWardwiseCollections(formValues?.year, value)
+        // }
     }, []);
+
+    // console.log(formValues)
+
+    const SearchCollections = () => {
+        console.log(formValues)
+        if (!formValues?.year || !formValues?.month) {
+            ShowAlert("Required", "All feilds are required!")
+        } else {
+            getWardwiseCollections(formValues?.year, formValues?.month)
+        }
+
+    }
+
+
+    const ShowAlert = (type, mess) => {
+        Alert.alert(
+            type,
+            mess,
+            [
+                {
+                    text: "OK", onPress: () => {
+                        console.log("OK Pressed")
+
+
+                    }
+                }
+            ]
+        );
+    }
+
 
 
     // const handleValueChange = (value) => {
@@ -127,40 +205,80 @@ const CollectionsSummaryScreen = () => {
     return (
         <View style={styles1.container}>
 
-            {IsSubmitted && <LoaderModal visible={IsSubmitted} loadingText="Please wait, Data is Loading..." />}
+            {/* {IsSubmitted && <LoaderModal visible={IsSubmitted} loadingText="Please wait, Data is Loading..." />} */}
+            <View style={{ flexDirection: 'row', width: '100%' }}>
+                <View style={[styles2.container2, { width: '50%' }]}>
 
-            <View style={styles2.container2}>
+                    <Text style={styles2.label}>Select a year</Text>
+                    <View style={styles.inputView}>
+                        <RNPickerSelect
+                            value={formValues?.year}
 
-                <Text style={styles2.label}>Select a Month:</Text>
-                <View style={styles.inputView}>
-                    <RNPickerSelect
-                        value={selectedMonth}
-                        onValueChange={handleValueChange}
-                        onDonePress={handleInputChange}
-                        items={months}
-                        placeholder={{
-                            label: 'Select a month...',
-                            value: null,
-                        }}
-                        style={{
-                            ...pickerSelectStyles,
-                            iconContainer: {
-                                top: 10,
-                                right: 12,
-                            },
-                        }}
-                        useNativeAndroidPickerStyle={false}
-                        textInputProps={{ underlineColor: 'yellow' }}
-                        doneText={Platform.OS === 'ios' ? 'Done' : null}
+                            onValueChange={(value) => { handleValueChangeYear(value, 'year') }}
+                            onDonePress={handleInputChangeYear}
+                            items={years}
+                            placeholder={{
+                                label: 'Select a year...',
+                                value: null,
+                            }}
+                            style={{
+                                ...pickerSelectStyles,
+                                iconContainer: {
+                                    top: 10,
+                                    right: 12,
+                                },
+                            }}
+                            useNativeAndroidPickerStyle={false}
+                            textInputProps={{ underlineColor: 'yellow' }}
+                            doneText={Platform.OS === 'ios' ? 'Done' : null}
 
-                        Icon={() => {
-                            return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
-                        }}
-                    />
+                            Icon={() => {
+                                return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
+                            }}
+                        />
 
+                    </View>
+
+                    {/* {selectedMonth && <Text style={styles2.selectedText}>Selected Month: {selectedMonth}</Text>} */}
                 </View>
+                <View style={[styles2.container2, { width: '50%' }]}>
 
-                {/* {selectedMonth && <Text style={styles2.selectedText}>Selected Month: {selectedMonth}</Text>} */}
+                    <Text style={styles2.label}>Select a month</Text>
+                    <View style={styles.inputView}>
+                        <RNPickerSelect
+                            value={formValues?.month}
+                            onValueChange={(value) => { handleValueChange(value, 'month') }}
+                            onDonePress={handleInputChange}
+                            items={months}
+                            disabled={formValues?.year ? false : true}
+                            placeholder={{
+                                label: 'Select a month...',
+                                value: null,
+                            }}
+                            style={{
+                                ...pickerSelectStyles,
+                                iconContainer: {
+                                    top: 10,
+                                    right: 12,
+                                },
+                            }}
+                            useNativeAndroidPickerStyle={false}
+                            textInputProps={{ underlineColor: 'yellow' }}
+                            doneText={Platform.OS === 'ios' ? 'Done' : null}
+
+                            Icon={() => {
+                                return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
+                            }}
+                        />
+
+                    </View>
+
+                    {/* {selectedMonth && <Text style={styles2.selectedText}>Selected Month: {selectedMonth}</Text>} */}
+                </View>
+            </View>
+            <View style={styles2.container2}>
+                <CustomButton title={IsSubmitted ? 'Loading...' : 'Search'} onPress={SearchCollections} iconName='search-outline' isClicked={IsSubmitted} />
+                {/* <Button disabled={!(formValues?.year && formValues.month)} title='Search' color={Colors.primary} onPress={SearchCollections}></Button> */}
             </View>
 
 

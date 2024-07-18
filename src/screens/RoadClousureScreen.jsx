@@ -410,7 +410,7 @@ function RoadClousureScreen({ route }) {
                     console.log(response.data);
                     setIsSubmitted(false);
 
-                    ShowAlert("Success", "Meeting has been saved successfully!")
+                    ShowAlert("Success", "Road Closure has been saved successfully!")
 
                 } catch (error) {
                     console.log(error);
@@ -740,7 +740,7 @@ function RoadClousureScreen({ route }) {
                             mode='date'
                             display='spinner'
                             value={date}
-                            minimumDate={today}
+                            // minimumDate={today}
                             maximumDate={selectedEndDate}
                             onChange={(event, selectedDate) =>
                                 onChageDatePicker(

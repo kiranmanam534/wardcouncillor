@@ -24,15 +24,15 @@ const WardMemberInfoScreen = () => {
 
   const [seconds, setSeconds] = useState(5); // Initial timeout value in seconds
 
-  useEffect(() => {
-    // Function to decrease the timer every second
-    const interval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1); // Decrease seconds by 1
-    }, 5000); // Run every second
+  // useEffect(() => {
+  //   // Function to decrease the timer every second
+  //   const interval = setInterval(() => {
+  //     setSeconds(prevSeconds => prevSeconds - 1); // Decrease seconds by 1
+  //   }, 5000); // Run every second
 
-    // Cleanup function to clear the interval when the component unmounts
-    return () => clearInterval(interval);
-  }, []); // Empty dependency array to run effect only once
+  //   // Cleanup function to clear the interval when the component unmounts
+  //   return () => clearInterval(interval);
+  // }, []); // Empty dependency array to run effect only once
 
   // Format seconds into minutes and seconds
   const minutes = Math.floor(seconds / 60);
