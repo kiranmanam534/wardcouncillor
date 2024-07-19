@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// const baseURL='http://102.130.114.194:7000'
+const baseURL='http://172.20.10.13:5055'
 // const baseURL='https://localhost:7148'
-const baseURL='http://196.41.72.247:8083/WardsCoreApi'
+// const baseURL='http://196.41.72.247:8083/WardsCoreApi'
 
 
 // Create an instance of Axios with custom configurations

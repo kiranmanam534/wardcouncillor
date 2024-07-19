@@ -109,5 +109,8 @@ export const wardValue = (wardType, value) => {
   else if (wardType == 'Customer') {
     return 'No of customers : ' + value;
   }
+  else if (wardType == 'Indigent') {
+    return 'No of applications : ' + value;
+  }
   return value;
 };

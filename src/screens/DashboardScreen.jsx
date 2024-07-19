@@ -487,24 +487,25 @@ const DashboardScreen = () => {
                     </View>
                   </Card.Actions>
                 </Card>
-                {/* {loggedUser?.warD_NO == 0 &&
+                
                   <Card
                     onPress={() => {
                       handleDetailsNavigation(
-                        'WardsWiseComparison',
-                        'Wards Comparision',
-                        'Wards Comparision',
+                        'CouncillorDetails',
+                        'Indigent',
+                        'Indigent',
                       );
                     }}
-                    style={[styles.card, { backgroundColor: Colors.blue }]}
+                    style={[styles.card, { backgroundColor: Colors.yellow }]}
                     mode="outlined">
                     <Card.Title
-                      title="Wards Comparision"
+                      title="Indigent Applications"
                       titleStyle={{ color: Colors.white, fontSize: 14 }}
                     />
                     <Card.Content>
                       <Text></Text>
                       <Text variant="titleLarge" style={styles.text}>
+                        {parseInt(getValueByKey(items, 'Indigent'))}
                       </Text>
                     </Card.Content>
                     <Card.Actions>
@@ -513,7 +514,7 @@ const DashboardScreen = () => {
                       </View>
                     </Card.Actions>
                   </Card>
-                } */}
+                
               </View>
             </View>
           </ScrollView>

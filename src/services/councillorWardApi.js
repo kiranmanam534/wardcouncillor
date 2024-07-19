@@ -147,6 +147,8 @@ export const GetCouncillorWardTownshipMemberInfo = createAsyncThunk(
       else if (wardType == 'OutstandingCategory') {
         const encodedwardNo = encodeURIComponent(wardNo);
         URL = `api/Outstanding/get-outstanding-category-township-members-data?category=${encodedwardNo}&outstandingsDays=${encodedName}&township=${encodedtownship}&search=${search}&page=${page}&limit=${limit}`;
+      } else if (wardType == 'Indigent') {
+        URL = `api/Indigent/get-indigent-members-data?wardNo=${wardNo}&status=${encodedName}&Township=${encodedtownship}&search=${search}&page=${page}&limit=${limit}`;
       }
       console.log(URL);
 

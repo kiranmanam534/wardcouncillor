@@ -704,6 +704,141 @@ const TownshipCard = ({ item, wardType, onPress, sendSMS, name, showImage, image
           </Card.Content>
         </Card>
       );
+    }else if (wardType == 'Indigent') {
+      return (
+        <Card style={styles.card}>
+          <Card.Content style={{ paddingRight: 80 }}>
+            <View style={styles.cardContent}>
+              <Icon name="user" size={30} color={Colors.blue} />
+              <Title style={styles.title}>
+                Account :{item.account}
+              </Title>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 20 }}>
+              <Text style={styles.contentText}>Name</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.name}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Marital</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.maritalStatus}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Address</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.address}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Source Of Income</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.sourceOfIncome}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>No Of Properties</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {item.numberOfProperties}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Property Value</Text>
+              <Text
+                style={{ fontWeight: '800', fontSize: 13, color: Colors.black }}>
+                : {formattedAmount(
+                  parseFloat(item.propertyValue?item.propertyValue:0),
+                  'en-ZA',
+                  'ZAR',
+                  'currency',
+                )}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+              <Text style={styles.contentText}>Mobile No</Text>
+              <Text
+                style={[
+                  styles.phoneNumber,
+                  {
+                    fontWeight: '800',
+                    fontSize: 13,
+                    textDecorationLine: item.cell && 'underline',
+                  },
+                ]}
+                onPress={item.cell && onPress}>
+                : {item.cell}
+              </Text>
+            </View>
+          </Card.Content>
+          <Divider style={styles.divider} />
+          <Card.Content
+            style={[
+              styles.footer,
+              {
+                backgroundColor: Colors.blue,
+                borderBottomLeftRadius: 15,
+                borderBottomRightRadius: 15,
+                height: 50,
+                borderWidth: 2,
+                borderColor: Colors.yellow,
+              },
+            ]}>
+            <Paragraph style={[styles.text, { fontSize: 13, paddingTop: 10 }]}>
+            Household Income : {' '} 
+              {wardType == 'Indigent'
+                ? formattedAmount(
+                  parseFloat(item.householdIncome?item.householdIncome:0),
+                  'en-ZA',
+                  'ZAR',
+                  'currency',
+                )
+                : item.householdIncome}
+            </Paragraph>
+            <View style={{ marginTop: 15 }}>
+              {/* <TouchableOpacity
+               onPress={sendSMS}
+               style={[
+                  styles.btn,
+                  {
+                    height: 30,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    borderRadius: 20,
+                  },
+                ]}>
+                <View
+                  style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    // marginHorizontal: -20,
+                  }}>
+                 {item.account == ImageId ?
+                    <ActivityIndicator animatin color="#000" size="small" /> :
+                    <Icon name="send" size={20} color={Colors.blue} />}
+
+                  <Text
+                    style={[
+                      styles.text,
+                      { fontSize: 16, color: Colors.blue, paddingLeft: 5 },
+                    ]}>
+                    Send
+                  </Text>
+                </View>
+              </TouchableOpacity> */}
+            </View>
+          </Card.Content>
+        </Card>
+      );
     }
   };
 

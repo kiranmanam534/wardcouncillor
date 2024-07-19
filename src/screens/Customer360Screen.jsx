@@ -61,7 +61,7 @@ const Customer360Screen = () => {
 
 
     const handlePaymentHistory = () => {
-        navigation.navigate('PaymentHistory', { title:'Payment History', accountNo: searchKey })
+        navigation.navigate('PaymentHistory', { title: 'Payment History', accountNo: searchKey })
     }
 
 
@@ -128,7 +128,7 @@ const Customer360Screen = () => {
                             <Text style={styles.username}>{items?.customerData[0]?.category}</Text>
                             {items?.customerData[0]?.cellphonenumber && <Text style={styles.bio}>{items?.customerData[0]?.cellphonenumber}</Text>}
                             <Text style={styles.bio}>{items?.customerData[0]?.address}</Text>
-                            <Text style={[styles.bio,{fontWeight:'700'}]}>Ward : {items?.outstandingData[0]?.ward}</Text>
+                            <Text style={[styles.bio, { fontWeight: '700' }]}>Ward : {items?.outstandingData[0]?.ward}</Text>
                         </View>
                         <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
                             <View style={{ flexDirection: 'row', marginLeft: -15 }}>
@@ -257,11 +257,50 @@ const Customer360Screen = () => {
 
 
                         </View>
+                        <View style={[styles.socialMediaSection, { borderBottomWidth: 0 }]}>
+                            <View style={{ flexDirection: 'row', marginLeft: -15 }}>
+                                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+                                <Text style={styles.sectionTitle}>Indigent</Text>
+                            </View>
+
+                            {items?.indigentData.length > 0 ?
+                                items?.indigentData.map((item, index) => (
+                                    <View style={[styles.socialMediaSection, { padding: 0 }]}
+                                        key={'Interims_' + index}>
+                                        <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
+                                        <InfoRow icon="envelope" label={'Account'} text={item?.account} />
+                                        <InfoRow icon="envelope" label={'Name'} text={item?.name} />
+                                        <InfoRow icon="info-circle" label={'Address'} text={item?.address} />
+                                        <InfoRow icon="info-circle" label={'Marital'} text={item?.maritalStatus} />
+                                        <InfoRow icon="map-marker" label={'Source Of Income'} text={item?.sourceOfIncome} />
+                                        <InfoRow icon="envelope" label={'Household Income'} text={formattedAmount(
+                                            parseFloat(item?.householdIncome ?? 0),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="envelope" label={'No Of Properties'} text={item?.numberOfProperties} />
+                                        <InfoRow icon="map-marker" label={'Property Value'} text={formattedAmount(
+                                            parseFloat(item?.propertyValue ?? 0),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )} />
+                                        <InfoRow icon="map-marker" label={'Cell No'} text={item?.cell ? item?.cell : 'N/A'} />
+                                    </View>
+                                )) :
+                                <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
+                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                </View>
+                            }
+
+
+                        </View>
                     </ScrollView> :
                     <CustomAlert
                         isVisible={isAlertErrorVisible}
                         onClose={closeAlert1}
-                        message={`You entered account number is  "${searchKey}" doesn't exists${loggedUser?.warD_NO!=0 ?' under ward no:' +loggedUser?.warD_NO +'.':'.'}`}
+                        message={`You entered account number is  "${searchKey}" doesn't exists${loggedUser?.warD_NO != 0 ? ' under ward no:' + loggedUser?.warD_NO + '.' : '.'}`}
                         message1={'Please enter correct account number!'}
                         imageSource={logo} // Replace with your image URL or local image source
                     />
@@ -278,8 +317,18 @@ const InfoRow = ({ icon, text, label, type }) => (
 
     <View style={styles.infoRow}>
         {/* <Icon name={icon} size={20} style={styles.infoIcon} /> */}
-        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'), color: (type == 'outstanding total' ? Colors.primary : '') }]}>{label}</Text>
-        <Text style={[styles.infoText, { fontWeight: (type == 'outstanding total' ? '800' : '500'), color: (type == 'outstanding total' ? Colors.primary : '') }]}>{text}</Text>
+        <Text style={[styles.infoText, {
+            fontWeight: (type == 'outstanding total' ? '800' : '500'),
+            color: (type == 'outstanding total' ? Colors.primary : ''),
+        }]}>
+            {label}
+        </Text>
+        <Text style={[styles.infoText, {
+            fontWeight: (type == 'outstanding total' ? '800' : '500'),
+            color: (type == 'outstanding total' ? Colors.primary : '')
+        }]}>
+            {label == "Address" ? (text?.length > 20 ? text.substring(0, 20)+'...' : text) : text}
+        </Text>
     </View>
 );
 

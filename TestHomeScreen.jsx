@@ -262,7 +262,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         // backgroundColor: Colors.primary,
-        elevation: 1,
+        // ...Platform.select({
+        //     ios: {
+        //       shadowColor: Colors.blue,
+        //       shadowOffset: { width: 0, height: 0 },
+        //       shadowOpacity: 0.2,
+        //       shadowRadius: 1.41,
+        //     },
+        //     android: {
+        //       elevation: 1,
+        //     },
+        //   }),
         alignSelf: 'center',
     },
     img: {

@@ -108,6 +108,8 @@ const WardMemberCard = ({wardMember, onPress}) => {
               height: 50,
               borderWidth: 2,
               borderColor: Colors.yellow,
+              justifyContent:'flex-end',
+              alignItems:'center'
             },
           ]}>
           {/* <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>
