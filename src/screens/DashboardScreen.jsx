@@ -604,7 +604,7 @@ const styles1 = StyleSheet.create({
     width: 70,
     height: 70,
     borderWidth: 1, // Border width in pixels
-    borderColor: Colors.white,
+    borderColor: Colors.blue,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',

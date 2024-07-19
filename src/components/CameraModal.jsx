@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderWidth: 1, // Border width in pixels
-        borderColor: Colors.white,
+        borderColor: Colors.blue,
         borderRadius: 40, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',

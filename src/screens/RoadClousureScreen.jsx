@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
         width: screenWidth / 4,
         height: screenWidth / 4,
         borderWidth: 1, // Border width in pixels
-        borderColor: Colors.white,
+        borderColor: Colors.blue,
         borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',

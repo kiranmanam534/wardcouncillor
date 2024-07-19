@@ -60,7 +60,7 @@ const CollectionsSummaryScreen = () => {
     const loggedUser = useSelector(state => state.loginReducer.items);
 
 
-    const getWardwiseCollections = async (year1,month) => {
+    const getWardwiseCollections = async (year1, month) => {
         // console.log(month)
         setIsSubmitted(true);
         setStatusCode(null);
@@ -192,6 +192,11 @@ const CollectionsSummaryScreen = () => {
     // };
 
 
+    const calculateTotal = () => {
+        return WardCollectionsData?.reduce((sum, item) => sum + item.value, 0);
+    };
+
+
 
     const renderItem = ({ item }) => (
         <DataTable.Row style={styles.infoRow}>
@@ -199,6 +204,14 @@ const CollectionsSummaryScreen = () => {
             <DataTable.Cell>{formattedAmount(parseFloat(item?.value), 'en-ZA', 'ZAR', 'currency')}</DataTable.Cell>
         </DataTable.Row>
     );
+    const Footer = ({ total }) => (
+        <DataTable.Header style={{ backgroundColor: Colors.blue }}>
+            <DataTable.Title> <Text style={{ color: Colors.white }}>Total</Text></DataTable.Title>
+            <DataTable.Title><Text style={{ color: Colors.white }}>{formattedAmount(parseFloat(total), 'en-ZA', 'ZAR', 'currency')}</Text></DataTable.Title>
+        </DataTable.Header>
+
+    );
+
 
 
 
@@ -304,6 +317,8 @@ const CollectionsSummaryScreen = () => {
                             renderItem={renderItem}
                             keyExtractor={(item, index) => index.toString()}
                             showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ paddingBottom: 100 }} // Adjust the padding as needed
+                            ListFooterComponent={<Footer total={calculateTotal()} />}
                         />
 
                         {/* {WardCollectionsData?.map((item, index) => (
@@ -431,7 +446,7 @@ const styles = StyleSheet.create({
         width: screenWidth / 4,
         height: screenWidth / 4,
         borderWidth: 1, // Border width in pixels
-        borderColor: Colors.white,
+        borderColor: Colors.blue,
         borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
         alignItems: 'center',
         justifyContent: 'center',

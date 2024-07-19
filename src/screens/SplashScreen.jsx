@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   box: {
     width: screenWidth-50,
     height: screenWidth-50,
-    borderWidth: 5, // Border width in pixels
+    borderWidth: 2, // Border width in pixels
     // borderColor: 'blue', // Border color
     borderRadius:(screenWidth-50)/2, // Border radius (optional)
     alignItems:'center',
