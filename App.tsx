@@ -17,11 +17,12 @@ import TestCharts from './src/TestCharts'
 import Test from './src/Test'
 import CallLocalApi from './src/CallLocalApi'
 import TestBarchart from './src/screens/TestBarchart'
+import WardsDBAIScreen from './src/screens/WardsDBAIScreen'
 
 const App = () => {
   return (
     <Provider store={store}>      
-    <Navigation/>
+    {/* <Navigation/> */}
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -36,6 +37,7 @@ const App = () => {
     {/* <Test/> */}
     {/* <CallLocalApi/> */}
     {/* <TestBarchart/> */}
+    <WardsDBAIScreen/>
     </Provider>
   )
 }
