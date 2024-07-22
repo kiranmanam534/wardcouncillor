@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import axios from 'axios';
 
 
@@ -14,12 +14,21 @@ const WardsDBAIScreen = () => {
     const flatListRef = useRef(null);
 
 
-  // Use useEffect to scroll to end when messages are updated
-  useEffect(() => {
+//   // Use useEffect to scroll to end when messages are updated
+//   useEffect(() => {
+//     // if (flatListRef.current) {
+//       flatListRef.current.scrollToEnd({ animated: true });
+//     // }
+//   }, [messages.length]);
+
+
+  // Scroll to end when content size changes
+  const onContentSizeChange = () => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
-  }, [messages.length]);
+  };
+
 
 
     const sendMessage = async () => {
@@ -42,6 +51,7 @@ const WardsDBAIScreen = () => {
     };
 
     return (
+        <SafeAreaView style={{flex:1}}>
         <View style={styles.container}>
             <FlatList
              ref={flatListRef}
@@ -61,6 +71,7 @@ const WardsDBAIScreen = () => {
                 )}
                 keyExtractor={(item, index) => index.toString()}
                 contentContainerStyle={{ paddingBottom: 100 }} // Adjust the padding as needed
+                onContentSizeChange={onContentSizeChange} // Trigger scrolling when content size changes
             />
             <TextInput
                 style={styles.input}
@@ -70,6 +81,7 @@ const WardsDBAIScreen = () => {
             />
             <Button title="Send" onPress={sendMessage} />
         </View>
+        </SafeAreaView>
     );
 };
 
