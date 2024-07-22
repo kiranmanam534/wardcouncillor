@@ -55,14 +55,14 @@ const WardsDBAIScreen = () => {
                 const postData = { "query": input, "tables": [] }
                 console.log(postData)
                 const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
-                console.log(result.data[0].reqTXT)
+                console.log(result.data[0].SQL)
                 console.log(result.data[0].results.recordsets[0])
 
                 // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
                 setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
                 setIsLoading(false)
             } catch (error) {
-                console.log('Error sending message:', error);
+                console.log('Error sending message:', error.response);
                 setMessages([...newMessages, { role: 'bot', content: ["Result not found!"] , count: loadingCount + 2}]);
                 setIsLoading(false)
             }

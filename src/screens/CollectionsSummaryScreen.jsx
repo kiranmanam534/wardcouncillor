@@ -205,9 +205,9 @@ const CollectionsSummaryScreen = () => {
         </DataTable.Row>
     );
     const Footer = ({ total }) => (
-        <DataTable.Header style={{ backgroundColor: Colors.blue }}>
-            <DataTable.Title> <Text style={{ color: Colors.white }}>Total</Text></DataTable.Title>
-            <DataTable.Title><Text style={{ color: Colors.white }}>{formattedAmount(parseFloat(total), 'en-ZA', 'ZAR', 'currency')}</Text></DataTable.Title>
+        <DataTable.Header style={{ backgroundColor: Colors.yellow,marginBottom:5 }}>
+            <DataTable.Title> <Text style={{ color: Colors.black }}>Total</Text></DataTable.Title>
+            <DataTable.Title><Text style={{ color: Colors.black }}>{formattedAmount(parseFloat(total), 'en-ZA', 'ZAR', 'currency')}</Text></DataTable.Title>
         </DataTable.Header>
 
     );
@@ -305,7 +305,7 @@ const CollectionsSummaryScreen = () => {
 
             {statusCode === 200 && !IsSubmitted && WardCollectionsData.length > 0 &&
                 <View style={[styles.container, { marginVertical: 15, marginHorizontal: 5 }]} h>
-
+                <Footer total={calculateTotal()} />
                     <DataTable style={{ marginBottom: 10, }}>
                         <DataTable.Header style={{ backgroundColor: Colors.blue }}>
                             <DataTable.Title> <Text style={{ color: Colors.white }}>Ward No</Text></DataTable.Title>
