@@ -193,7 +193,7 @@ const CollectionsSummaryScreen = () => {
 
 
     const calculateTotal = () => {
-        return WardCollectionsData?.reduce((sum, item) => sum + item.value, 0);
+        return WardCollectionsData?.reduce((sum, item) => sum + parseFloat(item.value), 0).toFixed(2);
     };
 
 
@@ -311,6 +311,7 @@ const CollectionsSummaryScreen = () => {
                             <DataTable.Title> <Text style={{ color: Colors.white }}>Ward No</Text></DataTable.Title>
                             <DataTable.Title><Text style={{ color: Colors.white }}>Amount</Text></DataTable.Title>
                         </DataTable.Header>
+                        {/* <Text>{calculateTotal()}</Text> */}
 
                         <FlatList
                             data={WardCollectionsData}

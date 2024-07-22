@@ -22,7 +22,7 @@ import WardsDBAIScreen from './src/screens/WardsDBAIScreen'
 const App = () => {
   return (
     <Provider store={store}>      
-    {/* <Navigation/> */}
+    <Navigation/>
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -37,7 +37,7 @@ const App = () => {
     {/* <Test/> */}
     {/* <CallLocalApi/> */}
     {/* <TestBarchart/> */}
-    <WardsDBAIScreen/>
+    {/* <WardsDBAIScreen/> */}
     </Provider>
   )
 }

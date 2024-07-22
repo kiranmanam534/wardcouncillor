@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { Button, Image, View, Platform, StyleSheet, Alert, Text } from 'react-native';
 import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import { apiUrl } from './constant/CommonData';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -65,7 +66,7 @@ const Imagepickerscreen = () => {
 
 
   const handlePostRequest = async (image,extension) => {
-    const url = 'http://196.41.72.247:8083/WardsCoreApi/api/Create/save-healthcare-attachment';
+    const url = `${apiUrl}/api/Create/save-healthcare-attachment`;
     const data = {
       "id": 1,
       "image": image,

@@ -5,6 +5,7 @@ import {
   Dimensions,
   Image,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -26,6 +27,7 @@ import { MayorSelectedWardActions } from '../redux/MayorSelectedWardSlice';
 import { apiUrl } from '../constant/CommonData';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 const logo = require('../assets/images/COE_logo_portrait.png');
 
@@ -487,36 +489,38 @@ const DashboardScreen = () => {
                     </View>
                   </Card.Actions>
                 </Card>
-                
-                  <Card
-                    onPress={() => {
-                      handleDetailsNavigation(
-                        'CouncillorDetails',
-                        'Indigent',
-                        'Indigent',
-                      );
-                    }}
-                    style={[styles.card, { backgroundColor: Colors.yellow }]}
-                    mode="outlined">
-                    <Card.Title
-                      title="Indigent Applications"
-                      titleStyle={{ color: Colors.white, fontSize: 14 }}
-                    />
-                    <Card.Content>
-                      <Text></Text>
-                      <Text variant="titleLarge" style={styles.text}>
-                        {parseInt(getValueByKey(items, 'Indigent'))}
-                      </Text>
-                    </Card.Content>
-                    <Card.Actions>
-                      <View style={styles.button}>
-                        <Text style={styles.buttonText}>View</Text>
-                      </View>
-                    </Card.Actions>
-                  </Card>
-                
+
+                <Card
+                  onPress={() => {
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'Indigent',
+                      'Indigent',
+                    );
+                  }}
+                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  mode="outlined">
+                  <Card.Title
+                    title="Indigent Applications"
+                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                  />
+                  <Card.Content>
+                    <Text></Text>
+                    <Text variant="titleLarge" style={styles.text}>
+                      {parseInt(getValueByKey(items, 'Indigent'))}
+                    </Text>
+                  </Card.Content>
+                  <Card.Actions>
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>View</Text>
+                    </View>
+                  </Card.Actions>
+                </Card>
+
               </View>
+
             </View>
+
           </ScrollView>
         </View>
       }
@@ -557,7 +561,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '900',
     color: Colors.white,
-  },
+  }
 });
 
 

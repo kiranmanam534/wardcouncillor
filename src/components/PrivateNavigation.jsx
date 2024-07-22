@@ -36,6 +36,7 @@ import WardWiseCollections from '../screens/WardWiseCollections';
 import CollectionsBarChartScreen from '../screens/CollectionsBarChartScreen';
 import CollectionsSummaryScreen from '../screens/CollectionsSummaryScreen';
 import WardsWiseComparisonScreen from '../screens/WardsWiseComparisonScreen';
+import WardsDBAIScreen from '../screens/WardsDBAIScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -52,7 +53,12 @@ const PrivateNavigation = () => {
     dispatch(authSliceActions.logout());
   };
 
+  const goToAIChatBot = () => {
+    navigation.navigate("AIChatBot", { title: "AI Chat Bot" })
+  }
+
   return (
+    <>
     <PrivateStack.Navigator
       initialRouteName='Index'
       screenOptions={{
@@ -325,9 +331,49 @@ const PrivateNavigation = () => {
           headerShown: true,
         })}
       />
+      <PrivateStack.Screen
+        name="AIChatBot"
+        component={WardsDBAIScreen}
+        options={({ navigation, route }) => ({
+          title: route.params.title,
+          headerShown: true,
+        })}
+      />
 
     </PrivateStack.Navigator>
+    <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
+              <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
+              {/* <MaterialIcon
+              name={'chat'}
+              size={30}
+              color={Colors.white}
+            /> */}
+            </Pressable>
+    </>
   );
 };
 
 export default PrivateNavigation;
+
+
+const styles = StyleSheet.create({
+  toggleButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 30,
+    // top: Dimensions.get('screen').height/2,
+    backgroundColor: Colors.primary,
+    borderRadius: 25,
+    height: 50,
+    width: 50,
+    // padding: 10,
+    elevation: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: Colors.black, // For iOS
+    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOpacity: 0.8, // For iOS
+    shadowRadius: 20, // For iOS
+  },
+});
+
