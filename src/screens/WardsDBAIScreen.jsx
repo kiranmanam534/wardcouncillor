@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constant/Colors';
@@ -14,8 +14,9 @@ const WardsDBAIScreen = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [loadingCount, setLoadingCount] = useState(0);
     const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState('');
+    const [input, setInput] = useState('Get top 2 records from properties');
     const flatListRef = useRef(null);
+    const [responseToBeDisplay, setToBeDisplay] = useState([]);
 
 
     //   // Use useEffect to scroll to end when messages are updated
@@ -33,12 +34,27 @@ const WardsDBAIScreen = () => {
         // }
     };
 
-    useEffect(() => {
-        if (messages.length > 0) {
-            console.log(messages.length)
-            flatListRef.current.scrollToEnd({ animated: true });
-        }
-    }, [messages]);
+    // useEffect(() => {
+    //     if (messages.length > 0) {
+    //         console.log(messages.length)
+    //         flatListRef.current.scrollToEnd({ animated: true });
+    //     }
+    // }, [messages]);
+
+
+    const DynamicKeyValueDisplayBody = ({ data }) => {
+        return (
+            <View style={{ borderWidth: 0, borderColor: Colors.white, }}>
+                {Object.entries(data).map(([key, value], index) => (
+
+                    <View key={index} style={{ width: Dimensions.get('screen').width, borderBottomWidth: 0, padding: 0 }}>
+                        <Text style={{ color: Colors.white, fontSize: 11 }}>{key} : {value}</Text>
+                    </View>
+
+                ))}
+            </View>
+        );
+    };
 
 
 
@@ -46,7 +62,7 @@ const WardsDBAIScreen = () => {
     const sendMessage = async () => {
         if (input) {
             setLoadingCount(loadingCount + 1)
-            const newMessages = [...messages, { role: 'user', content: [input], count: loadingCount + 1 }];
+            const newMessages = [...messages, { role: 'user', content: [input], sqlQuery: '', count: loadingCount + 1 }];
             setMessages(newMessages);
             setInput('');
             setIsLoading(true)
@@ -59,11 +75,14 @@ const WardsDBAIScreen = () => {
                 console.log(result.data[0].results.recordsets[0])
 
                 // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
-                setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
+                // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
+                setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], sqlQuery: result.data[0].SQL, count: loadingCount + 2 }]);
+
                 setIsLoading(false)
+                // setToBeDisplay(result.data);
             } catch (error) {
                 console.log('Error sending message:', error.response);
-                setMessages([...newMessages, { role: 'bot', content: ["Result not found!"] , count: loadingCount + 2}]);
+                setMessages([...newMessages, { role: 'bot', content: ["Result not found!"], sqlQuery: '', count: loadingCount + 2 }]);
                 setIsLoading(false)
             }
         }
@@ -72,6 +91,8 @@ const WardsDBAIScreen = () => {
             Alert.alert("Required!", "Please enter a message!")
         }
     };
+
+    console.log(JSON.stringify(messages))
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -83,16 +104,52 @@ const WardsDBAIScreen = () => {
                     renderItem={({ item }) => (
 
                         <>
-                            {item.role === 'user' && isLoading && item.count==loadingCount&&
+                            {item.role === 'user' && isLoading && item.count == loadingCount &&
                                 <View style={{ position: 'absolute', right: 10, top: 50 }} >
                                     <LoadingDots />
                                 </View>}
+                            {item.sqlQuery &&
+                                <View style={[styles.botMessage,{width: Dimensions.get('screen').width,backgroundColor:Colors.red}]}>
+                                <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10,paddingVertical:5 }}>#SQL Query:</Text>
+                                    <Text style={{ color: Colors.white, padding: 5,fontSize:11 }}>{item.sqlQuery}</Text>
+                                </View>
+                            }
                             <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
-                                {/* {JSON.stringify(item.content)} */}
+                            {item.role === 'bot' &&<Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10,paddingVertical:5 }}>#Result:</Text>}
                                 {item?.content?.map((item1, index) => (
                                     <View key={index} style={styles.itemContainer}>
-                                        <Text style={styles.itemText}>{
-                                            JSON.stringify(item1)}
+                                        <Text style={styles.itemText}>
+                                            {item.role === 'user' && JSON.stringify(item1)}
+                                            {/* { item.role === 'bot' && JSON.stringify(item1)} */}
+                                            {
+                                                item.role === 'bot' &&
+                                                <View key={index}>
+                                                    {/* <Text>{}</Text> */}
+                                                    <Text style={{ color: Colors.white, textDecorationLine: 'underline', fontSize: 15, padding: 3 }}>{'#' + (index + 1)}</Text>
+                                                    <DynamicKeyValueDisplayBody data={item1} />
+                                                </View>
+                                            }
+                                            {/* { item.role === 'bot' &&
+                                                responseToBeDisplay?.map(({ SQL, reqTXT, results }, index) => (
+
+
+                                                    <View>
+
+
+                                                        {
+
+                                                            results.recordsets[0].map(({ ...coloumn }, index) => (
+                                                                <View key={index}>
+                                                                    <DynamicKeyValueDisplayBody data={coloumn} />
+                                                                </View>
+                                                            ))
+                                                        }
+
+                                                    </View>
+
+                                                ))
+                                            } */}
+
                                         </Text>
                                     </View>
                                 ))}
@@ -100,9 +157,39 @@ const WardsDBAIScreen = () => {
                         </>
                     )}
                     keyExtractor={(item, index) => index.toString()}
-                // contentContainerStyle={{ paddingBottom: 100 }} // Adjust the padding as needed
-                // onContentSizeChange={onContentSizeChange} // Trigger scrolling when content size changes
                 />
+
+
+                {/* 
+                {
+                    responseToBeDisplay?.map(({ SQL, reqTXT, results }, index) => (
+                        <>
+                            <View key={index}>
+                                <Text>Requested SViewing</Text>
+                                <Text>{reqTXT}</Text>
+                            </View>
+                            <View>
+                                <View>
+
+
+                                    {
+
+                                        results.recordsets[0].map(({ ...coloumn }, index) => (
+                                            <View key={index}>
+                                                <DynamicKeyValueDisplayBody data={coloumn} />
+                                            </View>
+                                        ))
+                                    }
+
+                                </View>
+                            </View>
+
+
+                        </>
+
+                    ))
+                } */}
+
 
 
                 <View style={styles.container1}>
