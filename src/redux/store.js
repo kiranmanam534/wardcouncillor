@@ -25,6 +25,7 @@ import PaymentHistorySlice from './PaymentHistorySlice';
 import AnnouncementViewSlice from './announcementViewSlice';
 import AnnouncementImagesSlice from './AnnouncementImagesSlice';
 import AnnouncementDeleteSlice from './AnnouncementDeleteSlice';
+import visibilityAIIconSlice from './visibilityAIIconSlice';
 
 const store = configureStore({
   reducer: {
@@ -54,7 +55,8 @@ const store = configureStore({
     PaymentHistoryReducer:PaymentHistorySlice.reducer,
     announcementViewReducer:AnnouncementViewSlice.reducer,
     AnnouncementImagesReducer:AnnouncementImagesSlice.reducer,
-    // AnnouncementDeleteReducer:AnnouncementDeleteSlice.reducer
+    // AnnouncementDeleteReducer:AnnouncementDeleteSlice.reducer,
+    visibilityAI: visibilityAIIconSlice.reducer,
 
   },
   middleware: getDefaultMiddleware => {

@@ -4,9 +4,14 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constant/Colors';
 import LoadingDots from '../components/LoadingDots';
+import { useDispatch } from 'react-redux';
+import { hideData, showData } from '../redux/visibilityAIIconSlice';
 
 
 const WardsDBAIScreen = () => {
+
+    const dispatch = useDispatch();
+
     const [headers, setHeaders] = useState([]);
     const [prompt, setPrompt] = useState('');
     const [response, setResponse] = useState([{ role: 'user', content: [] }]);
@@ -41,6 +46,12 @@ const WardsDBAIScreen = () => {
     //     }
     // }, [messages]);
 
+    useEffect(() => {
+        dispatch(hideData());
+        return () => {
+            dispatch(showData());
+        };
+    }, [dispatch]);
 
     const DynamicKeyValueDisplayBody = ({ data }) => {
         return (
@@ -71,8 +82,8 @@ const WardsDBAIScreen = () => {
                 const postData = { "query": input, "tables": [] }
                 console.log(postData)
                 const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
-                console.log(result.data[0].SQL)
-                console.log(result.data[0].results.recordsets[0])
+                // console.log(result.data[0].SQL)
+                // console.log(result.data[0].results.recordsets[0])
 
                 // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
                 // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
@@ -109,13 +120,13 @@ const WardsDBAIScreen = () => {
                                     <LoadingDots />
                                 </View>}
                             {item.sqlQuery &&
-                                <View style={[styles.botMessage,{width: Dimensions.get('screen').width,backgroundColor:Colors.red}]}>
-                                <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10,paddingVertical:5 }}>#SQL Query:</Text>
-                                    <Text style={{ color: Colors.white, padding: 5,fontSize:11 }}>{item.sqlQuery}</Text>
+                                <View style={[styles.botMessage, { width: Dimensions.get('screen').width, backgroundColor: '#145DA0' }]}>
+                                    <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10, paddingVertical: 5 }}>#SQL Query:</Text>
+                                    <Text style={{ color: Colors.white, padding: 5, fontSize: 11 }}>{item.sqlQuery}</Text>
                                 </View>
                             }
                             <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
-                            {item.role === 'bot' &&<Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10,paddingVertical:5 }}>#Result:</Text>}
+                                {item.role === 'bot' && <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10, paddingVertical: 5 }}>#Result:</Text>}
                                 {item?.content?.map((item1, index) => (
                                     <View key={index} style={styles.itemContainer}>
                                         <Text style={styles.itemText}>

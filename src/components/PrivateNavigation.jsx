@@ -44,6 +44,8 @@ const PrivateNavigation = () => {
 
   const navigation = useNavigation();
 
+  const isVisible = useSelector((state) => state.visibilityAI.isVisible);
+
 
   const loggedUser = useSelector(state => state.loginReducer.items);
   console.log("Navigation", loggedUser.warD_NO)
@@ -59,296 +61,298 @@ const PrivateNavigation = () => {
 
   return (
     <>
-    <PrivateStack.Navigator
-      initialRouteName='Index'
-      screenOptions={{
-        // navigationBarHidden: true,
-        navigationBarColor: Colors.primary,
-        statusBarColor: Colors.primary,
-        headerBackTitleVisible: false,
-        headerStyle: {
-          backgroundColor: Colors.primary,
-        },
-        headerTitleStyle: {
-          fontWeight: 'bold',
-          color: Colors.white,
-        },
-        headerTintColor: Colors.white,
-      }}>
-      <PrivateStack.Screen
-        name="Index"
+      <PrivateStack.Navigator
+        initialRouteName='Index'
+        screenOptions={{
+          // navigationBarHidden: true,
+          navigationBarColor: Colors.primary,
+          statusBarColor: Colors.primary,
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: Colors.primary,
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            color: Colors.white,
+          },
+          headerTintColor: Colors.white,
+        }}>
+        <PrivateStack.Screen
+          name="Index"
 
-        component={WardMemberInfoScreen}
-        options={({ navigation, route }) => ({
-          title: loggedUser.warD_NO == 0 ? 'MAYOR INFO' : 'COUNCILLOR INFO',
-          headerShown: true,
-          headerTitleAlign: 'center',
-          navigationBarHidden: true,
-          headerRight: () => (
-            <Pressable onPress={handleLogout}>
-              <Icon name="sign-out" size={25} color={Colors.white} />
-            </Pressable>
-          ),
-          // headerLeft: null, // Hide the left navigation icon
-        })}
-      />
-      <PrivateStack.Screen
-        name="Dashboard"
-        component={loggedUser?.warD_NO != 0 ? BottomTabNavigator : DashboardScreen}
-        options={({ navigation, route }) => ({
-          title: 'HOME',
-          headerShown: loggedUser?.warD_NO != 0 ? false : true,
-          navigationBarHidden: true,
-          headerRight: () => (
-            <Pressable onPress={handleLogout}>
-              <Icon name="sign-out" size={25} color={Colors.white} />
-            </Pressable>
-          ),
-          headerLeft: null, // Hides the headerLeft
-        })}
-      />
-      <PrivateStack.Screen
-        name="MayorOutstandingDashboard"
-        component={MayorOutstandingDashboardScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="CategoryOutstanding"
-        component={CategoryOutstandingScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="AllWards"
-        component={AllWardsOutstandingScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+          component={WardMemberInfoScreen}
+          options={({ navigation, route }) => ({
+            title: loggedUser.warD_NO == 0 ? 'MAYOR INFO' : 'COUNCILLOR INFO',
+            headerShown: true,
+            headerTitleAlign: 'center',
+            navigationBarHidden: true,
+            headerRight: () => (
+              <Pressable onPress={handleLogout}>
+                <Icon name="sign-out" size={25} color={Colors.white} />
+              </Pressable>
+            ),
+            // headerLeft: null, // Hide the left navigation icon
+          })}
+        />
+        <PrivateStack.Screen
+          name="Dashboard"
+          component={loggedUser?.warD_NO != 0 ? BottomTabNavigator : DashboardScreen}
+          options={({ navigation, route }) => ({
+            title: 'HOME',
+            headerShown: loggedUser?.warD_NO != 0 ? false : true,
+            navigationBarHidden: true,
+            headerRight: () => (
+              <Pressable onPress={handleLogout}>
+                <Icon name="sign-out" size={25} color={Colors.white} />
+              </Pressable>
+            ),
+            headerLeft: null, // Hides the headerLeft
+          })}
+        />
+        <PrivateStack.Screen
+          name="MayorOutstandingDashboard"
+          component={MayorOutstandingDashboardScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="CategoryOutstanding"
+          component={CategoryOutstandingScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="AllWards"
+          component={AllWardsOutstandingScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
-      <PrivateStack.Screen
-        name="WardWiseCollections"
-        component={WardWiseCollections}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="CouncillorDetails"
-        component={CouncillorDetailsScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="CouncillorDetail"
-        component={CouncillorDetailScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="CouncillorView"
-        component={CouncilloriViewScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="WardWiseCollections"
+          component={WardWiseCollections}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="CouncillorDetails"
+          component={CouncillorDetailsScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="CouncillorDetail"
+          component={CouncillorDetailScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="CouncillorView"
+          component={CouncilloriViewScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
-      <PrivateStack.Screen
-        name="Hotspots"
-        component={HotspotScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="RoadClosure"
-        component={RoadClousureScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="Meetings"
-        component={WardMeetingScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="Workshops"
-        component={WorkshopsScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="Hotspots"
+          component={HotspotScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="RoadClosure"
+          component={RoadClousureScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="Meetings"
+          component={WardMeetingScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="Workshops"
+          component={WorkshopsScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
-      <PrivateStack.Screen
-        name="MissingPerson"
-        component={MissingPersonsScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-
-      <PrivateStack.Screen
-        name="Warnings"
-        component={WarningssScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="MissingPerson"
+          component={MissingPersonsScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
 
-
-      <PrivateStack.Screen
-        name="Healthcare"
-        component={HealthCareScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-
-      <PrivateStack.Screen
-        name="ShowPropertyMap"
-        component={ShowMapModal}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-      <PrivateStack.Screen
-        name="Collections"
-        component={CollectionsScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="Customer360"
-        component={Customer360Screen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="Warnings"
+          component={WarningssScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
 
-      <PrivateStack.Screen
-        name="PaymentHistory"
-        component={PaymentHistoryScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+
+        <PrivateStack.Screen
+          name="Healthcare"
+          component={HealthCareScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
 
-      <PrivateStack.Screen
-        name="ViewAnnouncement"
-        component={ViewAnnouncementScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="ShowPropertyMap"
+          component={ShowMapModal}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
-      <PrivateStack.Screen
-        name="ViewImages"
-        component={ViewImagesScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-
-      <PrivateStack.Screen
-        name="OustandingCharts"
-        component={OustandingChartsScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-      <PrivateStack.Screen
-        name="OutstandingCategoriesChart"
-        component={OutstandingCategoriesChartScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="Collections"
+          component={CollectionsScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="Customer360"
+          component={Customer360Screen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
 
-      <PrivateStack.Screen
-        name="CollectionsBarChart"
-        component={CollectionsBarChartScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-
-      <PrivateStack.Screen
-        name="CollectionsSummary"
-        component={CollectionsSummaryScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="PaymentHistory"
+          component={PaymentHistoryScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
 
-      <PrivateStack.Screen
-        name="WardsWiseComparison"
-        component={WardsWiseComparisonScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
-      <PrivateStack.Screen
-        name="AIChatBot"
-        component={WardsDBAIScreen}
-        options={({ navigation, route }) => ({
-          title: route.params.title,
-          headerShown: true,
-        })}
-      />
+        <PrivateStack.Screen
+          name="ViewAnnouncement"
+          component={ViewAnnouncementScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
 
-    </PrivateStack.Navigator>
-    <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-              <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
-              {/* <MaterialIcon
+        <PrivateStack.Screen
+          name="ViewImages"
+          component={ViewImagesScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+
+        <PrivateStack.Screen
+          name="OustandingCharts"
+          component={OustandingChartsScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+        <PrivateStack.Screen
+          name="OutstandingCategoriesChart"
+          component={OutstandingCategoriesChartScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+
+        <PrivateStack.Screen
+          name="CollectionsBarChart"
+          component={CollectionsBarChartScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+        <PrivateStack.Screen
+          name="CollectionsSummary"
+          component={CollectionsSummaryScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+
+        <PrivateStack.Screen
+          name="WardsWiseComparison"
+          component={WardsWiseComparisonScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+        <PrivateStack.Screen
+          name="AIChatBot"
+          component={WardsDBAIScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+      </PrivateStack.Navigator>
+      {isVisible &&
+        <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
+          <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
+          {/* <MaterialIcon
               name={'chat'}
               size={30}
               color={Colors.white}
             /> */}
-            </Pressable>
+        </Pressable>
+      }
     </>
   );
 };

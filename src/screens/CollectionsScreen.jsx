@@ -34,7 +34,7 @@ const CollectionsScreen = () => {
             });
         }else if (item.name == 'CollectionsSummary') {
             navigation.navigate("CollectionsSummary", {
-                title: GetwardHeaderTitle("Collections", "Collections Summaey"),
+                title: GetwardHeaderTitle("Collections", "Collections Summary"),
                 wardType: "Collections",
             });
         }else if (item.name == 'WardsWiseComparison') {
