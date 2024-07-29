@@ -454,7 +454,7 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
               </View>
-              <View style={styles.row}>
+              {/* <View style={styles.row}>
                 <Card
                   onPress={() => {
                     // handleDetailsNavigation('Collections', 'Collections', 'Collections');
@@ -517,7 +517,7 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
 
-              </View>
+              </View> */}
 
             </View>
 
