@@ -29,7 +29,7 @@ const CollectionsScreen = () => {
             });
         } else if (item.name == 'MonthWiseCollections') {
             navigation.navigate("CollectionsBarChart", {
-                title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle("Collections", "Month wise collects") : GetwardHeaderTitle("Collections", "Month wise collects"),
+                title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle("Collections", "Month wise collections") : GetwardHeaderTitle("Collections", "Month wise collections"),
                 wardType: "Collections",
             });
         }else if (item.name == 'CollectionsSummary') {
