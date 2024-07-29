@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, SafeAreaView, TouchableOpacity, Alert, Dimensions, Image } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constant/Colors';
@@ -81,8 +81,8 @@ const WardsDBAIScreen = () => {
             try {
                 const postData = { "query": input, "tables": [] }
                 console.log(postData)
-                const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
-                // const result = await axios.post('http://102.130.119.148:3344/api/getdata', postData);
+                // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
+                const result = await axios.post('http://102.130.119.148:3344/api/getdata', postData);
                 // console.log(result.data[0].SQL)
                 console.log(result.data)
 
@@ -107,8 +107,16 @@ const WardsDBAIScreen = () => {
     // console.log(JSON.stringify(messages))
 
     return (
+        // <View>
+        //     <Image
+        //                                 source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png'}}
+        //                                 // style={{ flex: 1 }}
+        //                                 width={100}
+        //                                 height={Dimensions.get('screen').width}/>
+        // </View>
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.container}>
+            
                 <FlatList
                     style={{ position: 'relative' }}
                     ref={flatListRef}
@@ -128,6 +136,7 @@ const WardsDBAIScreen = () => {
                             }
                             <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
                                 {item.role === 'bot' && <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10, paddingVertical: 5 }}>#Result:</Text>}
+                              
                                 {item?.content?.map((item1, index) => (
                                     <View key={index} style={styles.itemContainer}>
                                         <Text style={styles.itemText}>
@@ -161,10 +170,17 @@ const WardsDBAIScreen = () => {
 
                                                 ))
                                             } */}
+                                            <Image
+                                        source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png'}}
+                                        // style={{ flex: 1 }}
+                                        width={40}
+                                        height={40}
+                                    />  </Text>
 
-                                        </Text>
+                                     
                                     </View>
                                 ))}
+
                             </View>
                         </>
                     )}
