@@ -1,4 +1,4 @@
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -39,6 +39,8 @@ import WardsWiseComparisonScreen from '../screens/WardsWiseComparisonScreen';
 import WardsDBAIScreen from '../screens/WardsDBAIScreen';
 import WardBillingCollectionsScreen from '../screens/WardBillingCollectionsScreen';
 import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_BarChartScreen';
+const AI_Icon = require('../assets/images/AI_Icon.jpeg');
+const screenWidth = Dimensions.get('window').width;
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -58,7 +60,7 @@ const PrivateNavigation = () => {
   };
 
   const goToAIChatBot = () => {
-    navigation.navigate("AIChatBot", { title: "AI Chat Bot" })
+    navigation.navigate("AIChatBot", { title: "I AM TSEBO" })
   }
 
   return (
@@ -365,7 +367,8 @@ const PrivateNavigation = () => {
       </PrivateStack.Navigator>
       {isVisible &&
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-          <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
+        <Image source={AI_Icon} style={styles.img} />
+          {/* <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text> */}
         </Pressable>
       }
     </>
@@ -393,6 +396,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, // For iOS
     shadowOpacity: 0.8, // For iOS
     shadowRadius: 20, // For iOS
+    cursor:'pointer'
   },
+  img: {
+        width: 60,
+        height: 60,
+        borderRadius:30
+        // resizeMode: 'stretch',
+    },
 });
 

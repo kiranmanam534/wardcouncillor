@@ -6,7 +6,7 @@ import { Colors } from '../constant/Colors';
 import LoadingDots from '../components/LoadingDots';
 import { useDispatch } from 'react-redux';
 import { hideData, showData } from '../redux/visibilityAIIconSlice';
-
+const screenWidth = Dimensions.get('window').width;
 
 const WardsDBAIScreen = () => {
 
@@ -114,6 +114,7 @@ const WardsDBAIScreen = () => {
         //                                 width={100}
         //                                 height={Dimensions.get('screen').width}/>
         // </View>
+        <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
             <View style={styles.container}>
 
@@ -181,9 +182,7 @@ const WardsDBAIScreen = () => {
                                 <View style={{ backgroundColor: Colors.lightgray, marginVertical: 10,padding:5 }}>
                                     <Image
                                         source={{ uri: item.barChatImg }}
-                                        // style={{ flex: 1 }}
-                                        width={250}
-                                        height={150}
+                                        style={styles.img}
                                     // tintColor={Colors.lightgray}
                                     />
                                 </View>
@@ -242,6 +241,7 @@ const WardsDBAIScreen = () => {
             </View>
 
         </View>
+        </SafeAreaView>
     );
 };
 
@@ -312,6 +312,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         right: 12
 
+    },
+    img: {
+        width: screenWidth-50,
+        height: screenWidth-50,
+        resizeMode: 'contain',
     },
 });
 
