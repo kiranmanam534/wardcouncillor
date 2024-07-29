@@ -88,13 +88,13 @@ const WardsDBAIScreen = () => {
 
                 // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
                 // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
-                setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], sqlQuery: result.data[0].SQL, count: loadingCount + 2 }]);
+                setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], sqlQuery: result.data[0].SQL,barChatImg:result.data[0]?.img, count: loadingCount + 2 }]);
 
                 setIsLoading(false)
                 // setToBeDisplay(result.data);
             } catch (error) {
                 console.log('Error sending message:', error.response);
-                setMessages([...newMessages, { role: 'bot', content: [["Result not found!"]], sqlQuery: '', count: loadingCount + 2 }]);
+                setMessages([...newMessages, { role: 'bot', content: [["Result not found!"]], sqlQuery: '',barChatImg:'', count: loadingCount + 2 }]);
                 setIsLoading(false)
             }
         }
@@ -177,10 +177,10 @@ const WardsDBAIScreen = () => {
                                 ))}
 
                             </View>
-                            {item.role === 'bot' &&
-                                <View style={{ backgroundColor: Colors.yellow, marginVertical: 20 }}>
+                            {item.role === 'bot' && item.barChatImg &&
+                                <View style={{ backgroundColor: Colors.lightgray, marginVertical: 10,padding:5 }}>
                                     <Image
-                                        source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png' }}
+                                        source={{ uri: item.barChatImg }}
                                         // style={{ flex: 1 }}
                                         width={250}
                                         height={150}

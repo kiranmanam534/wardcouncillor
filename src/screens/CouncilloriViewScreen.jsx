@@ -185,7 +185,7 @@ const CouncilloriViewScreen = ({ route }) => {
       }
     } else {
       if (item.cellNo && item.cellNo != 'Not Available') {
-        let message = `Hi ${item.debtorName.trim()}, Your Meter No : ${item.meterNumber} is  for ${item.accountNumber}`;
+        let message = `Hi ${item.debtorName.trim()}, Your Interims Meter No : ${item.meterNumber} is  for ${item.accountNumber}`;
         const requestBody = {
           recipientNumber: '0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
           message: message.toString(),

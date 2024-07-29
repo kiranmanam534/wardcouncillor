@@ -35,8 +35,8 @@ console.log(wardType)
 
 
     const navigateToDetail = (wardType, name) => {
-        navigation.navigate("CollectionsBarChart", {
-            title: 'Ward : '+name + ' - ' + GetwardHeaderTitle("Collections", "Collections Barchat") ,
+        navigation.navigate("Collections_Billing_BarChart", {
+            title: 'Ward : '+name + ' - ' + GetwardHeaderTitle("Collections", "Collections & Billing Barchat") ,
             wardType: "Collections",
             selectedWardNo:name
         });

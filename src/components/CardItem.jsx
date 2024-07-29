@@ -32,7 +32,7 @@ const CardItem = ({
           <Card.Content>
             <View style={styles.cardContent}>
               <Text>Billing Amount</Text>
-              <Title style={styles.title}>
+              <Title style={[styles.title,{fontSize:15}]}>
                 {isAmount && ['WardBillingCollections'].includes(wardType)
                   ? ': ' + formattedAmount(billing, 'en-ZA', 'ZAR', 'currency')
                   : ': ' + wardValue(wardType, billing)}
@@ -42,7 +42,7 @@ const CardItem = ({
           <Card.Content>
             <View style={styles.cardContent}>
               <Text>Collection Amount</Text>
-              <Title style={styles.title}>
+              <Title  style={[styles.title,{fontSize:15}]}>
                 {isAmount && ['WardBillingCollections'].includes(wardType)
                   ? ': ' + formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
                   : ': ' + wardValue(wardType, collection)}
@@ -69,7 +69,7 @@ const CardItem = ({
                 ? formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
                 : wardValue(wardType, collection)} */}
             </Paragraph>
-            {name != 'N/A' &&
+            {/* {name != 'N/A' &&
               <View style={{ marginTop: 15 }}>
                 <TouchableOpacity
                   style={[
@@ -89,7 +89,6 @@ const CardItem = ({
                       justifyContent: 'center',
                       alignSelf: 'center',
                       flexDirection: 'row',
-                      // marginHorizontal: -20,
                     }}>
                     <Icon name={wardType == 'WardBillingCollections' ? "bar-chart-o" : "info-circle"} size={20} color={Colors.blue} />
                     <Text
@@ -102,7 +101,7 @@ const CardItem = ({
                   </View>
                 </TouchableOpacity>
               </View>
-            }
+            } */}
           </Card.Content>
         </Card>
       </View>

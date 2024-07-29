@@ -38,6 +38,7 @@ import CollectionsSummaryScreen from '../screens/CollectionsSummaryScreen';
 import WardsWiseComparisonScreen from '../screens/WardsWiseComparisonScreen';
 import WardsDBAIScreen from '../screens/WardsDBAIScreen';
 import WardBillingCollectionsScreen from '../screens/WardBillingCollectionsScreen';
+import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_BarChartScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -326,6 +327,15 @@ const PrivateNavigation = () => {
         />
 
         <PrivateStack.Screen
+          name="Collections_Billing_BarChart"
+          component={Collections_Billing_BarChartScreen}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+        <PrivateStack.Screen
           name="CollectionsSummary"
           component={CollectionsSummaryScreen}
           options={({ navigation, route }) => ({
@@ -353,11 +363,11 @@ const PrivateNavigation = () => {
         />
 
       </PrivateStack.Navigator>
-      {/* {isVisible &&
+      {isVisible &&
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
           <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
         </Pressable>
-      } */}
+      }
     </>
   );
 };
