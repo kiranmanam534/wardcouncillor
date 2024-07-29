@@ -114,9 +114,9 @@ const WardsDBAIScreen = () => {
         //                                 width={100}
         //                                 height={Dimensions.get('screen').width}/>
         // </View>
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
             <View style={styles.container}>
-            
+
                 <FlatList
                     style={{ position: 'relative' }}
                     ref={flatListRef}
@@ -136,7 +136,7 @@ const WardsDBAIScreen = () => {
                             }
                             <View style={item.role === 'user' ? styles.userMessage : styles.botMessage}>
                                 {item.role === 'bot' && <Text style={{ color: Colors.yellow, textDecorationLine: 'underline', fontSize: 15, paddingHorizontal: 10, paddingVertical: 5 }}>#Result:</Text>}
-                              
+
                                 {item?.content?.map((item1, index) => (
                                     <View key={index} style={styles.itemContainer}>
                                         <Text style={styles.itemText}>
@@ -170,18 +170,24 @@ const WardsDBAIScreen = () => {
 
                                                 ))
                                             } */}
-                                            <Image
-                                        source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png'}}
-                                        // style={{ flex: 1 }}
-                                        width={40}
-                                        height={40}
-                                    />  </Text>
+                                        </Text>
 
-                                     
+
                                     </View>
                                 ))}
 
                             </View>
+                            {item.role === 'bot' &&
+                                <View style={{ backgroundColor: Colors.yellow, marginVertical: 20 }}>
+                                    <Image
+                                        source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png' }}
+                                        // style={{ flex: 1 }}
+                                        width={250}
+                                        height={150}
+                                    // tintColor={Colors.lightgray}
+                                    />
+                                </View>
+                            }
                         </>
                     )}
                     keyExtractor={(item, index) => index.toString()}
@@ -235,7 +241,7 @@ const WardsDBAIScreen = () => {
 
             </View>
 
-        </SafeAreaView>
+        </View>
     );
 };
 

@@ -454,7 +454,7 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
               </View>
-              {/* <View style={styles.row}>
+              <View style={styles.row}>
                 <Card
                   onPress={() => {
                     // handleDetailsNavigation('Collections', 'Collections', 'Collections');
@@ -490,7 +490,7 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
 
-                <Card
+                {/* <Card
                   onPress={() => {
                     handleDetailsNavigation(
                       'CouncillorDetails',
@@ -515,9 +515,9 @@ const DashboardScreen = () => {
                       <Text style={styles.buttonText}>View</Text>
                     </View>
                   </Card.Actions>
-                </Card>
+                </Card> */}
 
-              </View> */}
+              </View>
 
             </View>
 
