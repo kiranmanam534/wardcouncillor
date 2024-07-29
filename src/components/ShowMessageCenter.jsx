@@ -31,7 +31,7 @@ const ShowMessageCenter = ({ message }) => {
           </View>
           <View style={styles.content}>
             <Text style={styles.title}>
-              {message == 'No data found.' ? 'Success' : 'Error'}
+              {message == 'No data found.' ? 'Success' : 'Message'}
               {/* {message == 'Something went wrong!' ? 'Error' : 'Success'} */}
 
             </Text>
