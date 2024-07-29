@@ -49,7 +49,7 @@ console.log(wardType)
             const currentYear = new Date().getFullYear();
             console.log(currentYear); // This will log the current year, e.g., 2024
             // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-            const response = await axios.get(`${apiUrl}/api/Collection/get-ward-wise-collections?Year=${currentYear}&search=${search}`);
+            const response = await axios.get(`${apiUrl}/api/Collection/get-ward-wise-Billing-collections?Year=${currentYear}&search=${search}`);
             console.log(response.data);
            
             setStatusCode(response.status);
@@ -103,6 +103,8 @@ console.log(wardType)
                             isTownship={false}
                             wardType={wardType}
                             value={Math.abs(parseFloat(item.value))}
+                            billing={Math.abs(parseFloat(item?.billing))}
+                            collection={Math.abs(parseFloat(item?.collection))}
                             isAmount={true}
                             onPress={() => {
                                 navigateToDetail(wardType, item.name);

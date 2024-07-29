@@ -353,16 +353,11 @@ const PrivateNavigation = () => {
         />
 
       </PrivateStack.Navigator>
-      {isVisible &&
+      {/* {isVisible &&
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
           <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
-          {/* <MaterialIcon
-              name={'chat'}
-              size={30}
-              color={Colors.white}
-            /> */}
         </Pressable>
-      }
+      } */}
     </>
   );
 };

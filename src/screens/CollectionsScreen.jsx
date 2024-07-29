@@ -46,7 +46,7 @@ const CollectionsScreen = () => {
         else if (item.name == 'WardBillingCollections') {
             navigation.navigate("WardBillingCollections", {
                 title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle("Collections", "Ward wise billing & collections") : GetwardHeaderTitle("Collections", "Ward wise billing & collections"),
-                wardType: "Collections",
+                wardType: "WardBillingCollections",
             });
         }
     };

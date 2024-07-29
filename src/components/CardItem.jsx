@@ -13,77 +13,172 @@ const CardItem = ({
   onPress,
   wardType,
   isTownship = false,
-  name
+  name,
+  billing,
+  collection
 }) => {
-  return (
-    <View style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <View style={styles.cardContent}>
-            <Icon name="users" size={25} color={Colors.blue} />
-            <Title style={styles.title}>
-              {wardTitle(wardType, title, isTownship)}
-            </Title>
-          </View>
-        </Card.Content>
-        <Divider style={styles.divider} />
-        <Card.Content
-          style={[
-            styles.footer,
-            {
-              backgroundColor: Colors.blue,
-              borderBottomLeftRadius: 15,
-              borderBottomRightRadius: 15,
-              height: 50,
-              borderWidth: 2,
-              borderColor: Colors.yellow,
-            },
-          ]}>
-          {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
-          <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
-            {/* {wardType=='Outstanding' && } */}
-            {isAmount && ['Outstanding', 'OutstandingCategory','Collections'].includes(wardType)
-              ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
-              : wardValue(wardType, value)}
-          </Paragraph>
-          {name != 'N/A' &&
-            <View style={{ marginTop: 15 }}>
-              <TouchableOpacity
-                style={[
-                  styles.btn,
-                  {
-                    height: 30,
-                    width: wardType=='Collections'?130:100,
-                    backgroundColor: Colors.white,
-                    borderRadius: 20,
-                  },
-                ]}
-                onPress={onPress}>
-                <View
-                  style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    alignSelf: 'center',
-                    flexDirection: 'row',
-                    // marginHorizontal: -20,
-                  }}>
-                  <Icon name={wardType=='Collections'?"bar-chart-o":"info-circle"} size={20} color={Colors.blue} />
-                  <Text
-                    style={[
-                      styles.text,
-                      { fontSize: 16, color: Colors.blue, paddingLeft: wardType=='Collections'?5:10 },
-                    ]}>
-                    {wardType=='Collections'?'View Chart':'View'}
-                  </Text>
-                </View>
-              </TouchableOpacity>
+  if (wardType == 'WardBillingCollections') {
+    return (
+      <View style={styles.container}>
+        <Card style={styles.card}>
+          <Card.Content>
+            <View style={styles.cardContent}>
+              <Icon name="users" size={25} color={Colors.blue} />
+              <Title style={styles.title}>
+                {wardTitle(wardType, title, isTownship)}
+              </Title>
             </View>
-          }
-        </Card.Content>
-      </Card>
-    </View>
-  );
+          </Card.Content>
+          <Card.Content>
+            <View style={styles.cardContent}>
+              <Text>Billing Amount</Text>
+              <Title style={styles.title}>
+                {isAmount && ['WardBillingCollections'].includes(wardType)
+                  ? ': ' + formattedAmount(billing, 'en-ZA', 'ZAR', 'currency')
+                  : ': ' + wardValue(wardType, billing)}
+              </Title>
+            </View>
+          </Card.Content>
+          <Card.Content>
+            <View style={styles.cardContent}>
+              <Text>Collection Amount</Text>
+              <Title style={styles.title}>
+                {isAmount && ['WardBillingCollections'].includes(wardType)
+                  ? ': ' + formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
+                  : ': ' + wardValue(wardType, collection)}
+                {/* {wardTitle(wardType, collection, isTownship)} */}
+              </Title>
+            </View>
+          </Card.Content>
+          <Card.Content
+            style={[
+              styles.footer,
+              {
+                backgroundColor: Colors.blue,
+                borderBottomLeftRadius: 15,
+                borderBottomRightRadius: 15,
+                height: 50,
+                borderWidth: 2,
+                borderColor: Colors.yellow,
+              },
+            ]}>
+            {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
+            <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
+              {/* {wardType=='Outstanding' && } */}
+              {/* {isAmount && ['WardBillingCollections'].includes(wardType)
+                ? formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
+                : wardValue(wardType, collection)} */}
+            </Paragraph>
+            {name != 'N/A' &&
+              <View style={{ marginTop: 15 }}>
+                <TouchableOpacity
+                  style={[
+                    styles.btn,
+                    {
+                      height: 30,
+                      width: wardType == 'WardBillingCollections' ? 130 : 100,
+                      backgroundColor: Colors.white,
+                      borderRadius: 20,
+                    },
+                  ]}
+                  onPress={onPress}>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      flexDirection: 'row',
+                      // marginHorizontal: -20,
+                    }}>
+                    <Icon name={wardType == 'WardBillingCollections' ? "bar-chart-o" : "info-circle"} size={20} color={Colors.blue} />
+                    <Text
+                      style={[
+                        styles.text,
+                        { fontSize: 16, color: Colors.blue, paddingLeft: wardType == 'WardBillingCollections' ? 5 : 10 },
+                      ]}>
+                      {wardType == 'WardBillingCollections' ? 'View Chart' : 'View'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            }
+          </Card.Content>
+        </Card>
+      </View>
+    );
+  }
+  else {
+    return (
+      <View style={styles.container}>
+        <Card style={styles.card}>
+          <Card.Content>
+            <View style={styles.cardContent}>
+              <Icon name="users" size={25} color={Colors.blue} />
+              <Title style={styles.title}>
+                {wardTitle(wardType, title, isTownship)}
+              </Title>
+            </View>
+          </Card.Content>
+          <Divider style={styles.divider} />
+          <Card.Content
+            style={[
+              styles.footer,
+              {
+                backgroundColor: Colors.blue,
+                borderBottomLeftRadius: 15,
+                borderBottomRightRadius: 15,
+                height: 50,
+                borderWidth: 2,
+                borderColor: Colors.yellow,
+              },
+            ]}>
+            {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
+            <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
+              {/* {wardType=='Outstanding' && } */}
+              {isAmount && ['Outstanding', 'OutstandingCategory', 'Collections'].includes(wardType)
+                ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
+                : wardValue(wardType, value)}
+            </Paragraph>
+            {name != 'N/A' &&
+              <View style={{ marginTop: 15 }}>
+                <TouchableOpacity
+                  style={[
+                    styles.btn,
+                    {
+                      height: 30,
+                      width: wardType == 'Collections' ? 130 : 100,
+                      backgroundColor: Colors.white,
+                      borderRadius: 20,
+                    },
+                  ]}
+                  onPress={onPress}>
+                  <View
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      alignSelf: 'center',
+                      flexDirection: 'row',
+                      // marginHorizontal: -20,
+                    }}>
+                    <Icon name={wardType == 'Collections' ? "bar-chart-o" : "info-circle"} size={20} color={Colors.blue} />
+                    <Text
+                      style={[
+                        styles.text,
+                        { fontSize: 16, color: Colors.blue, paddingLeft: wardType == 'Collections' ? 5 : 10 },
+                      ]}>
+                      {wardType == 'Collections' ? 'View Chart' : 'View'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            }
+          </Card.Content>
+        </Card>
+      </View>
+    );
+  }
 };
 
 export default CardItem;

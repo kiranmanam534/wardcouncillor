@@ -164,6 +164,13 @@ const Customer360Screen = () => {
                                             'ZAR',
                                             'currency',
                                         )} />
+                                         <InfoRow icon="envelope" label={'Levy Amount'} text={formattedAmount(
+                                            parseFloat(item?.levyAmount?item?.levyAmount:0.00),
+                                            'en-ZA',
+                                            'ZAR',
+                                            'currency',
+                                        )}
+                                            type="Levy Amount" />
                                         <InfoRow icon="envelope" label={'Total'} text={formattedAmount(
                                             parseFloat(item?.totalAmount),
                                             'en-ZA',
