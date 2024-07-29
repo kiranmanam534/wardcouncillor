@@ -37,6 +37,7 @@ import CollectionsBarChartScreen from '../screens/CollectionsBarChartScreen';
 import CollectionsSummaryScreen from '../screens/CollectionsSummaryScreen';
 import WardsWiseComparisonScreen from '../screens/WardsWiseComparisonScreen';
 import WardsDBAIScreen from '../screens/WardsDBAIScreen';
+import WardBillingCollectionsScreen from '../screens/WardBillingCollectionsScreen';
 
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
@@ -137,6 +138,15 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="WardWiseCollections"
           component={WardWiseCollections}
+          options={({ navigation, route }) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+<PrivateStack.Screen
+          name="WardBillingCollections"
+          component={WardBillingCollectionsScreen}
           options={({ navigation, route }) => ({
             title: route.params.title,
             headerShown: true,

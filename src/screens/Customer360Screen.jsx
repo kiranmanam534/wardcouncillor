@@ -174,7 +174,7 @@ const Customer360Screen = () => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Outstanding data is not found for account No: {searchKey}.</Text>
                                 </View>
                             }
 
@@ -198,7 +198,7 @@ const Customer360Screen = () => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Meter data is not found for account No: {searchKey}.</Text>
                                 </View>
                             }
 
@@ -212,7 +212,7 @@ const Customer360Screen = () => {
                             {items?.propertyData.length > 0 ?
                                 items?.propertyData.map((item, index) => (
                                     <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                        key={'Meter_' + index}>
+                                        key={'Property_' + index}>
                                         <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
                                         <InfoRow icon="envelope" label={'Name'} text={item?.accountname} />
                                         <InfoRow icon="info-circle" label={'Cell No'} text={item?.cellphonenumber ? item?.cellphonenumber : 'N/A'} />
@@ -222,7 +222,7 @@ const Customer360Screen = () => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Property data is not found for account No: {searchKey}.</Text>
                                 </View>
                             }
 
@@ -251,7 +251,7 @@ const Customer360Screen = () => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Interims data is not found for account No: {searchKey}.</Text>
                                 </View>
                             }
 
@@ -266,7 +266,7 @@ const Customer360Screen = () => {
                             {items?.indigentData.length > 0 ?
                                 items?.indigentData.map((item, index) => (
                                     <View style={[styles.socialMediaSection, { padding: 0 }]}
-                                        key={'Interims_' + index}>
+                                        key={'Indigent_' + index}>
                                         <Text style={{ padding: 5, fontWeight: '600', fontSize: 15, color: Colors.white, backgroundColor: Colors.blue }}>#{index + 1}</Text>
                                         <InfoRow icon="envelope" label={'Account'} text={item?.account} />
                                         <InfoRow icon="envelope" label={'Name'} text={item?.name} />
@@ -290,7 +290,7 @@ const Customer360Screen = () => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Indigent data is not found for account No: {searchKey}.</Text>
                                 </View>
                             }
 

@@ -77,7 +77,7 @@ const PaymentHistoryScreen = ({ route }) => {
                                     </View>
                                 )) :
                                 <View style={[styles.socialMediaSection, { padding: 0, justifyContent: 'center', alignSelf: 'center' }]}>
-                                    <Text style={{ color: Colors.red }}>No data found!</Text>
+                                    <Text style={{ color: Colors.red }}>Payment History data is not found for account No: {accountNo}.</Text>
                                 </View>
                             }
 
@@ -88,7 +88,7 @@ const PaymentHistoryScreen = ({ route }) => {
                     </ScrollView> :
 
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ShowMessageCenter message={'No data found.'} />
+                    <ShowMessageCenter message={`Payment History data is not found for account No: ${accountNo}.`} />
                     </View>
 
                 : ""}

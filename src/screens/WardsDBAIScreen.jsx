@@ -82,8 +82,9 @@ const WardsDBAIScreen = () => {
                 const postData = { "query": input, "tables": [] }
                 console.log(postData)
                 const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
+                // const result = await axios.post('http://102.130.119.148:3344/api/getdata', postData);
                 // console.log(result.data[0].SQL)
-                // console.log(result.data[0].results.recordsets[0])
+                console.log(result.data)
 
                 // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
                 // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
@@ -93,7 +94,7 @@ const WardsDBAIScreen = () => {
                 // setToBeDisplay(result.data);
             } catch (error) {
                 console.log('Error sending message:', error.response);
-                setMessages([...newMessages, { role: 'bot', content: ["Result not found!"], sqlQuery: '', count: loadingCount + 2 }]);
+                setMessages([...newMessages, { role: 'bot', content: [["Result not found!"]], sqlQuery: '', count: loadingCount + 2 }]);
                 setIsLoading(false)
             }
         }
@@ -103,7 +104,7 @@ const WardsDBAIScreen = () => {
         }
     };
 
-    console.log(JSON.stringify(messages))
+    // console.log(JSON.stringify(messages))
 
     return (
         <SafeAreaView style={{ flex: 1 }}>

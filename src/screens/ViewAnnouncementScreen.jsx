@@ -53,6 +53,23 @@ const ViewAnnouncementScreen = ({ route }) => {
 
     const { title } = route.params;
     console.log("isFocused-----", title, isFocused);
+    let searchPlaceHoder = 'Serach...';
+    if (title == 'Hotspots') {
+        searchPlaceHoder = 'Search by Location or Crime Type or Details...';
+    } else if (title == 'Road Closure') {
+        searchPlaceHoder = 'Search by Location or Road name or Details...';
+    } else if (title == 'Meetings') {
+        searchPlaceHoder = 'Search by Location or Subject or Details...';
+    } else if (title == 'Missing Person') {
+        searchPlaceHoder = 'Search by Location or Name or Details...';
+    } else if (title == 'Workshops') {
+        searchPlaceHoder = 'Search by Location or Details...';
+    } else if (title == 'Healthcare') {
+        searchPlaceHoder = 'Search by Location or Details...';
+    } else if (title == 'Warnings') {
+        searchPlaceHoder = 'Search by Location or Type or Details...';
+    }
+
 
 
     const {
@@ -86,16 +103,16 @@ const ViewAnnouncementScreen = ({ route }) => {
 
     const onChangeSearch = (query) => setSearchQuery(query);
 
-    // React.useLayoutEffect(() => {
-    //     navigation.setOptions({
-    //         headerRight: () => (
-    //             <TouchableOpacity onPress={toggleSearchBar} style={styles.searchButton}>
-    //                 {/* <Text style={styles.searchButtonText}>Search</Text> */}
-    //                 <Icon name="search" size={20} color={Colors.white} />
-    //             </TouchableOpacity>
-    //         ),
-    //     });
-    // }, [navigation, searchVisible]);
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={toggleSearchBar} style={styles.searchButton}>
+                    {/* <Text style={styles.searchButtonText}>Search</Text> */}
+                    <Icon name="search" size={20} color={Colors.white} />
+                </TouchableOpacity>
+            ),
+        });
+    }, [navigation, searchVisible]);
 
 
     const LoadAnouncements = (pageNo) => {
@@ -303,7 +320,7 @@ const ViewAnnouncementScreen = ({ route }) => {
                     onPress={handleSearch}
                     value={searchText}
                     // setSearchText={setSearchText}
-                    placeholder={'search...'}
+                    placeholder={searchPlaceHoder}
                     isLoading={isLoading}
                 />
             )}

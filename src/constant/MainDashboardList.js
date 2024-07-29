@@ -149,6 +149,12 @@ export const CollectionsDashboardList = [
     title: 'Wards Comparision',
     icon: <MaterialCommunityIcons name="compare-horizontal" size={50} color={Colors.blue} />,
     name:'WardsWiseComparison'
-  }
+  },
+  // {
+  //   id: 5,
+  //   title: 'Ward wise billing & collections',
+  //   icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+  //   name:'WardBillingCollections'
+  // },
 ];
 

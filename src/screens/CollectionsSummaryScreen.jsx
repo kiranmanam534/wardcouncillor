@@ -25,9 +25,9 @@ const screenWidth = Dimensions.get('window').width;
 
 const CollectionsSummaryScreen = () => {
     const currentYear = new Date().getFullYear();
-    const startYear = currentYear - 2;
+    const startYear = currentYear;
     const years = Array.from(
-        { length: currentYear - startYear + 1 },
+        { length: currentYear - startYear+2 },
         (v, i) => ({ label: (startYear + i).toString(), value: (startYear + i) })
     );
 
