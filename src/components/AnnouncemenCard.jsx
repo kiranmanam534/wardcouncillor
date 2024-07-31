@@ -29,13 +29,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Crime Type</Text>
               <Text
@@ -193,13 +193,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -337,14 +337,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Date</Text>
+              <Text style={styles.contentText}>Start Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.roadclouseR_STARTDATE && formatDateTime(item.roadclouseR_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Time </Text>
+              <Text style={styles.contentText}>Start Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.roadclouseR_STARTIME && formatDateTime(item.roadclouseR_STARTIME,'time')}
@@ -379,13 +379,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.roaD_NAME}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -523,14 +523,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Date</Text>
+              <Text style={styles.contentText}>Start Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.meetinG_STARTDATE && formatDateTime(item.meetinG_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Time </Text>
+              <Text style={styles.contentText}>Start Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.meetinG_STARTIME && formatDateTime(item.meetinG_STARTIME,'time')}
@@ -565,13 +565,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.subject}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -709,14 +709,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Date</Text>
+              <Text style={styles.contentText}>Start Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.missinG_DATE && formatDateTime(item.missinG_DATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Time </Text>
+              <Text style={styles.contentText}>Start Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.missinG_TIME && formatDateTime(item.missinG_TIME,'time')}
@@ -737,13 +737,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -881,14 +881,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Date</Text>
+              <Text style={styles.contentText}>Start Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.workshoP_STARTDATE && formatDateTime(item.workshoP_STARTDATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Time </Text>
+              <Text style={styles.contentText}>Start Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.workshoP_STARTIME && formatDateTime(item.workshoP_STARTIME,'time')}
@@ -916,13 +916,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.location}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text
@@ -1060,14 +1060,14 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
         <Card style={styles.card}>
           <Card.Content style={{ paddingRight: 80 }}>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Date</Text>
+              <Text style={styles.contentText}>Start Date</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.warninG_DATE && formatDateTime(item.warninG_DATE,'date')} 
               </Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
-              <Text style={styles.contentText}>Satrt Time </Text>
+              <Text style={styles.contentText}>Start Time </Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 15, color: Colors.black }}>
                 : {item.warninG_TIME && formatDateTime(item.warninG_TIME,'time')}
@@ -1088,13 +1088,13 @@ const AnnouncemenCard = ({ item, type, onPress, deletedID }) => {
                 : {item.typeofwarning}
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', paddingTop: 10 }}>
+            {/* <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>GIS Location</Text>
               <Text
                 style={{ fontWeight: '500', fontSize: 13, color: Colors.black }}>
                 : {item.latitude}, {item.latitude}
               </Text>
-            </View>
+            </View> */}
             <View style={{ flexDirection: 'row', paddingTop: 10 }}>
               <Text style={styles.contentText}>Details</Text>
               <Text

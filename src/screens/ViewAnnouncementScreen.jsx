@@ -238,7 +238,7 @@ const ViewAnnouncementScreen = ({ route }) => {
                             setDeletedID(0);
                             if (res.data.statusCode == 200) {
 
-                                Alert.alert("Success", "Delete successfully!", [
+                                Alert.alert("Success", "Deleted successfully!", [
                                     {
                                         text: 'OK',
                                         onPress: async () => {

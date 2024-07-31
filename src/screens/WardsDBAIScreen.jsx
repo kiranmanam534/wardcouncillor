@@ -82,7 +82,7 @@ const WardsDBAIScreen = () => {
                 const postData = { "query": input, "tables": [] }
                 console.log(postData)
                 // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
-                const result = await axios.post('http://102.130.119.148:3344/api/getdata', postData);
+                const result = await axios.post('http://102.130.119.148:3333/api/getdata', postData);
                 // console.log(result.data[0].SQL)
                 console.log(result.data)
 
