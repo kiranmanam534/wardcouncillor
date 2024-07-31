@@ -165,7 +165,7 @@ const TestHomeScreen = () => {
             };
 
             // Handle the specific error message
-            if (error.message === 'User cancelled flow' || error.message=="The operation couldn’t be completed. (org.openid.appauth.general error -3.)") {
+            if (error.message === 'User cancelled flow' || error.message == "The operation couldn’t be completed. (org.openid.appauth.general error -3.)") {
                 // You can add more custom properties if needed
                 errorObject.message = 'The user has cancelled the authentication process.';
             }
@@ -188,7 +188,7 @@ const TestHomeScreen = () => {
             console.log('====================================');
 
             if (state.isInternetReachable !== false) {
-                 IAMLogin();
+                IAMLogin();
                 // if (Platform.OS == 'ios' && state.isInternetReachable != null) {
                 //     // handleNavigation("Mayor / Councillor");
                 //     IAMLogin();
@@ -213,10 +213,16 @@ const TestHomeScreen = () => {
 
     return (
         <View style={{ flex: 1 }}>
+
             <ImageBackground
                 source={banner}
                 style={styles.imageBackground}
             >
+
+                <View style={{ position: 'absolute', bottom: screenHeight / 25,backgroundColor:Colors.primary,padding:5,borderRadius:5,borderWidth:1,borderColor:Colors.white }}>
+                    <Text style={{ color: Colors.white }}>V.1.0</Text>
+                </View>
+
                 <View style={styles.box}>
                     <Image source={logo} style={styles.img} />
                 </View>
@@ -238,6 +244,8 @@ const TestHomeScreen = () => {
 
                     <Text style={styles.text}> {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}</Text>
                 </TouchableOpacity>
+
+
             </ImageBackground>
 
         </View>
@@ -251,6 +259,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'relative'
     },
 
     box: {
