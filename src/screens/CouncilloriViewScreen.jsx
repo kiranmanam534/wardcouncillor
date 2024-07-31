@@ -173,7 +173,7 @@ const CouncilloriViewScreen = ({ route }) => {
         )}`;
         // console.log(message)
         const requestBody = {
-          recipientNumber: '0739007893',//item.cellphonenumber,
+          recipientNumber: '0792360234',//'0739007893',//item.cellphonenumber,
           message: message.toString(),
           // campaign: 'Outstanding Amount',
         };
@@ -188,7 +188,7 @@ const CouncilloriViewScreen = ({ route }) => {
         let message = `Hi ${item.debtorName.trim()}, your meter number ${item.meterNumber} is on interim, please submit your latest readings via whatsapp.`;
         // let message = `Hi ${item.debtorName.trim()}, Your Interims Meter No : ${item.meterNumber} is  for ${item.accountNumber}`;
         const requestBody = {
-          recipientNumber: '0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
+          recipientNumber: '0792360234',//'0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
           message: message.toString(),
           // campaign: 'Interims',
         };

@@ -46,6 +46,8 @@
 	<string>Allow access to the capture image</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognition description</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to video and microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>

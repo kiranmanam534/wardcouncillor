@@ -18,6 +18,9 @@ import Test from './src/Test'
 import CallLocalApi from './src/CallLocalApi'
 import TestBarchart from './src/screens/TestBarchart'
 import WardsDBAIScreen from './src/screens/WardsDBAIScreen'
+import VoiceSpeakScreen from './src/VoiceSpeakScreen'
+import VoiceReconizeScreen from './src/VoiceReconizeScreen'
+import MultipleBarChart from './src/MultipleBarChart'
 
 const App = () => {
   return (
@@ -38,6 +41,7 @@ const App = () => {
     {/* <CallLocalApi/> */}
     {/* <TestBarchart/> */}
     {/* <WardsDBAIScreen/> */}
+    {/* <MultipleBarChart/> */}
     </Provider>
   )
 }

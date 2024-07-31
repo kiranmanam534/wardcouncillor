@@ -365,12 +365,11 @@ const PrivateNavigation = () => {
         />
 
       </PrivateStack.Navigator>
-      {isVisible &&
+      {/* {isVisible &&
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
         <Image source={AI_Icon} style={styles.img} />
-          {/* <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text> */}
         </Pressable>
-      }
+      } */}
     </>
   );
 };
