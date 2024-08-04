@@ -11,7 +11,7 @@ import {
 import Voice from '@react-native-community/voice';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Ensure you have react-native-vector-icons installed
 
-const VoiceRecognition = () => {
+const VoiceRecognition1 = () => {
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
   const [results, setResults] = useState([]);
@@ -183,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VoiceRecognition;
+export default VoiceRecognition1;

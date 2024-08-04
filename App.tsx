@@ -3,12 +3,13 @@ import React from 'react'
 import Navigation from './src/components/Navigation'
 import { Provider } from 'react-redux'
 import store from './src/redux/store'
+import VoiceRecognition1 from './VoiceRecognize1'
 
 
 const App = () => {
   return (
     <Provider store={store}>      
-    <Navigation/>
+    {/* <Navigation/> */}
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -26,7 +27,7 @@ const App = () => {
     {/* <WardsDBAIScreen/> */}
     {/* <MultipleBarChart/> */}
     {/* <VoiceRecognizer/> */}
-    {/* <VoiceRecognize1/> */}
+    <VoiceRecognition1/>
     </Provider>
   )
 }
