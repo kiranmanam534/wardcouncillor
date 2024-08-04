@@ -182,7 +182,7 @@ const WardsDBAIScreen = () => {
         console.log(postData);
         // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
         const result = await axios.post(
-          'http://102.130.119.148:3333/api/getdata',
+          'http://102.130.119.148:3344/api/getdata',
           postData,
         );
         // console.log(result.data[0].SQL)
@@ -204,7 +204,7 @@ const WardsDBAIScreen = () => {
         setIsLoading(false);
         // setToBeDisplay(result.data);
       } catch (error) {
-        console.log('Error sending message:', error.response);
+        console.log('Error sending message:', error);
         setMessages([
           ...newMessages,
           {

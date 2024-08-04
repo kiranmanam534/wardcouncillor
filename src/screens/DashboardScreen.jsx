@@ -12,19 +12,19 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Card } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {Card} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
-import { Colors } from '../constant/Colors';
-import { getCouncillorWardDashboardApi } from '../services/councillorWardApi';
-import { getValueByKey } from '../utility/getValueByKey';
-import { formattedAmount } from '../utility/FormattedAmmount';
+import {Colors} from '../constant/Colors';
+import {getCouncillorWardDashboardApi} from '../services/councillorWardApi';
+import {getValueByKey} from '../utility/getValueByKey';
+import {formattedAmount} from '../utility/FormattedAmmount';
 import LoaderModal from '../components/LoaderModal';
-import { GetwardHeaderTitle } from '../utility/Commom';
-import { MayorSelectedWardActions } from '../redux/MayorSelectedWardSlice';
-import { apiUrl } from '../constant/CommonData';
+import {GetwardHeaderTitle} from '../utility/Commom';
+import {MayorSelectedWardActions} from '../redux/MayorSelectedWardSlice';
+import {apiUrl} from '../constant/CommonData';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -37,16 +37,16 @@ const DashboardScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const [isRefresh, setIsRefresh] = useState(false)
-  const [IsDataMaintaince, setIsDataMaintaince] = useState(false)
-  const [DataMaintaince, setDataMaintaince] = useState(null)
-  const [IsDataMaintainceLoding, setIsDataMaintainceLoding] = useState(false)
+  const [isRefresh, setIsRefresh] = useState(false);
+  const [IsDataMaintaince, setIsDataMaintaince] = useState(false);
+  const [DataMaintaince, setDataMaintaince] = useState(null);
+  const [IsDataMaintainceLoding, setIsDataMaintainceLoding] = useState(false);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
 
   const loggedUserNme = useSelector(state => state.loginReducer.loggedUserName);
 
-  const { items, isLoading, error } = useSelector(
+  const {items, isLoading, error} = useSelector(
     state => state.WardDashboardReducer,
   );
 
@@ -56,13 +56,18 @@ const DashboardScreen = () => {
 
   // console.log("DataLoadedItems", DataLoadedItems)
   // console.log("isDataLoaded", isDataLoaded)
-  console.log("items", items)
+  console.log('items', items);
 
   const getDataMaintainceInfo = async () => {
     try {
       setIsDataMaintainceLoding(true);
-      console.log("getDataMaintainceInfo", `${apiUrl}/api/CouncillorWard/GetDataLoadDetails`)
-      const response = await axios.post(`${apiUrl}/api/CouncillorWard/GetDataLoadDetails`);
+      console.log(
+        'getDataMaintainceInfo',
+        `${apiUrl}/api/CouncillorWard/GetDataLoadDetails`,
+      );
+      const response = await axios.post(
+        `${apiUrl}/api/CouncillorWard/GetDataLoadDetails`,
+      );
       console.log(response.data.data);
       const res = response.data.data;
       if (res[0].name == 'LOADED') {
@@ -81,35 +86,38 @@ const DashboardScreen = () => {
       setIsDataMaintainceLoding(false);
       setIsRefresh(false);
     }
-  }
+  };
 
   useEffect(() => {
     getDataMaintainceInfo();
   }, [loggedUser?.warD_NO]);
-
 
   // useEffect(() => {
   //   dispatch(GetDataLoadDetailsApi());
   // }, []);
 
   const RefreshData = () => {
-    setIsRefresh(true)
+    setIsRefresh(true);
     // dispatch(GetDataLoadDetailsApi());
     getDataMaintainceInfo();
-  }
+  };
 
   const handleDetailsNavigation = (navigationText, title, wardType) => {
     dispatch(MayorSelectedWardActions.clearSelectedWardNo());
     navigation.navigate(navigationText, {
-      title: loggedUser?.warD_NO != 0 ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle(wardType, title) : GetwardHeaderTitle(wardType, title),
+      title:
+        loggedUser?.warD_NO != 0
+          ? loggedUser?.warD_NO + ' - ' + GetwardHeaderTitle(wardType, title)
+          : GetwardHeaderTitle(wardType, title),
       wardType: wardType,
     });
   };
 
   if (IsDataMaintainceLoding && !isRefresh) {
-    return <LoaderModal visible={IsDataMaintainceLoding} loadingText="Loading..." />;
+    return (
+      <LoaderModal visible={IsDataMaintainceLoding} loadingText="Loading..." />
+    );
   }
-
 
   const ShowMessageData = () => {
     return (
@@ -124,28 +132,29 @@ const DashboardScreen = () => {
             backgroundColor: Colors.primary,
             justifyContent: 'center',
             borderRadius: 10,
-            padding: 5
+            padding: 5,
           }}>
           <Text
             style={{
               fontSize: 17,
               fontWeight: '600',
               color: Colors.white,
-              paddingLeft: 5
+              paddingLeft: 5,
             }}>
-            <Icon name="user" size={17} color={Colors.yellow} />{'  '}
-            Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
-
-
+            <Icon name="user" size={17} color={Colors.yellow} />
+            {'  '}
+            Hello, <Text style={{color: Colors.white}}>{loggedUserNme} </Text>
           </Text>
-          <Text style={{
-            fontSize: 17,
-            fontWeight: '600',
-            color: Colors.white,
-            textAlign: 'right',
-            paddingRight: 10
-          }}>Ward : {loggedUser?.warD_NO}</Text>
-
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: '600',
+              color: Colors.white,
+              textAlign: 'right',
+              paddingRight: 10,
+            }}>
+            Ward : {loggedUser?.warD_NO}
+          </Text>
         </View>
 
         <View style={[styles1.container]}>
@@ -155,53 +164,61 @@ const DashboardScreen = () => {
                 <Image source={logo} style={styles1.img} />
               </View>
             </View>
-            <View style={{ flexDirection: 'row', height: 'auto' }}>
+            <View style={{flexDirection: 'row', height: 'auto'}}>
               <View style={styles1.content}>
-                <Text style={[styles1.title, { paddingTop: 5 }]}>
+                <Text style={[styles1.title, {paddingTop: 5}]}>
                   Under Maintenance
                 </Text>
                 <Text style={styles1.description}>
-                  Due to planned system maintenance, application will not be accessable during the maintenance period.
+                  Due to planned system maintenance, application will not be
+                  accessable during the maintenance period.
                 </Text>
-                <Text style={[styles1.description, { color: Colors.primary, paddingTop: 10 }]}>
+                <Text
+                  style={[
+                    styles1.description,
+                    {color: Colors.primary, paddingTop: 10},
+                  ]}>
                   We appreciate your patience during this time!
                 </Text>
               </View>
             </View>
 
-            <View style={{ marginTop: 20 }}>
+            <View style={{marginTop: 20}}>
               <TouchableOpacity
                 onPress={RefreshData}
                 style={{
-                  height: 50, width: 100, backgroundColor: Colors.primary,
-                  justifyContent: 'center', alignItems: 'center',
+                  height: 50,
+                  width: 100,
+                  backgroundColor: Colors.primary,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                   borderRadius: 25,
-                  flexDirection: 'row'
+                  flexDirection: 'row',
                 }}>
-                {isRefresh ?
-                  <ActivityIndicator animating={true} color="#000" size="small" />
-                  :
-                  <Text style={{ color: Colors.white, fontSize: 15 }}>
+                {isRefresh ? (
+                  <ActivityIndicator
+                    animating={true}
+                    color="#000"
+                    size="small"
+                  />
+                ) : (
+                  <Text style={{color: Colors.white, fontSize: 15}}>
                     Refresh
                   </Text>
-                }
-
+                )}
               </TouchableOpacity>
             </View>
           </View>
         </View>
-
       </View>
-
-
     );
   };
 
   return (
     <>
-      {IsDataMaintaince ?
-        <ShowMessageData /> :
-
+      {IsDataMaintaince ? (
+        <ShowMessageData />
+      ) : (
         <View style={styles.container}>
           <View
             style={{
@@ -213,27 +230,27 @@ const DashboardScreen = () => {
               backgroundColor: Colors.primary,
               justifyContent: 'center',
               borderRadius: 10,
-              padding: 5
+              padding: 5,
             }}>
             <Text
               style={{
                 fontSize: 17,
                 fontWeight: '600',
                 color: Colors.white,
-                paddingLeft: 5
+                paddingLeft: 5,
               }}>
-              <Icon name="user" size={17} color={Colors.yellow} />{'  '}
-              Hello, <Text style={{ color: Colors.white }}>{loggedUserNme} </Text>
-
-
+              <Icon name="user" size={17} color={Colors.yellow} />
+              {'  '}
+              Hello, <Text style={{color: Colors.white}}>{loggedUserNme} </Text>
             </Text>
-            <Text style={{
-              fontSize: 17,
-              fontWeight: '600',
-              color: Colors.white,
-              textAlign: 'right',
-              paddingRight: 10
-            }}>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '600',
+                color: Colors.white,
+                textAlign: 'right',
+                paddingRight: 10,
+              }}>
               Ward : {loggedUser?.warD_NO}
             </Text>
             <Text
@@ -241,17 +258,16 @@ const DashboardScreen = () => {
                 fontSize: 12,
                 // fontWeight: '800',
                 color: Colors.white,
-                textAlign: 'right'
+                textAlign: 'right',
               }}>
               Last data refreshed: {DataMaintaince?.value}
             </Text>
           </View>
           <ScrollView>
-            <View style={{ marginBottom: 150 }}>
+            <View style={{marginBottom: 150}}>
               <View style={styles.row}>
                 <Card
                   onPress={() => {
-
                     if (loggedUser?.warD_NO == 0) {
                       handleDetailsNavigation(
                         'MayorOutstandingDashboard',
@@ -265,16 +281,13 @@ const DashboardScreen = () => {
                         'Outstanding',
                       );
                     }
-
-
-
                   }}
-                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  style={[styles.card, {backgroundColor: Colors.primary}]}
                   mode="outlined">
                   <Card.Title
                     title="Outstanding Debt"
                     titleNumberOfLines={2}
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
@@ -301,9 +314,12 @@ const DashboardScreen = () => {
                       'Interims',
                     );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  style={[styles.card, {backgroundColor: Colors.yellow}]}
                   mode="outlined">
-                  <Card.Title title="Interims" titleStyle={{ color: Colors.white, fontSize: 14 }} />
+                  <Card.Title
+                    title="Interims"
+                    titleStyle={{color: Colors.white, fontSize: 14}}
+                  />
                   <Card.Content>
                     <Text></Text>
                     <Text variant="titleLarge" style={styles.text}>
@@ -320,11 +336,19 @@ const DashboardScreen = () => {
               <View style={styles.row}>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('CouncillorDetails', 'Incidents/Complaints', 'IMS');
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'Incidents/Complaints',
+                      'IMS',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.blue }]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
-                  <Card.Title title="Incidents/Complaints" titleStyle={{ color: Colors.white, fontSize: 14 }} titleNumberOfLines={2} />
+                  <Card.Title
+                    title="Incidents/Complaints"
+                    titleStyle={{color: Colors.white, fontSize: 14}}
+                    titleNumberOfLines={2}
+                  />
                   <Card.Content>
                     <Text></Text>
                     <Text variant="titleLarge" style={styles.text}>
@@ -339,19 +363,25 @@ const DashboardScreen = () => {
                 </Card>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('CouncillorDetails', 'Total Water and Electricity Meters', 'Meter');
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'Total Water and Electricity Meters',
+                      'Meter',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.red }]}
+                  style={[styles.card, {backgroundColor: Colors.red}]}
                   mode="outlined">
                   <Card.Title
                     title="Total Water and Electricity Meters"
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                     titleNumberOfLines={2}
                   />
                   <Card.Content>
                     <Text></Text>
                     <Text variant="titleLarge" style={styles.text}>
-                      {parseFloat(getValueByKey(items, 'Water and Electricity Meters'))}
+                      {parseFloat(
+                        getValueByKey(items, 'Water and Electricity Meters'),
+                      )}
                     </Text>
                   </Card.Content>
                   <Card.Actions>
@@ -364,13 +394,18 @@ const DashboardScreen = () => {
               <View style={styles.row}>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('CouncillorDetails', 'City’s Total Properties', 'Property');
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'City’s Total Properties',
+                      'Property',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  style={[styles.card, {backgroundColor: Colors.primary}]}
                   mode="outlined">
                   <Card.Title
-                    title="City’s Total Properties" titleNumberOfLines={2}
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    title="City’s Total Properties"
+                    titleNumberOfLines={2}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
@@ -386,13 +421,18 @@ const DashboardScreen = () => {
                 </Card>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('CouncillorDetails', 'City’s Total Customers', 'Customer');
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'City’s Total Customers',
+                      'Customer',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  style={[styles.card, {backgroundColor: Colors.yellow}]}
                   mode="outlined">
                   <Card.Title
-                    title="City’s Total Customers" titleNumberOfLines={2}
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    title="City’s Total Customers"
+                    titleNumberOfLines={2}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
@@ -406,19 +446,22 @@ const DashboardScreen = () => {
                     </View>
                   </Card.Actions>
                 </Card>
-
               </View>
 
               <View style={styles.row}>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('CouncillorDetails', 'Meters Not Read', 'MetersNotRead');
+                    handleDetailsNavigation(
+                      'CouncillorDetails',
+                      'Meters Not Read',
+                      'MetersNotRead',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.blue }]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="Meters Not Read"
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
@@ -434,18 +477,21 @@ const DashboardScreen = () => {
                 </Card>
                 <Card
                   onPress={() => {
-                    handleDetailsNavigation('Customer360', 'Customer 360', 'Customer360');
+                    handleDetailsNavigation(
+                      'Customer360',
+                      'Customer 360',
+                      'Customer360',
+                    );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.red }]}
+                  style={[styles.card, {backgroundColor: Colors.red}]}
                   mode="outlined">
                   <Card.Title
                     title="Customer 360"
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
-                    <Text variant="titleLarge" style={styles.text}>
-                    </Text>
+                    <Text variant="titleLarge" style={styles.text}></Text>
                   </Card.Content>
                   <Card.Actions>
                     <View style={styles.button}>
@@ -472,16 +518,15 @@ const DashboardScreen = () => {
                       );
                     }
                   }}
-                  style={[styles.card, { backgroundColor: Colors.primary }]}
+                  style={[styles.card, {backgroundColor: Colors.primary}]}
                   mode="outlined">
                   <Card.Title
                     title="Collections"
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
-                    <Text variant="titleLarge" style={styles.text}>
-                    </Text>
+                    <Text variant="titleLarge" style={styles.text}></Text>
                   </Card.Content>
                   <Card.Actions>
                     <View style={styles.button}>
@@ -490,7 +535,7 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
 
-                {/* <Card
+                <Card
                   onPress={() => {
                     handleDetailsNavigation(
                       'CouncillorDetails',
@@ -498,11 +543,11 @@ const DashboardScreen = () => {
                       'Indigent',
                     );
                   }}
-                  style={[styles.card, { backgroundColor: Colors.yellow }]}
+                  style={[styles.card, {backgroundColor: Colors.yellow}]}
                   mode="outlined">
                   <Card.Title
                     title="Indigent Applications"
-                    titleStyle={{ color: Colors.white, fontSize: 14 }}
+                    titleStyle={{color: Colors.white, fontSize: 14}}
                   />
                   <Card.Content>
                     <Text></Text>
@@ -515,15 +560,12 @@ const DashboardScreen = () => {
                       <Text style={styles.buttonText}>View</Text>
                     </View>
                   </Card.Actions>
-                </Card> */}
-
+                </Card>
               </View>
-
             </View>
-
           </ScrollView>
         </View>
-      }
+      )}
     </>
   );
 };
@@ -538,7 +580,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   card: {
     width: '48%', // Adjust the width based on your requirement
@@ -561,9 +603,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '900',
     color: Colors.white,
-  }
+  },
 });
-
 
 const styles1 = StyleSheet.create({
   container: {
@@ -571,26 +612,24 @@ const styles1 = StyleSheet.create({
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center'
-
+    alignSelf: 'center',
   },
   card: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#f1f1f2",
+    backgroundColor: '#f1f1f2',
     borderRadius: 10,
     padding: 20,
     margin: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
   },
   iconContainer: {
     marginRight: 16,
-
   },
   content: {
     flex: 1,
@@ -599,11 +638,11 @@ const styles1 = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: Colors.red
+    color: Colors.red,
   },
   description: {
     fontSize: 16,
-    color: Colors.blue
+    color: Colors.blue,
   },
   box: {
     width: 70,
