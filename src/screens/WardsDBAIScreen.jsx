@@ -38,105 +38,75 @@ const WardsDBAIScreen = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const flatListRef = useRef(null);
-  const [responseToBeDisplay, setToBeDisplay] = useState([]);
 
-  const [recognized, setRecognized] = useState('');
-  const [started, setStarted] = useState('');
-  const [results, setResults] = useState([]);
-  const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
+  const [recognizedText, setRecognizedText] = useState('');
+  const [isListening, setIsListening] = useState(false);
 
-  // Use useEffect to scroll to end when messages are updated
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({animated: true});
     }
   }, [messages]);
 
-  // Scroll to end when content size changes
-  const onContentSizeChange = () => {
-    // if (flatListRef.current) {
-    flatListRef.current.scrollToEnd({animated: true});
-    // }
-  };
-
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      requestMicrophonePermission();
-    }
-
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechRecognized = onSpeechRecognized;
     Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechEnd = onSpeechEnd;
+    Voice.onSpeechError = onSpeechError;
 
-    // Cleanup listeners on unmount
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
   }, []);
 
-  const requestMicrophonePermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        {
-          title: 'Microphone Permission',
-          message:
-            'This app needs access to your microphone to recognize speech.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Microphone permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const onSpeechStart = e => {
-    setStarted('√');
-    setIsRecording(true);
-  };
-
-  const onSpeechRecognized = e => {
-    setRecognized('√');
-  };
-
   const onSpeechResults = e => {
-    setResults(e.value);
+    // setRecognizedText(e.value[0]);
+    setInput(e.value[0]);
+
+    // setTimeout(() => {
+    //   sendMessage();
+    // }, 1000);
   };
 
-  const startRecognizing = async () => {
+  const onSpeechStart = () => {
+    setIsListening(true);
+  };
+
+  const onSpeechEnd = () => {
+    setIsListening(false);
+  };
+
+  const onSpeechError = e => {
+    setIsListening(false);
+    console.error(e);
+  };
+
+  const startListening = async () => {
     try {
       await Voice.start('en-US');
-      setRecognized('');
-      setStarted('');
-      setResults([]);
-      setIsRecording(true);
-      startTimer();
+      setRecognizedText('');
     } catch (e) {
       console.error(e);
     }
   };
 
-  const stopRecognizing = async () => {
-    if (results.length > 0) {
-      console.log('stopRecognizing');
-      try {
-        await Voice.stop();
-        setIsRecording(false);
-        setResults([]);
-        stopTimer();
-        sendMessage();
-      } catch (e) {
-        console.error(e);
-      }
+  const stopListening = async () => {
+    try {
+      sendMessage();
+      await Voice.stop();
+      setRecognizedText('');
+    } catch (e) {
+      console.error(e);
     }
   };
+
+  // useEffect(() => {
+  //   if (recognizedText) {
+  //     sendMessage();
+  //   }
+  // }, [recognizedText]);
 
   const startTimer = () => {
     setTimer(0);
@@ -147,6 +117,7 @@ const WardsDBAIScreen = () => {
   };
 
   const stopTimer = () => {
+    console.log(intervalId);
     if (intervalId) {
       clearInterval(intervalId);
       setIntervalId(null);
@@ -159,11 +130,13 @@ const WardsDBAIScreen = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  useEffect(() => {
-    if (results.length > 0) {
-      setInput(results.join(' '));
-    }
-  }, [results]);
+  console.log(input);
+
+  // useEffect(() => {
+  // if (results.length > 0) {
+  // setInput(results.join(' '));
+  // }
+  // }, [results]);
 
   useEffect(() => {
     dispatch(hideData());
@@ -229,8 +202,8 @@ const WardsDBAIScreen = () => {
 
         setIsLoading(false);
         // setToBeDisplay(result.data);
-        setInput();
-        setResults([]);
+        setInput('');
+        // setResults([]);
       } catch (error) {
         console.log('Error sending message:', error);
         setMessages([
@@ -244,8 +217,8 @@ const WardsDBAIScreen = () => {
           },
         ]);
         setIsLoading(false);
-        setInput();
-        setResults([]);
+        setInput('');
+        // setResults([]);
       }
     } else {
       Alert.alert('Required!', 'Please enter a message!');
@@ -255,14 +228,26 @@ const WardsDBAIScreen = () => {
   // console.log(JSON.stringify(messages))
 
   return (
-    // <View>
-    //     <Image
-    //                                 source={{ uri: 'http://102.130.119.148:3344/charts/83c15a77-9c25-49b2-849a-3b94828d4e6b.png'}}
-    //                                 // style={{ flex: 1 }}
-    //                                 width={100}
-    //                                 height={Dimensions.get('screen').width}/>
-    // </View>
     <SafeAreaView style={{flex: 1}}>
+      {/* <View style={styles1.container1}>
+      {isRecording ? (
+        <View style={styles1.recordingContainer}>
+          <Text style={styles1.timerText}>{formatTime(timer)}</Text>
+          <Text style={styles1.statusText}>Recording...</Text>
+        </View>
+      ) : (
+        <Text style={styles1.resultsText}>{results.join(' ')}</Text>
+      )}
+      <TouchableOpacity
+        style={[styles1.voiceButton, isRecording && styles1.recording]}
+        onPressIn={startRecognizing}
+        onPressOut={stopRecognizing}>
+        <Icon name="mic" size={30} color="#fff" />
+      </TouchableOpacity>
+      <Text style={styles1.statusText}>
+        {isRecording ? 'Press and hold to stop' : 'Press and hold to record'}
+      </Text>
+    </View> */}
       <View style={{flex: 1}}>
         <View style={styles.container}>
           <FlatList
@@ -385,36 +370,6 @@ const WardsDBAIScreen = () => {
             keyExtractor={(item, index) => index.toString()}
           />
 
-          {/* 
-                {
-                    responseToBeDisplay?.map(({ SQL, reqTXT, results }, index) => (
-                        <>
-                            <View key={index}>
-                                <Text>Requested SViewing</Text>
-                                <Text>{reqTXT}</Text>
-                            </View>
-                            <View>
-                                <View>
-
-
-                                    {
-
-                                        results.recordsets[0].map(({ ...coloumn }, index) => (
-                                            <View key={index}>
-                                                <DynamicKeyValueDisplayBody data={coloumn} />
-                                            </View>
-                                        ))
-                                    }
-
-                                </View>
-                            </View>
-
-
-                        </>
-
-                    ))
-                } */}
-
           <View style={styles.container1}>
             {/* <View>
               <TouchableOpacity
@@ -427,10 +382,10 @@ const WardsDBAIScreen = () => {
                 {isRecording ? 'Recording...' : 'Press and hold to record'}
               </Text>
             </View> */}
-            {isRecording ? (
+            {isListening ? (
               <View style={styles.recordingContainer}>
                 <Text style={styles.timerText}>
-                  {formatTime(timer)}{' '}
+                  {/* {formatTime(timer)}{' '} */}
                   <Text style={styles.statusText}>Recording...</Text>
                 </Text>
               </View>
@@ -451,11 +406,20 @@ const WardsDBAIScreen = () => {
               </>
             )}
             <TouchableOpacity
-              style={[styles.voiceButton, isRecording && styles.recording]}
-              onPressIn={startRecognizing}
-              onPressOut={stopRecognizing}>
-              <MaterialIcon name="mic" size={30} color="#fff" />
+              onPress={isListening ? stopListening : startListening}
+              style={[styles.voiceButton, isListening && styles.recording]}>
+              <MaterialIcon
+                name={isListening ? 'stop' : 'mic'}
+                size={30}
+                color="#fff"
+              />
             </TouchableOpacity>
+            {/* <TouchableOpacity
+              style={[styles.voiceButton, isListening && styles.recording]}
+              onLongPress={startListening}
+              onPressOut={stopListening}>
+              <MaterialIcon name="mic" size={30} color="#fff" />
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>
@@ -579,5 +543,49 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.red,
     // marginBottom: 10,
+  },
+});
+
+const styles1 = StyleSheet.create({
+  container1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  resultsText: {
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 40,
+  },
+  voiceButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  recording: {
+    backgroundColor: 'red',
+  },
+  statusText: {
+    fontSize: 16,
+  },
+  recordingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  timerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
