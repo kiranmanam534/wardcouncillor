@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  TextInput,
   Button,
   StyleSheet,
   PermissionsAndroid,
@@ -17,6 +16,8 @@ const VoiceRecognition = () => {
   const [started, setStarted] = useState('');
   const [results, setResults] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -30,6 +31,9 @@ const VoiceRecognition = () => {
     // Cleanup listeners on unmount
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
   }, []);
 
@@ -57,6 +61,7 @@ const VoiceRecognition = () => {
   const onSpeechStart = e => {
     setStarted('√');
     setIsRecording(true);
+    startTimer();
   };
 
   const onSpeechRecognized = e => {
@@ -74,6 +79,7 @@ const VoiceRecognition = () => {
       setStarted('');
       setResults([]);
       setIsRecording(true);
+      startTimer();
     } catch (e) {
       console.error(e);
     }
@@ -83,19 +89,43 @@ const VoiceRecognition = () => {
     try {
       await Voice.stop();
       setIsRecording(false);
+      stopTimer();
     } catch (e) {
       console.error(e);
     }
   };
 
+  const startTimer = () => {
+    setTimer(0);
+    const id = setInterval(() => {
+      setTimer(prev => prev + 1);
+    }, 1000);
+    setIntervalId(id);
+  };
+
+  const stopTimer = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+  };
+
+  const formatTime = seconds => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.textBox}
-        value={results.join(' ')}
-        placeholder="Speak something..."
-        editable={false}
-      />
+      {isRecording ? (
+        <View style={styles.recordingContainer}>
+          <Text style={styles.timerText}>{formatTime(timer)}</Text>
+          <Text style={styles.statusText}>Recording...</Text>
+        </View>
+      ) : (
+        <Text style={styles.resultsText}>{results.join(' ')}</Text>
+      )}
       <TouchableOpacity
         style={[styles.voiceButton, isRecording && styles.recording]}
         onPressIn={startRecognizing}
@@ -103,7 +133,7 @@ const VoiceRecognition = () => {
         <Icon name="mic" size={30} color="#fff" />
       </TouchableOpacity>
       <Text style={styles.statusText}>
-        {isRecording ? 'Recording...' : 'Press and hold to record'}
+        {isRecording ? 'Press and hold to stop' : 'Press and hold to record'}
       </Text>
     </View>
   );
@@ -115,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textBox: {
+  resultsText: {
     width: '80%',
     height: 40,
     borderColor: 'gray',
@@ -123,6 +153,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 40,
   },
   voiceButton: {
     width: 60,
@@ -131,13 +163,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
   },
   recording: {
     backgroundColor: 'red',
   },
   statusText: {
-    marginTop: 20,
     fontSize: 16,
+  },
+  recordingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  timerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 

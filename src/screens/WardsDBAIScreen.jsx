@@ -23,6 +23,7 @@ import Voice from '@react-native-community/voice';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import {hideData, showData} from '../redux/visibilityAIIconSlice';
+import {set} from 'react-hook-form';
 const screenWidth = Dimensions.get('window').width;
 
 const WardsDBAIScreen = () => {
@@ -43,13 +44,15 @@ const WardsDBAIScreen = () => {
   const [started, setStarted] = useState('');
   const [results, setResults] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
 
-  //   // Use useEffect to scroll to end when messages are updated
-  //   useEffect(() => {
-  //     // if (flatListRef.current) {
-  //       flatListRef.current.scrollToEnd({ animated: true });
-  //     // }
-  //   }, [messages.length]);
+  // Use useEffect to scroll to end when messages are updated
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({animated: true});
+    }
+  }, [messages]);
 
   // Scroll to end when content size changes
   const onContentSizeChange = () => {
@@ -114,6 +117,7 @@ const WardsDBAIScreen = () => {
       setStarted('');
       setResults([]);
       setIsRecording(true);
+      startTimer();
     } catch (e) {
       console.error(e);
     }
@@ -125,12 +129,34 @@ const WardsDBAIScreen = () => {
       try {
         await Voice.stop();
         setIsRecording(false);
-        sendMessage();
         setResults([]);
+        stopTimer();
+        sendMessage();
       } catch (e) {
         console.error(e);
       }
     }
+  };
+
+  const startTimer = () => {
+    setTimer(0);
+    const id = setInterval(() => {
+      setTimer(prev => prev + 1);
+    }, 1000);
+    setIntervalId(id);
+  };
+
+  const stopTimer = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+  };
+
+  const formatTime = seconds => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   useEffect(() => {
@@ -203,6 +229,8 @@ const WardsDBAIScreen = () => {
 
         setIsLoading(false);
         // setToBeDisplay(result.data);
+        setInput();
+        setResults([]);
       } catch (error) {
         console.log('Error sending message:', error);
         setMessages([
@@ -216,6 +244,8 @@ const WardsDBAIScreen = () => {
           },
         ]);
         setIsLoading(false);
+        setInput();
+        setResults([]);
       }
     } else {
       Alert.alert('Required!', 'Please enter a message!');
@@ -397,16 +427,29 @@ const WardsDBAIScreen = () => {
                 {isRecording ? 'Recording...' : 'Press and hold to record'}
               </Text>
             </View> */}
-            <TextInput
-              style={styles.textInput}
-              placeholder="Type or Speak..."
-              multiline
-              value={input}
-              onChangeText={setInput}
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-              <Icon name="send" size={24} color={Colors.blue} />
-            </TouchableOpacity>
+            {isRecording ? (
+              <View style={styles.recordingContainer}>
+                <Text style={styles.timerText}>
+                  {formatTime(timer)}{' '}
+                  <Text style={styles.statusText}>Recording...</Text>
+                </Text>
+              </View>
+            ) : (
+              <>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Type or Speak..."
+                  multiline
+                  value={input}
+                  onChangeText={setInput}
+                />
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={sendMessage}>
+                  <Icon name="send" size={24} color={Colors.blue} />
+                </TouchableOpacity>
+              </>
+            )}
             <TouchableOpacity
               style={[styles.voiceButton, isRecording && styles.recording]}
               onPressIn={startRecognizing}
@@ -513,5 +556,28 @@ const styles = StyleSheet.create({
   statusText: {
     marginTop: 20,
     fontSize: 16,
+  },
+  recordingContainer: {
+    // width: '80%',
+    // height: 40,
+    borderWidth: 0.5,
+    flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+
+    // marginBottom: 20,
+    // gap: 10,
+    width: '85%',
+    padding: 10,
+    marginBottom: 5,
+    marginRight: 10,
+    borderRadius: 10,
+    borderColor: Colors.red,
+  },
+  timerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.red,
+    // marginBottom: 10,
   },
 });
