@@ -1,16 +1,24 @@
-import { Alert, Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import CouncillorDetailsScreen from '../screens/CouncillorDetailsScreen';
 import CouncillorDetailScreen from '../screens/CouncillorDetailScreen';
 import CouncilloriViewScreen from '../screens/CouncilloriViewScreen';
-import { Colors } from '../constant/Colors';
-import { clearData } from '../session/session';
-import { authSliceActions } from '../redux/loginSlice';
+import {Colors} from '../constant/Colors';
+import {clearData} from '../session/session';
+import {authSliceActions} from '../redux/loginSlice';
 import WardMemberInfoScreen from '../screens/WardMemberInfoScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import HotspotScreen from '../screens/HotspotScreen';
@@ -48,11 +56,10 @@ const PrivateNavigation = () => {
 
   const navigation = useNavigation();
 
-  const isVisible = useSelector((state) => state.visibilityAI.isVisible);
-
+  const isVisible = useSelector(state => state.visibilityAI.isVisible);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
-  console.log("Navigation", loggedUser.warD_NO)
+  console.log('Navigation', loggedUser.warD_NO);
 
   const handleLogout = () => {
     clearData();
@@ -60,13 +67,13 @@ const PrivateNavigation = () => {
   };
 
   const goToAIChatBot = () => {
-    navigation.navigate("AIChatBot", { title: "I AM TSEBO" })
-  }
+    navigation.navigate('AIChatBot', {title: 'I AM TSEBO'});
+  };
 
   return (
     <>
       <PrivateStack.Navigator
-        initialRouteName='Index'
+        initialRouteName="Index"
         screenOptions={{
           // navigationBarHidden: true,
           navigationBarColor: Colors.primary,
@@ -83,9 +90,8 @@ const PrivateNavigation = () => {
         }}>
         <PrivateStack.Screen
           name="Index"
-
           component={WardMemberInfoScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: loggedUser.warD_NO == 0 ? 'MAYOR INFO' : 'COUNCILLOR INFO',
             headerShown: true,
             headerTitleAlign: 'center',
@@ -100,8 +106,10 @@ const PrivateNavigation = () => {
         />
         <PrivateStack.Screen
           name="Dashboard"
-          component={loggedUser?.warD_NO != 0 ? BottomTabNavigator : DashboardScreen}
-          options={({ navigation, route }) => ({
+          component={
+            loggedUser?.warD_NO != 0 ? BottomTabNavigator : DashboardScreen
+          }
+          options={({navigation, route}) => ({
             title: 'HOME',
             headerShown: loggedUser?.warD_NO != 0 ? false : true,
             navigationBarHidden: true,
@@ -116,7 +124,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="MayorOutstandingDashboard"
           component={MayorOutstandingDashboardScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -124,7 +132,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="CategoryOutstanding"
           component={CategoryOutstandingScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -132,7 +140,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="AllWards"
           component={AllWardsOutstandingScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -141,16 +149,16 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="WardWiseCollections"
           component={WardWiseCollections}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-<PrivateStack.Screen
+        <PrivateStack.Screen
           name="WardBillingCollections"
           component={WardBillingCollectionsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -158,7 +166,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="CouncillorDetails"
           component={CouncillorDetailsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -166,7 +174,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="CouncillorDetail"
           component={CouncillorDetailScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -174,7 +182,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="CouncillorView"
           component={CouncilloriViewScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -183,7 +191,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Hotspots"
           component={HotspotScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -191,7 +199,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="RoadClosure"
           component={RoadClousureScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -199,7 +207,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Meetings"
           component={WardMeetingScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -207,7 +215,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Workshops"
           component={WorkshopsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -216,38 +224,34 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="MissingPerson"
           component={MissingPersonsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
-
 
         <PrivateStack.Screen
           name="Warnings"
           component={WarningssScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
-
-
 
         <PrivateStack.Screen
           name="Healthcare"
           component={HealthCareScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-
         <PrivateStack.Screen
           name="ShowPropertyMap"
           component={ShowMapModal}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -256,7 +260,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Collections"
           component={CollectionsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -264,27 +268,25 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Customer360"
           component={Customer360Screen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
-
 
         <PrivateStack.Screen
           name="PaymentHistory"
           component={PaymentHistoryScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-
         <PrivateStack.Screen
           name="ViewAnnouncement"
           component={ViewAnnouncementScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -293,17 +295,16 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="ViewImages"
           component={ViewImagesScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-
         <PrivateStack.Screen
           name="OustandingCharts"
           component={OustandingChartsScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -312,17 +313,16 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="OutstandingCategoriesChart"
           component={OutstandingCategoriesChartScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-
         <PrivateStack.Screen
           name="CollectionsBarChart"
           component={CollectionsBarChartScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -331,7 +331,7 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="Collections_Billing_BarChart"
           component={Collections_Billing_BarChartScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -340,17 +340,16 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="CollectionsSummary"
           component={CollectionsSummaryScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
 
-
         <PrivateStack.Screen
           name="WardsWiseComparison"
           component={WardsWiseComparisonScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
@@ -358,24 +357,22 @@ const PrivateNavigation = () => {
         <PrivateStack.Screen
           name="AIChatBot"
           component={WardsDBAIScreen}
-          options={({ navigation, route }) => ({
+          options={({navigation, route}) => ({
             title: route.params.title,
             headerShown: true,
           })}
         />
-
       </PrivateStack.Navigator>
-      {/* {isVisible &&
+      {isVisible && (
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-        <Image source={AI_Icon} style={styles.img} />
+          <Image source={AI_Icon} style={styles.img} />
         </Pressable>
-      } */}
+      )}
     </>
   );
 };
 
 export default PrivateNavigation;
-
 
 const styles = StyleSheet.create({
   toggleButton: {
@@ -392,16 +389,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: Colors.black, // For iOS
-    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.8, // For iOS
     shadowRadius: 20, // For iOS
-    cursor:'pointer'
+    cursor: 'pointer',
   },
   img: {
-        width: 60,
-        height: 60,
-        borderRadius:30
-        // resizeMode: 'stretch',
-    },
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    // resizeMode: 'stretch',
+  },
 });
-

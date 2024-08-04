@@ -27,7 +27,7 @@ import VoiceRecognize1 from './VoiceRecognize1'
 const App = () => {
   return (
     <Provider store={store}>      
-    {/* <Navigation/> */}
+    <Navigation/>
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -45,7 +45,7 @@ const App = () => {
     {/* <WardsDBAIScreen/> */}
     {/* <MultipleBarChart/> */}
     {/* <VoiceRecognizer/> */}
-    <VoiceRecognize1/>
+    {/* <VoiceRecognize1/> */}
     </Provider>
   )
 }

@@ -1,18 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {
   View,
-  Text,
+  TextInput,
   Button,
   StyleSheet,
   PermissionsAndroid,
   Platform,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
 import Voice from '@react-native-community/voice';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Ensure you have react-native-vector-icons installed
 
-const VoiceRecognition1 = () => {
+const VoiceRecognition = () => {
   const [recognized, setRecognized] = useState('');
   const [started, setStarted] = useState('');
   const [results, setResults] = useState([]);
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -52,6 +56,7 @@ const VoiceRecognition1 = () => {
 
   const onSpeechStart = e => {
     setStarted('√');
+    setIsRecording(true);
   };
 
   const onSpeechRecognized = e => {
@@ -68,6 +73,7 @@ const VoiceRecognition1 = () => {
       setRecognized('');
       setStarted('');
       setResults([]);
+      setIsRecording(true);
     } catch (e) {
       console.error(e);
     }
@@ -76,6 +82,7 @@ const VoiceRecognition1 = () => {
   const stopRecognizing = async () => {
     try {
       await Voice.stop();
+      setIsRecording(false);
     } catch (e) {
       console.error(e);
     }
@@ -83,11 +90,21 @@ const VoiceRecognition1 = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.stat}>Started: {started}</Text>
-      <Text style={styles.stat}>Recognized: {recognized}</Text>
-      <Text style={styles.stat}>Results: {results.join(', ')}</Text>
-      <Button title="Start Recognizing" onPress={startRecognizing} />
-      <Button title="Stop Recognizing" onPress={stopRecognizing} />
+      <TextInput
+        style={styles.textBox}
+        value={results.join(' ')}
+        placeholder="Speak something..."
+        editable={false}
+      />
+      <TouchableOpacity
+        style={[styles.voiceButton, isRecording && styles.recording]}
+        onPressIn={startRecognizing}
+        onPressOut={stopRecognizing}>
+        <Icon name="mic" size={30} color="#fff" />
+      </TouchableOpacity>
+      <Text style={styles.statusText}>
+        {isRecording ? 'Recording...' : 'Press and hold to record'}
+      </Text>
     </View>
   );
 };
@@ -98,10 +115,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  stat: {
-    marginBottom: 10,
-    fontSize: 18,
+  textBox: {
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  voiceButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#007AFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  recording: {
+    backgroundColor: 'red',
+  },
+  statusText: {
+    marginTop: 20,
+    fontSize: 16,
   },
 });
 
-export default VoiceRecognition1;
+export default VoiceRecognition;
