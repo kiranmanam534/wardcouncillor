@@ -69,7 +69,7 @@ const CardItem = ({
                 ? formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
                 : wardValue(wardType, collection)} */}
             </Paragraph>
-            {/* {name != 'N/A' &&
+            {name != 'N/A' &&
               <View style={{ marginTop: 15 }}>
                 <TouchableOpacity
                   style={[
@@ -101,7 +101,7 @@ const CardItem = ({
                   </View>
                 </TouchableOpacity>
               </View>
-            } */}
+            }
           </Card.Content>
         </Card>
       </View>

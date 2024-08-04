@@ -21,11 +21,13 @@ import WardsDBAIScreen from './src/screens/WardsDBAIScreen'
 import VoiceSpeakScreen from './src/VoiceSpeakScreen'
 import VoiceReconizeScreen from './src/VoiceReconizeScreen'
 import MultipleBarChart from './src/MultipleBarChart'
+import VoiceRecognizer from './src/VoiceReconizeScreen'
+import VoiceRecognize1 from './VoiceRecognize1'
 
 const App = () => {
   return (
     <Provider store={store}>      
-    <Navigation/>
+    {/* <Navigation/> */}
     {/* <MyComponent/> */}
     {/* <TestMapView/> */}
     {/* <PhotoCaptureScreen/> */}
@@ -42,6 +44,8 @@ const App = () => {
     {/* <TestBarchart/> */}
     {/* <WardsDBAIScreen/> */}
     {/* <MultipleBarChart/> */}
+    {/* <VoiceRecognizer/> */}
+    <VoiceRecognize1/>
     </Provider>
   )
 }

@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Platform, PermissionsAndroid } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
 import Voice from '@react-native-voice/voice';
 
 const VoiceRecognizer = () => {
@@ -9,25 +16,39 @@ const VoiceRecognizer = () => {
   const [results, setResults] = useState([]);
   const [partialResults, setPartialResults] = useState([]);
 
-  useEffect(() => {
-    const onSpeechStart = (e) => setStarted(true);
-    const onSpeechRecognized = (e) => setRecognized(e.recognized);
-    const onSpeechEnd = (e) => setStarted(false);
-    const onSpeechError = (e) => setError(JSON.stringify(e.error));
-    const onSpeechResults = (e) => setResults(e.value);
-    const onSpeechPartialResults = (e) => setPartialResults(e.value);
+  const onSpeechStart = e => setStarted(true);
+  const onSpeechRecognized = e => setRecognized(e.recognized);
+  const onSpeechEnd = e => setStarted(false);
+  const onSpeechError = e => setError(JSON.stringify(e.error));
+  const onSpeechResults = e => setResults(e.value);
+  const onSpeechPartialResults = e => setPartialResults(e.value);
 
-    Voice.onSpeechStart = onSpeechStart;
-    Voice.onSpeechRecognized = onSpeechRecognized;
-    Voice.onSpeechEnd = onSpeechEnd;
-    Voice.onSpeechError = onSpeechError;
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechPartialResults = onSpeechPartialResults;
+  Voice.onSpeechStart = onSpeechStart;
+  Voice.onSpeechRecognized = onSpeechRecognized;
+  Voice.onSpeechEnd = onSpeechEnd;
+  Voice.onSpeechError = onSpeechError;
+  Voice.onSpeechResults = onSpeechResults;
+  Voice.onSpeechPartialResults = onSpeechPartialResults;
 
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const onSpeechStart = (e) => setStarted(true);
+  //   const onSpeechRecognized = (e) => setRecognized(e.recognized);
+  //   const onSpeechEnd = (e) => setStarted(false);
+  //   const onSpeechError = (e) => setError(JSON.stringify(e.error));
+  //   const onSpeechResults = (e) => setResults(e.value);
+  //   const onSpeechPartialResults = (e) => setPartialResults(e.value);
+
+  //   Voice.onSpeechStart = onSpeechStart;
+  //   Voice.onSpeechRecognized = onSpeechRecognized;
+  //   Voice.onSpeechEnd = onSpeechEnd;
+  //   Voice.onSpeechError = onSpeechError;
+  //   Voice.onSpeechResults = onSpeechResults;
+  //   Voice.onSpeechPartialResults = onSpeechPartialResults;
+
+  //   return () => {
+  //     Voice.destroy().then(Voice.removeAllListeners);
+  //   };
+  // }, []);
 
   const startRecognizing = async () => {
     setRecognized('');
@@ -99,11 +120,15 @@ const VoiceRecognizer = () => {
       <Button title="Destroy" onPress={destroyRecognizer} />
       <Text style={styles.stat}>Results</Text>
       {results.map((result, index) => (
-        <Text key={index} style={styles.stat}>{result}</Text>
+        <Text key={index} style={styles.stat}>
+          {result}
+        </Text>
       ))}
       <Text style={styles.stat}>Partial Results</Text>
       {partialResults.map((result, index) => (
-        <Text key={index} style={styles.stat}>{result}</Text>
+        <Text key={index} style={styles.stat}>
+          {result}
+        </Text>
       ))}
     </View>
   );
