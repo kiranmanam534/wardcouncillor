@@ -289,12 +289,12 @@ const styles = StyleSheet.create({
   box: {
     width: screenWidth / 2,
     height: screenWidth / 2,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
+    borderWidth: 1.5, // Border width in pixels
+    borderColor: Colors.primary,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: Colors.primary,
+    // backgroundColor: Colors.white,
     // ...Platform.select({
     //     ios: {
     //       shadowColor: Colors.blue,

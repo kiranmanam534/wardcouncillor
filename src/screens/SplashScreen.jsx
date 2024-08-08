@@ -21,16 +21,16 @@ const SplashScreen = () => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   // Simulate loading time (e.g., fetching data, initializing resources)
-  //   const timeout = setTimeout(() => {
-  //     // Navigate to main screen after 2 seconds (adjust as needed)
-  //     // navigation.replace('SearchBar');
-  //     navigation.replace('Home');
-  //   }, 2000);
+  useEffect(() => {
+    // Simulate loading time (e.g., fetching data, initializing resources)
+    const timeout = setTimeout(() => {
+      // Navigate to main screen after 2 seconds (adjust as needed)
+      // navigation.replace('SearchBar');
+      navigation.replace('Home');
+    }, 2000);
 
-  //   return () => clearTimeout(timeout);
-  // }, [navigation]);
+    return () => clearTimeout(timeout);
+  }, [navigation]);
 
   useEffect(() => {
     Animated.loop(
