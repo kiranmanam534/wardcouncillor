@@ -49,7 +49,7 @@ const WardBillingCollectionsScreen = ({route}) => {
         'Ward : ' +
         name +
         ' - ' +
-        GetwardHeaderTitle('Collections', 'Collections vs Billing Barchat'),
+        GetwardHeaderTitle('Collections', 'Billing vs Collections Barchat'),
       wardType: 'Collections',
       selectedWardNo: name,
     });

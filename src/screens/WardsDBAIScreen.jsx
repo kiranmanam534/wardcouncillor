@@ -524,24 +524,18 @@ const WardsDBAIScreen = () => {
               </View>
             ) : (
               <>
-                <KeyboardAvoidingView
-                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                  style={{flex: 1}}>
-                  {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Type or Speak..."
-                    multiline
-                    value={input}
-                    onChangeText={setInput}
-                  />
-                  <TouchableOpacity
-                    style={styles.sendButton}
-                    onPress={sendMessage}>
-                    <Icon name="send" size={24} color={Colors.blue} />
-                  </TouchableOpacity>
-                  {/* </TouchableWithoutFeedback> */}
-                </KeyboardAvoidingView>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Type or Speak..."
+                  multiline
+                  value={input}
+                  onChangeText={setInput}
+                />
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={sendMessage}>
+                  <Icon name="send" size={24} color={Colors.blue} />
+                </TouchableOpacity>
               </>
             )}
             <TouchableOpacity

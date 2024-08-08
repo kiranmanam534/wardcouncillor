@@ -8,18 +8,16 @@ export const MainDashboardList = [
   {
     id: 1,
     title: 'Hotspots',
-    icon: (
-      <MaterialIcon name="wifi-tethering" size={50} color={Colors.blue} />
-    ),
-    name:'Hotspots',
-    viewName:'ViewAnnouncement'
+    icon: <MaterialIcon name="wifi-tethering" size={50} color={Colors.blue} />,
+    name: 'Hotspots',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 2,
     title: 'Road Closure',
     icon: <MaterialIcon name="warning" size={50} color={Colors.blue} />,
-    name:'RoadClosure',
-    viewName:'ViewAnnouncement'
+    name: 'RoadClosure',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 3,
@@ -31,17 +29,15 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Meetings',
-    viewName:'ViewAnnouncement'
+    name: 'Meetings',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 4,
     title: 'Missing Person',
-    icon: (
-      <MaterialIcon name="person-search" size={50} color={Colors.blue} />
-    ),
-    name:'MissingPerson',
-    viewName:'ViewAnnouncement'
+    icon: <MaterialIcon name="person-search" size={50} color={Colors.blue} />,
+    name: 'MissingPerson',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 5,
@@ -53,15 +49,15 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Workshops',
-    viewName:'ViewAnnouncement'
+    name: 'Workshops',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 6,
     title: 'Healthcare',
     icon: <FontAwesome5 name="first-aid" size={50} color={Colors.blue} />,
-    name:'Healthcare',
-    viewName:'ViewAnnouncement'
+    name: 'Healthcare',
+    viewName: 'ViewAnnouncement',
   },
   {
     id: 7,
@@ -73,8 +69,8 @@ export const MainDashboardList = [
         color={Colors.blue}
       />
     ),
-    name:'Warnings',
-    viewName:'ViewAnnouncement'
+    name: 'Warnings',
+    viewName: 'ViewAnnouncement',
   },
   // {
   //   id: 8,
@@ -91,37 +87,32 @@ export const MainDashboardList = [
   // Add more data as needed
 ];
 
-
 export const MayorOustandingDashboardList = [
   {
     id: 1,
     title: 'Summary',
     icon: (
-      <MaterialCommunityIcons name="tablet-dashboard" size={50} color={Colors.blue} />
+      <MaterialCommunityIcons
+        name="tablet-dashboard"
+        size={50}
+        color={Colors.blue}
+      />
     ),
-    name:'Summary'
+    name: 'Summary',
   },
   {
     id: 2,
     title: 'Ward wise list',
     icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
-    name:'WardList'
+    name: 'WardList',
   },
   {
     id: 3,
     title: 'Category wise list',
-    icon: (
-      <MaterialIcon
-        name="category"
-        size={50}
-        color={Colors.blue}
-      />
-    ),
-    name:'CategoryList'
-  }
+    icon: <MaterialIcon name="category" size={50} color={Colors.blue} />,
+    name: 'CategoryList',
+  },
 ];
-
-
 
 export const CollectionsDashboardList = [
   {
@@ -130,31 +121,42 @@ export const CollectionsDashboardList = [
     icon: (
       <MaterialCommunityIcons name="calendar" size={50} color={Colors.blue} />
     ),
-    name:'MonthWiseCollections'
+    name: 'MonthWiseCollections',
   },
   {
     id: 2,
     title: 'Ward wise collections',
     icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
-    name:'WardCollections'
+    name: 'WardCollections',
   },
   {
     id: 3,
     title: 'Collections Summary',
-    icon: <MaterialCommunityIcons name="tablet-dashboard" size={50} color={Colors.blue} />,
-    name:'CollectionsSummary'
+    icon: (
+      <MaterialCommunityIcons
+        name="tablet-dashboard"
+        size={50}
+        color={Colors.blue}
+      />
+    ),
+    name: 'CollectionsSummary',
   },
   {
     id: 4,
     title: 'Wards Comparision',
-    icon: <MaterialCommunityIcons name="compare-horizontal" size={50} color={Colors.blue} />,
-    name:'WardsWiseComparison'
+    icon: (
+      <MaterialCommunityIcons
+        name="compare-horizontal"
+        size={50}
+        color={Colors.blue}
+      />
+    ),
+    name: 'WardsWiseComparison',
   },
   {
     id: 5,
-    title: 'Ward wise billing & collections',
+    title: 'Billing vs Collections',
     icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
-    name:'WardBillingCollections'
+    name: 'WardBillingCollections',
   },
 ];
-

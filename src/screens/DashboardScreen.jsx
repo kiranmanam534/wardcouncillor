@@ -512,10 +512,15 @@ const DashboardScreen = () => {
                       );
                     } else {
                       handleDetailsNavigation(
-                        'CollectionsBarChart',
-                        'Collections Bar chart',
+                        'Collections',
+                        'Collections',
                         'Collections',
                       );
+                      // handleDetailsNavigation(
+                      //   'CollectionsBarChart',
+                      //   'Collections Bar chart',
+                      //   'Collections',
+                      // );
                     }
                   }}
                   style={[styles.card, {backgroundColor: Colors.primary}]}

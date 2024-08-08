@@ -63,21 +63,86 @@ const CollectionsScreen = () => {
         wardType: 'Wards Comparision',
       });
     } else if (item.name == 'WardBillingCollections') {
-      navigation.navigate('WardBillingCollections', {
+      // handleDetailsNavigation(
+      //   'CollectionsBarChart',
+      //   'Collections Bar chart',
+      //   'Collections',
+      // );
+
+      let navText =
+        loggedUser?.warD_NO == 0
+          ? 'WardBillingCollections'
+          : 'Collections_Billing_BarChart';
+      // navigation.navigate('Collections_Billing_BarChart', {
+      //   title:
+      //     'Ward : ' +
+      //     name +
+      //     ' - ' +
+      //     GetwardHeaderTitle('Collections', 'Collections vs Billing Barchat'),
+      //   wardType: 'Collections',
+      //   selectedWardNo: name,
+      // });
+      navigation.navigate(navText, {
         title:
           loggedUser?.warD_NO != 0
             ? loggedUser?.warD_NO +
               ' - ' +
-              GetwardHeaderTitle(
-                'Collections',
-                'Ward wise billing vs collections',
-              )
-            : GetwardHeaderTitle(
-                'Collections',
-                'Ward wise billing vs collections',
-              ),
-        wardType: 'WardBillingCollections',
+              GetwardHeaderTitle('Collections', 'Billing vs Collections')
+            : GetwardHeaderTitle('Collections', 'Billing vs Collections  '),
+        wardType:
+          loggedUser?.warD_NO == 0 ? 'WardBillingCollections' : 'Collections',
+        selectedWardNo: loggedUser?.warD_NO,
       });
+    }
+  };
+
+  const renderMenuList = item => {
+    console.log(loggedUser?.warD_NO);
+    if (
+      (loggedUser?.warD_NO != 0 && item.name == 'WardBillingCollections') ||
+      item.name == 'MonthWiseCollections'
+    ) {
+      return (
+        <TouchableOpacity
+          key={item.id}
+          onPress={() => handleDetailsNavigation(item)}>
+          <View style={styles.card}>
+            <View style={styles.iconContainer}>
+              {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
+              {item.icon}
+            </View>
+            <View style={styles.content}>
+              <Text style={styles.title}>{item.title}</Text>
+              {/* <Text style={styles.description}>
+            This is the description of the card.</Text> */}
+            </View>
+            <View style={[styles.iconContainer, {marginRight: 0}]}>
+              <Icon name="angle-right" size={50} color={Colors.yellow} />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    } else if (loggedUser?.warD_NO == 0) {
+      return (
+        <TouchableOpacity
+          key={item.id}
+          onPress={() => handleDetailsNavigation(item)}>
+          <View style={styles.card}>
+            <View style={styles.iconContainer}>
+              {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
+              {item.icon}
+            </View>
+            <View style={styles.content}>
+              <Text style={styles.title}>{item.title}</Text>
+              {/* <Text style={styles.description}>
+              This is the description of the card.</Text> */}
+            </View>
+            <View style={[styles.iconContainer, {marginRight: 0}]}>
+              <Icon name="angle-right" size={50} color={Colors.yellow} />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
     }
   };
 
@@ -88,26 +153,7 @@ const CollectionsScreen = () => {
           styles.container,
           {marginBottom: Platform.OS === 'ios' ? 120 : 120},
         ]}>
-        {CollectionsDashboardList.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => handleDetailsNavigation(item)}>
-            <View style={styles.card}>
-              <View style={styles.iconContainer}>
-                {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
-                {item.icon}
-              </View>
-              <View style={styles.content}>
-                <Text style={styles.title}>{item.title}</Text>
-                {/* <Text style={styles.description}>
-                    This is the description of the card.</Text> */}
-              </View>
-              <View style={[styles.iconContainer, {marginRight: 0}]}>
-                <Icon name="angle-right" size={50} color={Colors.yellow} />
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+        {CollectionsDashboardList.map(item => renderMenuList(item))}
       </View>
     </ScrollView>
   );
