@@ -219,7 +219,7 @@ const TestHomeScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      <ImageBackground source={banner} style={styles.imageBackground}>
+      <View style={styles.imageBackground}>
         <View
           style={{
             position: 'absolute',
@@ -272,7 +272,7 @@ const TestHomeScreen = () => {
             {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}
           </Text>
         </TouchableOpacity>
-      </ImageBackground>
+      </View>
     </View>
   );
 };
@@ -285,17 +285,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    backgroundColor: Colors.primary,
   },
 
   box: {
     width: screenWidth / 2,
     height: screenWidth / 2,
     borderWidth: 1.5, // Border width in pixels
-    borderColor: Colors.primary,
+    borderColor: Colors.blue,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: Colors.white,
+    backgroundColor: Colors.white,
     // ...Platform.select({
     //     ios: {
     //       shadowColor: Colors.blue,
