@@ -29,7 +29,7 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -12,27 +12,25 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 import RNPickerSelect from 'react-native-picker-select';
 
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import InputFeild from '../components/InputFeild';
-import { SingupFileds } from '../constant/SignupFeilds';
+import {SingupFileds} from '../constant/SignupFeilds';
 import SignupValidationSchema from '../validation/SignupSchema';
-import { useDispatch, useSelector } from 'react-redux';
-import { CommunityMemberRegisterApi } from '../services/communityMemberApi';
-import { ActivityIndicator, TextInput } from 'react-native-paper';
+import {useDispatch, useSelector} from 'react-redux';
+import {CommunityMemberRegisterApi} from '../services/communityMemberApi';
+import {ActivityIndicator, TextInput} from 'react-native-paper';
 import ErrorModal from '../components/ErrorModal';
 
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
-
-
 
 const TitlesList = [
   {
@@ -49,13 +47,12 @@ const TitlesList = [
   },
 ];
 
-
-export default function SignupScreen({ route }) {
+export default function SignupScreen({route}) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { title } = route.params;
+  const {title} = route.params;
 
-  const { data, isLoading, error, statusCode } = useSelector(
+  const {data, isLoading, error, statusCode} = useSelector(
     state => state.communityMemberRegisterReducer,
   );
 
@@ -79,7 +76,7 @@ export default function SignupScreen({ route }) {
 
   const handleSubmit = async () => {
     try {
-      await SignupValidationSchema.validate(formValues, { abortEarly: false });
+      await SignupValidationSchema.validate(formValues, {abortEarly: false});
       // Form is valid, submit the data
       // console.log('Form data:', formValues);
 
@@ -95,7 +92,7 @@ export default function SignupScreen({ route }) {
       //   wardNo: 'string',
       // };
 
-      formValues.IDNumber='1234';
+      formValues.IDNumber = '1234';
 
       dispatch(CommunityMemberRegisterApi(formValues));
     } catch (error) {
@@ -103,7 +100,7 @@ export default function SignupScreen({ route }) {
       console.log(error);
       const validationErrors = {};
       error.inner.forEach(e => {
-        console.log(e.message)
+        console.log(e.message);
         validationErrors[e.path] = e.message;
       });
       setErrors(validationErrors);
@@ -143,7 +140,7 @@ export default function SignupScreen({ route }) {
 
         <View style={styles.inputView}>
           <RNPickerSelect
-            placeholder={{ label: 'Title...', value: null }}
+            placeholder={{label: 'Title...', value: null}}
             items={TitlesList}
             onValueChange={value => handleInputChange('title', value)}
             style={{
@@ -155,47 +152,47 @@ export default function SignupScreen({ route }) {
             }}
             value={formValues.title}
             useNativeAndroidPickerStyle={false}
-            textInputProps={{ underlineColor: 'yellow' }}
+            textInputProps={{underlineColor: 'yellow'}}
             Icon={() => {
-              return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
+              return (
+                <MaterialIcon
+                  name="keyboard-arrow-down"
+                  size={24}
+                  color="gray"
+                />
+              );
             }}
           />
 
-          {errors?.title && (
-            <Text style={{ color: 'red' }}>{errors?.title}</Text>
-          )}
+          {errors?.title && <Text style={{color: 'red'}}>{errors?.title}</Text>}
         </View>
 
         <View style={styles.inputView}>
           <TextInput
             mode="outlined"
             label={'First Name'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='firstName'
-            value={
-              formValues.firstName
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="firstName"
+            value={formValues.firstName}
             onChangeText={value => handleInputChange('firstName', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.firstName && (
-            <Text style={{ color: 'red' }}>{errors?.firstName}</Text>
+            <Text style={{color: 'red'}}>{errors?.firstName}</Text>
           )}
         </View>
         <View style={styles.inputView}>
           <TextInput
             mode="outlined"
             label={'Last Name'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='lastName'
-            value={
-              formValues.lastName
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="lastName"
+            value={formValues.lastName}
             onChangeText={value => handleInputChange('lastName', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.lastName && (
-            <Text style={{ color: 'red' }}>{errors?.lastName}</Text>
+            <Text style={{color: 'red'}}>{errors?.lastName}</Text>
           )}
         </View>
 
@@ -203,17 +200,15 @@ export default function SignupScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Cell Number'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='cell Number'
-            value={
-              formValues.cellNumber
-            }
-            keyboardType='number-pad'
+            style={{backgroundColor: Colors.white}}
+            placeholder="cell Number"
+            value={formValues.cellNumber}
+            keyboardType="number-pad"
             onChangeText={value => handleInputChange('cellNumber', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.cellNumber && (
-            <Text style={{ color: 'red' }}>{errors?.cellNumber}</Text>
+            <Text style={{color: 'red'}}>{errors?.cellNumber}</Text>
           )}
         </View>
 
@@ -221,18 +216,14 @@ export default function SignupScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Email'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Email'
-            value={
-              formValues.email
-            }
-            keyboardType='email-address'
+            style={{backgroundColor: Colors.white}}
+            placeholder="Email"
+            value={formValues.email}
+            keyboardType="email-address"
             onChangeText={value => handleInputChange('email', value)}
             placeholderTextColor={'#11182744'}
           />
-          {errors?.email && (
-            <Text style={{ color: 'red' }}>{errors?.email}</Text>
-          )}
+          {errors?.email && <Text style={{color: 'red'}}>{errors?.email}</Text>}
         </View>
         {/* <View style={styles.inputView}>
           <TextInput
@@ -256,18 +247,16 @@ export default function SignupScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Password'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='password'
-            value={
-              formValues.password
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="password"
+            value={formValues.password}
             secureTextEntry
-            keyboardType='default'
+            keyboardType="default"
             onChangeText={value => handleInputChange('password', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.password && (
-            <Text style={{ color: 'red' }}>{errors?.password}</Text>
+            <Text style={{color: 'red'}}>{errors?.password}</Text>
           )}
         </View>
 
@@ -275,68 +264,68 @@ export default function SignupScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Confirm Password'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='confirmPassword'
-            value={
-              formValues.confirmPassword
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="confirmPassword"
+            value={formValues.confirmPassword}
             secureTextEntry
-            keyboardType='default'
+            keyboardType="default"
             onChangeText={value => handleInputChange('confirmPassword', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.confirmPassword && (
-            <Text style={{ color: 'red' }}>{errors?.confirmPassword}</Text>
+            <Text style={{color: 'red'}}>{errors?.confirmPassword}</Text>
           )}
         </View>
         <View style={styles.inputView}>
-          {Platform.OS == 'android' &&
+          {Platform.OS == 'android' && (
             <TextInput
               mode="outlined"
               label={'Address'}
-              style={{ backgroundColor: Colors.white }}
-              placeholder='Location'
-              value={
-                formValues.address
-              }
+              style={{backgroundColor: Colors.white}}
+              placeholder="Location"
+              value={formValues.address}
               autoCorrect={false}
-              keyboardType='default'
+              keyboardType="default"
               autoCapitalize="none"
               onChangeText={value => handleInputChange('address', value)}
               placeholderTextColor={'#11182744'}
-
             />
-          }
+          )}
 
-          {Platform.OS == 'ios' &&
-            <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
+          {Platform.OS == 'ios' && (
+            <View
+              style={{
+                borderWidth: 0.7,
+                borderRadius: 5,
+                borderColor: Colors.black,
+                flex: 1,
+              }}>
               <GooglePlacesAutocomplete
-                GooglePlacesDetailsQuery={{ fields: "geometry" }}
+                GooglePlacesDetailsQuery={{fields: 'geometry'}}
                 fetchDetails={true} // you need this to fetch the details object onPress
                 placeholder="Search"
                 query={{
-                  key: "AIzaSyCG4Tc5v-7PBF4JO-6NKx2aX0xDNCZ4BVM",
-                  language: "en", // language of the results
+                  key: 'AIzaSyCG4Tc5v-7PBF4JO-6NKx2aX0xDNCZ4BVM',
+                  language: 'en', // language of the results
                 }}
                 listViewDisplayed={true}
                 onPress={(data, details = null) => {
-                  console.log("data", data);
-                  console.log("details", details);
+                  console.log('data', data);
+                  console.log('details', details);
                   console.log(JSON.stringify(details?.geometry?.location));
                   console.log('lat', details?.geometry?.location?.lat);
                   console.log('lat', details?.geometry?.location?.lng);
                   // formValues.latitude = details?.geometry?.location?.lat.toString();
                   // formValues.longitude = details?.geometry?.location?.lng.toString();
-                  handleInputChange('address', data?.description)
+                  handleInputChange('address', data?.description);
                 }}
-                onFail={(error) => console.error(error)}
-
+                onFail={error => console.error(error)}
               />
             </View>
-          }
+          )}
 
           {errors?.address && (
-            <Text style={{ color: 'red' }}>{errors?.address}</Text>
+            <Text style={{color: 'red'}}>{errors?.address}</Text>
           )}
         </View>
 
@@ -344,22 +333,17 @@ export default function SignupScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Ward Number'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='wardNo'
-            value={
-              formValues.wardNo
-            }
-            keyboardType='default'
+            style={{backgroundColor: Colors.white}}
+            placeholder="wardNo"
+            value={formValues.wardNo}
+            keyboardType="default"
             onChangeText={value => handleInputChange('wardNo', value)}
             placeholderTextColor={'#11182744'}
           />
           {errors?.wardNo && (
-            <Text style={{ color: 'red' }}>{errors?.wardNo}</Text>
+            <Text style={{color: 'red'}}>{errors?.wardNo}</Text>
           )}
         </View>
-    
-
-
 
         <View style={styles.buttonView}>
           <Pressable style={styles.button} onPress={() => handleSubmit()}>
@@ -376,14 +360,13 @@ export default function SignupScreen({ route }) {
           <Text
             style={styles.signup}
             onPress={() => {
-              navigation.navigate('SignIn', { title: title });
+              navigation.navigate('SignIn', {title: title});
             }}>
             {' '}
             Sign In
           </Text>
         </Text>
       </ScrollView>
-
     </SafeAreaView>
   );
 }
@@ -479,7 +462,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
@@ -490,7 +472,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
   inputAndroid: {
     fontSize: 16,
@@ -501,6 +483,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
 });

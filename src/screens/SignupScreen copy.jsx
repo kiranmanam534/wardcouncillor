@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Button,
@@ -13,19 +13,19 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import InputFeild from '../components/InputFeild';
-import { SingupFileds } from '../constant/SignupFeilds';
-const logo = require('../assets/images/COE_logo_portrait.png');
+import {SingupFileds} from '../constant/SignupFeilds';
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default function SignupScreen({ route }) {
+export default function SignupScreen({route}) {
   const navigation = useNavigation();
-  const { title } = route.params;
+  const {title} = route.params;
 
   const [formValues, setFormValues] = useState({});
 
@@ -70,7 +70,7 @@ export default function SignupScreen({ route }) {
           <Text
             style={styles.signup}
             onPress={() => {
-              navigation.navigate('SignIn', { title: title });
+              navigation.navigate('SignIn', {title: title});
             }}>
             {' '}
             Sign In

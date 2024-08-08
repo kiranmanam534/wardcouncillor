@@ -11,7 +11,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {Card, Title, Paragraph, Divider} from 'react-native-paper';
 
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 import {Colors} from '../constant/Colors';
 
 const screenWidth = Dimensions.get('window').width;
@@ -39,8 +39,7 @@ const WardMemberCard = ({wardMember, onPress}) => {
               {wardMember?.FirstName} {wardMember?.Surname}
             </Title>
           </View>
-          
-          
+
           <View style={{flexDirection: 'row', paddingTop: 20}}>
             <Text style={styles.contentText}>Ward No</Text>
             <Text
@@ -108,8 +107,8 @@ const WardMemberCard = ({wardMember, onPress}) => {
               height: 50,
               borderWidth: 2,
               borderColor: Colors.yellow,
-              justifyContent:'flex-end',
-              alignItems:'center'
+              justifyContent: 'flex-end',
+              alignItems: 'center',
             },
           ]}>
           {/* <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>

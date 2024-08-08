@@ -23,7 +23,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {CommunityMemberRegisterApi} from '../services/communityMemberApi';
 import {ActivityIndicator} from 'react-native-paper';
 import ErrorModal from '../components/ErrorModal';
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;

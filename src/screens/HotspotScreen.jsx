@@ -1,18 +1,34 @@
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { TextInput } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { FormateDate } from '../utility/FormateDate'
-import { Colors } from '../constant/Colors'
-import { formatDateTime } from '../utility/formattedTime';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {FormateDate} from '../utility/FormateDate';
+import {Colors} from '../constant/Colors';
+import {formatDateTime} from '../utility/formattedTime';
+import {useDispatch, useSelector} from 'react-redux';
 import HotspotValidationSchema from '../validation/HotspotSchema';
-import { createHotspotActions } from '../redux/createHotspotSlice';
-import { getCategoriesApi } from '../services/masterDataApi';
+import {createHotspotActions} from '../redux/createHotspotSlice';
+import {getCategoriesApi} from '../services/masterDataApi';
 
 import RNPickerSelect from 'react-native-picker-select';
 // import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import {
+  launchImageLibrary as _launchImageLibrary,
+  launchCamera as _launchCamera,
+} from 'react-native-image-picker';
 // import RNPickerSelect, { defaultStyles } from './debug';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import BinaryImageModal from '../components/BinaryImageModal';
@@ -22,18 +38,15 @@ let launchCamera = _launchCamera;
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
-import { AnnounceViewActions } from '../redux/announcementViewSlice';
-import { useNavigation } from '@react-navigation/native';
+import {AnnounceViewActions} from '../redux/announcementViewSlice';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
-import { apiUrl } from '../constant/CommonData';
+import {apiUrl} from '../constant/CommonData';
 
-
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
-
-
 
 // Utility function to chunk the data
 const chunkArray = (array, chunkSize) => {
@@ -44,9 +57,8 @@ const chunkArray = (array, chunkSize) => {
   return result;
 };
 
-function HotspotScreen({ route }) {
-
-  const { title, type, editItem } = route.params;
+function HotspotScreen({route}) {
+  const {title, type, editItem} = route.params;
   // console.log(title, type, editItem);
 
   const dispatch = useDispatch();
@@ -56,10 +68,10 @@ function HotspotScreen({ route }) {
   const today = new Date();
 
   const [formValues, setFormValues] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [sports1, setSports1] = useState([])
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sports1, setSports1] = useState([]);
 
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
 
   const [showDatePicker, setShowDatePicker] = useState('');
 
@@ -69,44 +81,44 @@ function HotspotScreen({ route }) {
   const [selectedImages, setSelectedImages] = useState([]);
   const [errors, setErrors] = useState({});
 
-
   const loggedUser = useSelector(state => state.loginReducer.items);
 
-  const { items: Categories, isLoading: categoriesLodaing, error: categoryError, statusCode: categoryStatusCode } = useSelector(
-    state => state.CategoriesReducer,
-  );
+  const {
+    items: Categories,
+    isLoading: categoriesLodaing,
+    error: categoryError,
+    statusCode: categoryStatusCode,
+  } = useSelector(state => state.CategoriesReducer);
 
   useEffect(() => {
     dispatch(getCategoriesApi('Hotspots'));
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     if (Categories) {
-      setSports1(Categories.map(item => ({
-        label: item.name,
-        value: item.name,
-      })))
+      setSports1(
+        Categories.map(item => ({
+          label: item.name,
+          value: item.name,
+        })),
+      );
     }
-
-  }, [Categories])
-
-
+  }, [Categories]);
 
   useEffect(() => {
     if (editItem) {
       setFormValues({
-        crimE_DATE: editItem.crimE_DATE && formatDateTime(editItem.crimE_DATE, 'date'),
+        crimE_DATE:
+          editItem.crimE_DATE && formatDateTime(editItem.crimE_DATE, 'date'),
         crimE_TYPE: editItem.crimE_TYPE,
         location: editItem.location,
-        crimE_DETAILS: editItem.crimE_DETAILS
-      })
+        crimE_DETAILS: editItem.crimE_DETAILS,
+      });
     }
-  }, [editItem])
-
+  }, [editItem]);
 
   const handleInputChange = (fieldName, value) => {
-    console.log(fieldName, value)
+    console.log(fieldName, value);
     setFormValues(prevValues => ({
       ...prevValues,
       [fieldName]: value,
@@ -118,17 +130,14 @@ function HotspotScreen({ route }) {
     }));
   };
 
-
-
-  const toggleDatePicker = (value) => {
-    setShowDatePicker(value)
-
-  }
+  const toggleDatePicker = value => {
+    setShowDatePicker(value);
+  };
 
   const onChageDatePicker = (event, selectedDate, fieldName) => {
     if (event.type == 'set') {
       const currentDate = selectedDate;
-      setDate(currentDate)
+      setDate(currentDate);
 
       if (Platform.OS == 'android') {
         toggleDatePicker('NO');
@@ -141,19 +150,15 @@ function HotspotScreen({ route }) {
             ...prevValues,
             [fieldName]: '',
           }));
-
         }, 50);
       }
-
-
     } else {
       toggleDatePicker('NO');
     }
-  }
+  };
 
-
-  const confoirmIOSDate = (fieldName) => {
-    console.log(fieldName)
+  const confoirmIOSDate = fieldName => {
+    console.log(fieldName);
     toggleDatePicker('No');
     setTimeout(() => {
       setFormValues(prevValues => ({
@@ -165,9 +170,7 @@ function HotspotScreen({ route }) {
         [fieldName]: '',
       }));
     }, 50);
-  }
-
-
+  };
 
   const openImagePicker = () => {
     const options = {
@@ -182,56 +185,46 @@ function HotspotScreen({ route }) {
   };
 
   const handleCameraLaunch = () => {
-
     const options = {
       mediaType: 'photo',
       // includeBase64: false,
       // maxHeight: 2000,
       // maxWidth: 2000,
       // selectionLimit: 0
-
     };
 
     launchCamera(options, handleResponse);
   };
 
-  const handleResponse = (response) => {
-    setShowCameraModal(false)
+  const handleResponse = response => {
+    setShowCameraModal(false);
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.error) {
       console.log('Image picker error: ', response.error);
     } else {
       // console.log(response.assets);
-      
-      setSelectedImages([...selectedImages, response.assets]);
 
+      setSelectedImages([...selectedImages, response.assets]);
     }
   };
 
-
-
-
-  const removeSelectedImage = (index) => {
+  const removeSelectedImage = index => {
     setSelectedImages(
       selectedImages.filter((item, index1) => {
-        return index1 != index
-      })
+        return index1 != index;
+      }),
     );
-  }
+  };
 
+  const viewImageonModal = binaryImg => {
+    setIsBinaryImage(true);
+    setViewBinaryImage(binaryImg);
+  };
 
-  const viewImageonModal = (binaryImg) => {
-    setIsBinaryImage(true)
-    setViewBinaryImage(binaryImg)
-  }
-
-
-  const onCloseBinaryImageModal = (binaryImg) => {
-    setIsBinaryImage(false)
-  }
-
-
+  const onCloseBinaryImageModal = binaryImg => {
+    setIsBinaryImage(false);
+  };
 
   const closeCameraModal = () => {
     setShowCameraModal(false);
@@ -243,88 +236,85 @@ function HotspotScreen({ route }) {
       mess,
       [
         {
-          text: "OK", onPress: () => {
-            console.log("OK Pressed")
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
             if (type === 'Success' && !editItem) {
               dispatch(createHotspotActions.clear());
               setFormValues();
-              setSelectedImages([])
-              setErrors()
+              setSelectedImages([]);
+              setErrors();
+            } else if (editItem) {
+              dispatch(AnnounceViewActions.clearAnnouncementsData());
+              navigation.navigate('ViewAnnouncement', {
+                title: 'Hotspots',
+                isEdit: true,
+              });
             }
-            else if (editItem) {
-              dispatch(AnnounceViewActions.clearAnnouncementsData())
-              navigation.navigate('ViewAnnouncement', { title: "Hotspots", isEdit: true })
-            }
-
-          }
-        }
+          },
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
-  }
-
-
+  };
 
   const handleSubmit = async () => {
     try {
-
-      await HotspotValidationSchema.validate(formValues, { abortEarly: false });
+      await HotspotValidationSchema.validate(formValues, {abortEarly: false});
       if (editItem) {
         setIsSubmitted(true);
 
         let data = {
-          "id": editItem.id,
-          "crimE_DATE": formValues.crimE_DATE,
-          "refnumber": editItem.refnumber,
-          "location": formValues.location,
-          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "crimE_TYPE": formValues.crimE_TYPE,
-          "crimE_DETAILS": formValues.crimE_DETAILS,
+          id: editItem.id,
+          crimE_DATE: formValues.crimE_DATE,
+          refnumber: editItem.refnumber,
+          location: formValues.location,
+          latitude: '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
+          longitude: '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          crimE_TYPE: formValues.crimE_TYPE,
+          crimE_DETAILS: formValues.crimE_DETAILS,
           // "expirY_DATE": formValues.crimE_DATE,
           // "userid": loggedUser?.userid,
-          "warD_NO": loggedUser?.warD_NO,
-        }
+          warD_NO: loggedUser?.warD_NO,
+        };
 
         // dispatch(CreateHotspotApi({ data: formdata, type: 'edit' }));
 
-        console.log(data)
+        console.log(data);
 
         try {
           // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-          const response = await axios.post(`${apiUrl}/api/hotspot/update-hotspot-data`, data);
+          const response = await axios.post(
+            `${apiUrl}/api/hotspot/update-hotspot-data`,
+            data,
+          );
           console.log(response.data);
           setIsSubmitted(false);
 
-          ShowAlert("Success", "Hotspot has been updated successfully!")
-
+          ShowAlert('Success', 'Hotspot has been updated successfully!');
         } catch (error) {
           console.log(error);
           setIsSubmitted(false);
-          ShowAlert("Error", "Something went wrong!")
-
+          ShowAlert('Error', 'Something went wrong!');
         }
       } else {
-
         setIsSubmitted(true);
-
 
         const formData = new FormData();
 
         // if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
 
         let postData = {
-          "CRIME_DATE": formValues.crimE_DATE,
-          "LOCATION": formValues.location,
-          "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "CRIME_TYPE": formValues.crimE_TYPE,
-          "CRIME_DETAILS": formValues.crimE_DETAILS,
-          "EXPIRY_DATE": formValues.crimE_DATE,
-          "USERID": loggedUser?.userid,
-          "WARD_NO": loggedUser?.warD_NO,
-        }
-
+          CRIME_DATE: formValues.crimE_DATE,
+          LOCATION: formValues.location,
+          LATITUDE: '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
+          LONGITUDE: '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          CRIME_TYPE: formValues.crimE_TYPE,
+          CRIME_DETAILS: formValues.crimE_DETAILS,
+          EXPIRY_DATE: formValues.crimE_DATE,
+          USERID: loggedUser?.userid,
+          WARD_NO: loggedUser?.warD_NO,
+        };
 
         // let postData = {
         //   "hotspotInputData": formData1,
@@ -333,51 +323,47 @@ function HotspotScreen({ route }) {
 
         if (selectedImages.length > 0) {
           selectedImages.forEach((image, index) => {
-            console.log(`image===> ${index}`, image)
+            console.log(`image===> ${index}`, image);
             formData.append(`files`, {
-              uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+              uri:
+                Platform.OS === 'ios'
+                  ? image[0].uri.replace('file://', '')
+                  : image[0].uri,
               type: image[0].type,
-              name: image[0].fileName || `image_${index}.jpg`
+              name: image[0].fileName || `image_${index}.jpg`,
             });
           });
         }
-        formData.append("device", Platform.OS);
-        formData.append("hotspotInputData", JSON.stringify(postData))
+        formData.append('device', Platform.OS);
+        formData.append('hotspotInputData', JSON.stringify(postData));
 
         try {
           // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-          const response = await axios.post(`${apiUrl}/api/Create/save-hotspot`,
+          const response = await axios.post(
+            `${apiUrl}/api/Create/save-hotspot`,
 
             formData,
             {
               headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-
-
-            });
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          );
           console.log(response.data);
           setIsSubmitted(false);
 
-          ShowAlert("Success", "Hotspot has been saved successfully!")
-
+          ShowAlert('Success', 'Hotspot has been saved successfully!');
         } catch (error) {
           console.log(error);
           setIsSubmitted(false);
-          ShowAlert("Error", "Something went wrong!")
-
+          ShowAlert('Error', 'Something went wrong!');
         }
 
         //dispatch(CreateHotspotApi({ data: formData, type: 'create' }));
-
       }
-
-
-
-
     } catch (error) {
       // Validation failed, set errors
-      console.log(error)
+      console.log(error);
       setIsSubmitted(false);
       const validationErrors = {};
       error.inner.forEach(e => {
@@ -388,42 +374,48 @@ function HotspotScreen({ route }) {
     }
   };
 
-
-
-
   return (
-
-
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />
         </View>
         <Text style={styles.title}>
-          {editItem ? "Update" : "Create"} Hotspot</Text>
+          {editItem ? 'Update' : 'Create'} Hotspot
+        </Text>
         <View style={styles.inputView}>
-          <Pressable onPress={() => { toggleDatePicker('crimE_DATE') }}>
+          <Pressable
+            onPress={() => {
+              toggleDatePicker('crimE_DATE');
+            }}>
             <TextInput
               mode="outlined"
               label={'Crime Date'}
-              style={{ backgroundColor: Colors.white }}
-              placeholder='2024-01-01'
-              value={
-                formValues?.crimE_DATE
-              }
+              style={{backgroundColor: Colors.white}}
+              placeholder="2024-01-01"
+              value={formValues?.crimE_DATE}
               onChangeText={value => handleInputChange('crimE_DATE', value)}
               placeholderTextColor={'#11182744'}
               editable={false}
-              onPressIn={() => { toggleDatePicker('crimE_DATE') }}
+              onPressIn={() => {
+                toggleDatePicker('crimE_DATE');
+              }}
             />
-            <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <Icon name="calendar" size={25} color={Colors.blue} />
             </View>
           </Pressable>
           {errors?.crimE_DATE && (
-            <Text style={{ color: 'red' }}>{errors?.crimE_DATE}</Text>
+            <Text style={{color: 'red'}}>{errors?.crimE_DATE}</Text>
           )}
-
         </View>
 
         <View style={styles.inputView}>
@@ -431,19 +423,24 @@ function HotspotScreen({ route }) {
           <TextInput
             mode="outlined"
             label={'Location'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Location'
-            value={
-              formValues?.location ? (formValues?.location) : ''
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="Location"
+            value={formValues?.location ? formValues?.location : ''}
             autoCorrect={false}
-            keyboardType='default'
+            keyboardType="default"
             autoCapitalize="none"
             onChangeText={value => handleInputChange('location', value)}
             placeholderTextColor={'#11182744'}
-
           />
-          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+          <View
+            style={{
+              position: 'absolute',
+              right: 30,
+              top: 5,
+              bottom: 0,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             <MaterialIcon name="my-location" size={25} color={Colors.blue} />
           </View>
           {/* } */}
@@ -476,15 +473,13 @@ function HotspotScreen({ route }) {
           } */}
 
           {errors?.location && (
-            <Text style={{ color: 'red' }}>{errors?.location}</Text>
+            <Text style={{color: 'red'}}>{errors?.location}</Text>
           )}
         </View>
 
-
         <View style={styles.inputView}>
-
           <RNPickerSelect
-            placeholder={{ label: 'Crime type...', value: null }}
+            placeholder={{label: 'Crime type...', value: null}}
             items={sports1}
             onValueChange={value => handleInputChange('crimE_TYPE', value)}
             style={{
@@ -494,13 +489,17 @@ function HotspotScreen({ route }) {
                 right: 12,
               },
             }}
-            value={
-              formValues?.crimE_TYPE ? (formValues?.crimE_TYPE) : null
-            }
+            value={formValues?.crimE_TYPE ? formValues?.crimE_TYPE : null}
             useNativeAndroidPickerStyle={false}
-            textInputProps={{ underlineColor: 'yellow' }}
+            textInputProps={{underlineColor: 'yellow'}}
             Icon={() => {
-              return <MaterialIcon name="keyboard-arrow-down" size={24} color="gray" />;
+              return (
+                <MaterialIcon
+                  name="keyboard-arrow-down"
+                  size={24}
+                  color="gray"
+                />
+              );
             }}
           />
           {/* {Platform.OS == 'android' &&
@@ -533,7 +532,7 @@ function HotspotScreen({ route }) {
 
           /> */}
           {errors?.crimE_TYPE && (
-            <Text style={{ color: 'red' }}>{errors?.crimE_TYPE}</Text>
+            <Text style={{color: 'red'}}>{errors?.crimE_TYPE}</Text>
           )}
           {/* </View> */}
         </View>
@@ -544,59 +543,70 @@ function HotspotScreen({ route }) {
             label={'Crime Details'}
             numberOfLines={5}
             multiline={true}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Crime Details'
-            value={
-              formValues?.crimE_DETAILS ? (formValues?.crimE_DETAILS) : ''
-            }
+            style={{backgroundColor: Colors.white}}
+            placeholder="Crime Details"
+            value={formValues?.crimE_DETAILS ? formValues?.crimE_DETAILS : ''}
             autoCorrect={false}
-            keyboardType='default'
+            keyboardType="default"
             autoCapitalize="none"
             onChangeText={value => handleInputChange('crimE_DETAILS', value)}
             placeholderTextColor={'#11182744'}
             height={100}
-            textAlignVertical='top'
-
-
+            textAlignVertical="top"
           />
           {errors?.crimE_DETAILS && (
-            <Text style={{ color: 'red' }}>{errors?.crimE_DETAILS}</Text>
+            <Text style={{color: 'red'}}>{errors?.crimE_DETAILS}</Text>
           )}
         </View>
 
         {chunkArray(selectedImages, 5).map((item, index1) => (
           <View key={index1} style={styles.row}>
             {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
+              <View key={index} style={[styles.item, {position: 'relative'}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    viewImageonModal(subItem[0].uri);
+                  }}>
                   <Image
-                    source={{ uri: subItem[0].uri }}
+                    source={{uri: subItem[0].uri}}
                     width={40}
                     height={40}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                <TouchableOpacity
+                  onPress={() => removeSelectedImage(index)}
+                  style={{position: 'absolute', right: 0}}>
+                  <Ionicon
+                    name={'close-circle-outline'}
+                    size={25}
+                    color={Colors.blue}
+                  />
                 </TouchableOpacity>
               </View>
             ))}
           </View>
         ))}
-        {editItem ? null :
+        {editItem ? null : (
           <View style={styles.buttonView}>
-            <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+            <Pressable
+              style={styles.CameraButton}
+              onPress={() => setShowCameraModal(true)}>
               <Icon name="camera" size={25} color={Colors.blue} />
-              <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+              <Text style={[styles.CameraText, {paddingLeft: 10}]}>
                 Capture images
               </Text>
             </Pressable>
-          </View>}
+          </View>
+        )}
 
         <View style={styles.buttonView}>
-          <Pressable style={styles.button} onPress={() => {
-            if (!isSubmitted) { handleSubmit() }
-          }}>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              if (!isSubmitted) {
+                handleSubmit();
+              }
+            }}>
             <Text style={styles.buttonText}>
               {isSubmitted && (
                 <ActivityIndicator size={20} color={Colors.white} />
@@ -613,75 +623,80 @@ function HotspotScreen({ route }) {
           binaryImageData={viewBinaryImage}
         />
 
-
-
         <CameraModal
           isVisible={showCameraModal}
           onClose={closeCameraModal}
           openCamera={handleCameraLaunch}
           openGallery={openImagePicker}
         />
-
-
       </ScrollView>
-      <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
-
-        {showDatePicker == "crimE_DATE" && (
+      <View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            backgroundColor: Colors.white,
+            width: '100%',
+          },
+        ]}>
+        {showDatePicker == 'crimE_DATE' && (
           <>
             <DateTimePicker
-              mode='date'
-              display='spinner'
+              mode="date"
+              display="spinner"
               value={date}
               maximumDate={today}
               onChange={(event, selectedDate) =>
-                onChageDatePicker(
-                  event,
-                  selectedDate,
-                  'crimE_DATE'
-                )
+                onChageDatePicker(event, selectedDate, 'crimE_DATE')
               }
               style={Platform.OS == 'ios' && styles.datePicker}
-
-
             />
             {Platform.OS == 'ios' && (
-              <View style={{
-                flexDirection: 'row', justifyContent: 'space-evenly', position: 'absolute', bottom: 20,
-                width: '100%'
-              }}>
-                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                { backgroundColor: '#11182711' }]}
-                  onPress={() => { toggleDatePicker('No') }}
-                >
-                  <Text style={[styles.buttonText, { color: '#075985' }]}>Cancel</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  position: 'absolute',
+                  bottom: 20,
+                  width: '100%',
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.pickerButton,
+                    {backgroundColor: '#11182711'},
+                  ]}
+                  onPress={() => {
+                    toggleDatePicker('No');
+                  }}>
+                  <Text style={[styles.buttonText, {color: '#075985'}]}>
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                ]}
-                  onPress={() => { confoirmIOSDate('crimE_DATE') }}
-                >
+                <TouchableOpacity
+                  style={[styles.button, styles.pickerButton]}
+                  onPress={() => {
+                    confoirmIOSDate('crimE_DATE');
+                  }}>
                   <Text style={styles.buttonText}>Confirm</Text>
                 </TouchableOpacity>
               </View>
             )}
           </>
-
         )}
-
-
       </View>
-
     </SafeAreaView>
   );
 }
 
-export default HotspotScreen
+export default HotspotScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 10,
-    position: 'relative'
+    position: 'relative',
   },
   title: {
     fontSize: 20,
@@ -773,19 +788,19 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 10,
     marginBottom: 15,
-    backgroundColor: '#075985'
+    backgroundColor: '#075985',
   },
   buttonText1: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#fff"
+    fontWeight: '500',
+    color: '#fff',
   },
   pickerButton: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   datePicker: {
     height: 300,
-    bottom: 50
+    bottom: 50,
   },
 
   dropdown: {
@@ -796,7 +811,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     color: Colors.black,
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
   itemStyle: {
     fontSize: 16,
@@ -810,8 +825,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     color: Colors.black,
-  }
-  ,
+  },
   CameraButton: {
     backgroundColor: Colors.white,
     height: 45,
@@ -820,7 +834,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   CameraText: {
     color: Colors.primary,
@@ -841,8 +855,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
@@ -853,7 +865,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
   inputAndroid: {
     fontSize: 16,
@@ -864,6 +876,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
 });

@@ -14,7 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
-const logo = require("../assets/images/COE_logo_portrait.png")
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -22,7 +22,7 @@ const screenHeight = Dimensions.get('window').height;
 const HomeScreen = () => {
   const navigation = useNavigation();
 
-  const handleNavigation = (title) => {
+  const handleNavigation = title => {
     // console.log(title)
     navigation.navigate('SignIn', {title: title});
   };
@@ -30,10 +30,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <Image
-          source={logo}
-          style={styles.img}
-        />
+        <Image source={logo} style={styles.img} />
       </View>
       <View style={styles.btn_conatiner}>
         {/* <TouchableOpacity onPress={()=>{handleNavigation("community member")}} style={styles.btn}>
@@ -41,7 +38,11 @@ const HomeScreen = () => {
           <Text style={styles.text}> I'm a community member</Text>
         </TouchableOpacity> */}
 
-        <TouchableOpacity onPress={()=>{handleNavigation("ward councillor")}} style={styles.btn}>
+        <TouchableOpacity
+          onPress={() => {
+            handleNavigation('ward councillor');
+          }}
+          style={styles.btn}>
           <Icon name="user-circle" size={25} color={Colors.yellow} />
           <Text style={styles.text}> I'm a ward councillor</Text>
         </TouchableOpacity>
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.primary,
     padding: 15,
     borderRadius: 10,
-    borderWidth:1,
-    borderColor:Colors.black
+    borderWidth: 1,
+    borderColor: Colors.black,
   },
   text: {
     marginLeft: 10,

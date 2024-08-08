@@ -1,28 +1,32 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { err } from 'react-native-svg';
+import {err} from 'react-native-svg';
 
-
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/BCX-LOGO.png');
 
 const screenWidth = Dimensions.get('window').width;
 
-const ShowMessageCenter = ({ message }) => {
-
-  console.log('ShowMessageCenter', message)
+const ShowMessageCenter = ({message}) => {
+  console.log('ShowMessageCenter', message);
   // if (error == 'No data foßund') message = 'No data found';
   return (
-
-
-    <View style={[styles.container
-      // ,
-      //  { marginBottom: Platform.OS === 'ios' ? 120 : 120 }
-    ]}>
-
+    <View
+      style={[
+        styles.container,
+        // ,
+        //  { marginBottom: Platform.OS === 'ios' ? 120 : 120 }
+      ]}>
       <View style={styles.card}>
-        <View style={{ flexDirection: 'row', height: 'auto' }}>
+        <View style={{flexDirection: 'row', height: 'auto'}}>
           <View style={styles.iconContainer}>
             {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
             <View style={styles.box}>
@@ -33,7 +37,6 @@ const ShowMessageCenter = ({ message }) => {
             <Text style={styles.title}>
               {message == 'No data found.' ? 'Success' : 'Message'}
               {/* {message == 'Something went wrong!' ? 'Error' : 'Success'} */}
-
             </Text>
             <Text style={styles.description}>
               {message}
@@ -48,7 +51,6 @@ const ShowMessageCenter = ({ message }) => {
           </TouchableOpacity>
         </View> */}
       </View>
-
     </View>
 
     // <View style={styles.container}>
@@ -67,26 +69,24 @@ const styles = StyleSheet.create({
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center'
-
+    alignSelf: 'center',
   },
   card: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#f1f1f2",
+    backgroundColor: '#f1f1f2',
     borderRadius: 10,
     padding: 20,
     margin: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
   },
   iconContainer: {
     marginRight: 16,
-
   },
   content: {
     flex: 1,
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: Colors.red
+    color: Colors.red,
   },
   description: {
     fontSize: 16,
-    color: Colors.blue
+    color: Colors.blue,
   },
   box: {
     width: 70,
