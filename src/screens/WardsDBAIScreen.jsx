@@ -195,7 +195,7 @@ const WardsDBAIScreen = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  console.log('input====>', input);
+  // console.log('input====>', input);
 
   // useEffect(() => {
   // if (results.length > 0) {
@@ -230,19 +230,27 @@ const WardsDBAIScreen = () => {
     );
   };
 
-  console.log(input);
+  // console.log(input);
 
   const sendMessage = async () => {
     if (input) {
-      console.log('input', input);
-      const result = await translateText(input, 'en');
-      console.log(result);
+      console.log('input', input, !['en', 'Language'].includes(Language));
+      let lanRes = input;
+      if (!['en', 'Language'].includes(Language)) {
+        try {
+          lanRes = await translateText(input, 'en');
+          console.log('lanRes===>', lanRes);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
       setLoadingCount(loadingCount + 1);
       const newMessages = [
         ...messages,
         {
           role: 'user',
-          content: [result],
+          content: [lanRes.toString()],
           sqlQuery: '',
           count: loadingCount + 1,
         },
@@ -252,7 +260,7 @@ const WardsDBAIScreen = () => {
       setIsLoading(true);
 
       try {
-        const postData = {query: result, tables: []};
+        const postData = {query: lanRes.toString(), tables: []};
         console.log(postData);
         // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
         const result = await axios.post(
@@ -392,7 +400,7 @@ const WardsDBAIScreen = () => {
                 {item.role === 'user' &&
                   isLoading &&
                   item.count == loadingCount && (
-                    <View style={{position: 'absolute', right: 10, top: 50}}>
+                    <View style={{position: 'absolute', right: 10, top: 20}}>
                       <LoadingDots />
                     </View>
                   )}
@@ -444,10 +452,8 @@ const WardsDBAIScreen = () => {
                     <View key={index} style={styles.itemContainer}>
                       <Text style={styles.itemText}>
                         {item.role === 'user' && JSON.stringify(item1)}
-                        {/* { item.role === 'bot' && JSON.stringify(item1)} */}
                         {item.role === 'bot' && (
                           <View key={index}>
-                            {/* <Text>{}</Text> */}
                             <Text
                               style={{
                                 color: Colors.white,
@@ -460,26 +466,6 @@ const WardsDBAIScreen = () => {
                             <DynamicKeyValueDisplayBody data={item1} />
                           </View>
                         )}
-                        {/* { item.role === 'bot' &&
-                                                responseToBeDisplay?.map(({ SQL, reqTXT, results }, index) => (
-
-
-                                                    <View>
-
-
-                                                        {
-
-                                                            results.recordsets[0].map(({ ...coloumn }, index) => (
-                                                                <View key={index}>
-                                                                    <DynamicKeyValueDisplayBody data={coloumn} />
-                                                                </View>
-                                                            ))
-                                                        }
-
-                                                    </View>
-
-                                                ))
-                                            } */}
                       </Text>
                     </View>
                   ))}
@@ -491,6 +477,7 @@ const WardsDBAIScreen = () => {
                       marginVertical: 10,
                       padding: 5,
                     }}>
+                    {/* <Text>{item.barChatImg}</Text> */}
                     <Image
                       source={{uri: item.barChatImg}}
                       style={styles.img}
@@ -591,8 +578,9 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     padding: 10,
+
     // borderBottomWidth: 1,
-    // borderBottomColor: '#ccc',
+    // borderBottomColor: 'red',
   },
   itemText: {
     fontSize: 14,
