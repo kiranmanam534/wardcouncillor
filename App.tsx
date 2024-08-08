@@ -10,7 +10,7 @@ import Test from './src/Test';
 const App = () => {
   return (
     <Provider store={store}>
-      {/* <Navigation /> */}
+      <Navigation />
       {/* <MyComponent/> */}
       {/* <TestMapView/> */}
       {/* <PhotoCaptureScreen/> */}
@@ -30,7 +30,7 @@ const App = () => {
       {/* <VoiceRecognizer/> */}
       {/* <VoiceRecognition1 /> */}
       {/* <LanguageConvert /> */}
-      <Test />
+      {/* <Test /> */}
     </Provider>
   );
 };
