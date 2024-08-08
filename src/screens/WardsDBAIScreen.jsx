@@ -234,13 +234,15 @@ const WardsDBAIScreen = () => {
 
   const sendMessage = async () => {
     if (input) {
-      console.log('input', input);
+      console.log('input', input, !['en', 'Language'].includes(Language));
       let lanRes = input;
-      try {
-        lanRes = await translateText(input, 'en');
-        console.log('lanRes===>', lanRes);
-      } catch (error) {
-        console.log(error);
+      if (!['en', 'Language'].includes(Language)) {
+        try {
+          lanRes = await translateText(input, 'en');
+          console.log('lanRes===>', lanRes);
+        } catch (error) {
+          console.log(error);
+        }
       }
 
       setLoadingCount(loadingCount + 1);
@@ -475,7 +477,7 @@ const WardsDBAIScreen = () => {
                       marginVertical: 10,
                       padding: 5,
                     }}>
-                    <Text>{item.barChatImg}</Text>
+                    {/* <Text>{item.barChatImg}</Text> */}
                     <Image
                       source={{uri: item.barChatImg}}
                       style={styles.img}
