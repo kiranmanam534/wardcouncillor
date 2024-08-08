@@ -257,7 +257,7 @@ const TestHomeScreen = () => {
             {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
           ]}
           onPress={() => {
-            handleNavigation('ward councillor');
+            handleNavigation('Councillor');
             // !isIAMAuthenticate ? handleIAMLogin() : null;
             // handleNavigation("Mayor / Councillor")
           }}>
