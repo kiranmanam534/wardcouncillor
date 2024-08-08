@@ -400,7 +400,13 @@ const WardsDBAIScreen = () => {
                 {item.role === 'user' &&
                   isLoading &&
                   item.count == loadingCount && (
-                    <View style={{position: 'absolute', right: 10, top: 20}}>
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 50,
+                      }}>
                       <LoadingDots />
                     </View>
                   )}

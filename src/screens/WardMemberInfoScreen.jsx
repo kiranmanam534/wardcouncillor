@@ -1,17 +1,24 @@
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import WardMemberCard from '../components/WardMemberCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
-import { wardMemberInfo } from '../services/loginApi';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {wardMemberInfo} from '../services/loginApi';
 import LoaderModal from '../components/LoaderModal';
-import { Colors } from '../constant/Colors';
-import { authSliceActions } from '../redux/loginSlice';
+import {Colors} from '../constant/Colors';
+import {authSliceActions} from '../redux/loginSlice';
 
 const WardMemberInfoScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { items: wardMember, isLoading } = useSelector(
+  const {items: wardMember, isLoading} = useSelector(
     state => state.wardMemberReducer,
   );
   const loggedUser = useSelector(state => state.loginReducer.items);
@@ -54,38 +61,56 @@ const WardMemberInfoScreen = () => {
 
   useEffect(() => {
     let name =
-      (filteredData && filteredData[0].FirstName) +
+      (filteredData && filteredData[0]?.FirstName) +
       ' ' +
-      (filteredData && filteredData[0].Surname);
+      (filteredData && filteredData[0]?.Surname);
 
     // console.log(filteredData)
     dispatch(authSliceActions.getUserName(name));
   }, [dispatch, filteredData]);
 
   if (isLoading) {
-    return <LoaderModal visible={isLoading} loadingText="Please wait profile is Loading..." />;
+    return (
+      <LoaderModal
+        visible={isLoading}
+        loadingText="Please wait profile is Loading..."
+      />
+    );
   }
   return (
     <>
-      {!filteredData &&
+      {!filteredData && (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={{color: Colors.red}}>
+            Something went wrong on profile loadig...
+          </Text>
 
-
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-          <Text style={{ color: Colors.red }}>Something went wrong on profile loadig...</Text>
-
-          <View style={{ padding: 20 }}>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{padding: 20}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <Text>Please click on</Text>
-              <TouchableOpacity onPress={goToDashboard} style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 5, marginHorizontal: 10 }}>
-                <Text style={{ color: Colors.white, marginHorizontal: 5 }}>Dashboard</Text>
+              <TouchableOpacity
+                onPress={goToDashboard}
+                style={{
+                  backgroundColor: Colors.primary,
+                  padding: 5,
+                  borderRadius: 5,
+                  marginHorizontal: 10,
+                }}>
+                <Text style={{color: Colors.white, marginHorizontal: 5}}>
+                  Dashboard
+                </Text>
               </TouchableOpacity>
               <Text>to navigate dashboard.</Text>
             </View>
           </View>
         </View>
-      }
-      {filteredData &&
+      )}
+      {filteredData && (
         <ScrollView>
           {filteredData &&
             filteredData.map(item => (
@@ -95,8 +120,6 @@ const WardMemberInfoScreen = () => {
                 onPress={goToDashboard}
               />
             ))}
-
-
 
           {/* <View style={{ padding: 20 }}>
 
@@ -121,7 +144,7 @@ const WardMemberInfoScreen = () => {
 
           </View> */}
         </ScrollView>
-      }
+      )}
     </>
   );
 };

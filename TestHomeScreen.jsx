@@ -247,7 +247,7 @@ const TestHomeScreen = () => {
           WELCOME
         </Text>
         <Text style={{fontSize: 15, color: Colors.white, paddingTop: 10}}>
-          Ekurhuleni, a Tsonga word that means “place of peace”
+          BCX is your partner in digital transformation
         </Text>
         {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
 
@@ -257,7 +257,8 @@ const TestHomeScreen = () => {
             {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
           ]}
           onPress={() => {
-            !isIAMAuthenticate ? handleIAMLogin() : null;
+            handleNavigation('ward councillor');
+            // !isIAMAuthenticate ? handleIAMLogin() : null;
             // handleNavigation("Mayor / Councillor")
           }}>
           {isIAMAuthenticate ? (

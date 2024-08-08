@@ -44,7 +44,7 @@ export default function LoginScreen({route}) {
   const [username, setUsername] = useState(
     title === 'community member'
       ? 'kannavenkateswarlu@gmail.com'
-      : 'councillor2@gmail.com',
+      : 'COESolarDev08@ekurhuleni.gov.za',
   );
   // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'mayor@ekurhuleni.gov.za');
   const [password, setPassword] = useState(
