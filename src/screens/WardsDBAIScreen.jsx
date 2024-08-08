@@ -13,6 +13,9 @@ import {
   Image,
   PermissionsAndroid,
   Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -24,11 +27,12 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import {hideData, showData} from '../redux/visibilityAIIconSlice';
 import {set} from 'react-hook-form';
+import {useNavigation} from '@react-navigation/native';
 const screenWidth = Dimensions.get('window').width;
 
 const WardsDBAIScreen = () => {
   const dispatch = useDispatch();
-
+  const navigation = useNavigation();
   const [headers, setHeaders] = useState([]);
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState([{role: 'user', content: []}]);
@@ -43,6 +47,67 @@ const WardsDBAIScreen = () => {
   const [intervalId, setIntervalId] = useState(null);
   const [recognizedText, setRecognizedText] = useState('');
   const [isListening, setIsListening] = useState(false);
+
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [Language, setLanguage] = useState('Language');
+
+  const toggleSearchBar = val => {
+    // setLanguage('language');
+    if (val) {
+      val =
+        val === 'en'
+          ? 'English'
+          : val === 'af'
+          ? 'Afrikaans'
+          : val === 'zu'
+          ? 'Zulu'
+          : 'English';
+      setLanguage(val);
+    }
+    setSearchVisible(!searchVisible);
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleSearchBar}>
+          <Text style={styles.searchButtonText}>{Language}</Text>
+          {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, searchVisible]);
+
+  const translateText = async (text, targetLanguage) => {
+    const apiKey = 'AIzaSyCcbjNrLyNtA-sjHpQl0OUfwKBXLspdWqs';
+    const url = `https://translation.googleapis.com/language/translate/v2`;
+
+    try {
+      const response = await axios.post(url, null, {
+        params: {
+          q: text,
+          target: targetLanguage,
+          key: apiKey,
+        },
+      });
+
+      const translatedText = response.data.data.translations[0].translatedText;
+      return translatedText;
+    } catch (error) {
+      console.error('Error translating text:', error);
+      throw error;
+    }
+  };
+
+  const handleTranslate = async language => {
+    try {
+      const result = await translateText(inputText, 'en'); // 'en' for English
+      setInput(result);
+    } catch (error) {
+      console.log(error);
+      console.error('Translation error:', error);
+    }
+  };
 
   useEffect(() => {
     if (flatListRef.current) {
@@ -130,7 +195,7 @@ const WardsDBAIScreen = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  console.log(input);
+  console.log('input====>', input);
 
   // useEffect(() => {
   // if (results.length > 0) {
@@ -165,19 +230,29 @@ const WardsDBAIScreen = () => {
     );
   };
 
+  console.log(input);
+
   const sendMessage = async () => {
     if (input) {
+      console.log('input', input);
+      const result = await translateText(input, 'en');
+      console.log(result);
       setLoadingCount(loadingCount + 1);
       const newMessages = [
         ...messages,
-        {role: 'user', content: [input], sqlQuery: '', count: loadingCount + 1},
+        {
+          role: 'user',
+          content: [result],
+          sqlQuery: '',
+          count: loadingCount + 1,
+        },
       ];
       setMessages(newMessages);
       setInput('');
       setIsLoading(true);
 
       try {
-        const postData = {query: input, tables: []};
+        const postData = {query: result, tables: []};
         console.log(postData);
         // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
         const result = await axios.post(
@@ -226,6 +301,64 @@ const WardsDBAIScreen = () => {
   };
 
   // console.log(JSON.stringify(messages))
+
+  if (searchVisible)
+    return (
+      <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text>Choose your desire language.</Text>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity
+              onPress={() => {
+                toggleSearchBar('en');
+              }}
+              style={{
+                backgroundColor: Colors.primary,
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 10,
+                flexDirection: 'row',
+              }}>
+              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+              <Text style={styles.searchButtonText}>English</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                toggleSearchBar('zu');
+              }}
+              style={{
+                backgroundColor: Colors.blue,
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 10,
+                flexDirection: 'row',
+                marginLeft: 5,
+              }}>
+              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+              <Text style={styles.searchButtonText}>Zulu</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                toggleSearchBar('af');
+              }}
+              style={{
+                backgroundColor: Colors.yellow,
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 10,
+                flexDirection: 'row',
+                marginLeft: 5,
+              }}>
+              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+              <Text style={styles.searchButtonText}>Afrikaans</Text>
+            </TouchableOpacity>
+            {/* <Button title="English" />
+            <Button title="Zulu" />
+            <Button title="Affricans" /> */}
+          </View>
+        </View>
+      </SafeAreaView>
+    );
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -391,18 +524,24 @@ const WardsDBAIScreen = () => {
               </View>
             ) : (
               <>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Type or Speak..."
-                  multiline
-                  value={input}
-                  onChangeText={setInput}
-                />
-                <TouchableOpacity
-                  style={styles.sendButton}
-                  onPress={sendMessage}>
-                  <Icon name="send" size={24} color={Colors.blue} />
-                </TouchableOpacity>
+                <KeyboardAvoidingView
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                  style={{flex: 1}}>
+                  {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Type or Speak..."
+                    multiline
+                    value={input}
+                    onChangeText={setInput}
+                  />
+                  <TouchableOpacity
+                    style={styles.sendButton}
+                    onPress={sendMessage}>
+                    <Icon name="send" size={24} color={Colors.blue} />
+                  </TouchableOpacity>
+                  {/* </TouchableWithoutFeedback> */}
+                </KeyboardAvoidingView>
               </>
             )}
             <TouchableOpacity
@@ -543,6 +682,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.red,
     // marginBottom: 10,
+  },
+  searchButtonText: {
+    fontSize: 16,
+    color: Colors.white,
   },
 });
 

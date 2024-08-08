@@ -1,106 +1,298 @@
+import React, {useState} from 'react';
 import {
-  Image, StyleSheet, Platform, Button,
   View,
-  SafeAreaView,
   Text,
-  Alert,
+  TextInput,
+  Button,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  StyleSheet,
 } from 'react-native';
 
-import {
-  authorize,
-  refresh,
-  revoke,
-  prefetchConfiguration,
-} from 'react-native-app-auth';
-
-import { Buffer } from "buffer";
-
-
-
-
-const config_new = {
-  issuer: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/token',
-  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
-  redirectUrl: 'wardcouncillor:/oauthredirect',
-  additionalParameters: {},
-  // scopes: ['openid', 'profile', 'email','groups','role'],
-  scopes: ['openid', 'profile', 'email'],
-};
-
-
-
-const config = {
-  redirectUrl: 'wardcouncillor://oauthredirect', // Make sure this matches your custom scheme
-  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
-  scopes: ['openid', 'profile', 'email'],
-  serviceConfiguration: {
-    authorizationEndpoint: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/token',
-    tokenEndpoint: 'https://oauth2.googleapis.com/token',
-    revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
-  },
-};
-
-export default function Test() {
-
-  const handleSubmitPress = async () => {
-    console.log("here!!")
-    try {
-      // authenticate()
-      const authState = await authorize(config_new);
-      console.log(authState);
-      const jwtBody = authState.idToken.split('.')[1];
-      const base64 = jwtBody.replace('-', '+').replace('_', '/');
-      const decodedJwt = Buffer.from(base64, 'base64');
-      const data = JSON.parse(decodedJwt.toString('ascii'));
-      //Alert.alert('DATA: ', JSON.stringify(data));
-      console.log('====================================');
-      console.log(JSON.stringify(data));
-      console.log('====================================');
-      // result includes accessToken, accessTokenExpirationDate and refreshToken
-      console.log("*************");
-    } catch (error) {
-      console.log("******authorizeError*******");
-      console.log('====================================');
-      console.log(error);
-      console.log('====================================');
-      // console.log(JSON.stringify(error));
-      //Alert.alert('Failed to log in', ""+JSON.stringify(error));
-    }
-  }
-
-
+const Test = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [key, setKey] = useState(0);
+  const [text, setText] = useState('');
 
   return (
-    <View>
-      <View style={styles.titleContainer}>
-        <Text type="title">Welcome!</Text>
+    <View style={styles.container} key={key}>
+      <View>
+        <Text>dsds</Text>
       </View>
-      <View style={styles.stepContainer}>
-        <Text type="subtitle">SSO WSO2 IAM</Text>
-        <Button
-          title="SSO"
-          onPress={handleSubmitPress}
-        />
+      <View>
+        <Text>dsds</Text>
       </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <View>
+        <Text>dsds</Text>
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{flex: 1, marginBottom: 300}}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Enter Text:</Text>
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+                width: '80%',
+                padding: 10,
+                marginTop: 20,
+              }}
+              onChangeText={text => setText(text)}
+              value={text}
+              placeholder="Type here"
+            />
+            <Button title="Submit" onPress={() => alert('Submitted')} />
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  searchBox: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    width: '80%',
+    paddingHorizontal: 10,
   },
 });
+
+export default Test;
