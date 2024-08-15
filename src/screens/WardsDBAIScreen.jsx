@@ -535,7 +535,7 @@ const WardsDBAIScreen = () => {
                     </View>
                   ))}
                 </View>
-                {item.role === 'bot' && item.chartData.length > 0 && (
+                {/* {item.role === 'bot' && item.chartData.length > 0 && (
                   <View
                     style={{
                       flex: 1,
@@ -550,26 +550,21 @@ const WardsDBAIScreen = () => {
                       height={200}
                       barWidth={40}
                       width={screenWidth}
-                      // maxValue={maxAbsValue}
                       spacing={20}
                       roundedTop
                       yAxisThickness={1}
                       xAxisThickness={1}
                       isAnimated
                       noOfSections={10}
-                      // frontColor="#4CAF50"
                       barBorderRadius={4}
                       sideWidth={15}
                       isThreeD
-                      // side="right"
                       cappedBars
                       capColor={'rgba(78, 0, 142)'}
                       capThickness={4}
                       showGradient
                       gradientColor={'rgba(200, 100, 244,0.8)'}
                       frontColor={'rgba(219, 182, 249,0.2)'}
-                      // hideYAxisText
-                      // stepHeight={100}
                       showLine
                       lineConfig={{
                         color: '#4CAF50',
@@ -577,8 +572,6 @@ const WardsDBAIScreen = () => {
                         curved: true,
                       }}
                       xAxisLabelTextStyle={styles.labelTextStyle}
-                      // yAxisLabelTexts={generateYAxisLabels(maxAbsValue)}
-                      // yAxisLabelWidth={80} // Adjust the width here as per your requirement
                       renderTooltip={(item, index) => {
                         return (
                           <View
@@ -602,19 +595,8 @@ const WardsDBAIScreen = () => {
                         );
                       }}
                     />
-                    {/* <BarChart
-                      data={item?.chartData}
-                      barWidth={30}
-                      barBorderRadius={4}
-                      yAxisLabelTexts={['0', '50', '100']}
-                      xAxisLabelTextStyle={{color: 'gray'}}
-                      yAxisLabelTextStyle={{color: 'gray'}}
-                      frontColor="lightblue"
-                      height={200}
-                      noOfSections={10}
-                    /> */}
                   </View>
-                )}
+                )} */}
 
                 {/* {item.role === 'bot' && item.barChatImg && (
                   <View
