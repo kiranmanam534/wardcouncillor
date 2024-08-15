@@ -245,7 +245,7 @@ const WardsDBAIScreen = () => {
   const sendMessage = async () => {
     if (input) {
       // setChartData([]);
-      let NewChartData = [];
+      // let NewChartData = [];
       console.log('input', input, !['en', 'Language'].includes(Language));
       let lanRes = input;
       if (!['en', 'Language'].includes(Language)) {
@@ -265,7 +265,7 @@ const WardsDBAIScreen = () => {
           content: [lanRes.toString()],
           sqlQuery: '',
           count: loadingCount + 1,
-          chartData: [],
+          // chartData: [],
         },
       ];
       setMessages(newMessages);
@@ -284,33 +284,30 @@ const WardsDBAIScreen = () => {
         console.log(result.data);
 
         // Count the keys if the response is an object
-        if (
-          typeof result.data[0].results.recordsets[0][0] === 'object' &&
-          !Array.isArray(result.data[0].results.recordsets[0][0])
-        ) {
-          // setKeyCount(Object.keys(result.data[0].results.recordsets[0]).length);
-          if (
-            Object.keys(result.data[0].results.recordsets[0][0]).length === 2
-          ) {
-            Object.entries(result.data[0].results.recordsets[0][0]).forEach(
-              element => {
-                console.log(element[0], element[1]);
-                NewChartData = [
-                  ...chartData,
-                  {
-                    label: element[0],
-                    value: parseFloat(element[1]),
-                  },
-                ];
-                // setChartData(NewChartData);
-              },
-            );
-            // setChartData
-          }
-          console.log(
-            Object.keys(result.data[0].results.recordsets[0][0]).length,
-          );
-        }
+        // if (
+        //   typeof result.data[0].results.recordsets[0][0] === 'object' &&
+        //   !Array.isArray(result.data[0].results.recordsets[0][0])
+        // ) {
+        //   if (
+        //     Object.keys(result.data[0].results.recordsets[0][0]).length === 2
+        //   ) {
+        //     Object.entries(result.data[0].results.recordsets[0][0]).forEach(
+        //       element => {
+        //         console.log(element[0], element[1]);
+        //         NewChartData = [
+        //           ...chartData,
+        //           {
+        //             label: element[0],
+        //             value: parseFloat(element[1]),
+        //           },
+        //         ];
+        //       },
+        //     );
+        //   }
+        //   console.log(
+        //     Object.keys(result.data[0].results.recordsets[0][0]).length,
+        //   );
+        // }
 
         // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
         // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
@@ -322,7 +319,7 @@ const WardsDBAIScreen = () => {
             sqlQuery: result.data[0].SQL,
             barChatImg: result.data[0]?.img,
             count: loadingCount + 2,
-            chartData: NewChartData,
+            // chartData: NewChartData,
           },
         ]);
 
@@ -340,7 +337,7 @@ const WardsDBAIScreen = () => {
             sqlQuery: '',
             barChatImg: '',
             count: loadingCount + 2,
-            chartData: [],
+            // chartData: [],
           },
         ]);
         setIsLoading(false);
