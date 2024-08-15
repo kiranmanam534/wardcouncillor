@@ -67,7 +67,7 @@ const PrivateNavigation = () => {
   };
 
   const goToAIChatBot = () => {
-    navigation.navigate('AIChatBot', {title: 'I AM TSEBO'});
+    navigation.navigate('AIChatBot', {title: 'AI Chat Bot'});
   };
 
   return (
@@ -365,7 +365,8 @@ const PrivateNavigation = () => {
       </PrivateStack.Navigator>
       {isVisible && (
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-          <Image source={AI_Icon} style={styles.img} />
+          {/* <Image source={AI_Icon} style={styles.img} /> */}
+          <Text style={{color: Colors.white, fontSize: 25}}>AI</Text>
         </Pressable>
       )}
     </>

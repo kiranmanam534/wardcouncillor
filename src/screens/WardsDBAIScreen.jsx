@@ -54,13 +54,15 @@ const WardsDBAIScreen = () => {
   const toggleSearchBar = val => {
     // setLanguage('language');
     if (val) {
-      val =
+      val = val =
         val === 'en'
           ? 'English'
           : val === 'af'
           ? 'Afrikaans'
           : val === 'zu'
           ? 'Zulu'
+          : val === 'xh'
+          ? 'Xhosa'
           : 'English';
       setLanguage(val);
     }
@@ -359,6 +361,21 @@ const WardsDBAIScreen = () => {
               }}>
               {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
               <Text style={styles.searchButtonText}>Afrikaans</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                toggleSearchBar('xh');
+              }}
+              style={{
+                backgroundColor: Colors.red,
+                padding: 10,
+                borderRadius: 10,
+                marginTop: 10,
+                flexDirection: 'row',
+                marginLeft: 5,
+              }}>
+              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+              <Text style={styles.searchButtonText}>Xhosa</Text>
             </TouchableOpacity>
             {/* <Button title="English" />
             <Button title="Zulu" />
