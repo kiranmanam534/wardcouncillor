@@ -595,7 +595,7 @@ const WardsDBAIScreen = () => {
                   </View>
                 )} */}
 
-                {/* {item.role === 'bot' && item.barChatImg && (
+                {item.role === 'bot' && item.barChatImg && (
                   <View
                     style={{
                       backgroundColor: Colors.lightgray,
@@ -608,8 +608,7 @@ const WardsDBAIScreen = () => {
                       // tintColor={Colors.lightgray}
                     />
                   </View>
-                  
-                )} */}
+                )}
               </>
             )}
             keyExtractor={(item, index) => index.toString()}
