@@ -28,7 +28,14 @@ import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import {hideData, showData} from '../redux/visibilityAIIconSlice';
 import {set} from 'react-hook-form';
 import {useNavigation} from '@react-navigation/native';
+import {BarChart} from 'react-native-gifted-charts';
+import {formattedAmount} from '../utility/FormattedAmmount';
 const screenWidth = Dimensions.get('window').width;
+
+const chartData1 = [
+  {value: 822139232, label: 'TotalCount'},
+  {value: 6691000000, label: 'MaxMarketValue'},
+];
 
 const WardsDBAIScreen = () => {
   const dispatch = useDispatch();
@@ -47,9 +54,10 @@ const WardsDBAIScreen = () => {
   const [intervalId, setIntervalId] = useState(null);
   const [recognizedText, setRecognizedText] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [chartData, setChartData] = useState([]);
 
   const [searchVisible, setSearchVisible] = useState(false);
-  const [Language, setLanguage] = useState('Language');
+  const [Language, setLanguage] = useState('English');
 
   const toggleSearchBar = val => {
     // setLanguage('language');
@@ -236,6 +244,8 @@ const WardsDBAIScreen = () => {
 
   const sendMessage = async () => {
     if (input) {
+      // setChartData([]);
+      let NewChartData = [];
       console.log('input', input, !['en', 'Language'].includes(Language));
       let lanRes = input;
       if (!['en', 'Language'].includes(Language)) {
@@ -255,6 +265,7 @@ const WardsDBAIScreen = () => {
           content: [lanRes.toString()],
           sqlQuery: '',
           count: loadingCount + 1,
+          chartData: [],
         },
       ];
       setMessages(newMessages);
@@ -272,6 +283,35 @@ const WardsDBAIScreen = () => {
         // console.log(result.data[0].SQL)
         console.log(result.data);
 
+        // Count the keys if the response is an object
+        if (
+          typeof result.data[0].results.recordsets[0][0] === 'object' &&
+          !Array.isArray(result.data[0].results.recordsets[0][0])
+        ) {
+          // setKeyCount(Object.keys(result.data[0].results.recordsets[0]).length);
+          if (
+            Object.keys(result.data[0].results.recordsets[0][0]).length === 2
+          ) {
+            Object.entries(result.data[0].results.recordsets[0][0]).forEach(
+              element => {
+                console.log(element[0], element[1]);
+                NewChartData = [
+                  ...chartData,
+                  {
+                    label: element[0],
+                    value: parseFloat(element[1]),
+                  },
+                ];
+                // setChartData(NewChartData);
+              },
+            );
+            // setChartData
+          }
+          console.log(
+            Object.keys(result.data[0].results.recordsets[0][0]).length,
+          );
+        }
+
         // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
         // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
         setMessages([
@@ -282,6 +322,7 @@ const WardsDBAIScreen = () => {
             sqlQuery: result.data[0].SQL,
             barChatImg: result.data[0]?.img,
             count: loadingCount + 2,
+            chartData: NewChartData,
           },
         ]);
 
@@ -299,6 +340,7 @@ const WardsDBAIScreen = () => {
             sqlQuery: '',
             barChatImg: '',
             count: loadingCount + 2,
+            chartData: [],
           },
         ]);
         setIsLoading(false);
@@ -493,21 +535,102 @@ const WardsDBAIScreen = () => {
                     </View>
                   ))}
                 </View>
-                {item.role === 'bot' && item.barChatImg && (
+                {item.role === 'bot' && item.chartData.length > 0 && (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Text style={{marginBottom: 20, fontSize: 18}}>
+                      Monthly Sales
+                    </Text>
+                    <BarChart
+                      data={chartData1}
+                      height={200}
+                      barWidth={40}
+                      width={screenWidth}
+                      // maxValue={maxAbsValue}
+                      spacing={20}
+                      roundedTop
+                      yAxisThickness={1}
+                      xAxisThickness={1}
+                      isAnimated
+                      noOfSections={10}
+                      // frontColor="#4CAF50"
+                      barBorderRadius={4}
+                      sideWidth={15}
+                      isThreeD
+                      // side="right"
+                      cappedBars
+                      capColor={'rgba(78, 0, 142)'}
+                      capThickness={4}
+                      showGradient
+                      gradientColor={'rgba(200, 100, 244,0.8)'}
+                      frontColor={'rgba(219, 182, 249,0.2)'}
+                      // hideYAxisText
+                      // stepHeight={100}
+                      showLine
+                      lineConfig={{
+                        color: '#4CAF50',
+                        thickness: 2,
+                        curved: true,
+                      }}
+                      xAxisLabelTextStyle={styles.labelTextStyle}
+                      // yAxisLabelTexts={generateYAxisLabels(maxAbsValue)}
+                      // yAxisLabelWidth={80} // Adjust the width here as per your requirement
+                      renderTooltip={(item, index) => {
+                        return (
+                          <View
+                            style={{
+                              marginBottom: 0,
+                              marginLeft: -6,
+                              backgroundColor: '#ffcefe',
+                              paddingHorizontal: 6,
+                              paddingVertical: 4,
+                              borderRadius: 4,
+                            }}>
+                            <Text>
+                              {formattedAmount(
+                                parseFloat(item.value),
+                                'en-ZA',
+                                'ZAR',
+                                'currency',
+                              )}
+                            </Text>
+                          </View>
+                        );
+                      }}
+                    />
+                    {/* <BarChart
+                      data={item?.chartData}
+                      barWidth={30}
+                      barBorderRadius={4}
+                      yAxisLabelTexts={['0', '50', '100']}
+                      xAxisLabelTextStyle={{color: 'gray'}}
+                      yAxisLabelTextStyle={{color: 'gray'}}
+                      frontColor="lightblue"
+                      height={200}
+                      noOfSections={10}
+                    /> */}
+                  </View>
+                )}
+
+                {/* {item.role === 'bot' && item.barChatImg && (
                   <View
                     style={{
                       backgroundColor: Colors.lightgray,
                       marginVertical: 10,
                       padding: 5,
                     }}>
-                    {/* <Text>{item.barChatImg}</Text> */}
                     <Image
                       source={{uri: item.barChatImg}}
                       style={styles.img}
                       // tintColor={Colors.lightgray}
                     />
                   </View>
-                )}
+                  
+                )} */}
               </>
             )}
             keyExtractor={(item, index) => index.toString()}
