@@ -611,6 +611,32 @@ const WardsDBAIScreen = () => {
       </SafeAreaView>
     );
 
+  // if (true)
+  //   return (
+  //     <SafeAreaView style={{flex: 1}}>
+  //       <ScrollView horizontal>
+  //         <View style={{flexDirection: 'row'}}>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //           <Text>KM2</Text>
+  //         </View>
+  //       </ScrollView>
+  //     </SafeAreaView>
+  //   );
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1}}>
@@ -657,9 +683,9 @@ const WardsDBAIScreen = () => {
                       style={{color: Colors.white, padding: 5, fontSize: 11}}>
                       {item.sqlQuery}
                     </Text>
-                    {/* <Text>{JSON.stringify(item)}</Text> */}
                   </View>
                 )}
+
                 <View
                   style={
                     item.role === 'user'
@@ -673,32 +699,22 @@ const WardsDBAIScreen = () => {
                         textDecorationLine: 'underline',
                         fontSize: 15,
                         paddingHorizontal: 10,
-                        paddingVertical: 5,
+                        paddingTop: 5,
                       }}>
                       #Result:
                     </Text>
                   )}
                   {item?.content?.map((item1, index) => (
-                    <View key={index} style={styles.itemContainer}>
-                      <Text style={styles.itemText}>
-                        {item.role === 'user' && JSON.stringify(item1)}
-                        {/* {item.role === 'bot' && (
-                          <View key={index}>
-                            <Text
-                              style={{
-                                color: Colors.white,
-                                textDecorationLine: 'underline',
-                                fontSize: 15,
-                                padding: 3,
-                              }}>
-                              {'#' + (index + 1)}
-                            </Text>
-                            <DynamicKeyValueDisplayBody data={item1} />
-                          </View>
-                        )} */}
+                    <View key={index}>
+                      <View style={styles.itemContainer}>
+                        <Text style={styles.itemText}>
+                          {item.role === 'user' && JSON.stringify(item1)}
+                        </Text>
                         {item.role === 'bot' && (
-                          <ScrollView horizontal>
-                            <View style={{flexDirection: 'column'}}>
+                          <ScrollView
+                            horizontal={true}
+                            style={{marginBottom: 20, marginTop: -25}}>
+                            <View>
                               <View
                                 style={{
                                   borderWidth: 0,
@@ -766,33 +782,10 @@ const WardsDBAIScreen = () => {
                             </View>
                           </ScrollView>
                         )}
-                      </Text>
+                      </View>
                     </View>
                   ))}
-
-                  {/* {item?.content?.map((item1, index) => (
-                    <View key={index} style={styles.itemContainer}>
-                      <Text style={styles.itemText}>
-                        {item.role === 'user' && JSON.stringify(item1)}
-                        {item.role === 'bot' && (
-                          <View key={index}>
-                            <Text
-                              style={{
-                                color: Colors.white,
-                                textDecorationLine: 'underline',
-                                fontSize: 15,
-                                padding: 3,
-                              }}>
-                              {'#' + (index + 1)}
-                            </Text>
-                            <DynamicKeyValueDisplayBody data={item1} />
-                          </View>
-                        )}
-                      </Text>
-                    </View>
-                  ))} */}
                 </View>
-                {/* <Text> {JSON.stringify(item.chartData)}</Text> */}
                 {item.role === 'bot' && item.chartData.length > 0 && (
                   <View
                     style={{
@@ -964,7 +957,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   botMessage: {
-    alignSelf: 'flex-start',
+    justifyContent: 'flex-start',
     backgroundColor: Colors.blue,
     // padding: 10,
     borderRadius: 10,
