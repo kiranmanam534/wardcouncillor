@@ -602,11 +602,7 @@ const WardsDBAIScreen = () => {
                       marginVertical: 10,
                       padding: 5,
                     }}>
-                    <Image
-                      source={{uri: item.barChatImg}}
-                      style={styles.img}
-                      // tintColor={Colors.lightgray}
-                    />
+                    <Image source={{uri: item.barChatImg}} style={styles.img} />
                   </View>
                 )}
               </>
