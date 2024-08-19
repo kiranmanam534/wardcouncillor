@@ -230,7 +230,7 @@ const TestHomeScreen = () => {
             borderWidth: 1,
             borderColor: Colors.white,
           }}>
-          <Text style={{color: Colors.white}}>V.1.1</Text>
+          <Text style={{color: Colors.white}}>V.1.2</Text>
         </View>
 
         <View style={styles.box}>
