@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -29,7 +30,9 @@ import {hideData, showData} from '../redux/visibilityAIIconSlice';
 import {set} from 'react-hook-form';
 import {useNavigation} from '@react-navigation/native';
 import {BarChart} from 'react-native-gifted-charts';
+import {BarChart as BarChartWrapper} from 'react-native-charts-wrapper';
 import {formattedAmount} from '../utility/FormattedAmmount';
+import {formatNumber} from '../utility/formatNumber';
 const screenWidth = Dimensions.get('window').width;
 
 const chartData1 = [
@@ -58,6 +61,15 @@ const WardsDBAIScreen = () => {
 
   const [searchVisible, setSearchVisible] = useState(false);
   const [Language, setLanguage] = useState('English');
+
+  // const dd = {
+  //   MaxMarketValue: 6691000000,
+  //   MinMarketValue: 0,
+  // };
+
+  // for (let key in dd) {
+  //   console.log(key, dd[key]);
+  // }
 
   const toggleSearchBar = val => {
     // setLanguage('language');
@@ -205,6 +217,42 @@ const WardsDBAIScreen = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
+  // Utility function to format numbers
+  const formatNumberWithoutText = number => {
+    // console.log(number);
+    if (number >= 1000000000) {
+      return (number / 1000000000).toFixed(1);
+    } else if (number >= 1000000) {
+      return (number / 1000000).toFixed(1);
+    } else if (number >= 100000) {
+      return (number / 1000).toFixed(1); // + 'k';
+    }
+    return number.toFixed(1).toString();
+  };
+
+  // Utility function to format values
+  const formatValue = value => {
+    if (value >= 1_000_000_000) {
+      return (value / 1_000_000_000).toFixed(2) + 'B';
+    } else if (value >= 1_000_000) {
+      return (value / 1_000_000).toFixed(2) + 'M';
+    } else if (value >= 1_000) {
+      return (value / 1_000).toFixed(2) + 'K';
+    }
+    return value.toString();
+  };
+  const formatValueWithoutText = value => {
+    if (value >= 1_000_000_000) {
+      return (value / 1_000_000_000).toFixed(2);
+    } else if (value >= 1_000_000) {
+      return (value / 1_000_000).toFixed(2);
+    }
+    // else if (value >= 1_000) {
+    //   return (value / 1_000).toFixed(2);
+    // }
+    return value;
+  };
+
   // console.log('input====>', input);
 
   // useEffect(() => {
@@ -222,30 +270,146 @@ const WardsDBAIScreen = () => {
 
   const DynamicKeyValueDisplayBody = ({data}) => {
     return (
-      <View style={{borderWidth: 0, borderColor: Colors.white}}>
-        {Object.entries(data).map(([key, value], index) => (
-          <View
-            key={index}
-            style={{
-              width: Dimensions.get('screen').width,
-              borderBottomWidth: 0,
-              padding: 0,
-            }}>
-            <Text style={{color: Colors.white, fontSize: 11}}>
-              {key} : {value}
-            </Text>
-          </View>
-        ))}
+      <>
+        <View
+          style={{
+            // borderWidth: 1,
+            // borderColor: Colors.white,
+
+            flexDirection: 'row',
+          }}>
+          {Object.entries(data).map(([key, value], index) => (
+            <View
+              key={index}
+              style={{
+                width: '50%',
+                // borderBottomWidth: 0,
+                padding: 10,
+                borderWidth: 1,
+                // borderRightWidth: 0,
+                borderColor: Colors.white,
+              }}>
+              <Text style={{color: Colors.white, fontSize: 11}}>{key}</Text>
+            </View>
+          ))}
+        </View>
+        <View
+          style={{
+            // borderWidth: 1,
+            // borderColor: Colors.white,
+
+            flexDirection: 'row',
+          }}>
+          {Object.entries(data).map(([key, value], index) => (
+            <View
+              key={index}
+              style={{
+                width: '50%',
+                // borderBottomWidth: 0,
+                padding: 10,
+                borderWidth: 1,
+                // borderRightWidth: 0,
+                borderColor: Colors.white,
+              }}>
+              <Text style={{color: Colors.white, fontSize: 11}}>{value}</Text>
+            </View>
+          ))}
+        </View>
+      </>
+    );
+  };
+  const DynamicKeyValueDisplayBody1 = ({data}) => {
+    return (
+      <View
+        key={data['key']}
+        style={{
+          // width: '50%',
+          // borderBottomWidth: 0,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderWidth: 1,
+          width: 300,
+          // borderRightWidth: 0,
+          borderColor: Colors.white,
+          backgroundColor: Colors.primary,
+        }}>
+        <Text style={{color: Colors.white, fontSize: 11}}>{data['key']}</Text>
       </View>
     );
   };
 
+  const DynamicKeyValueDisplayBody2 = ({data, keyId}) => {
+    return (
+      <View
+        key={data}
+        style={{
+          // width: '50%',
+          // borderBottomWidth: 0,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderWidth: 1,
+          width: 300,
+          // borderRightWidth: 0,
+          borderColor: Colors.white,
+        }}>
+        <Text style={{color: Colors.white, fontSize: 11}}>
+          {JSON.stringify(data)}
+        </Text>
+      </View>
+    );
+  };
+
+  const DynamicKeyValueDisplayBody3 = ({data, keys}) => {
+    return (
+      <>
+        {data.map((item, index) => (
+          <View
+            key={item}
+            style={{
+              borderWidth: 0,
+              borderColor: Colors.white,
+              flexDirection: 'row',
+              borderColor: Colors.white,
+              paddingHorizontal: 10,
+              marginTop: -10,
+            }}>
+            {Object.entries(item['items']).map(([key, value], index) =>
+              keys.map(k1 => (
+                <View
+                  key={index}
+                  style={{
+                    // width: '50%',
+                    // borderBottomWidth: 0,
+                    paddingHorizontal: 10,
+                    paddingVertical: 5,
+                    borderWidth: 1,
+                    width: 300,
+                    // borderRightWidth: 0,
+                    borderColor: Colors.white,
+                  }}>
+                  <Text key={k1} style={{color: Colors.white, fontSize: 11}}>
+                    {item['items'][k1['key']]}
+                  </Text>
+                </View>
+              )),
+            )}
+          </View>
+        ))}
+
+        {/* <Text style={{color: Colors.white, fontSize: 11}}>
+          {JSON.stringify(data)}
+        </Text> */}
+      </>
+    );
+  };
   // console.log(input);
 
   const sendMessage = async () => {
     if (input) {
       // setChartData([]);
-      // let NewChartData = [];
+      let NewChartData = [];
+      let keysList = [];
+      let ValuesList = [];
       console.log('input', input, !['en', 'Language'].includes(Language));
       let lanRes = input;
       if (!['en', 'Language'].includes(Language)) {
@@ -265,7 +429,7 @@ const WardsDBAIScreen = () => {
           content: [lanRes.toString()],
           sqlQuery: '',
           count: loadingCount + 1,
-          // chartData: [],
+          chartData: [],
         },
       ];
       setMessages(newMessages);
@@ -281,33 +445,54 @@ const WardsDBAIScreen = () => {
           postData,
         );
         // console.log(result.data[0].SQL)
-        console.log(result.data);
+        const resutSetData = result.data[0].results.recordsets[0];
+        console.log(resutSetData);
+
+        if (typeof resutSetData === 'object' && Array.isArray(resutSetData)) {
+          console.log('checking..');
+          for (let index in resutSetData) {
+            const rData = resutSetData[index];
+            console.log(rData);
+            if (typeof rData === 'object' && !Array.isArray(rData)) {
+              for (let key in rData) {
+                console.log(index);
+                if (index == 0) {
+                  console.log(key);
+                  keysList.push({key: key});
+                }
+              }
+              ValuesList.push({items: rData});
+            }
+          }
+        }
 
         // Count the keys if the response is an object
-        // if (
-        //   typeof result.data[0].results.recordsets[0][0] === 'object' &&
-        //   !Array.isArray(result.data[0].results.recordsets[0][0])
-        // ) {
-        //   if (
-        //     Object.keys(result.data[0].results.recordsets[0][0]).length === 2
-        //   ) {
-        //     Object.entries(result.data[0].results.recordsets[0][0]).forEach(
-        //       element => {
-        //         console.log(element[0], element[1]);
-        //         NewChartData = [
-        //           ...chartData,
-        //           {
-        //             label: element[0],
-        //             value: parseFloat(element[1]),
-        //           },
-        //         ];
-        //       },
-        //     );
-        //   }
-        //   console.log(
-        //     Object.keys(result.data[0].results.recordsets[0][0]).length,
-        //   );
-        // }
+        if (
+          typeof result.data[0].results.recordsets[0][0] === 'object' &&
+          !Array.isArray(result.data[0].results.recordsets[0][0])
+        ) {
+          const dicRes = result.data[0].results.recordsets[0][0];
+          // for (let key in dicRes) {
+          //   keysList.push({key: key});
+          //   ValuesList.push({value: dicRes[key]});
+          // }
+          if (
+            Object.keys(result.data[0].results.recordsets[0][0]).length === 2
+          ) {
+            for (let key in dicRes) {
+              console.log(
+                key,
+                dicRes[key],
+                formatValueWithoutText(dicRes[key]),
+              );
+              NewChartData.push({
+                label: key,
+                value: parseFloat(dicRes[key]),
+                actualValue: dicRes[key],
+              });
+            }
+          }
+        }
 
         // const response = await axios.post('http://your_backend_ip:5000/api/chat', { message: input });
         // setMessages([...newMessages, { role: 'bot', content: result.data[0].results.recordsets[0], count: loadingCount + 2 }]);
@@ -315,11 +500,13 @@ const WardsDBAIScreen = () => {
           ...newMessages,
           {
             role: 'bot',
-            content: result.data[0].results.recordsets[0],
+            content: result.data[0].results.recordsets,
             sqlQuery: result.data[0].SQL,
             barChatImg: result.data[0]?.img,
+            keysList: keysList,
+            ValuesList: ValuesList,
             count: loadingCount + 2,
-            // chartData: NewChartData,
+            chartData: NewChartData,
           },
         ]);
 
@@ -337,7 +524,7 @@ const WardsDBAIScreen = () => {
             sqlQuery: '',
             barChatImg: '',
             count: loadingCount + 2,
-            // chartData: [],
+            chartData: [],
           },
         ]);
         setIsLoading(false);
@@ -349,7 +536,7 @@ const WardsDBAIScreen = () => {
     }
   };
 
-  // console.log(JSON.stringify(messages))
+  // console.log(JSON.stringify(messages));
 
   if (searchVisible)
     return (
@@ -426,25 +613,6 @@ const WardsDBAIScreen = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {/* <View style={styles1.container1}>
-      {isRecording ? (
-        <View style={styles1.recordingContainer}>
-          <Text style={styles1.timerText}>{formatTime(timer)}</Text>
-          <Text style={styles1.statusText}>Recording...</Text>
-        </View>
-      ) : (
-        <Text style={styles1.resultsText}>{results.join(' ')}</Text>
-      )}
-      <TouchableOpacity
-        style={[styles1.voiceButton, isRecording && styles1.recording]}
-        onPressIn={startRecognizing}
-        onPressOut={stopRecognizing}>
-        <Icon name="mic" size={30} color="#fff" />
-      </TouchableOpacity>
-      <Text style={styles1.statusText}>
-        {isRecording ? 'Press and hold to stop' : 'Press and hold to record'}
-      </Text>
-    </View> */}
       <View style={{flex: 1}}>
         <View style={styles.container}>
           <FlatList
@@ -489,6 +657,7 @@ const WardsDBAIScreen = () => {
                       style={{color: Colors.white, padding: 5, fontSize: 11}}>
                       {item.sqlQuery}
                     </Text>
+                    {/* <Text>{JSON.stringify(item)}</Text> */}
                   </View>
                 )}
                 <View
@@ -509,8 +678,99 @@ const WardsDBAIScreen = () => {
                       #Result:
                     </Text>
                   )}
-
                   {item?.content?.map((item1, index) => (
+                    <View key={index} style={styles.itemContainer}>
+                      <Text style={styles.itemText}>
+                        {item.role === 'user' && JSON.stringify(item1)}
+                        {/* {item.role === 'bot' && (
+                          <View key={index}>
+                            <Text
+                              style={{
+                                color: Colors.white,
+                                textDecorationLine: 'underline',
+                                fontSize: 15,
+                                padding: 3,
+                              }}>
+                              {'#' + (index + 1)}
+                            </Text>
+                            <DynamicKeyValueDisplayBody data={item1} />
+                          </View>
+                        )} */}
+                        {item.role === 'bot' && (
+                          <ScrollView horizontal>
+                            <View style={{flexDirection: 'column'}}>
+                              <View
+                                style={{
+                                  borderWidth: 0,
+                                  borderColor: Colors.white,
+                                  flexDirection: 'row',
+                                  // borderWidth: 1,
+                                  // borderRightWidth: 0,
+                                  borderColor: Colors.white,
+                                  padding: 10,
+                                  marginBottom: 0,
+                                }}>
+                                {item?.keysList?.map((col, index) => (
+                                  <View
+                                    key={index}
+                                    style={[
+                                      styles.itemContainer,
+                                      {padding: 0},
+                                    ]}>
+                                    <Text style={styles.itemText}>
+                                      {/* {item.role === 'user' && JSON.stringify(col)} */}
+                                      {item.role === 'bot' && (
+                                        <DynamicKeyValueDisplayBody1
+                                          data={col}
+                                        />
+                                      )}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </View>
+                              <View
+                                style={{
+                                  borderWidth: 0,
+                                  borderColor: Colors.white,
+                                  // flexDirection: 'row',
+                                  // borderWidth: 1,
+                                  // borderRightWidth: 0,
+                                  borderColor: Colors.white,
+                                  paddingHorizontal: 10,
+                                  marginTop: -10,
+                                }}>
+                                {item?.ValuesList?.map((val, index) => (
+                                  <View
+                                    key={index}
+                                    style={[
+                                      styles.itemContainer,
+                                      {padding: 0},
+                                    ]}>
+                                    <Text style={styles.itemText}>
+                                      {/* {item.role === 'user' && JSON.stringify(col)} */}
+                                      {/* {index} */}
+                                      {item.role === 'bot' &&
+                                        Object.entries(val['items']).map(
+                                          ([key, value], index) => (
+                                            <DynamicKeyValueDisplayBody2
+                                              key={index}
+                                              data={value}
+                                              keyId={item?.keysList}
+                                            />
+                                          ),
+                                        )}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </View>
+                            </View>
+                          </ScrollView>
+                        )}
+                      </Text>
+                    </View>
+                  ))}
+
+                  {/* {item?.content?.map((item1, index) => (
                     <View key={index} style={styles.itemContainer}>
                       <Text style={styles.itemText}>
                         {item.role === 'user' && JSON.stringify(item1)}
@@ -530,57 +790,71 @@ const WardsDBAIScreen = () => {
                         )}
                       </Text>
                     </View>
-                  ))}
+                  ))} */}
                 </View>
-                {/* {item.role === 'bot' && item.chartData.length > 0 && (
+                {/* <Text> {JSON.stringify(item.chartData)}</Text> */}
+                {item.role === 'bot' && item.chartData.length > 0 && (
                   <View
                     style={{
                       flex: 1,
                       justifyContent: 'center',
                       alignItems: 'center',
+                      marginVertical: 15,
                     }}>
-                    <Text style={{marginBottom: 20, fontSize: 18}}>
+                    {/* <Text style={{marginBottom: 20, fontSize: 18}}>
                       Monthly Sales
-                    </Text>
+                    </Text> */}
                     <BarChart
-                      data={chartData1}
-                      height={200}
+                      data={item.chartData}
+                      // height={200}
                       barWidth={40}
                       width={screenWidth}
                       spacing={20}
-                      roundedTop
+                      // roundedTop
                       yAxisThickness={1}
                       xAxisThickness={1}
                       isAnimated
-                      noOfSections={10}
+                      // noOfSections={2}
                       barBorderRadius={4}
                       sideWidth={15}
-                      isThreeD
+                      // isThreeD
                       cappedBars
                       capColor={'rgba(78, 0, 142)'}
                       capThickness={4}
                       showGradient
                       gradientColor={'rgba(200, 100, 244,0.8)'}
                       frontColor={'rgba(219, 182, 249,0.2)'}
-                      showLine
+                      // showLine
+                      xAxisLabelsVerticalShift={20}
                       lineConfig={{
                         color: '#4CAF50',
                         thickness: 2,
                         curved: true,
                       }}
                       xAxisLabelTextStyle={styles.labelTextStyle}
+                      // yAxisMin={0}
+                      // yAxisLabelTexts={item.chartData.map(item => item.value)}
+                      // hideYAxisText
+                      // yAxisLabelPrefix=""
+                      // yAxisLabelSuffix=""
+                      yAxisLabelContainerStyle={styles.labelTextStyle1}
                       renderTooltip={(item, index) => {
                         return (
                           <View
                             style={{
-                              marginBottom: 0,
+                              // marginBottom: 0,
                               marginLeft: -6,
-                              backgroundColor: '#ffcefe',
-                              paddingHorizontal: 6,
-                              paddingVertical: 4,
+                              backgroundColor: Colors.primary,
+                              // top: 20,
+                              padding: 5,
+
                               borderRadius: 4,
                             }}>
-                            <Text>
+                            <Text
+                              style={{
+                                color: Colors.white,
+                                textAlign: 'center',
+                              }}>
                               {formattedAmount(
                                 parseFloat(item.value),
                                 'en-ZA',
@@ -593,9 +867,9 @@ const WardsDBAIScreen = () => {
                       }}
                     />
                   </View>
-                )} */}
+                )}
 
-                {item.role === 'bot' && item.barChatImg && (
+                {/* {item.role === 'bot' && item.barChatImg && (
                   <View
                     style={{
                       backgroundColor: Colors.lightgray,
@@ -604,7 +878,7 @@ const WardsDBAIScreen = () => {
                     }}>
                     <Image source={{uri: item.barChatImg}} style={styles.img} />
                   </View>
-                )}
+                )} */}
               </>
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -788,6 +1062,20 @@ const styles = StyleSheet.create({
   searchButtonText: {
     fontSize: 16,
     color: Colors.white,
+  },
+  labelTextStyle: {
+    color: Colors.primary,
+    fontSize: 11,
+    transform: [{rotate: '25deg'}],
+    textAlign: 'center',
+    width: 120, // Adjust based on the label length
+  },
+  labelTextStyle1: {
+    color: Colors.primary,
+    fontSize: 11,
+    // transform: [{rotate: '40deg'}],
+    textAlign: 'center',
+    // width: 200, // Adjust based on the label length
   },
 });
 
