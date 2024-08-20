@@ -353,7 +353,7 @@ const WardsDBAIScreen = () => {
           borderColor: Colors.white,
         }}>
         <Text style={{color: Colors.white, fontSize: 11}}>
-          {JSON.stringify(data)}
+          {JSON.stringify(data)?.replace(/"/g, '')}
         </Text>
       </View>
     );
@@ -404,6 +404,11 @@ const WardsDBAIScreen = () => {
   };
   // console.log(input);
 
+  // Function to get values based on index
+  const getValueByIndex = (data, index) => {
+    return data.map(item => Object.values(item)[index].trim());
+  };
+
   const sendMessage = async () => {
     if (input) {
       // setChartData([]);
@@ -430,6 +435,7 @@ const WardsDBAIScreen = () => {
           sqlQuery: '',
           count: loadingCount + 1,
           chartData: [],
+          error: false,
         },
       ];
       setMessages(newMessages);
@@ -438,7 +444,7 @@ const WardsDBAIScreen = () => {
 
       try {
         const postData = {query: lanRes.toString(), tables: []};
-        console.log(postData);
+        // console.log(postData);
         // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
         const result = await axios.post(
           'http://102.130.119.148:3344/api/getdata',
@@ -446,50 +452,77 @@ const WardsDBAIScreen = () => {
         );
         // console.log(result.data[0].SQL)
         const resutSetData = result.data[0].results.recordsets[0];
-        console.log(resutSetData);
+        console.log('resutSetData==>', resutSetData);
+        // const accountNos = getValueByIndex(resutSetData, 0);
+        // console.log(accountNos);
+        // const payables = getValueByIndex(resutSetData, 1);
+        // console.log(payables);
 
         if (typeof resutSetData === 'object' && Array.isArray(resutSetData)) {
           console.log('checking..');
           for (let index in resutSetData) {
             const rData = resutSetData[index];
-            console.log(rData);
+
+            console.log('rData==>', rData);
             if (typeof rData === 'object' && !Array.isArray(rData)) {
               for (let key in rData) {
-                console.log(index);
+                // console.log(rData[key]);
+                // NewChartData.push({
+                //   label: dicRes[key],
+                //   value: parseFloat(dicRes[key]),
+                //   actualValue: dicRes[key],
+                // });
+                // console.log(index);
                 if (index == 0) {
-                  console.log(key);
+                  // console.log(key);
                   keysList.push({key: key});
                 }
               }
+
+              if (keysList.length === 2) {
+                console.log(keysList[0]);
+                console.log(keysList[1]);
+                console.log(rData[keysList[0]['key']]);
+                console.log(rData[keysList[1]['key']]);
+                NewChartData.push({
+                  label: rData[keysList[0]['key']],
+                  value: parseFloat(rData[keysList[1]['key']]),
+                  actualValue: rData[keysList[1]['key']],
+                });
+              }
+
+              for (let key_index in keysList) {
+                // console.log(rData[keysList[key_index]['key']]);
+                //  NewChartData.push({
+                //   label: rData[keysList[key_index]['key']],
+                //   value: parseFloat(rData[keysList[key_index]['key']]),
+                //   actualValue: dicRes[key],
+                // });
+              }
+
               ValuesList.push({items: rData});
             }
           }
         }
 
         // Count the keys if the response is an object
-        if (
-          typeof result.data[0].results.recordsets[0][0] === 'object' &&
-          !Array.isArray(result.data[0].results.recordsets[0][0])
-        ) {
-          const dicRes = result.data[0].results.recordsets[0][0];
+        if (typeof resutSetData === 'object' && !Array.isArray(resutSetData)) {
+          const dicRes = resutSetData;
           // for (let key in dicRes) {
-          //   keysList.push({key: key});
-          //   ValuesList.push({value: dicRes[key]});
+          //  console.log()
           // }
-          if (
-            Object.keys(result.data[0].results.recordsets[0][0]).length === 2
-          ) {
+          if (Object.keys(resutSetData).length === 2) {
             for (let key in dicRes) {
-              console.log(
-                key,
-                dicRes[key],
-                formatValueWithoutText(dicRes[key]),
-              );
-              NewChartData.push({
-                label: key,
-                value: parseFloat(dicRes[key]),
-                actualValue: dicRes[key],
-              });
+              // console.log(
+              //   key,
+              //   dicRes[key],
+              //   formatValueWithoutText(dicRes[key]),
+              // );
+              // NewChartData.push({
+              //   label: dicRes[key],
+              //   value: parseFloat(dicRes[key]),
+              //   actualValue: dicRes[key],
+              // });
             }
           }
         }
@@ -507,6 +540,7 @@ const WardsDBAIScreen = () => {
             ValuesList: ValuesList,
             count: loadingCount + 2,
             chartData: NewChartData,
+            error: false,
           },
         ]);
 
@@ -523,6 +557,7 @@ const WardsDBAIScreen = () => {
             content: [['Result not found!']],
             sqlQuery: '',
             barChatImg: '',
+            error: true,
             count: loadingCount + 2,
             chartData: [],
           },
@@ -660,7 +695,7 @@ const WardsDBAIScreen = () => {
                       <LoadingDots />
                     </View>
                   )}
-                {item.sqlQuery && (
+                {/* {item.sqlQuery && (
                   <View
                     style={[
                       styles.botMessage,
@@ -684,7 +719,7 @@ const WardsDBAIScreen = () => {
                       {item.sqlQuery}
                     </Text>
                   </View>
-                )}
+                )} */}
 
                 <View
                   style={
@@ -708,79 +743,92 @@ const WardsDBAIScreen = () => {
                     <View key={index}>
                       <View style={styles.itemContainer}>
                         <Text style={styles.itemText}>
-                          {item.role === 'user' && JSON.stringify(item1)}
+                          {item.role === 'user' &&
+                            JSON.stringify(item1)?.replace(/"/g, '')}
                         </Text>
                         {item.role === 'bot' && (
-                          <ScrollView
-                            horizontal={true}
-                            style={{marginBottom: 20, marginTop: -25}}>
-                            <View>
-                              <View
-                                style={{
-                                  borderWidth: 0,
-                                  borderColor: Colors.white,
-                                  flexDirection: 'row',
-                                  // borderWidth: 1,
-                                  // borderRightWidth: 0,
-                                  borderColor: Colors.white,
-                                  padding: 10,
-                                  marginBottom: 0,
-                                }}>
-                                {item?.keysList?.map((col, index) => (
+                          <>
+                            {item.error && (
+                              <Text style={styles.itemText}>
+                                {JSON.stringify(item1?.toString())?.replace(
+                                  /"/g,
+                                  '',
+                                )}
+                              </Text>
+                            )}
+                            {!item.error && (
+                              <ScrollView
+                                horizontal={true}
+                                style={{marginBottom: 20, marginTop: -25}}>
+                                <View>
                                   <View
-                                    key={index}
-                                    style={[
-                                      styles.itemContainer,
-                                      {padding: 0},
-                                    ]}>
-                                    <Text style={styles.itemText}>
-                                      {/* {item.role === 'user' && JSON.stringify(col)} */}
-                                      {item.role === 'bot' && (
-                                        <DynamicKeyValueDisplayBody1
-                                          data={col}
-                                        />
-                                      )}
-                                    </Text>
-                                  </View>
-                                ))}
-                              </View>
-                              <View
-                                style={{
-                                  borderWidth: 0,
-                                  borderColor: Colors.white,
-                                  // flexDirection: 'row',
-                                  // borderWidth: 1,
-                                  // borderRightWidth: 0,
-                                  borderColor: Colors.white,
-                                  paddingHorizontal: 10,
-                                  marginTop: -10,
-                                }}>
-                                {item?.ValuesList?.map((val, index) => (
-                                  <View
-                                    key={index}
-                                    style={[
-                                      styles.itemContainer,
-                                      {padding: 0},
-                                    ]}>
-                                    <Text style={styles.itemText}>
-                                      {/* {item.role === 'user' && JSON.stringify(col)} */}
-                                      {/* {index} */}
-                                      {item.role === 'bot' &&
-                                        Object.entries(val['items']).map(
-                                          ([key, value], index) => (
-                                            <DynamicKeyValueDisplayBody2
-                                              key={index}
-                                              data={value}
-                                              keyId={item?.keysList}
+                                    style={{
+                                      borderWidth: 0,
+                                      borderColor: Colors.white,
+                                      flexDirection: 'row',
+                                      // borderWidth: 1,
+                                      // borderRightWidth: 0,
+                                      borderColor: Colors.white,
+                                      padding: 10,
+                                      marginBottom: 0,
+                                    }}>
+                                    {item?.keysList?.map((col, index) => (
+                                      <View
+                                        key={index}
+                                        style={[
+                                          styles.itemContainer,
+                                          {padding: 0},
+                                        ]}>
+                                        <Text style={styles.itemText}>
+                                          {/* {item.role === 'user' && JSON.stringify(col)} */}
+                                          {item.role === 'bot' && (
+                                            <DynamicKeyValueDisplayBody1
+                                              data={col}
                                             />
-                                          ),
-                                        )}
-                                    </Text>
+                                          )}
+                                        </Text>
+                                      </View>
+                                    ))}
                                   </View>
-                                ))}
-                              </View>
-                            </View>
-                          </ScrollView>
+                                  <View
+                                    style={{
+                                      borderWidth: 0,
+                                      borderColor: Colors.white,
+                                      // flexDirection: 'row',
+                                      // borderWidth: 1,
+                                      // borderRightWidth: 0,
+                                      borderColor: Colors.white,
+                                      paddingHorizontal: 10,
+                                      marginTop: -10,
+                                    }}>
+                                    {item?.ValuesList?.map((val, index) => (
+                                      <View
+                                        key={index}
+                                        style={[
+                                          styles.itemContainer,
+                                          {padding: 0},
+                                        ]}>
+                                        <Text style={styles.itemText}>
+                                          {/* {item.role === 'user' && JSON.stringify(col)} */}
+                                          {/* {index} */}
+                                          {item.role === 'bot' &&
+                                            Object.entries(val['items']).map(
+                                              ([key, value], index) => (
+                                                <DynamicKeyValueDisplayBody2
+                                                  key={index}
+                                                  data={value}
+                                                  keyId={item?.keysList}
+                                                />
+                                              ),
+                                            )}
+                                        </Text>
+                                      </View>
+                                    ))}
+                                  </View>
+                                </View>
+                              </ScrollView>
+                            )}
+                          </>
                         )}
                       </View>
                     </View>
