@@ -15,30 +15,32 @@ import {
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import LoaderModal from '../components/LoaderModal';
-import { GetCouncillorWardTownshipMemberInfo, getMeterImageApi } from '../services/councillorWardApi';
+import {
+  GetCouncillorWardTownshipMemberInfo,
+  getMeterImageApi,
+} from '../services/councillorWardApi';
 import TownshipCard from '../components/TownshipCard';
-import { smsApi } from '../services/smsApi';
-import { formattedAmount, formattedCurrency } from '../utility/FormattedAmmount';
+import {smsApi} from '../services/smsApi';
+import {formattedAmount, formattedCurrency} from '../utility/FormattedAmmount';
 import ErrorModal from '../components/ErrorModal';
 import Toast from 'react-native-toast-message';
-import { Colors } from '../constant/Colors';
-import { smdSliceActions } from '../redux/smsSlice';
+import {Colors} from '../constant/Colors';
+import {smdSliceActions} from '../redux/smsSlice';
 import BottomSearchBox from '../components/BottomSearchBox';
 import CardItemTest from '../Test1';
 import ShowMessageCenter from '../components/ShowMessageCenter';
 import CardItemLoading from '../components/CardItemLoading';
-import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
+import {WardMemberSliceActions} from '../redux/councillorWardTownshipMemberSlice';
 import BinaryImageModal from '../components/BinaryImageModal';
-import { MeterImageActions } from '../redux/MeterImageSlice';
+import {MeterImageActions} from '../redux/MeterImageSlice';
 import ShowMapModal from '../components/ShowMapModal';
 import TestMapView from '../../TestMapView';
 
-
-const CouncilloriViewScreen = ({ route }) => {
+const CouncilloriViewScreen = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
@@ -50,7 +52,7 @@ const CouncilloriViewScreen = ({ route }) => {
   const [showMap, setShowMap] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
 
-  const { title, wardType, name, township } = route.params;
+  const {title, wardType, name, township} = route.params;
   console.log(wardType, name, township);
 
   const {
@@ -58,12 +60,10 @@ const CouncilloriViewScreen = ({ route }) => {
     isSMSsent,
     message: smsMessage,
     error: smsError,
-    statusCode
+    statusCode,
   } = useSelector(state => state.smsReducer);
 
-
-
-  const { wardNo: mayorSelectedWardNo } = useSelector(
+  const {wardNo: mayorSelectedWardNo} = useSelector(
     state => state.MayorSelectedWardReducer,
   );
 
@@ -75,12 +75,17 @@ const CouncilloriViewScreen = ({ route }) => {
     error,
     wardmembersCount,
     message: memberMessage,
-    statusCode: memberStatusCode
+    statusCode: memberStatusCode,
   } = useSelector(state => state.councillorWardTownshipMemberReducer);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
 
-  const { isLoading: imageLoading, error: imageError, image: binaryImage, isSuccess: isImageLoaded } = useSelector(state => state.MeterImageReducer);
+  const {
+    isLoading: imageLoading,
+    error: imageError,
+    image: binaryImage,
+    isSuccess: isImageLoaded,
+  } = useSelector(state => state.MeterImageReducer);
 
   // console.log('isImageLoaded', isImageLoaded)
   // console.log("binaryImage", imageError)
@@ -91,7 +96,6 @@ const CouncilloriViewScreen = ({ route }) => {
   } else if (wardType == 'Meter') {
     searchPlaceholderText = 'search by account or name or meter...';
   }
-
 
   // useLayoutEffect(() => {
   //   if (Platform.OS == 'android') {
@@ -117,7 +121,14 @@ const CouncilloriViewScreen = ({ route }) => {
         limit: 10,
       }),
     );
-  }, [loggedUser?.warD_NO, wardType, name, township, page, mayorSelectedWardNo]);
+  }, [
+    loggedUser?.warD_NO,
+    wardType,
+    name,
+    township,
+    page,
+    mayorSelectedWardNo,
+  ]);
 
   const handleLoadMore = () => {
     if (wardmembersCount != 0 && wardmembersCount == 10) setPage(page + 1);
@@ -141,18 +152,18 @@ const CouncilloriViewScreen = ({ route }) => {
       mess,
       [
         {
-          text: "OK", onPress: () => {
-            console.log("OK Pressed")
-          }
-        }
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+          },
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
-  }
-
+  };
 
   const handleSMS = item => {
-    console.log(wardType + " ==> ", item)
+    console.log(wardType + ' ==> ', item);
     if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
       if (item.cellphonenumber && item.cellphonenumber != 'Not Available') {
         let days_label = '';
@@ -160,76 +171,89 @@ const CouncilloriViewScreen = ({ route }) => {
         if (name === 'D60_DAYS') days_label = '60 days amount';
         if (name === 'D90_DAYS') days_label = '90 days amount';
         if (name === 'D120_PLUS') days_label = '120+ days amount';
-        let message = `Hi ${item.customeR_NAME.trim()}, Your outstanding ${days_label} is R${formattedCurrency(
+        let message = `Good day *${item.customeR_NAME.trim()}*, Reminder of your outstanding debt on your CoE utility bill. 
+Outstanding *${days_label}: R${formattedCurrency(
           parseFloat(item.daysAmount),
           'en-ZA',
           'ZAR',
           'currency',
-        )} and Your outstanding total amount is R${formattedCurrency(
+        )}* and Total Outstanding amount: *R${formattedCurrency(
           parseFloat(item.totalAmount),
           'en-ZA',
           'ZAR',
           'currency',
-        )}`;
-        // console.log(message)
+        )}*. 
+Make payment immediately or visit your nearest CoE Customer Care Centre. 
+Regards *City of Ekurhuleni.*`;
+
+        // let message = `Hi ${item.customeR_NAME.trim()}, Your outstanding ${days_label} is R${formattedCurrency(
+        //   parseFloat(item.daysAmount),
+        //   'en-ZA',
+        //   'ZAR',
+        //   'currency',
+        // )} and Your outstanding total amount is R${formattedCurrency(
+        //   parseFloat(item.totalAmount),
+        //   'en-ZA',
+        //   'ZAR',
+        //   'currency',
+        // )}`;
+        console.log(message);
         const requestBody = {
-          recipientNumber: '0792360234',//'0739007893',//item.cellphonenumber,
+          recipientNumber: '0739007893', //'0722409624', //'0792360234', //'0739007893',//item.cellphonenumber,
           message: message.toString(),
           // campaign: 'Outstanding Amount',
         };
-        dispatch(smsApi({ requestBody: requestBody }));
+        dispatch(smsApi({requestBody: requestBody}));
         setSelectedImageId(item.accounT_NO);
-      }
-      else {
-        ShowAlert("Warning!", "Mobile number should not be empty!")
+      } else {
+        ShowAlert('Warning!', 'Mobile number should not be empty!');
       }
     } else {
       if (item.cellNo && item.cellNo != 'Not Available') {
-        let message = `Hi ${item.debtorName.trim()}, your meter number ${item.meterNumber} is on interim, please submit your latest readings via whatsapp.`;
+        let message = `Good day *${item.debtorName.trim()}*, Your meter number ${
+          item.meterNumber
+        } is on interims. To get billed correctly, please submit your latest reading via Whatsapp on *0606677177* or to make arrangements for a meter reader to take the reading, email *mrsappsupport@ekurhuleni.gov.za* regards City of Ekurhuleni`;
+        // let message = `Hi ${item.debtorName.trim()}, your meter number ${
+        //   item.meterNumber
+        // } is on interim, please submit your latest readings via whatsapp.`;
         // let message = `Hi ${item.debtorName.trim()}, Your Interims Meter No : ${item.meterNumber} is  for ${item.accountNumber}`;
         const requestBody = {
-          recipientNumber: '0792360234',//'0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
+          recipientNumber: '0739007893', //'0722409624', //'0792360234', //'0739007893',//item.cellphonenumber,//'0739007893',//item.cellphonenumber
           message: message.toString(),
           // campaign: 'Interims',
         };
-        console.log(requestBody)
-        dispatch(smsApi({ requestBody: requestBody }));
+        console.log(requestBody);
+        dispatch(smsApi({requestBody: requestBody}));
         setSelectedImageId(item.accountNumber);
       } else {
-        ShowAlert("Warning!", "Mobile number should not be empty!")
+        ShowAlert('Warning!', 'Mobile number should not be empty!');
       }
     }
-
 
     // setShowErrorModal(true);
   };
 
-
-
-  const openMeterImage = (meterId) => {
-
+  const openMeterImage = meterId => {
     console.log(meterId);
 
     dispatch(getMeterImageApi(meterId));
 
-    setShowImage(true)
+    setShowImage(true);
     setSelectedImageId(meterId);
-  }
+  };
 
-
-  const openPropertyMap = (item) => {
-
+  const openPropertyMap = item => {
     console.log(item);
     // setShowMap(true)
-    navigation.navigate("ShowPropertyMap", {
+    navigation.navigate('ShowPropertyMap', {
       title: `Property Location`,
       lat: item.locationlatitude,
       long: item.locationlongitude,
       propertyName: item.accountname,
-      propertyAccount: item.accountnumber
+      propertyAccount: item.accountnumber,
       // township: township,
-    })
-  }
+    });
+  };
 
   const showToast = (text1, text2, type, color) => {
     Toast.show({
@@ -238,8 +262,8 @@ const CouncilloriViewScreen = ({ route }) => {
       text1: text1,
       text2: text2,
       visibilityTime: 3000,
-      text1Style: { color: color, fontSize: 15 },
-      text2Style: { color: Colors.blue, fontSize: 13 },
+      text1Style: {color: color, fontSize: 15},
+      text2Style: {color: Colors.blue, fontSize: 13},
     });
     dispatch(smdSliceActions.smsClear());
     setSelectedImageId(null);
@@ -251,7 +275,7 @@ const CouncilloriViewScreen = ({ route }) => {
 
   const handleSearch = () => {
     // Implement search functionality here
-    dispatch(WardMemberSliceActions.clearWardMemberData())
+    dispatch(WardMemberSliceActions.clearWardMemberData());
     console.log('Searching for:', searchText);
     dispatch(
       GetCouncillorWardTownshipMemberInfo({
@@ -274,9 +298,8 @@ const CouncilloriViewScreen = ({ route }) => {
     // }
   };
 
-
   const closeModal = () => {
-    dispatch(MeterImageActions.ClearImage())
+    dispatch(MeterImageActions.ClearImage());
   };
   useEffect(() => {
     if (!isSMSLoading && smsError) {
@@ -296,26 +319,32 @@ const CouncilloriViewScreen = ({ route }) => {
     return (
       <FlatList
         data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-        renderItem={({ item }) => <CardItemTest />}
+        renderItem={({item}) => <CardItemTest />}
         keyExtractor={(item, index) => index.toString()}
       />
     );
   };
 
   return (
-    <View style={{ flex: 1 }}>
-
+    <View style={{flex: 1}}>
       {/* {isImageLoaded &&
         <Image source={{ uri: 'data:image/jpeg;base64,' + binaryImage }} width={200} height={200} />} */}
 
-      {memberStatusCode && memberStatusCode !== 200 &&
-        <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'} />}
-
+      {memberStatusCode && memberStatusCode !== 200 && (
+        <ShowMessageCenter
+          message={
+            error == 'No data found.'
+              ? 'No data found.'
+              : 'Something went wrong!'
+          }
+        />
+      )}
 
       {/* <LoaderModal visible={isSMSLoading} loadingText="SMS is sending..." /> */}
-      {memberStatusCode && memberStatusCode === 200 && memberMessage === 'Data Not found' && items?.length == 0 && (
-        <ShowMessageCenter message={'No data found!'} />
-      )}
+      {memberStatusCode &&
+        memberStatusCode === 200 &&
+        memberMessage === 'Data Not found' &&
+        items?.length == 0 && <ShowMessageCenter message={'No data found!'} />}
 
       <ErrorModal
         visible={imageError && imageError != 200}
@@ -326,13 +355,14 @@ const CouncilloriViewScreen = ({ route }) => {
         }}
       />
 
-      {isImageLoaded && binaryImage &&
+      {isImageLoaded && binaryImage && (
         <BinaryImageModal
           binaryImageData={binaryImage} // Binary image data to be decoded
           isBinary={true}
           visible={showImage} // Boolean to control the visibility of the modal
           onClose={() => setShowImage(false)} // Function to handle modal close
-        />}
+        />
+      )}
 
       {/* {showMap &&
         <ShowMapModal
@@ -347,14 +377,14 @@ const CouncilloriViewScreen = ({ route }) => {
       {isLoading && (
         <FlatList
           data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-          renderItem={({ item }) => <CardItemLoading />}
+          renderItem={({item}) => <CardItemLoading />}
           keyExtractor={(item, index) => index.toString()}
         />
       )}
       {!isLoading && items?.length > 0 && (
         <FlatList
           data={items}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <TownshipCard
               // key={index}
               wardType={wardType}
@@ -364,10 +394,10 @@ const CouncilloriViewScreen = ({ route }) => {
                 handlePress(item.cellphonenumber);
               }}
               showImage={() => {
-                openMeterImage(item?.id)
+                openMeterImage(item?.id);
               }}
               showMap={() => {
-                openPropertyMap(item)
+                openPropertyMap(item);
               }}
               imageLoading={imageLoading}
               ImageId={selectedImageId}

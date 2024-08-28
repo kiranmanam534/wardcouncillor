@@ -51,6 +51,7 @@ const WardsDBAIScreen = () => {
   const [loadingCount, setLoadingCount] = useState(0);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const flatListRef = useRef(null);
 
   const [timer, setTimer] = useState(0);
@@ -83,6 +84,12 @@ const WardsDBAIScreen = () => {
           ? 'Zulu'
           : val === 'xh'
           ? 'Xhosa'
+          : val === 'nso'
+          ? 'Sepedi/Northern Sotho'
+          : val === 'tn'
+          ? 'Setswana'
+          : val === 'st'
+          ? 'Sesotho'
           : 'English';
       setLanguage(val);
     }
@@ -321,15 +328,12 @@ const WardsDBAIScreen = () => {
   const DynamicKeyValueDisplayBody1 = ({data}) => {
     return (
       <View
-        key={data['key']}
+        key={data['key'] + Math.random(1, 10)}
         style={{
-          // width: '50%',
-          // borderBottomWidth: 0,
           paddingHorizontal: 10,
           paddingVertical: 5,
           borderWidth: 1,
           width: 300,
-          // borderRightWidth: 0,
           borderColor: Colors.white,
           backgroundColor: Colors.primary,
         }}>
@@ -410,6 +414,7 @@ const WardsDBAIScreen = () => {
   };
 
   const sendMessage = async () => {
+    console.log(input);
     if (input) {
       // setChartData([]);
       let NewChartData = [];
@@ -436,6 +441,7 @@ const WardsDBAIScreen = () => {
           count: loadingCount + 1,
           chartData: [],
           error: false,
+          question: lanRes.toString(),
         },
       ];
       setMessages(newMessages);
@@ -480,10 +486,10 @@ const WardsDBAIScreen = () => {
               }
 
               if (keysList.length === 2) {
-                console.log(keysList[0]);
-                console.log(keysList[1]);
-                console.log(rData[keysList[0]['key']]);
-                console.log(rData[keysList[1]['key']]);
+                // console.log(keysList[0]);
+                // console.log(keysList[1]);
+                // console.log(rData[keysList[0]['key']]);
+                // console.log(rData[keysList[1]['key']]);
                 NewChartData.push({
                   label: rData[keysList[0]['key']],
                   value: parseFloat(rData[keysList[1]['key']]),
@@ -541,6 +547,7 @@ const WardsDBAIScreen = () => {
             count: loadingCount + 2,
             chartData: NewChartData,
             error: false,
+            question: lanRes.toString(),
           },
         ]);
 
@@ -560,6 +567,7 @@ const WardsDBAIScreen = () => {
             error: true,
             count: loadingCount + 2,
             chartData: [],
+            question: lanRes.toString(),
           },
         ]);
         setIsLoading(false);
@@ -571,7 +579,7 @@ const WardsDBAIScreen = () => {
     }
   };
 
-  // console.log(JSON.stringify(messages));
+  console.log('kmkmkmkmkmk=>', JSON.stringify(messages));
 
   if (searchVisible)
     return (
@@ -579,65 +587,116 @@ const WardsDBAIScreen = () => {
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
           <Text>Choose your desire language.</Text>
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-              onPress={() => {
-                toggleSearchBar('en');
-              }}
-              style={{
-                backgroundColor: Colors.primary,
-                padding: 10,
-                borderRadius: 10,
-                marginTop: 10,
-                flexDirection: 'row',
-              }}>
-              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-              <Text style={styles.searchButtonText}>English</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                toggleSearchBar('zu');
-              }}
-              style={{
-                backgroundColor: Colors.blue,
-                padding: 10,
-                borderRadius: 10,
-                marginTop: 10,
-                flexDirection: 'row',
-                marginLeft: 5,
-              }}>
-              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-              <Text style={styles.searchButtonText}>Zulu</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                toggleSearchBar('af');
-              }}
-              style={{
-                backgroundColor: Colors.yellow,
-                padding: 10,
-                borderRadius: 10,
-                marginTop: 10,
-                flexDirection: 'row',
-                marginLeft: 5,
-              }}>
-              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-              <Text style={styles.searchButtonText}>Afrikaans</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                toggleSearchBar('xh');
-              }}
-              style={{
-                backgroundColor: Colors.red,
-                padding: 10,
-                borderRadius: 10,
-                marginTop: 10,
-                flexDirection: 'row',
-                marginLeft: 5,
-              }}>
-              {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-              <Text style={styles.searchButtonText}>Xhosa</Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('en');
+                }}
+                style={{
+                  backgroundColor: Colors.primary,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>English</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('zu');
+                }}
+                style={{
+                  backgroundColor: Colors.blue,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>Zulu</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('af');
+                }}
+                style={{
+                  backgroundColor: Colors.yellow,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>Afrikaans</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('xh');
+                }}
+                style={{
+                  backgroundColor: Colors.red,
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>Xhosa</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('nso');
+                }}
+                style={{
+                  backgroundColor: '#987822',
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>
+                  Sepedi/Northern Sotho
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('tn');
+                }}
+                style={{
+                  backgroundColor: '#693622',
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>Setswana</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  toggleSearchBar('st');
+                }}
+                style={{
+                  backgroundColor: '#273622',
+                  padding: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  marginLeft: 5,
+                }}>
+                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+                <Text style={styles.searchButtonText}>Sesotho</Text>
+              </TouchableOpacity>
+            </View>
             {/* <Button title="English" />
             <Button title="Zulu" />
             <Button title="Affricans" /> */}
@@ -728,26 +787,38 @@ const WardsDBAIScreen = () => {
                       : styles.botMessage
                   }>
                   {item.role === 'bot' && (
-                    <Text
-                      style={{
-                        color: Colors.yellow,
-                        textDecorationLine: 'underline',
-                        fontSize: 15,
-                        paddingHorizontal: 10,
-                        paddingTop: 5,
-                      }}>
-                      #Result:
-                    </Text>
+                    <View>
+                      <Text
+                        style={{
+                          color: Colors.yellow,
+                          // textDecorationLine: 'underline',
+                          fontSize: 15,
+                          paddingHorizontal: 20,
+                          paddingVertical: 20,
+                          // paddingTop: 5,
+                        }}>
+                        {/* #Result: */}
+                        {item.question?.replace(/"/g, '')}
+                      </Text>
+                      {/* <Text style={[styles.itemText, {padding: 10}]}>
+                        {item.question?.replace(/"/g, '')}
+                      </Text> */}
+                    </View>
                   )}
                   {item?.content?.map((item1, index) => (
-                    <View key={index}>
-                      <View style={styles.itemContainer}>
-                        <Text style={styles.itemText}>
-                          {item.role === 'user' &&
-                            JSON.stringify(item1)?.replace(/"/g, '')}
-                        </Text>
+                    <>
+                      {isLoading &&
+                        item.count == loadingCount &&
+                        item.role === 'user' && (
+                          <View style={styles.itemContainer}>
+                            <Text style={styles.itemText}>
+                              {JSON.stringify(item1)?.replace(/"/g, '')}
+                            </Text>
+                          </View>
+                        )}
+                      <View key={index}>
                         {item.role === 'bot' && (
-                          <>
+                          <View style={styles.itemContainer}>
                             {item.error && (
                               <Text style={styles.itemText}>
                                 {JSON.stringify(item1?.toString())?.replace(
@@ -756,18 +827,17 @@ const WardsDBAIScreen = () => {
                                 )}
                               </Text>
                             )}
+
                             {!item.error && (
                               <ScrollView
                                 horizontal={true}
                                 style={{marginBottom: 20, marginTop: -25}}>
-                                <View>
+                                <View style={{flex: 1}}>
                                   <View
                                     style={{
                                       borderWidth: 0,
                                       borderColor: Colors.white,
                                       flexDirection: 'row',
-                                      // borderWidth: 1,
-                                      // borderRightWidth: 0,
                                       borderColor: Colors.white,
                                       padding: 10,
                                       marginBottom: 0,
@@ -780,7 +850,9 @@ const WardsDBAIScreen = () => {
                                           {padding: 0},
                                         ]}>
                                         <Text style={styles.itemText}>
-                                          {/* {item.role === 'user' && JSON.stringify(col)} */}
+                                          {/* {item.role === 'bot' && (
+                                            <>{JSON.stringify(col)}</>
+                                          )} */}
                                           {item.role === 'bot' && (
                                             <DynamicKeyValueDisplayBody1
                                               data={col}
@@ -794,9 +866,6 @@ const WardsDBAIScreen = () => {
                                     style={{
                                       borderWidth: 0,
                                       borderColor: Colors.white,
-                                      // flexDirection: 'row',
-                                      // borderWidth: 1,
-                                      // borderRightWidth: 0,
                                       borderColor: Colors.white,
                                       paddingHorizontal: 10,
                                       marginTop: -10,
@@ -809,8 +878,6 @@ const WardsDBAIScreen = () => {
                                           {padding: 0},
                                         ]}>
                                         <Text style={styles.itemText}>
-                                          {/* {item.role === 'user' && JSON.stringify(col)} */}
-                                          {/* {index} */}
                                           {item.role === 'bot' &&
                                             Object.entries(val['items']).map(
                                               ([key, value], index) => (
@@ -828,10 +895,10 @@ const WardsDBAIScreen = () => {
                                 </View>
                               </ScrollView>
                             )}
-                          </>
+                          </View>
                         )}
                       </View>
-                    </View>
+                    </>
                   ))}
                 </View>
                 {item.role === 'bot' && item.chartData.length > 0 && (
@@ -842,30 +909,22 @@ const WardsDBAIScreen = () => {
                       alignItems: 'center',
                       marginVertical: 15,
                     }}>
-                    {/* <Text style={{marginBottom: 20, fontSize: 18}}>
-                      Monthly Sales
-                    </Text> */}
                     <BarChart
                       data={item.chartData}
-                      // height={200}
                       barWidth={40}
                       width={screenWidth}
                       spacing={20}
-                      // roundedTop
                       yAxisThickness={1}
                       xAxisThickness={1}
                       isAnimated
-                      // noOfSections={2}
                       barBorderRadius={4}
                       sideWidth={15}
-                      // isThreeD
                       cappedBars
                       capColor={'rgba(78, 0, 142)'}
                       capThickness={4}
                       showGradient
                       gradientColor={'rgba(200, 100, 244,0.8)'}
                       frontColor={'rgba(219, 182, 249,0.2)'}
-                      // showLine
                       xAxisLabelsVerticalShift={20}
                       lineConfig={{
                         color: '#4CAF50',
@@ -873,20 +932,13 @@ const WardsDBAIScreen = () => {
                         curved: true,
                       }}
                       xAxisLabelTextStyle={styles.labelTextStyle}
-                      // yAxisMin={0}
-                      // yAxisLabelTexts={item.chartData.map(item => item.value)}
-                      // hideYAxisText
-                      // yAxisLabelPrefix=""
-                      // yAxisLabelSuffix=""
                       yAxisLabelContainerStyle={styles.labelTextStyle1}
                       renderTooltip={(item, index) => {
                         return (
                           <View
                             style={{
-                              // marginBottom: 0,
                               marginLeft: -6,
                               backgroundColor: Colors.primary,
-                              // top: 20,
                               padding: 5,
 
                               borderRadius: 4,
