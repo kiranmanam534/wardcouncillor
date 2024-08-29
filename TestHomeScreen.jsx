@@ -233,7 +233,7 @@ const TestHomeScreen = () => {
             borderWidth: 1,
             borderColor: Colors.white,
           }}>
-          <Text style={{color: Colors.white}}>V.1.0-beta</Text>
+          <Text style={{color: Colors.white}}>V.0.0-beta</Text>
         </TouchableOpacity>
 
         <View style={styles.box}>
