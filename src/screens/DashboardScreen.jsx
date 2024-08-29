@@ -271,13 +271,13 @@ const DashboardScreen = () => {
                     if (loggedUser?.warD_NO == 0) {
                       handleDetailsNavigation(
                         'MayorOutstandingDashboard',
-                        'Oustanding Dashboard',
+                        'Outstanding Dashboard',
                         'Outstanding',
                       );
                     } else {
                       handleDetailsNavigation(
                         'CouncillorDetails',
-                        'Oustanding Debt',
+                        'Outstanding Debt',
                         'Outstanding',
                       );
                     }

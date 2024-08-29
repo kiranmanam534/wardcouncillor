@@ -92,7 +92,8 @@ const PrivateNavigation = () => {
           name="Index"
           component={WardMemberInfoScreen}
           options={({navigation, route}) => ({
-            title: loggedUser.warD_NO == 0 ? 'MAYOR INFO' : 'COUNCILLOR INFO',
+            title:
+              loggedUser.warD_NO == 0 ? `SPEAKER'S INFO` : 'COUNCILLOR INFO',
             headerShown: true,
             headerTitleAlign: 'center',
             navigationBarHidden: true,

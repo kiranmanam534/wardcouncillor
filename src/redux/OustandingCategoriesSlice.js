@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { GetCouncillorWardDetailsIfoByCategoryApi } from '../services/councillorWardApi';
+import {createSlice} from '@reduxjs/toolkit';
+import {GetCouncillorWardDetailsIfoByCategoryApi} from '../services/councillorWardApi';
 
 const OustandingCategoriesSlice = createSlice({
   name: 'OustandingCategoriesSlice',
@@ -7,7 +7,7 @@ const OustandingCategoriesSlice = createSlice({
     items: null,
     isLoading: false,
     error: null,
-    statusCode: null
+    statusCode: null,
   },
   reducers: {
     clearWards: (state, action) => {
@@ -27,27 +27,27 @@ const OustandingCategoriesSlice = createSlice({
         GetCouncillorWardDetailsIfoByCategoryApi.fulfilled,
         (state, action) => {
           state.isLoading = false;
-          console.log("fulfilled");
+          console.log('fulfilled');
           console.log(action.payload);
           state.items = action.payload.data;
-          state.error = action.payload.message
-          state.statusCode = action.payload.statusCode
+          state.error = action.payload.message;
+          state.statusCode = action.payload.statusCode;
         },
       )
       .addCase(
         GetCouncillorWardDetailsIfoByCategoryApi.rejected,
         (state, action) => {
           state.isLoading = false;
-          console.log("fulfilled");
+          console.log('fulfilled');
           console.log(action.payload);
           state.error = action.error.message;
           state.items = null;
-          state.statusCode = action.payload.statusCode
+          state.statusCode = action.payload.statusCode;
         },
       );
   },
 });
 
-export const OustandingCategoriesActions = OustandingCategoriesSlice.actions
+export const OustandingCategoriesActions = OustandingCategoriesSlice.actions;
 
 export default OustandingCategoriesSlice;

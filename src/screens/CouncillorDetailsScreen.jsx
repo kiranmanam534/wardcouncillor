@@ -1,43 +1,47 @@
-import { View, StyleSheet, ScrollView, Alert, FlatList, Text, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 import CardItem from '../components/CardItem';
-import { GetCouncillorWardDetailsIfoByWardNo } from '../services/councillorWardApi';
+import {GetCouncillorWardDetailsIfoByWardNo} from '../services/councillorWardApi';
 
-import {
-  GetwardHeaderTownshipTitle,
-} from '../utility/Commom';
-import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
-import { councillorWardsActions } from '../redux/councillorWardsSlice';
+import {GetwardHeaderTownshipTitle} from '../utility/Commom';
+import {WardMemberSliceActions} from '../redux/councillorWardTownshipMemberSlice';
+import {councillorWardsActions} from '../redux/councillorWardsSlice';
 import ErrorModal from '../components/ErrorModal';
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import CardItemLoading from '../components/CardItemLoading';
 import ShowMessageCenter from '../components/ShowMessageCenter';
-import { getSelectedWardNoByType } from '../utility/getWardNoByType';
+import {getSelectedWardNoByType} from '../utility/getWardNoByType';
 
-const CouncillorDetailsScreen = ({ route }) => {
+const CouncillorDetailsScreen = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { wardType } = route.params;
-  console.log(wardType)
+  const {wardType} = route.params;
+  console.log(wardType);
   const [showErrorModal, setShowErrorModal] = useState(false);
   // const [OustandingItem, setOustandingItem] = useState([])
   const loggedUser = useSelector(state => state.loginReducer.items);
-  const { items, isLoading, error, statusCode } = useSelector(
+  const {items, isLoading, error, statusCode} = useSelector(
     state => state.WardOustandingReducer,
   );
 
-  const { wardNo: mayorSelectedWardNo } = useSelector(
+  const {wardNo: mayorSelectedWardNo} = useSelector(
     state => state.MayorSelectedWardReducer,
   );
 
-  console.log("mayorSelectedWardNo", mayorSelectedWardNo)
-
-
+  console.log('mayorSelectedWardNo', mayorSelectedWardNo);
 
   // useEffect(()=>{
   //   setOustandingItem(items)
@@ -48,13 +52,15 @@ const CouncillorDetailsScreen = ({ route }) => {
     // console.log('====================================');
     // console.log(OustandingItem);
     // console.log('====================================');
-    navigation.navigate('OustandingCharts', { title: 'Oustanding Charts' })
+    navigation.navigate('OustandingCharts', {title: 'Outstanding Charts'});
   };
   React.useLayoutEffect(() => {
     if (['Outstanding', 'OutstandingCategory'].includes(wardType)) {
       navigation.setOptions({
         headerRight: () => (
-          <TouchableOpacity onPress={showOutstandingCharts} style={styles.searchButton}>
+          <TouchableOpacity
+            onPress={showOutstandingCharts}
+            style={styles.searchButton}>
             {/* <Text style={styles.searchButtonText}>Search</Text> */}
             <Icon name="pie-chart" size={25} color={Colors.white} />
           </TouchableOpacity>
@@ -65,16 +71,17 @@ const CouncillorDetailsScreen = ({ route }) => {
 
   useEffect(() => {
     // getSelectedWardNoByType(wardType,loggedUser?.warD_NO,maylorSelectedWardNo)
-    dispatch(councillorWardsActions.clearWards())
+    dispatch(councillorWardsActions.clearWards());
     setTimeout(() => {
       dispatch(
         GetCouncillorWardDetailsIfoByWardNo({
-          wardNo: mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO,
+          wardNo: mayorSelectedWardNo
+            ? mayorSelectedWardNo
+            : loggedUser?.warD_NO,
           wardType: wardType,
         }),
       );
     }, 100);
-
   }, [loggedUser?.warD_NO, wardType, mayorSelectedWardNo]);
 
   const navigateToDetail = (wardType, name) => {
@@ -82,8 +89,9 @@ const CouncillorDetailsScreen = ({ route }) => {
       dispatch(WardMemberSliceActions.clearWardMemberData());
       navigation.navigate('CouncillorView', {
         title:
-          `${mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO} - ` +
-          GetwardHeaderTownshipTitle(wardType, name),
+          `${
+            mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO
+          } - ` + GetwardHeaderTownshipTitle(wardType, name),
         wardType: wardType,
         name: name,
         township: '',
@@ -91,14 +99,14 @@ const CouncillorDetailsScreen = ({ route }) => {
     } else {
       navigation.navigate('CouncillorDetail', {
         title:
-          `${mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO} - ` +
-          GetwardHeaderTownshipTitle(wardType, name),
+          `${
+            mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO
+          } - ` + GetwardHeaderTownshipTitle(wardType, name),
         wardType: wardType,
         name: name,
       });
     }
   };
-
 
   useEffect(() => {
     if (!isLoading && error) {
@@ -115,9 +123,15 @@ const CouncillorDetailsScreen = ({ route }) => {
 
   return (
     <>
-
-      {statusCode && statusCode !== 200 &&
-        <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'} />}
+      {statusCode && statusCode !== 200 && (
+        <ShowMessageCenter
+          message={
+            error == 'No data found.'
+              ? 'No data found.'
+              : 'Something went wrong!'
+          }
+        />
+      )}
 
       {statusCode && statusCode === 200 && items.length == 0 && (
         <ShowMessageCenter message={'No data found!'} />
@@ -133,11 +147,11 @@ const CouncillorDetailsScreen = ({ route }) => {
       {isLoading && (
         <FlatList
           data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-          renderItem={({ item }) => <CardItemLoading />}
+          renderItem={({item}) => <CardItemLoading />}
           keyExtractor={(item, index) => index.toString()}
-        // onEndReached={handleLoadMore}
-        // onEndReachedThreshold={10} // Adjust the threshold as needed
-        // ListFooterComponent={renderFooter}
+          // onEndReached={handleLoadMore}
+          // onEndReachedThreshold={10} // Adjust the threshold as needed
+          // ListFooterComponent={renderFooter}
         />
       )}
       <ScrollView>
@@ -150,7 +164,11 @@ const CouncillorDetailsScreen = ({ route }) => {
               isTownship={false}
               wardType={wardType}
               value={parseFloat(item.value)}
-              isAmount={['Outstanding', 'OutstandingCategory'].includes(wardType) ? true : false}
+              isAmount={
+                ['Outstanding', 'OutstandingCategory'].includes(wardType)
+                  ? true
+                  : false
+              }
               onPress={() => {
                 navigateToDetail(wardType, item.name);
               }}
