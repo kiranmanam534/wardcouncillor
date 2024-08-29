@@ -38,8 +38,9 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const config_new = {
-  issuer: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/token',
-  clientId: 'F7aubwPETI6TBfCGuUNajDtbreka',
+  // issuer: 'https://coeiamtest.ekurhuleni.gov.za/oauth2/token',
+  issuer: 'https://mycity.ekurhuleni.gov.za/oauth2/token',
+  clientId: 'afH1F2cPhSyLRdvkqQyYmwu3C4ka',
   redirectUrl: 'wardcouncillor:/oauthredirect',
   additionalParameters: {},
   // scopes: ['openid', 'profile', 'email','groups','role'],
@@ -136,19 +137,19 @@ const TestHomeScreen = () => {
       const decodedJwt = Buffer.from(base64, 'base64');
       const data = JSON.parse(decodedJwt.toString('ascii'));
       //Alert.alert('DATA: ', JSON.stringify(data));
-      console.log('====================================');
+      console.log('================1====================');
       console.log(data.groups);
-      console.log('====================================');
-      const IAM_Email = data.sub;
-      console.log('====================================');
+      console.log('=================2===================');
+      const IAM_Email = data.email;
+      console.log('=================3===================');
       console.log(IAM_Email);
-      // console.log(JSON.stringify(data));
-      console.log('====================================');
+      console.log(JSON.stringify(data));
+      console.log('=================4===================');
 
       const exists = data.groups?.includes('Application/Councillor_Mayor');
 
       if (IAM_Email) {
-        console.log(exists);
+        console.log('exists', exists);
         login({
           username: IAM_Email,
           password: 'password',
