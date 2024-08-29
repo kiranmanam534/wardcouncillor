@@ -220,7 +220,10 @@ const TestHomeScreen = () => {
   return (
     <View style={{flex: 1}}>
       <ImageBackground source={banner} style={styles.imageBackground}>
-        <View
+        <TouchableOpacity
+          onPress={() => {
+            handleNavigation('Mayor / Councillor');
+          }}
           style={{
             position: 'absolute',
             bottom: screenHeight / 25,
@@ -230,8 +233,8 @@ const TestHomeScreen = () => {
             borderWidth: 1,
             borderColor: Colors.white,
           }}>
-          <Text style={{color: Colors.white}}>V.1.2-beta</Text>
-        </View>
+          <Text style={{color: Colors.white}}>V.1.0-beta</Text>
+        </TouchableOpacity>
 
         <View style={styles.box}>
           <Image source={logo} style={styles.img} />

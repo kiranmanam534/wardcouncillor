@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Dimensions,
@@ -12,36 +12,38 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { TextInput } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {TextInput} from 'react-native-paper';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
-import { Colors } from '../constant/Colors';
-import { loginApi } from '../services/loginApi';
+import {Colors} from '../constant/Colors';
+import {loginApi} from '../services/loginApi';
 import LoaderModal from '../components/LoaderModal';
 import ErrorModal from '../components/ErrorModal';
-import { authSliceActions } from '../redux/loginSlice';
+import {authSliceActions} from '../redux/loginSlice';
 const logo = require('../assets/images/COE_logo_portrait.png');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-export default function LoginScreen({ route }) {
+export default function LoginScreen({route}) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { title } = route.params;
+  const {title} = route.params;
 
-  const { items, isLoading, error } = useSelector(state => state.loginReducer);
+  const {items, isLoading, error} = useSelector(state => state.loginReducer);
 
   const isLoggedIn = useSelector(state => state.loginReducer.isLoggedIn);
   const [isShowPwd, setIsShowPwd] = useState(true);
   const [click, setClick] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(useSelector(state => state.loginReducer.error ? true : false));
-  const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'councillor2@gmail.com');
-  // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'mayor@ekurhuleni.gov.za');
-  const [password, setPassword] = useState(title === 'community member' ? 'P@ssword12*' : 'admin');
+  const [showErrorModal, setShowErrorModal] = useState(
+    useSelector(state => (state.loginReducer.error ? true : false)),
+  );
+  // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'councillor2@gmail.com');
+  const [username, setUsername] = useState('COESolarDev08@ekurhuleni.gov.za');
+  const [password, setPassword] = useState('#Apps2024!?');
   // const [username, setUsername] = useState(
   //   title === 'community member'
   //     ? 'kannavenkateswarlu29@gmail.com'
@@ -49,8 +51,7 @@ export default function LoginScreen({ route }) {
   // );
   // const [password, setPassword] = useState('admin');
 
-
-  console.log(showErrorModal, error)
+  console.log(showErrorModal, error);
 
   const handleLogin = () => {
     console.log(username);
@@ -80,16 +81,18 @@ export default function LoginScreen({ route }) {
   useEffect(() => {
     if (!isLoading && error) {
       // setShowErrorModal(true);
-      Alert.alert("Error", error == "Network error!" ? error : 'username and password wrong.')
+      Alert.alert(
+        'Error',
+        error == 'Network error!' ? error : 'username and password wrong.',
+      );
     }
   }, [error, isLoading]);
 
   const closeModal = () => {
-    dispatch(authSliceActions.logout())
+    dispatch(authSliceActions.logout());
     setTimeout(() => {
       setShowErrorModal(false);
     }, 500);
-
   };
 
   const showPwd = () => {
@@ -118,7 +121,7 @@ export default function LoginScreen({ route }) {
             <TextInput
               mode="outlined"
               label={'EMAIL OR USERNAME'}
-              style={[styles.input, { position: 'relative' }]}
+              style={[styles.input, {position: 'relative'}]}
               // placeholder="EMAIL OR USERNAME"
               // placeholderTextColor={Colors.black}
               value={username}
@@ -178,7 +181,7 @@ export default function LoginScreen({ route }) {
             <Switch
               value={click}
               onValueChange={setClick}
-              trackColor={{ true: Colors.primary, false: Colors.blue }}
+              trackColor={{true: Colors.primary, false: Colors.blue}}
             />
             <Text style={styles.rememberText}>Remember Me</Text>
           </View>
@@ -215,7 +218,7 @@ export default function LoginScreen({ route }) {
             <Text
               style={styles.signup}
               onPress={() => {
-                navigation.navigate('SignUp', { title: title });
+                navigation.navigate('SignUp', {title: title});
               }}>
               {' '}
               Sign Up
@@ -333,7 +336,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     alignSelf: 'center',
     elevation: 1,
-    marginTop: 50
+    marginTop: 50,
   },
   img: {
     width: screenWidth / 2 - 60,
