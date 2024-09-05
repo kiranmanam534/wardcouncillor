@@ -30,6 +30,7 @@ const Collections_Billing_BarChartScreen = ({route}) => {
   const [IsSubmitted, setIsSubmitted] = useState(false);
   const [statusCode, setStatusCode] = useState(null);
   const [WardCompareData, setWardCompareData] = useState([]);
+  const [WardCompareGroupedData, setWardCompareGroupedData] = useState();
   const [SelectedWarData, setSelectedWarData] = useState();
   const [SelectedWarInfo, setSelectedWarInfo] = useState();
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -147,7 +148,7 @@ const Collections_Billing_BarChartScreen = ({route}) => {
 
     // Determine the maximum value from the data
     const maxValue = Math.max(
-      ...ddd.map(item => parseInt(formatNumber1(item.value))),
+      ...ddd.map(item => parseFloat(formatNumber1(item.value))),
     );
     const maxValue1 = Math.max(...ddd.map(item => parseInt(item.value)));
     setMaxAbsValue(maxValue);
@@ -200,15 +201,23 @@ const Collections_Billing_BarChartScreen = ({route}) => {
         barchartData = [...barchartData].sort(
           (a, b) => parseInt(a.monthNumber) - parseInt(b.monthNumber),
         );
+
+        // Group and sum the values
+        const groupedData = groupByLabel(barchartData);
+
+        console.log(groupedData);
+        setWardCompareGroupedData(groupedData);
+
         // console.log(sortedUsers);
 
         // Determine the maximum value from the data
         const maxValue = Math.max(
-          ...barchartData.map(item => parseInt(formatNumber1(item.value))),
+          ...barchartData.map(item => parseInt(item.value)),
         );
-        setMaxAbsValue(maxValue);
+        setMaxAbsValue(maxValue / 1000000);
+        console.log(`maxValue: ${maxValue / 1000000}`);
 
-        const sectionValue = Math.round(maxValue / 5);
+        const sectionValue = Math.round(maxValue / 1000000 / 5);
         console.log(sectionValue);
 
         setYAxisLabels(
@@ -216,13 +225,17 @@ const Collections_Billing_BarChartScreen = ({route}) => {
             formatYLabel(sectionValue * i),
           ),
         );
+        for (const i in barchartData) {
+          const p = barchartData[i].value / 1000000; //Math.round((maxValue / barchartData[i].value) * 100);
+          console.log(`% is  ${p}`);
+        }
 
         setWardCompareData(
           barchartData?.map(item => ({
             type: item.type,
             month: item.label,
             actualValue: item.value,
-            value: item.value,
+            value: item.value / 1000000, //Math.round((maxValue / item.value) * 100),
             label: item.type == 'Collection' ? `${item.label}` : '',
             // spacing: 10,
             // labelWidth: 50,
@@ -242,6 +255,7 @@ const Collections_Billing_BarChartScreen = ({route}) => {
       }
 
       setWardCompareData([]);
+      setWardCompareGroupedData();
     }
   };
 
@@ -270,6 +284,22 @@ const Collections_Billing_BarChartScreen = ({route}) => {
     getWardwiseCollections();
     // chart_km()
   }, []);
+
+  // Function to group by label and sum values under the label
+  const groupByLabel = data => {
+    return data.reduce((acc, item) => {
+      const {label, type, value} = item;
+      const numericValue = parseFloat(value);
+
+      if (!acc[label]) {
+        acc[label] = {Billing: 0, Collection: 0};
+      }
+
+      acc[label][type] += numericValue;
+
+      return acc;
+    }, {});
+  };
 
   // console.log(WardCompareData)
 
@@ -341,6 +371,115 @@ const Collections_Billing_BarChartScreen = ({route}) => {
     );
   };
 
+  const renderBarValues = () => {
+    console.log(
+      `WardCompareGroupedData : ${JSON.stringify(
+        Object.keys(WardCompareGroupedData),
+      )}`,
+    );
+
+    return (
+      <>
+        {WardCompareGroupedData && (
+          <View
+            style={{
+              margin: 10,
+              backgroundColor: Colors.primary,
+              padding: 10,
+              borderRadius: 10,
+            }}>
+            {Object.keys(WardCompareGroupedData).map(key => (
+              <View
+                key={key}
+                style={{
+                  borderBottomWidth: 1,
+                  borderBottomColor: Colors.white,
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Text
+                    style={{
+                      color: Colors.white,
+                      padding: 5,
+                      width: 80,
+                    }}>
+                    Month
+                  </Text>
+                  <Text
+                    style={{
+                      color: Colors.yellow,
+                      padding: 5,
+                      fontWeight: 'bold',
+                    }}>
+                    : {key}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{color: Colors.white, padding: 5, width: 80}}>
+                    Billing
+                  </Text>
+                  <Text
+                    style={{
+                      color: Colors.white,
+                      padding: 5,
+                      fontWeight: 'bold',
+                    }}>
+                    :{' '}
+                    {formattedAmount(
+                      parseFloat(WardCompareGroupedData[key].Billing),
+                      'en-ZA',
+                      'ZAR',
+                      'currency',
+                    )}
+                  </Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{color: Colors.white, padding: 5, width: 80}}>
+                    Collection
+                  </Text>
+                  <Text
+                    style={{
+                      color: Colors.white,
+                      padding: 5,
+                      fontWeight: 'bold',
+                    }}>
+                    :{' '}
+                    {formattedAmount(
+                      parseFloat(WardCompareGroupedData[key].Collection),
+                      'en-ZA',
+                      'ZAR',
+                      'currency',
+                    )}
+                  </Text>
+                </View>
+              </View>
+            ))}
+            {/* {WardCompareGroupedData?.map((item, i) => (
+              <View
+                key={i}
+                style={{borderBottomWidth: 1, borderBottomColor: Colors.white}}>
+                <Text style={{color: Colors.white, padding: 5}}>
+                  Type : {item.type}
+                </Text>
+                <Text style={{color: Colors.white, padding: 5}}>
+                  Month : {item.month}
+                </Text>
+                <Text style={{color: Colors.white, padding: 5}}>
+                  Amount :{' '}
+                  {formattedAmount(
+                    parseFloat(item.actualValue),
+                    'en-ZA',
+                    'ZAR',
+                    'currency',
+                  )}
+                </Text>
+              </View>
+            ))} */}
+          </View>
+        )}
+      </>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={{marginTop: 10}}>
@@ -405,10 +544,11 @@ const Collections_Billing_BarChartScreen = ({route}) => {
                       paddingHorizontal: 6,
                       paddingVertical: 4,
                       borderRadius: 4,
+                      top: 20,
                     }}>
                     <Text>
                       {formattedAmount(
-                        parseFloat(item.value),
+                        parseFloat(item.actualValue),
                         'en-ZA',
                         'ZAR',
                         'currency',
@@ -447,6 +587,7 @@ const Collections_Billing_BarChartScreen = ({route}) => {
             )}
           </View>
         )}
+        {WardCompareGroupedData && renderBarValues()}
       </ScrollView>
     </SafeAreaView>
   );
