@@ -12,6 +12,7 @@ import {
   Pressable,
   Image,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
@@ -373,71 +374,75 @@ Regards *City of Ekurhuleni.*`;
         />} */}
 
       {/* <TestMapView/> */}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={100}>
+        {isLoading && (
+          <FlatList
+            data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+            renderItem={({item}) => <CardItemLoading />}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
+        {!isLoading && items?.length > 0 && (
+          <FlatList
+            data={items}
+            renderItem={({item}) => (
+              <TownshipCard
+                // key={index}
+                wardType={wardType}
+                item={item}
+                name={name}
+                onPress={() => {
+                  handlePress(item.cellphonenumber);
+                }}
+                showImage={() => {
+                  openMeterImage(item?.id);
+                }}
+                showMap={() => {
+                  openPropertyMap(item);
+                }}
+                imageLoading={imageLoading}
+                ImageId={selectedImageId}
+                sendSMS={() => {
+                  handleSMS(item);
+                }}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={handleLoadMore}
+            // onEndReachedThreshold={10} // Adjust the threshold as needed
+            ListFooterComponent={renderFooter}
+          />
+        )}
 
-      {isLoading && (
-        <FlatList
-          data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-          renderItem={({item}) => <CardItemLoading />}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      )}
-      {!isLoading && items?.length > 0 && (
-        <FlatList
-          data={items}
-          renderItem={({item}) => (
-            <TownshipCard
-              // key={index}
-              wardType={wardType}
-              item={item}
-              name={name}
-              onPress={() => {
-                handlePress(item.cellphonenumber);
-              }}
-              showImage={() => {
-                openMeterImage(item?.id);
-              }}
-              showMap={() => {
-                openPropertyMap(item);
-              }}
-              imageLoading={imageLoading}
-              ImageId={selectedImageId}
-              sendSMS={() => {
-                handleSMS(item);
-              }}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          onEndReached={handleLoadMore}
-          // onEndReachedThreshold={10} // Adjust the threshold as needed
-          ListFooterComponent={renderFooter}
-        />
-      )}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Toast position="bottom" bottomOffset={20} />
+        </View>
 
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Toast position="bottom" bottomOffset={20} />
-      </View>
-
-      {/* <Pressable style={styles.toggleButton} onPress={toggleSearchBox}>
+        {/* <Pressable style={styles.toggleButton} onPress={toggleSearchBox}>
         <Ionicons
           name={showSearchBox ? 'close' : 'search'}
           size={30}
           color={Colors.white}
         />
       </Pressable> */}
-      {/* {showSearchBox && ( */}
-      <BottomSearchBox
-        onChangeText={handleBottomSearchBox}
-        onPress={handleSearch}
-        value={searchText}
-        // setSearchText={setSearchText}
-        placeholder={searchPlaceholderText}
-        isLoading={isLoading}
-      />
+        {/* {showSearchBox && ( */}
+        <BottomSearchBox
+          onChangeText={handleBottomSearchBox}
+          onPress={handleSearch}
+          value={searchText}
+          // setSearchText={setSearchText}
+          placeholder={searchPlaceholderText}
+          isLoading={isLoading}
+        />
+      </KeyboardAvoidingView>
       {/* )} */}
     </View>
   );

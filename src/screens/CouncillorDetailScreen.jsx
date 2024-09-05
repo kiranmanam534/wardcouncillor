@@ -6,42 +6,43 @@ import {
   Text,
   FlatList,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
 
 import CardItem from '../components/CardItem';
-import { GetCouncillorWardTownshipIfoByWardNo } from '../services/councillorWardApi';
+import {GetCouncillorWardTownshipIfoByWardNo} from '../services/councillorWardApi';
 import LoaderModal from '../components/LoaderModal';
-import { GetwardHeaderTownshipTitle } from '../utility/Commom';
-import { WardMemberSliceActions } from '../redux/councillorWardTownshipMemberSlice';
+import {GetwardHeaderTownshipTitle} from '../utility/Commom';
+import {WardMemberSliceActions} from '../redux/councillorWardTownshipMemberSlice';
 import BottomSearchBox from '../components/BottomSearchBox';
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import ShowMessageCenter from '../components/ShowMessageCenter';
 import CardItemLoading from '../components/CardItemLoading';
 
-const CouncillorDetailScreen = ({ route }) => {
+const CouncillorDetailScreen = ({route}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { title: parentTitle, wardType, name } = route.params;
+  const {title: parentTitle, wardType, name} = route.params;
 
   const [searchText, setSearchText] = useState('');
   const [showSearchBox, setShowSearchBox] = useState(false);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
-  const { items, isLoading, error, statusCode } = useSelector(
+  const {items, isLoading, error, statusCode} = useSelector(
     state => state.councillorWardTownshipReducer,
   );
 
-
-  const { wardNo: mayorSelectedWardNo } = useSelector(
+  const {wardNo: mayorSelectedWardNo} = useSelector(
     state => state.MayorSelectedWardReducer,
   );
 
-  console.log("CouncillorDetailScreen=>",items)
+  console.log('CouncillorDetailScreen=>', items);
 
   useEffect(() => {
     dispatch(
@@ -52,14 +53,17 @@ const CouncillorDetailScreen = ({ route }) => {
         search: '',
       }),
     );
-  }, [loggedUser?.warD_NO, wardType, name,mayorSelectedWardNo]);
+  }, [loggedUser?.warD_NO, wardType, name, mayorSelectedWardNo]);
 
   console.log('items', items);
 
   const navigateToDetail = (title, township) => {
     dispatch(WardMemberSliceActions.clearWardMemberData());
     navigation.navigate('CouncillorView', {
-      title: `${mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO} - ` + title,
+      title:
+        `${
+          mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO
+        } - ` + title,
       wardType: wardType,
       name: name,
       township: township,
@@ -103,50 +107,64 @@ const CouncillorDetailScreen = ({ route }) => {
   // }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       {/* {isLoading && (
         <LoaderModal visible={isLoading} loadingText="Loading..." />
       )} */}
 
-      {statusCode && statusCode !== 200 &&
-        <ShowMessageCenter message={error == 'No data found.' ? 'No data found.' : 'Something went wrong!'}/>}
+      {statusCode && statusCode !== 200 && (
+        <ShowMessageCenter
+          message={
+            error == 'No data found.'
+              ? 'No data found.'
+              : 'Something went wrong!'
+          }
+        />
+      )}
 
-
-      {statusCode &&statusCode === 200 && items?.length == 0 && (
+      {statusCode && statusCode === 200 && items?.length == 0 && (
         <ShowMessageCenter message={'No data found!'} />
       )}
-      {isLoading && (
-        <FlatList
-          data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-          renderItem={({ item }) => <CardItemLoading />}
-          keyExtractor={(item, index) => index.toString()}
-        // onEndReached={handleLoadMore}
-        // onEndReachedThreshold={10} // Adjust the threshold as needed
-        // ListFooterComponent={renderFooter}
-        />
-      )}
-      {!isLoading && items?.length > 0 && (
-        <FlatList
-          data={items}
-          renderItem={({ item }) => (
-            <CardItem
-              key={item.name}
-              title={item.name}
-              value={parseFloat(item.value)}
-              wardType={wardType}
-              isTownship={true}
-              isAmount={['Outstanding','OutstandingCategory'].includes(wardType) ? true : false}
-              onPress={() => {
-                navigateToDetail(item.name, item.name);
-              }}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      )}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={100}>
+        {isLoading && (
+          <FlatList
+            data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+            renderItem={({item}) => <CardItemLoading />}
+            keyExtractor={(item, index) => index.toString()}
+            // onEndReached={handleLoadMore}
+            // onEndReachedThreshold={10} // Adjust the threshold as needed
+            // ListFooterComponent={renderFooter}
+          />
+        )}
+        {!isLoading && items?.length > 0 && (
+          <FlatList
+            data={items}
+            renderItem={({item}) => (
+              <CardItem
+                key={item.name}
+                title={item.name}
+                value={parseFloat(item.value)}
+                wardType={wardType}
+                isTownship={true}
+                isAmount={
+                  ['Outstanding', 'OutstandingCategory'].includes(wardType)
+                    ? true
+                    : false
+                }
+                onPress={() => {
+                  navigateToDetail(item.name, item.name);
+                }}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
 
-      {/* <View> */}
-      {/* {items.length > 0 &&
+        {/* <View> */}
+        {/* {items.length > 0 &&
           items.map(item => (
             <CardItem
               key={item.name}
@@ -162,7 +180,7 @@ const CouncillorDetailScreen = ({ route }) => {
           ))}
       </View> */}
 
-      {/* <Pressable style={styles.toggleButton} onPress={toggleSearchBox}>
+        {/* <Pressable style={styles.toggleButton} onPress={toggleSearchBox}>
         <Ionicons
           name={showSearchBox ? 'close' : 'search'}
           size={30}
@@ -170,15 +188,16 @@ const CouncillorDetailScreen = ({ route }) => {
         />
       </Pressable> */}
 
-      {/* {showSearchBox && ( */}
-      <BottomSearchBox
-        onChangeText={handleBottomSearchBox}
-        onPress={handleSearch}
-        value={searchText}
-        // setSearchText={setSearchText}
-        placeholder={'search by name...'}
-        isLoading={isLoading}
-      />
+        {/* {showSearchBox && ( */}
+        <BottomSearchBox
+          onChangeText={handleBottomSearchBox}
+          onPress={handleSearch}
+          value={searchText}
+          // setSearchText={setSearchText}
+          placeholder={'search by name...'}
+          isLoading={isLoading}
+        />
+      </KeyboardAvoidingView>
       {/* )} */}
     </View>
   );

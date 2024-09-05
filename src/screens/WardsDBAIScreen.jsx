@@ -17,6 +17,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  useWindowDimensions,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -41,6 +42,8 @@ const chartData1 = [
 ];
 
 const WardsDBAIScreen = () => {
+  const {height} = useWindowDimensions();
+  console.log('height==>', height);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [headers, setHeaders] = useState([]);
@@ -734,27 +737,80 @@ const WardsDBAIScreen = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={{flex: 1}}>
+        {/* {Platform.OS == 'ios' && (
+          <View
+            style={[
+              styles.container1,
+              {position: 'relative', marginVertical: 40},
+            ]}>
+            <View
+              style={{
+                width: '98%',
+                flexDirection: 'row',
+                position: 'absolute',
+                marginLeft: 5,
+              }}>
+              {isListening ? (
+                <View style={styles.recordingContainer}>
+                  <Text style={styles.timerText}>
+                    <Text style={styles.statusText}>Recording...</Text>
+                  </Text>
+                </View>
+              ) : (
+                <View style={{flexDirection: 'row', width: '87%'}}>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Type or Speak..."
+                    multiline
+                    value={input}
+                    onChangeText={setInput}
+                  />
+                  <TouchableOpacity
+                    style={styles.sendButton}
+                    onPress={sendMessage}>
+                    <Icon name="send" size={24} color={Colors.blue} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              <View style={{width: '13%'}}>
+                <TouchableOpacity
+                  onPress={isListening ? stopListening : startListening}
+                  style={[styles.voiceButton, isListening && styles.recording]}>
+                  <MaterialIcon
+                    name={isListening ? 'stop' : 'mic'}
+                    size={30}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )} */}
         <View style={styles.container}>
-          <FlatList
-            style={{position: 'relative'}}
-            ref={flatListRef}
-            data={messages}
-            renderItem={({item}) => (
-              <>
-                {item.role === 'user' &&
-                  isLoading &&
-                  item.count == loadingCount && (
-                    <View
-                      style={{
-                        position: 'absolute',
-                        right: 0,
-                        left: 0,
-                        top: 50,
-                      }}>
-                      <LoadingDots />
-                    </View>
-                  )}
-                {/* {item.sqlQuery && (
+          <KeyboardAvoidingView
+            style={{flex: 1}}
+            behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={100}>
+            <FlatList
+              style={{position: 'relative'}}
+              ref={flatListRef}
+              data={messages}
+              renderItem={({item}) => (
+                <>
+                  {item.role === 'user' &&
+                    isLoading &&
+                    item.count == loadingCount && (
+                      <View
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          left: 0,
+                          top: 50,
+                        }}>
+                        <LoadingDots />
+                      </View>
+                    )}
+                  {/* {item.sqlQuery && (
                   <View
                     style={[
                       styles.botMessage,
@@ -780,189 +836,189 @@ const WardsDBAIScreen = () => {
                   </View>
                 )} */}
 
-                <View
-                  style={
-                    item.role === 'user'
-                      ? styles.userMessage
-                      : styles.botMessage
-                  }>
-                  {item.role === 'bot' && (
-                    <View>
-                      <Text
-                        style={{
-                          color: Colors.yellow,
-                          // textDecorationLine: 'underline',
-                          fontSize: 15,
-                          paddingHorizontal: 20,
-                          paddingVertical: 20,
-                          // paddingTop: 5,
-                        }}>
-                        {/* #Result: */}
-                        {item.question?.replace(/"/g, '')}
-                      </Text>
-                      {/* <Text style={[styles.itemText, {padding: 10}]}>
+                  <View
+                    style={
+                      item.role === 'user'
+                        ? styles.userMessage
+                        : styles.botMessage
+                    }>
+                    {item.role === 'bot' && (
+                      <View>
+                        <Text
+                          style={{
+                            color: Colors.yellow,
+                            // textDecorationLine: 'underline',
+                            fontSize: 15,
+                            paddingHorizontal: 20,
+                            paddingVertical: 20,
+                            // paddingTop: 5,
+                          }}>
+                          {/* #Result: */}
+                          {item.question?.replace(/"/g, '')}
+                        </Text>
+                        {/* <Text style={[styles.itemText, {padding: 10}]}>
                         {item.question?.replace(/"/g, '')}
                       </Text> */}
-                    </View>
-                  )}
-                  {item?.content?.map((item1, index) => (
-                    <>
-                      {isLoading &&
-                        item.count == loadingCount &&
-                        item.role === 'user' && (
-                          <View style={styles.itemContainer}>
-                            <Text style={styles.itemText}>
-                              {JSON.stringify(item1)?.replace(/"/g, '')}
-                            </Text>
-                          </View>
-                        )}
-                      <View key={index}>
-                        {item.role === 'bot' && (
-                          <View style={styles.itemContainer}>
-                            {item.error && (
+                      </View>
+                    )}
+                    {item?.content?.map((item1, index) => (
+                      <>
+                        {isLoading &&
+                          item.count == loadingCount &&
+                          item.role === 'user' && (
+                            <View style={styles.itemContainer}>
                               <Text style={styles.itemText}>
-                                {JSON.stringify(item1?.toString())?.replace(
-                                  /"/g,
-                                  '',
-                                )}
+                                {JSON.stringify(item1)?.replace(/"/g, '')}
                               </Text>
-                            )}
+                            </View>
+                          )}
+                        <View key={index}>
+                          {item.role === 'bot' && (
+                            <View style={styles.itemContainer}>
+                              {item.error && (
+                                <Text style={styles.itemText}>
+                                  {JSON.stringify(item1?.toString())?.replace(
+                                    /"/g,
+                                    '',
+                                  )}
+                                </Text>
+                              )}
 
-                            {!item.error && (
-                              <ScrollView
-                                horizontal={true}
-                                style={{marginBottom: 20, marginTop: -25}}>
-                                <View style={{flex: 1}}>
-                                  <View
-                                    style={{
-                                      borderWidth: 0,
-                                      borderColor: Colors.white,
-                                      flexDirection: 'row',
-                                      borderColor: Colors.white,
-                                      padding: 10,
-                                      marginBottom: 0,
-                                    }}>
-                                    {item?.keysList?.map((col, index) => (
-                                      <View
-                                        key={index}
-                                        style={[
-                                          styles.itemContainer,
-                                          {padding: 0},
-                                        ]}>
-                                        <Text style={styles.itemText}>
-                                          {/* {item.role === 'bot' && (
+                              {!item.error && (
+                                <ScrollView
+                                  horizontal={true}
+                                  style={{marginBottom: 20, marginTop: -25}}>
+                                  <View style={{flex: 1}}>
+                                    <View
+                                      style={{
+                                        borderWidth: 0,
+                                        borderColor: Colors.white,
+                                        flexDirection: 'row',
+                                        borderColor: Colors.white,
+                                        padding: 10,
+                                        marginBottom: 0,
+                                      }}>
+                                      {item?.keysList?.map((col, index) => (
+                                        <View
+                                          key={index}
+                                          style={[
+                                            styles.itemContainer,
+                                            {padding: 0},
+                                          ]}>
+                                          <Text style={styles.itemText}>
+                                            {/* {item.role === 'bot' && (
                                             <>{JSON.stringify(col)}</>
                                           )} */}
-                                          {item.role === 'bot' && (
-                                            <DynamicKeyValueDisplayBody1
-                                              data={col}
-                                            />
-                                          )}
-                                        </Text>
-                                      </View>
-                                    ))}
-                                  </View>
-                                  <View
-                                    style={{
-                                      borderWidth: 0,
-                                      borderColor: Colors.white,
-                                      borderColor: Colors.white,
-                                      paddingHorizontal: 10,
-                                      marginTop: -10,
-                                    }}>
-                                    {item?.ValuesList?.map((val, index) => (
-                                      <View
-                                        key={index}
-                                        style={[
-                                          styles.itemContainer,
-                                          {padding: 0},
-                                        ]}>
-                                        <Text style={styles.itemText}>
-                                          {item.role === 'bot' &&
-                                            Object.entries(val['items']).map(
-                                              ([key, value], index) => (
-                                                <DynamicKeyValueDisplayBody2
-                                                  key={index}
-                                                  data={value}
-                                                  keyId={item?.keysList}
-                                                />
-                                              ),
+                                            {item.role === 'bot' && (
+                                              <DynamicKeyValueDisplayBody1
+                                                data={col}
+                                              />
                                             )}
-                                        </Text>
-                                      </View>
-                                    ))}
+                                          </Text>
+                                        </View>
+                                      ))}
+                                    </View>
+                                    <View
+                                      style={{
+                                        borderWidth: 0,
+                                        borderColor: Colors.white,
+                                        borderColor: Colors.white,
+                                        paddingHorizontal: 10,
+                                        marginTop: -10,
+                                      }}>
+                                      {item?.ValuesList?.map((val, index) => (
+                                        <View
+                                          key={index}
+                                          style={[
+                                            styles.itemContainer,
+                                            {padding: 0},
+                                          ]}>
+                                          <Text style={styles.itemText}>
+                                            {item.role === 'bot' &&
+                                              Object.entries(val['items']).map(
+                                                ([key, value], index) => (
+                                                  <DynamicKeyValueDisplayBody2
+                                                    key={index}
+                                                    data={value}
+                                                    keyId={item?.keysList}
+                                                  />
+                                                ),
+                                              )}
+                                          </Text>
+                                        </View>
+                                      ))}
+                                    </View>
                                   </View>
-                                </View>
-                              </ScrollView>
-                            )}
-                          </View>
-                        )}
-                      </View>
-                    </>
-                  ))}
-                </View>
-                {item.role === 'bot' && item.chartData.length > 0 && (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginVertical: 15,
-                    }}>
-                    <BarChart
-                      data={item.chartData}
-                      barWidth={40}
-                      width={screenWidth}
-                      spacing={20}
-                      yAxisThickness={1}
-                      xAxisThickness={1}
-                      isAnimated
-                      barBorderRadius={4}
-                      sideWidth={15}
-                      cappedBars
-                      capColor={'rgba(78, 0, 142)'}
-                      capThickness={4}
-                      showGradient
-                      gradientColor={'rgba(200, 100, 244,0.8)'}
-                      frontColor={'rgba(219, 182, 249,0.2)'}
-                      xAxisLabelsVerticalShift={20}
-                      lineConfig={{
-                        color: '#4CAF50',
-                        thickness: 2,
-                        curved: true,
-                      }}
-                      xAxisLabelTextStyle={styles.labelTextStyle}
-                      yAxisLabelContainerStyle={styles.labelTextStyle1}
-                      renderTooltip={(item, index) => {
-                        return (
-                          <View
-                            style={{
-                              marginLeft: -6,
-                              backgroundColor: Colors.primary,
-                              padding: 5,
-
-                              borderRadius: 4,
-                            }}>
-                            <Text
-                              style={{
-                                color: Colors.white,
-                                textAlign: 'center',
-                              }}>
-                              {formattedAmount(
-                                parseFloat(item.value),
-                                'en-ZA',
-                                'ZAR',
-                                'currency',
+                                </ScrollView>
                               )}
-                            </Text>
-                          </View>
-                        );
-                      }}
-                    />
+                            </View>
+                          )}
+                        </View>
+                      </>
+                    ))}
                   </View>
-                )}
+                  {item.role === 'bot' && item.chartData.length > 0 && (
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        marginVertical: 15,
+                      }}>
+                      <BarChart
+                        data={item.chartData}
+                        barWidth={40}
+                        width={screenWidth}
+                        spacing={20}
+                        yAxisThickness={1}
+                        xAxisThickness={1}
+                        isAnimated
+                        barBorderRadius={4}
+                        sideWidth={15}
+                        cappedBars
+                        capColor={'rgba(78, 0, 142)'}
+                        capThickness={4}
+                        showGradient
+                        gradientColor={'rgba(200, 100, 244,0.8)'}
+                        frontColor={'rgba(219, 182, 249,0.2)'}
+                        xAxisLabelsVerticalShift={20}
+                        lineConfig={{
+                          color: '#4CAF50',
+                          thickness: 2,
+                          curved: true,
+                        }}
+                        xAxisLabelTextStyle={styles.labelTextStyle}
+                        yAxisLabelContainerStyle={styles.labelTextStyle1}
+                        renderTooltip={(item, index) => {
+                          return (
+                            <View
+                              style={{
+                                marginLeft: -6,
+                                backgroundColor: Colors.primary,
+                                padding: 5,
 
-                {/* {item.role === 'bot' && item.barChatImg && (
+                                borderRadius: 4,
+                              }}>
+                              <Text
+                                style={{
+                                  color: Colors.white,
+                                  textAlign: 'center',
+                                }}>
+                                {formattedAmount(
+                                  parseFloat(item.value),
+                                  'en-ZA',
+                                  'ZAR',
+                                  'currency',
+                                )}
+                              </Text>
+                            </View>
+                          );
+                        }}
+                      />
+                    </View>
+                  )}
+
+                  {/* {item.role === 'bot' && item.barChatImg && (
                   <View
                     style={{
                       backgroundColor: Colors.lightgray,
@@ -972,62 +1028,49 @@ const WardsDBAIScreen = () => {
                     <Image source={{uri: item.barChatImg}} style={styles.img} />
                   </View>
                 )} */}
-              </>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-
-          <View style={styles.container1}>
-            {/* <View>
-              <TouchableOpacity
-                style={[styles.voiceButton, isRecording && styles.recording]}
-                onPressIn={startRecognizing}
-                onPressOut={stopRecognizing}>
-                <MaterialIcon name="mic" size={30} color="#fff" />
-              </TouchableOpacity>
-              <Text style={styles.statusText}>
-                {isRecording ? 'Recording...' : 'Press and hold to record'}
-              </Text>
-            </View> */}
-            {isListening ? (
-              <View style={styles.recordingContainer}>
-                <Text style={styles.timerText}>
-                  {/* {formatTime(timer)}{' '} */}
-                  <Text style={styles.statusText}>Recording...</Text>
-                </Text>
-              </View>
-            ) : (
-              <>
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Type or Speak..."
-                  multiline
-                  value={input}
-                  onChangeText={setInput}
-                />
+                </>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+            {/* {Platform.OS == 'android' && ( */}
+            <View style={styles.container1}>
+              {isListening ? (
+                <View style={styles.recordingContainer}>
+                  <Text style={styles.timerText}>
+                    <Text style={styles.statusText}>Recording...</Text>
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <View style={{flexDirection: 'row', width: '87%'}}>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Type or Speak..."
+                      multiline
+                      value={input}
+                      onChangeText={setInput}
+                    />
+                    <TouchableOpacity
+                      style={styles.sendButton}
+                      onPress={sendMessage}>
+                      <Icon name="send" size={24} color={Colors.blue} />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
+              <View style={{width: '13%'}}>
                 <TouchableOpacity
-                  style={styles.sendButton}
-                  onPress={sendMessage}>
-                  <Icon name="send" size={24} color={Colors.blue} />
+                  onPress={isListening ? stopListening : startListening}
+                  style={[styles.voiceButton, isListening && styles.recording]}>
+                  <MaterialIcon
+                    name={isListening ? 'stop' : 'mic'}
+                    size={30}
+                    color="#fff"
+                  />
                 </TouchableOpacity>
-              </>
-            )}
-            <TouchableOpacity
-              onPress={isListening ? stopListening : startListening}
-              style={[styles.voiceButton, isListening && styles.recording]}>
-              <MaterialIcon
-                name={isListening ? 'stop' : 'mic'}
-                size={30}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            {/* <TouchableOpacity
-              style={[styles.voiceButton, isListening && styles.recording]}
-              onLongPress={startListening}
-              onPressOut={stopListening}>
-              <MaterialIcon name="mic" size={30} color="#fff" />
-            </TouchableOpacity> */}
-          </View>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </View>
     </SafeAreaView>
@@ -1088,17 +1131,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginRight: 10,
     position: 'relative',
+    height: 50,
+    width: 50,
   },
   sendButton: {
     backgroundColor: Colors.lightgray1,
     borderRadius: 20,
-    padding: 10,
+    // padding: (Platform.OS = 'android' ? 20 : 10),
+    height: 45,
+    width: 45,
+    marginVertical: 2.5,
     // paddingVertical: 15,
     // paddingHorizontal: 10,
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    right: 65,
+    right: 13,
   },
   img: {
     width: screenWidth - 50,
@@ -1213,5 +1261,21 @@ const styles1 = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+});
+
+const styles_km = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  inner: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
   },
 });
