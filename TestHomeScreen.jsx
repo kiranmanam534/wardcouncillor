@@ -80,8 +80,8 @@ const TestHomeScreen = () => {
         `${apiUrl}/api/auth/login`,
         loginformData,
       );
-      console.log(response.data);
       const user = response.data.data;
+      console.log('Logged User info===>', user);
       dispatch(authSliceActions.setLoggedUser(user));
       setIAMAuthenticate(false);
     } catch (error) {
@@ -154,6 +154,9 @@ const TestHomeScreen = () => {
           username: IAM_Email,
           password: 'password',
           usertype: 'C',
+          device: Platform.OS,
+          userlattitude: '0.00',
+          userlongitude: '0.00',
         });
       }
     } catch (error) {

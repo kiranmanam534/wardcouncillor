@@ -17,42 +17,181 @@ import {Colors} from '../constant/Colors';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
+// const WardMemberCard = ({wardMember, onPress}) => {
+//   console.log('WardMemberCard', wardMember);
+//   return (
+//     <View style={styles.container}>
+//       <Card style={styles.card}>
+//         <View style={styles.box}>
+//           {/* {wardMember?.Councillor_Picture ? (
+//             <Image
+//               source={{uri: wardMember?.Councillor_Picture}}
+//               style={styles.img}
+//             />
+//           ) : (
+//             <Icon name="user" size={100} color={Colors.blue} />
+//           )} */}
+//           <Icon name="user" size={100} color={Colors.blue} />
+//         </View>
+//         <Card.Content style={{paddingRight: 80, paddingTop: 20}}>
+//           <View style={styles.cardContent}>
+//             <Icon name="user" size={25} color={Colors.blue} />
+//             <Title style={styles.title}>
+//               {wardMember?.FirstName} {wardMember?.Surname}
+//             </Title>
+//           </View>
+
+//           <View style={{flexDirection: 'row', paddingTop: 20}}>
+//             <Text style={styles.contentText}>Ward No</Text>
+//             <Text
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : {wardMember?.WardNo}
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Gender</Text>
+//             <Text
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : {wardMember.Gender == 'M' ? 'Male' : 'Female'}
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Party</Text>
+//             <Text
+//               numberOfLines={5}
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : {wardMember?.Party}
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Email</Text>
+//             <Text
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : {wardMember?.EmailAddress}
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Mobile</Text>
+//             <Text
+//               style={{
+//                 fontWeight: '800',
+//                 fontSize: 15,
+//                 color: Colors.primary,
+//                 textDecorationLine: 'underline',
+//               }}>
+//               : {wardMember?.Mobile}
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Home</Text>
+//             <Text
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : -
+//             </Text>
+//           </View>
+//           <View style={{flexDirection: 'row', paddingTop: 10}}>
+//             <Text style={styles.contentText}>Work</Text>
+//             <Text
+//               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
+//               : -
+//             </Text>
+//           </View>
+//         </Card.Content>
+//         <Divider style={styles.divider} />
+//         <Card.Content
+//           style={[
+//             styles.footer,
+//             {
+//               backgroundColor: Colors.blue,
+//               borderBottomLeftRadius: 15,
+//               borderBottomRightRadius: 15,
+//               height: 50,
+//               borderWidth: 2,
+//               borderColor: Colors.yellow,
+//               justifyContent: 'flex-end',
+//               alignItems: 'center',
+//             },
+//           ]}>
+//           {/* <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>
+//             {wardMember.Gender == 'M' ? 'Male' : 'Female'}
+//           </Paragraph> */}
+//           <View style={{marginTop: 15}}>
+//             <TouchableOpacity
+//               onPress={onPress}
+//               style={[
+//                 styles.btn,
+//                 {
+//                   height: 30,
+//                   width: 200,
+//                   backgroundColor: Colors.white,
+//                   borderRadius: 20,
+//                 },
+//               ]}>
+//               <View
+//                 style={{
+//                   flex: 1,
+//                   alignItems: 'center',
+//                   justifyContent: 'center',
+//                   alignSelf: 'center',
+//                   flexDirection: 'row',
+//                   // marginHorizontal: -20,
+//                 }}>
+//                 <Icon name="hand-o-right" size={20} color={Colors.blue} />
+//                 <Text
+//                   style={[
+//                     styles.text,
+//                     {fontSize: 16, color: Colors.blue, paddingLeft: 5},
+//                   ]}>
+//                   Go To Dashboard
+//                 </Text>
+//               </View>
+//             </TouchableOpacity>
+//           </View>
+//         </Card.Content>
+//       </Card>
+//     </View>
+//   );
+// };
+
 const WardMemberCard = ({wardMember, onPress}) => {
+  console.log('WardMemberCard', wardMember);
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
         <View style={styles.box}>
-          {/* {wardMember?.Councillor_Picture ? (
+          {wardMember?.councilloR_IMAGE ? (
             <Image
-              source={{uri: wardMember?.Councillor_Picture}}
+              source={{uri: wardMember?.councilloR_IMAGE}}
               style={styles.img}
             />
           ) : (
             <Icon name="user" size={100} color={Colors.blue} />
-          )} */}
-          <Icon name="user" size={100} color={Colors.blue} />
+          )}
+          {/* <Icon name="user" size={100} color={Colors.blue} /> */}
         </View>
         <Card.Content style={{paddingRight: 80, paddingTop: 20}}>
           <View style={styles.cardContent}>
             <Icon name="user" size={25} color={Colors.blue} />
             <Title style={styles.title}>
-              {wardMember?.FirstName} {wardMember?.Surname}
+              {wardMember?.name} {wardMember?.surname}
             </Title>
           </View>
-          
-          
+
           <View style={{flexDirection: 'row', paddingTop: 20}}>
             <Text style={styles.contentText}>Ward No</Text>
             <Text
               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
-              : {wardMember?.WardNo}
+              : {wardMember?.warD_NO}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
             <Text style={styles.contentText}>Gender</Text>
             <Text
               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
-              : {wardMember.Gender == 'M' ? 'Male' : 'Female'}
+              :{wardMember.gender}
+              {/* {wardMember.gender && wardMember.gender == 'M'
+                ? 'Male'
+                : 'Female'} */}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
@@ -60,14 +199,14 @@ const WardMemberCard = ({wardMember, onPress}) => {
             <Text
               numberOfLines={5}
               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
-              : {wardMember?.Party}
+              : {wardMember?.party}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
             <Text style={styles.contentText}>Email</Text>
             <Text
               style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
-              : {wardMember?.EmailAddress}
+              : {wardMember?.username}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
@@ -79,14 +218,19 @@ const WardMemberCard = ({wardMember, onPress}) => {
                 color: Colors.primary,
                 textDecorationLine: 'underline',
               }}>
-              : {wardMember?.Mobile}
+              : {wardMember?.cell}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
             <Text style={styles.contentText}>Home</Text>
             <Text
-              style={{fontWeight: '800', fontSize: 15, color: Colors.black}}>
-              : -
+              style={{
+                fontWeight: '800',
+                fontSize: 15,
+                color: Colors.primary,
+                textDecorationLine: 'underline',
+              }}>
+              : {wardMember?.phone}
             </Text>
           </View>
           <View style={{flexDirection: 'row', paddingTop: 10}}>
@@ -108,8 +252,8 @@ const WardMemberCard = ({wardMember, onPress}) => {
               height: 50,
               borderWidth: 2,
               borderColor: Colors.yellow,
-              justifyContent:'flex-end',
-              alignItems:'center'
+              justifyContent: 'flex-end',
+              alignItems: 'center',
             },
           ]}>
           {/* <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 10}]}>
