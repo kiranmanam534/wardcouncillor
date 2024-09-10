@@ -176,9 +176,9 @@ const TestHomeScreen = () => {
           username: IAM_Email,
           password: 'password',
           usertype: 'C',
-          // device: Platform.OS,
-          // userlattitude: latitude,
-          // userlongitude: longitude,
+          device: Platform.OS,
+          userlattitude: location.latitude,
+          userlongitude: location.longitude,
         });
       }
     } catch (error) {
