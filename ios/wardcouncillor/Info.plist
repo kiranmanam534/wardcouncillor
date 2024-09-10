@@ -45,7 +45,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Allow access to the capture image</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location for XYZ feature</string>
+	<string></string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We need your location to show your current position on the map.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
