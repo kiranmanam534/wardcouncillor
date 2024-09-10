@@ -172,33 +172,14 @@ const TestHomeScreen = () => {
 
       if (IAM_Email) {
         console.log('exists', exists);
-        Geolocation.getCurrentPosition(
-          position => {
-            const {latitude, longitude} = position.coords;
-            setLocation({latitude, longitude});
-            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-            login({
-              username: IAM_Email,
-              password: 'password',
-              usertype: 'C',
-              // device: Platform.OS,
-              // userlattitude: latitude,
-              // userlongitude: longitude,
-            });
-          },
-          error => {
-            console.log(error);
-            login({
-              username: IAM_Email,
-              password: 'password',
-              usertype: 'C',
-              // device: Platform.OS,
-              // userlattitude: '0.00',
-              // userlongitude: '0.00',
-            });
-          },
-          {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-        );
+        login({
+          username: IAM_Email,
+          password: 'password',
+          usertype: 'C',
+          // device: Platform.OS,
+          // userlattitude: latitude,
+          // userlongitude: longitude,
+        });
       }
     } catch (error) {
       setIAMAuthenticate(false);
