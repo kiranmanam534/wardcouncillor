@@ -78,22 +78,22 @@ const TestHomeScreen = () => {
     );
   };
 
-  // useEffect(() => {
-  //   console.log(`Latitude: , Longitude: `);
-
-  //   // Request the user's location
-  //   Geolocation.getCurrentPosition(
-  //     position => {
-  //       const {latitude, longitude} = position.coords;
-  //       setLocation({latitude, longitude});
-  //       console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-  //     },
-  //     error => {
-  //       console.log(error);
-  //     },
-  //     {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
-  //   );
-  // }, []);
+  useEffect(() => {
+    // Request the user's location
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        setLocation({latitude, longitude});
+        console.log(
+          `${Platform.OS}: Latitude: ${latitude}, Longitude: ${longitude}`,
+        );
+      },
+      error => {
+        console.log(error);
+      },
+      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+    );
+  }, []);
 
   const login = async loginformData => {
     try {
@@ -177,8 +177,8 @@ const TestHomeScreen = () => {
           password: 'password',
           usertype: 'C',
           device: Platform.OS,
-          userlattitude: location.latitude,
-          userlongitude: location.longitude,
+          userlattitude: location.latitude.toString(),
+          userlongitude: location.longitude.toString(),
         });
       }
     } catch (error) {
