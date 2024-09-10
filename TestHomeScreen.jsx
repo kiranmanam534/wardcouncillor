@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import Geolocation from '@react-native-community/geolocation';
 
 import {
   authorize,
@@ -52,7 +53,10 @@ const TestHomeScreen = () => {
   const dispatch = useDispatch();
   // const { items, isLoading, error } = useSelector(state => state.loginReducer);
   const [isIAMAuthenticate, setIAMAuthenticate] = useState(false);
-
+  const [location, setLocation] = useState({
+    latitude: '0.00',
+    longitude: '0.00',
+  });
   const handleNavigation = title => {
     // console.log(title)
     navigation.navigate('SignIn', {title: title});
@@ -74,8 +78,26 @@ const TestHomeScreen = () => {
     );
   };
 
+  // useEffect(() => {
+  //   console.log(`Latitude: , Longitude: `);
+
+  //   // Request the user's location
+  //   Geolocation.getCurrentPosition(
+  //     position => {
+  //       const {latitude, longitude} = position.coords;
+  //       setLocation({latitude, longitude});
+  //       console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+  //     },
+  //     error => {
+  //       console.log(error);
+  //     },
+  //     {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+  //   );
+  // }, []);
+
   const login = async loginformData => {
     try {
+      console.log('loginformData===>', loginformData);
       const response = await axios.post(
         `${apiUrl}/api/auth/login`,
         loginformData,
@@ -150,14 +172,33 @@ const TestHomeScreen = () => {
 
       if (IAM_Email) {
         console.log('exists', exists);
-        login({
-          username: IAM_Email,
-          password: 'password',
-          usertype: 'C',
-          device: Platform.OS,
-          userlattitude: '0.00',
-          userlongitude: '0.00',
-        });
+        Geolocation.getCurrentPosition(
+          position => {
+            const {latitude, longitude} = position.coords;
+            setLocation({latitude, longitude});
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            login({
+              username: IAM_Email,
+              password: 'password',
+              usertype: 'C',
+              // device: Platform.OS,
+              // userlattitude: latitude,
+              // userlongitude: longitude,
+            });
+          },
+          error => {
+            console.log(error);
+            login({
+              username: IAM_Email,
+              password: 'password',
+              usertype: 'C',
+              // device: Platform.OS,
+              // userlattitude: '0.00',
+              // userlongitude: '0.00',
+            });
+          },
+          {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+        );
       }
     } catch (error) {
       setIAMAuthenticate(false);
