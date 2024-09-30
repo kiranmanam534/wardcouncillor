@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // const baseURL = 'http://192.168.1.8:5055';
-const baseURL = 'https://myward.ekurhuleni.gov.za';
-// const baseURL='http://196.41.72.247:8083/WardsCoreApi'
+// const baseURL = 'https://myward.ekurhuleni.gov.za';
+const baseURL = 'http://196.41.72.247:8083/WardsCoreApi';
 
 // Create an instance of Axios with custom configurations
 export const AxiosInstance = axios.create({

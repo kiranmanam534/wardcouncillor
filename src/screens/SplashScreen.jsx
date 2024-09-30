@@ -26,7 +26,7 @@ const SplashScreen = () => {
     const timeout = setTimeout(() => {
       // Navigate to main screen after 2 seconds (adjust as needed)
       // navigation.replace('SearchBar');
-      navigation.replace('Home');
+      navigation.replace('SignIn', {title: 'BUbu Login'});
     }, 2000);
 
     return () => clearTimeout(timeout);

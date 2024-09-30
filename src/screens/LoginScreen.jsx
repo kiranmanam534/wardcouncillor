@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -15,6 +16,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
+import Geolocation from '@react-native-community/geolocation';
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
@@ -32,6 +34,10 @@ export default function LoginScreen({route}) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {title} = route.params;
+  const [location, setLocation] = useState({
+    latitude: '0.00',
+    longitude: '0.00',
+  });
 
   const {items, isLoading, error} = useSelector(state => state.loginReducer);
 
@@ -51,6 +57,23 @@ export default function LoginScreen({route}) {
   // );
   // const [password, setPassword] = useState('admin');
 
+  useEffect(() => {
+    // Request the user's location
+    Geolocation.getCurrentPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        setLocation({latitude, longitude});
+        console.log(
+          `${Platform.OS}: Latitude: ${latitude}, Longitude: ${longitude}`,
+        );
+      },
+      error => {
+        console.log(error);
+      },
+      {enableHighAccuracy: true, timeout: 60000, maximumAge: 1000},
+    );
+  }, []);
+
   console.log(showErrorModal, error);
 
   const handleLogin = () => {
@@ -60,7 +83,10 @@ export default function LoginScreen({route}) {
       loginApi({
         username: username,
         password: password,
-        usertype: title === 'community member' ? 'U' : 'C',
+        usertype: 'C',
+        device: Platform.OS,
+        userlattitude: location.latitude.toString(),
+        userlongitude: location.longitude.toString(),
       }),
     );
   };
