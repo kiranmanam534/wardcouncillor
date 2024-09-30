@@ -44,18 +44,18 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow access to the capture image</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location to provide personalized maps and directions</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need your location to provide better map services, even when the app is in the background</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to show your position on the map and provide services while running in the background</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Speech recognition description</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide better map services, even when the app is in the background</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need access to your location to provide personalized maps and directions</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to video and microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to the photo library for selecting images</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognition description</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
