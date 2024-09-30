@@ -50,6 +50,8 @@ import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_B
 const AI_Icon = require('../assets/images/AI_Icon.jpeg');
 const screenWidth = Dimensions.get('window').width;
 
+const logo = require('../assets/images/COE_logo_portrait.png');
+
 const PrivateNavigation = () => {
   const PrivateStack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -366,7 +368,7 @@ const PrivateNavigation = () => {
       </PrivateStack.Navigator>
       {isVisible && (
         <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-          <Image source={AI_Icon} style={styles.img} />
+          <Image source={logo} style={styles.img} />
         </Pressable>
       )}
     </>

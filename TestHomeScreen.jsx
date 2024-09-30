@@ -244,63 +244,63 @@ const TestHomeScreen = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
-      <ImageBackground source={banner} style={styles.imageBackground}>
-        <TouchableOpacity
-          // onPress={() => {
-          //   handleNavigation('Mayor / Councillor');
-          // }}
-          style={{
-            position: 'absolute',
-            bottom: screenHeight / 25,
-            backgroundColor: Colors.primary,
-            padding: 5,
-            borderRadius: 5,
-            borderWidth: 1,
-            borderColor: Colors.white,
-          }}>
-          <Text style={{color: Colors.white}}>V.1.0-beta</Text>
-        </TouchableOpacity>
+    <View style={styles.imageBackground}>
+      {/* <ImageBackground source={banner} style={styles.imageBackground}> */}
+      <TouchableOpacity
+        // onPress={() => {
+        //   handleNavigation('Mayor / Councillor');
+        // }}
+        style={{
+          position: 'absolute',
+          bottom: screenHeight / 25,
+          backgroundColor: Colors.primary,
+          padding: 5,
+          borderRadius: 5,
+          borderWidth: 1,
+          borderColor: Colors.white,
+        }}>
+        <Text style={{color: Colors.white}}>V.1.0-beta</Text>
+      </TouchableOpacity>
 
-        <View style={styles.box}>
-          <Image source={logo} style={styles.img} />
-        </View>
+      <View style={styles.box}>
+        <Image source={logo} style={styles.img} />
+      </View>
 
-        <Text
-          style={{
-            fontSize: 20,
-            color: Colors.yellow,
-            paddingTop: 10,
-            fontWeight: 'bold',
-          }}>
-          WELCOME
+      <Text
+        style={{
+          fontSize: 20,
+          color: Colors.yellow,
+          paddingTop: 10,
+          fontWeight: 'bold',
+        }}>
+        WELCOME
+      </Text>
+      <Text style={{fontSize: 15, color: Colors.white, paddingTop: 10}}>
+        Ekurhuleni, a Tsonga word that means “place of peace”
+      </Text>
+      {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
+
+      <TouchableOpacity
+        style={[
+          styles.btn,
+          {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
+        ]}
+        onPress={() => {
+          !isIAMAuthenticate ? handleIAMLogin() : null;
+          // handleNavigation("Mayor / Councillor")
+        }}>
+        {isIAMAuthenticate ? (
+          <ActivityIndicator animatin color={Colors.white} size="small" />
+        ) : (
+          <Icon name="user-circle" size={20} color={Colors.white} />
+        )}
+
+        <Text style={styles.text}>
+          {' '}
+          {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}
         </Text>
-        <Text style={{fontSize: 15, color: Colors.white, paddingTop: 10}}>
-          Ekurhuleni, a Tsonga word that means “place of peace”
-        </Text>
-        {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
-
-        <TouchableOpacity
-          style={[
-            styles.btn,
-            {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
-          ]}
-          onPress={() => {
-            !isIAMAuthenticate ? handleIAMLogin() : null;
-            // handleNavigation("Mayor / Councillor")
-          }}>
-          {isIAMAuthenticate ? (
-            <ActivityIndicator animatin color={Colors.white} size="small" />
-          ) : (
-            <Icon name="user-circle" size={20} color={Colors.white} />
-          )}
-
-          <Text style={styles.text}>
-            {' '}
-            {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}
-          </Text>
-        </TouchableOpacity>
-      </ImageBackground>
+      </TouchableOpacity>
+      {/* </ImageBackground> */}
     </View>
   );
 };
@@ -313,13 +313,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    backgroundColor: Colors.primary,
   },
 
   box: {
-    width: screenWidth / 2,
-    height: screenWidth / 2,
+    width: screenWidth / 1.5,
+    height: screenWidth / 1.5,
     borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
+    borderColor: Colors.yellow,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
@@ -338,8 +339,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   img: {
-    width: screenWidth / 2 - 60,
-    height: screenWidth / 2 - 60,
+    width: screenWidth / 2 - 0,
+    height: screenWidth / 2 - 0,
     resizeMode: 'contain',
   },
   btn: {
