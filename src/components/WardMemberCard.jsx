@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     elevation: 1, // Add shadow
     borderRadius: 15, // Add border radius
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: Colors.yellow,
   },
   cardContent: {
     flexDirection: 'row',
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     width: screenWidth / 2,
     height: screenWidth / 2,
     borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
+    borderColor: Colors.yellow,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
