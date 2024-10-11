@@ -7,6 +7,9 @@ import VoiceRecognition1 from './VoiceRecognize1';
 import LanguageConvert from './LanguageConvert';
 import Test from './src/Test';
 import EsriMap from './src/TestGIS';
+import EsriAutocomplete from './src/EsriAutocomplete';
+import GoogleAutocompleteScreen from './GoogleAutocompleteScreen';
+import EsriAutocomplete1 from './src/EsriAutocomplete1';
 
 const App = () => {
   return (
@@ -34,6 +37,8 @@ const App = () => {
         {/* <LanguageConvert /> */}
         {/* <Test /> */}
         {/* <EsriMap /> */}
+        {/* <EsriAutocomplete1 /> */}
+        {/* <GoogleAutocompleteScreen/> */}
       </Provider>
     </StrictMode>
   );
