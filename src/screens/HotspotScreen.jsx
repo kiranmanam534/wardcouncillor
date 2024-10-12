@@ -77,6 +77,9 @@ function HotspotScreen({route}) {
 
   const [date, setDate] = useState(new Date());
 
+  const [Isaddress, setIsaddress] = useState(false);
+  const [candidates, setCandidates] = useState([]);
+
   const [showDatePicker, setShowDatePicker] = useState('');
 
   const [showCameraModal, setShowCameraModal] = useState(false);
@@ -267,6 +270,7 @@ function HotspotScreen({route}) {
     'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
 
   const getGeocode = async address => {
+    setIsaddress(true);
     const params = {
       SingleLine: address,
       f: 'json', // Return response as JSON
@@ -278,14 +282,14 @@ function HotspotScreen({route}) {
 
     try {
       const response = await axios.get(GEOCODE_URL, {params});
+      setIsaddress(false);
       return response.data.candidates;
     } catch (error) {
-      console.error('Error fetching geocode:', error);
+      console.log('Error fetching geocode:', error);
+      setIsaddress(false);
       return [];
     }
   };
-  const [address, setAddress] = useState('');
-  const [candidates, setCandidates] = useState([]);
 
   const handleSearch = async () => {
     const results = await getGeocode(autoLocation);
@@ -305,6 +309,7 @@ function HotspotScreen({route}) {
 
   // Function to show modal
   const openModal = () => {
+    // Alert.alert('ok ');
     setModalVisible(true);
     // Animated.timing(slideAnim, {
     //   toValue: 0,
@@ -439,6 +444,11 @@ function HotspotScreen({route}) {
     }
   };
 
+  // Function to handle click on the text input
+  const handleTextClick = () => {
+    Alert.alert('Text clicked!', 'You clicked on the read-only field.');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -485,32 +495,39 @@ function HotspotScreen({route}) {
         <View style={{position: 'relative', zIndex: 1}}>
           <View style={[styles.inputView]}>
             {/* {Platform.OS == 'android' && */}
-            <TextInput
-              mode="outlined"
-              label={'Location'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="Location"
-              value={formValues?.location ? formValues?.location : ''}
-              autoCorrect={false}
-              keyboardType="default"
-              autoCapitalize="none"
-              editable={false}
-              onChangeText={value => handleInputChange('location', value)}
-              placeholderTextColor={'#11182744'}
-              onFocus={openModal} // Trigger modal when focused
-              onPress={openModal}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 30,
-                top: 5,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <MaterialIcon name="my-location" size={25} color={Colors.blue} />
-            </View>
+            <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
+              <TextInput
+                mode="outlined"
+                label={'Location'}
+                style={{backgroundColor: Colors.white}}
+                placeholder="Location"
+                value={formValues?.location ? formValues?.location : ''}
+                autoCorrect={false}
+                keyboardType="default"
+                autoCapitalize="none"
+                editable={false}
+                onChangeText={value => handleInputChange('location', value)}
+                placeholderTextColor={'#11182744'}
+                onFocus={openModal} // Trigger modal when focused
+                onPress={openModal}
+              />
+
+              <View
+                style={{
+                  position: 'absolute',
+                  right: 10,
+                  top: 5,
+                  bottom: 0,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialIcon
+                  name="my-location"
+                  size={25}
+                  color={Colors.blue}
+                />
+              </View>
+            </TouchableOpacity>
             {/* } */}
 
             {/* {Platform.OS == 'ios' &&
@@ -786,8 +803,8 @@ function HotspotScreen({route}) {
                   // editable={false}
                   onChangeText={value => setAutoLocation(value)}
                   placeholderTextColor={'#11182744'}
-                  onFocus={openModal} // Trigger modal when focused
-                  onPress={openModal}
+                  // onFocus={openModal} // Trigger modal when focused
+                  // onPress={openModal}
                 />
                 <View
                   style={{
@@ -855,7 +872,7 @@ function HotspotScreen({route}) {
                 </View>
               )}
 
-              {candidates.length == 0 && (
+              {Isaddress && candidates.length == 0 && (
                 <View
                   style={[
                     {
