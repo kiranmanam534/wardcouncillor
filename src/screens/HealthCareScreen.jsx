@@ -1,38 +1,52 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { TextInput } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { FormateDate } from '../utility/FormateDate'
-import { Colors } from '../constant/Colors'
-import { formatDateTime, getTime } from '../utility/formattedTime';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {FormateDate} from '../utility/FormateDate';
+import {Colors} from '../constant/Colors';
+import {formatDateTime, getTime} from '../utility/formattedTime';
+import {useDispatch, useSelector} from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
-import { CreateHealthCareApi } from '../services/councillorWardApi';
+import {CreateHealthCareApi} from '../services/councillorWardApi';
 import HealthCareValidationSchema from '../validation/HealthCareSchema';
-import { createHealthCareActions } from '../redux/createHealthCareSlice';
+import {createHealthCareActions} from '../redux/createHealthCareSlice';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {
+  launchImageLibrary as _launchImageLibrary,
+  launchCamera as _launchCamera,
+} from 'react-native-image-picker';
 import CameraModal from '../components/CameraModal';
 import BinaryImageModal from '../components/BinaryImageModal';
-import { useNavigation } from '@react-navigation/native';
-import { AnnounceViewActions } from '../redux/announcementViewSlice';
-import { apiUrl } from '../constant/CommonData';
+import {useNavigation} from '@react-navigation/native';
+import {AnnounceViewActions} from '../redux/announcementViewSlice';
+import {apiUrl} from '../constant/CommonData';
+import AddressModal from '../components/AddressModal';
+import {getGeocode} from '../session/getGeocode';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
-
 
 const logo = require('../assets/images/COE_logo_portrait.png');
 
 const screenWidth = Dimensions.get('window').width;
-
-
-
-
 
 // Utility function to chunk the data
 const chunkArray = (array, chunkSize) => {
@@ -43,20 +57,17 @@ const chunkArray = (array, chunkSize) => {
   return result;
 };
 
-
-
-function HealthCareScreen({ route }) {
-
-  const { title, type, editItem } = route.params;
+function HealthCareScreen({route}) {
+  const {title, type, editItem} = route.params;
   console.log(title, type, editItem);
   const navigation = useNavigation();
-   // Set the maximum date to today
-   const today = new Date();
+  // Set the maximum date to today
+  const today = new Date();
 
   const dispatch = useDispatch();
 
-  const [formValues, setFormValues] = useState();
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [formValues, setFormValues] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
 
@@ -66,7 +77,7 @@ function HealthCareScreen({ route }) {
 
   // console.log(statusCode, isLoading);
 
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(new Date());
 
   const [showDatePicker, setShowDatePicker] = useState('');
   const [showTimePicker, setShowTimePicker] = useState('');
@@ -78,8 +89,13 @@ function HealthCareScreen({ route }) {
 
   const [errors, setErrors] = useState({});
 
+  const [Isaddress, setIsaddress] = useState(false);
+  const [candidates, setCandidates] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [autoLocation, setAutoLocation] = useState('');
+
   const handleInputChange = (fieldName, value) => {
-    console.log(fieldName, value)
+    console.log(fieldName, value);
     setFormValues(prevValues => ({
       ...prevValues,
       [fieldName]: value,
@@ -91,29 +107,29 @@ function HealthCareScreen({ route }) {
     }));
   };
 
-
   useEffect(() => {
     if (editItem) {
       setFormValues({
-        healthcarE_DATE: editItem.healthcarE_DATE && formatDateTime(editItem.healthcarE_DATE, 'date'),
+        healthcarE_DATE:
+          editItem.healthcarE_DATE &&
+          formatDateTime(editItem.healthcarE_DATE, 'date'),
         location: editItem.location,
-        healthcarE_DETAILS: editItem.healthcarE_DETAILS
-      })
+
+        latitude: editItem?.latitude?.toString() || '0.00',
+        longitude: editItem?.longitude?.toString() || '0.00',
+        healthcarE_DETAILS: editItem.healthcarE_DETAILS,
+      });
     }
-  }, [editItem])
+  }, [editItem]);
 
-
-
-  const toggleDatePicker = (value) => {
-    setShowDatePicker(value)
-
-  }
-
+  const toggleDatePicker = value => {
+    setShowDatePicker(value);
+  };
 
   const onChageDatePicker = (event, selectedDate, fieldName) => {
     if (event.type == 'set') {
       const currentDate = selectedDate;
-      setDate(currentDate)
+      setDate(currentDate);
 
       if (Platform.OS == 'android') {
         toggleDatePicker('NO');
@@ -126,19 +142,15 @@ function HealthCareScreen({ route }) {
             ...prevValues,
             [fieldName]: '',
           }));
-
         }, 50);
       }
-
-
     } else {
       toggleDatePicker('NO');
     }
-  }
+  };
 
-
-  const confoirmIOSDate = (fieldName) => {
-    console.log(fieldName)
+  const confoirmIOSDate = fieldName => {
+    console.log(fieldName);
     toggleDatePicker('No');
     setTimeout(() => {
       setFormValues(prevValues => ({
@@ -150,8 +162,7 @@ function HealthCareScreen({ route }) {
         [fieldName]: '',
       }));
     }, 50);
-  }
-
+  };
 
   // useEffect(() => {
   //   if (!isLoading && error) {
@@ -170,13 +181,8 @@ function HealthCareScreen({ route }) {
   //   }
   // };
 
-
-
-
   const [selectedImages, setSelectedImages] = useState([]);
   // const [imageBinary, setImageBinary] = useState(null);
-
-
 
   const openImagePicker = () => {
     const options = {
@@ -190,20 +196,18 @@ function HealthCareScreen({ route }) {
   };
 
   const handleCameraLaunch = () => {
-
     const options = {
       mediaType: 'photo',
       // includeBase64: true,
       // maxHeight: 2000,
       // maxWidth: 2000,
-
     };
 
     launchCamera(options, handleResponse);
   };
 
-  const handleResponse = (response) => {
-    setShowCameraModal(false)
+  const handleResponse = response => {
+    setShowCameraModal(false);
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.error) {
@@ -211,33 +215,25 @@ function HealthCareScreen({ route }) {
     } else {
       console.log('====================================');
       setSelectedImages([...selectedImages, response.assets]);
-
     }
   };
 
-
-
-
-  const removeSelectedImage = (index) => {
+  const removeSelectedImage = index => {
     setSelectedImages(
       selectedImages.filter((item, index1) => {
-        return index1 != index
-      })
+        return index1 != index;
+      }),
     );
-  }
+  };
 
+  const viewImageonModal = binaryImg => {
+    setIsBinaryImage(true);
+    setViewBinaryImage(binaryImg);
+  };
 
-  const viewImageonModal = (binaryImg) => {
-    setIsBinaryImage(true)
-    setViewBinaryImage(binaryImg)
-  }
-
-
-  const onCloseBinaryImageModal = (binaryImg) => {
-    setIsBinaryImage(false)
-  }
-
-
+  const onCloseBinaryImageModal = binaryImg => {
+    setIsBinaryImage(false);
+  };
 
   const closeCameraModal = () => {
     setShowCameraModal(false);
@@ -249,79 +245,107 @@ function HealthCareScreen({ route }) {
       mess,
       [
         {
-          text: "OK", onPress: () => {
-            console.log("OK Pressed")
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
             if (type === 'Success' && !editItem) {
               dispatch(createHealthCareActions.clear());
               setFormValues();
-              setSelectedImages([])
-              setErrors()
+              setSelectedImages([]);
+              setErrors();
+            } else if (editItem) {
+              dispatch(AnnounceViewActions.clearAnnouncementsData());
+              navigation.navigate('ViewAnnouncement', {
+                title: 'Healthcare',
+                isEdit: true,
+              });
             }
-            else if (editItem) {
-              dispatch(AnnounceViewActions.clearAnnouncementsData())
-              navigation.navigate('ViewAnnouncement', { title: "Healthcare", isEdit: true })
-            }
-
-          }
-        }
+          },
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
-  }
+  };
 
+  const handleSearch = async () => {
+    setIsaddress(true);
+    try {
+      const results = await getGeocode(autoLocation);
+      setCandidates(results);
+    } catch (error) {
+      console.log('Error fetching geocode:', error);
+      setIsaddress(false);
+    }
+  };
 
+  // Trigger API call when query changes
+  useEffect(() => {
+    setIsaddress(false);
+    setCandidates([]);
+    if (autoLocation) {
+      handleSearch();
+    }
+  }, [autoLocation]);
 
+  // Function to show modal
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  // Function to hide modal
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   const handleSubmit = async () => {
     try {
-
-      await HealthCareValidationSchema.validate(formValues, { abortEarly: false });
+      await HealthCareValidationSchema.validate(formValues, {
+        abortEarly: false,
+      });
       setIsSubmitted(true);
       if (editItem) {
-
         let data = {
-          "id": editItem.id,
-          "refnumber": editItem.refnumber,
-          "healthcarE_DATE": formValues.healthcarE_DATE,
-          "location": formValues.location,
-          "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "healthcarE_DETAILS": formValues.healthcarE_DETAILS,
-          "warD_NO": loggedUser?.warD_NO
-        }
+          id: editItem.id,
+          refnumber: editItem.refnumber,
+          healthcarE_DATE: formValues.healthcarE_DATE,
+          location: formValues.location,
+          latitude: formValues?.latitude?.toString() || '0.00',
+          longitude: formValues?.longitude?.toString() || '0.00',
+          healthcarE_DETAILS: formValues.healthcarE_DETAILS,
+          warD_NO: loggedUser?.warD_NO,
+        };
 
         // dispatch(CreateHealthCareApi({ data: formdata, type: 'edit' }));
 
-        console.log(data)
+        console.log(data);
         try {
           // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-          const response = await axios.post(`${apiUrl}/api/Healthcare/update-healthcare-data`, data);
+          const response = await axios.post(
+            `${apiUrl}/api/Healthcare/update-healthcare-data`,
+            data,
+          );
           console.log(response.data);
           setIsSubmitted(false);
 
-          ShowAlert("Success", "HealthCare has been updated successfully!")
-
+          ShowAlert('Success', 'HealthCare has been updated successfully!');
         } catch (error) {
           console.log(error);
           setIsSubmitted(false);
-          ShowAlert("Error", "Something went wrong!")
-
+          ShowAlert('Error', 'Something went wrong!');
         }
-
       } else {
         const formData = new FormData();
         // if (selectedImages.length == 0) return Alert.alert("Required", "Image is required!")
-        let postData =
-        {
-          "HEALTHCARE_DATE": formValues.healthcarE_DATE,
-          "LOCATION": formValues.location,
-          "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-          "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-          "HEALTHCARE_DETAILS": formValues.healthcarE_DETAILS,
-          "EXPIRY_DATE": formValues.healthcarE_DATE,
-          "USERID": loggedUser?.userid,
-          "WARD_NO": loggedUser?.warD_NO,
-        }
+        let postData = {
+          HEALTHCARE_DATE: formValues.healthcarE_DATE,
+          LOCATION: formValues.location,
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
+          HEALTHCARE_DETAILS: formValues.healthcarE_DETAILS,
+          EXPIRY_DATE: formValues.healthcarE_DATE,
+          USERID: loggedUser?.userid,
+          WARD_NO: loggedUser?.warD_NO,
+        };
 
         // let postData = {
         //   "healthCareInputData": formData,
@@ -333,45 +357,45 @@ function HealthCareScreen({ route }) {
 
         if (selectedImages.length > 0) {
           selectedImages.forEach((image, index) => {
-            console.log(`image===> ${index}`, image)
+            console.log(`image===> ${index}`, image);
             formData.append(`files`, {
-              uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
+              uri:
+                Platform.OS === 'ios'
+                  ? image[0].uri.replace('file://', '')
+                  : image[0].uri,
               type: image[0].type,
-              name: image[0].fileName || `image_${index}.jpg`
+              name: image[0].fileName || `image_${index}.jpg`,
             });
           });
         }
-        formData.append("device", Platform.OS);
-        formData.append("healthCareInputData", JSON.stringify(postData))
+        formData.append('device', Platform.OS);
+        formData.append('healthCareInputData', JSON.stringify(postData));
 
         try {
           // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-          const response = await axios.post(`${apiUrl}/api/Create/save-healthcare`,
+          const response = await axios.post(
+            `${apiUrl}/api/Create/save-healthcare`,
 
             formData,
             {
               headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-
-
-            });
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          );
           console.log(response.data);
           setIsSubmitted(false);
 
-          ShowAlert("Success", "HealthCare has been saved successfully!")
-
+          ShowAlert('Success', 'HealthCare has been saved successfully!');
         } catch (error) {
           console.log(error);
           setIsSubmitted(false);
-          ShowAlert("Error", "Something went wrong!")
-
+          ShowAlert('Error', 'Something went wrong!');
         }
       }
-
     } catch (error) {
       // Validation failed, set errors
-      console.log(error)
+      console.log(error);
       const validationErrors = {};
       error.inner.forEach(e => {
         validationErrors[e.path] = e.message;
@@ -379,16 +403,10 @@ function HealthCareScreen({ route }) {
       });
       setErrors(validationErrors);
       setIsSubmitted(false);
-
     }
   };
 
-
-
-
   return (
-
-
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.box}>
@@ -399,51 +417,75 @@ function HealthCareScreen({ route }) {
           HealthCare
         </Text>
         <View style={styles.inputView}>
-          <Pressable onPress={() => { toggleDatePicker('healthcarE_DATE') }}
-            style={{ position: 'relative' }}>
+          <Pressable
+            onPress={() => {
+              toggleDatePicker('healthcarE_DATE');
+            }}
+            style={{position: 'relative'}}>
             <TextInput
               mode="outlined"
               label={'Healthcare Date'}
-              style={{ backgroundColor: Colors.white }}
-              placeholder='2024-01-01'
-              value={
-                formValues?.healthcarE_DATE
+              style={{backgroundColor: Colors.white}}
+              placeholder="2024-01-01"
+              value={formValues?.healthcarE_DATE}
+              onChangeText={value =>
+                handleInputChange('healthcarE_DATE', value)
               }
-              onChangeText={value => handleInputChange('healthcarE_DATE', value)}
               placeholderTextColor={'#11182744'}
               editable={false}
-              onPressIn={() => { toggleDatePicker('healthcarE_DATE') }}
+              onPressIn={() => {
+                toggleDatePicker('healthcarE_DATE');
+              }}
             />
-            <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <Icon name="calendar" size={25} color={Colors.blue} />
             </View>
           </Pressable>
           {errors?.healthcarE_DATE && (
-            <Text style={{ color: 'red' }}>{errors?.healthcarE_DATE}</Text>
+            <Text style={{color: 'red'}}>{errors?.healthcarE_DATE}</Text>
           )}
-
         </View>
 
-        <View style={[styles.inputView, { position: 'relative' }]}>
+        <View style={[styles.inputView, {position: 'relative'}]}>
           {/* {Platform.OS == 'android' && */}
-          <TextInput
-            mode="outlined"
-            label={'Location'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Location'
-            value={
-              formValues?.location ? (formValues?.location) : ''
-            }
-            autoCorrect={false}
-            keyboardType='default'
-            autoCapitalize="none"
-            onChangeText={value => handleInputChange('location', value)}
-            placeholderTextColor={'#11182744'}
+          <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
+            <TextInput
+              mode="outlined"
+              label={'Location'}
+              style={{backgroundColor: Colors.white}}
+              placeholder="Location"
+              value={formValues?.location ? formValues?.location : ''}
+              autoCorrect={false}
+              keyboardType="default"
+              autoCapitalize="none"
+              multiline
+              editable={false}
+              onChangeText={value => handleInputChange('location', value)}
+              placeholderTextColor={'#11182744'}
+              onFocus={openModal} // Trigger modal when focused
+              onPress={openModal}
+            />
 
-          />
-          <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-            <MaterialIcon name="my-location" size={25} color={Colors.blue} />
-          </View>
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 5,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <MaterialIcon name="my-location" size={25} color={Colors.blue} />
+            </View>
+          </TouchableOpacity>
           {/* } */}
 
           {/* {Platform.OS == 'ios' &&
@@ -474,37 +516,38 @@ function HealthCareScreen({ route }) {
           } */}
 
           {errors?.location && (
-            <Text style={{ color: 'red' }}>{errors?.location}</Text>
+            <Text style={{color: 'red'}}>{errors?.location}</Text>
           )}
         </View>
 
-
-
-        <View style={[styles.inputView, { position: 'relative' }]}>
+        <View style={[styles.inputView, {position: 'relative'}]}>
           <TextInput
             mode="outlined"
             label={'Healthcare Details'}
             numberOfLines={5}
             multiline={true}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Healthcare Details'
+            style={{backgroundColor: Colors.white}}
+            placeholder="Healthcare Details"
             textAlignVertical="top" // Ensures text starts from the top of the input
             value={
-              formValues?.healthcarE_DETAILS ? (formValues?.healthcarE_DETAILS) : ''
+              formValues?.healthcarE_DETAILS
+                ? formValues?.healthcarE_DETAILS
+                : ''
             }
             autoCorrect={false}
-            keyboardType='default'
+            keyboardType="default"
             autoCapitalize="none"
-            onChangeText={value => handleInputChange('healthcarE_DETAILS', value)}
+            onChangeText={value =>
+              handleInputChange('healthcarE_DETAILS', value)
+            }
             placeholderTextColor={'#11182744'}
             height={100}
-
           />
           {/* <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
             <MaterialIcon name="details" size={25} color={Colors.blue} />
           </View> */}
           {errors?.healthcarE_DETAILS && (
-            <Text style={{ color: 'red' }}>{errors?.healthcarE_DETAILS}</Text>
+            <Text style={{color: 'red'}}>{errors?.healthcarE_DETAILS}</Text>
           )}
         </View>
         {/* 
@@ -517,19 +560,26 @@ function HealthCareScreen({ route }) {
         {chunkArray(selectedImages, 5).map((item, index1) => (
           <View key={index1} style={styles.row}>
             {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, { position: 'relative' }]}
-
-              >
-                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
+              <View key={index} style={[styles.item, {position: 'relative'}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    viewImageonModal(subItem[0].uri);
+                  }}>
                   <Image
-                    source={{ uri: subItem[0].uri }}
+                    source={{uri: subItem[0].uri}}
                     // style={{ flex: 1 }}
                     width={40}
                     height={40}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                  <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
+                <TouchableOpacity
+                  onPress={() => removeSelectedImage(index)}
+                  style={{position: 'absolute', right: 0}}>
+                  <Ionicon
+                    name={'close-circle-outline'}
+                    size={25}
+                    color={Colors.blue}
+                  />
                 </TouchableOpacity>
               </View>
             ))}
@@ -558,20 +608,27 @@ function HealthCareScreen({ route }) {
 
             }
           </View>} */}
-        {editItem ? null :
+        {editItem ? null : (
           <View style={styles.buttonView}>
-            <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
+            <Pressable
+              style={styles.CameraButton}
+              onPress={() => setShowCameraModal(true)}>
               <Icon name="camera" size={25} color={Colors.blue} />
-              <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
+              <Text style={[styles.CameraText, {paddingLeft: 10}]}>
                 Capture images
               </Text>
             </Pressable>
-          </View>}
+          </View>
+        )}
 
         <View style={styles.buttonView}>
-          <Pressable style={styles.button} onPress={() => {
-            if (!isSubmitted) { handleSubmit() }
-          }}>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              if (!isSubmitted) {
+                handleSubmit();
+              }
+            }}>
             <Text style={styles.buttonText}>
               {isSubmitted && (
                 <ActivityIndicator size={20} color={Colors.white} />
@@ -588,75 +645,93 @@ function HealthCareScreen({ route }) {
           binaryImageData={viewBinaryImage}
         />
 
-
-
         <CameraModal
           isVisible={showCameraModal}
           onClose={closeCameraModal}
           openCamera={handleCameraLaunch}
           openGallery={openImagePicker}
         />
-
       </ScrollView>
-      <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
-
-        {showDatePicker == "healthcarE_DATE" && (
+      <View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            backgroundColor: Colors.white,
+            width: '100%',
+          },
+        ]}>
+        {showDatePicker == 'healthcarE_DATE' && (
           <>
             <DateTimePicker
-              mode='date'
-              display='spinner'
+              mode="date"
+              display="spinner"
               value={date}
               minimumDate={today}
               onChange={(event, selectedDate) =>
-                onChageDatePicker(
-                  event,
-                  selectedDate,
-                  'healthcarE_DATE'
-                )
+                onChageDatePicker(event, selectedDate, 'healthcarE_DATE')
               }
               style={Platform.OS == 'ios' && styles.datePicker}
-
-
             />
             {Platform.OS == 'ios' && (
-              <View style={{
-                flexDirection: 'row', justifyContent: 'space-evenly', position: 'absolute', bottom: 20,
-                width: '100%'
-              }}>
-                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                { backgroundColor: '#11182711' }]}
-                  onPress={() => { toggleDatePicker('No') }}
-                >
-                  <Text style={[styles.buttonText, { color: '#075985' }]}>Cancel</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  position: 'absolute',
+                  bottom: 20,
+                  width: '100%',
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.pickerButton,
+                    {backgroundColor: '#11182711'},
+                  ]}
+                  onPress={() => {
+                    toggleDatePicker('No');
+                  }}>
+                  <Text style={[styles.buttonText, {color: '#075985'}]}>
+                    Cancel
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                ]}
-                  onPress={() => { confoirmIOSDate('healthcarE_DATE') }}
-                >
+                <TouchableOpacity
+                  style={[styles.button, styles.pickerButton]}
+                  onPress={() => {
+                    confoirmIOSDate('healthcarE_DATE');
+                  }}>
                   <Text style={styles.buttonText}>Confirm</Text>
                 </TouchableOpacity>
               </View>
             )}
           </>
-
         )}
 
-
+        {/* Modal Component */}
+        <AddressModal
+          modalVisible={modalVisible}
+          closeModal={closeModal}
+          Isaddress={Isaddress}
+          autoLocation={autoLocation}
+          setAutoLocation={setAutoLocation}
+          candidates={candidates}
+          handleInputChange={handleInputChange}
+          formValues={formValues}
+        />
       </View>
-
     </SafeAreaView>
   );
 }
 
-export default HealthCareScreen
+export default HealthCareScreen;
 
 const styles = StyleSheet.create({
   container: {
     // alignItems: 'center',
     flex: 1,
     marginTop: 10,
-    position: 'relative'
+    position: 'relative',
   },
   title: {
     fontSize: 20,
@@ -712,7 +787,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     // justifyContent: 'center',
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   CameraText: {
     color: Colors.primary,
@@ -765,19 +840,19 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: 10,
     marginBottom: 15,
-    backgroundColor: '#075985'
+    backgroundColor: '#075985',
   },
   buttonText1: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#fff"
+    fontWeight: '500',
+    color: '#fff',
   },
   pickerButton: {
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   datePicker: {
     height: 300,
-    bottom: 50
+    bottom: 50,
   },
 
   dropdown: {
@@ -788,7 +863,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     color: Colors.black,
-    backgroundColor: Colors.white
+    backgroundColor: Colors.white,
   },
   itemStyle: {
     fontSize: 16,
@@ -815,4 +890,4 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     alignItems: 'center',
   },
-})
+});

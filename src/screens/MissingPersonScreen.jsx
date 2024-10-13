@@ -203,6 +203,8 @@ function MissingPersonsScreen({route}) {
         fulL_NAME: editItem.fulL_NAME,
         location: editItem.location,
         missingpersoN_DETAILS: editItem.missingpersoN_DETAILS,
+        latitude: editItem?.latitude?.toString() || '0.00',
+        longitude: editItem?.longitude?.toString() || '0.00',
       });
     }
   }, [editItem]);
@@ -319,6 +321,7 @@ function MissingPersonsScreen({route}) {
 
   // Trigger API call when query changes
   useEffect(() => {
+    setIsaddress(false);
     setCandidates([]);
     if (autoLocation) {
       handleSearch();
@@ -347,8 +350,8 @@ function MissingPersonsScreen({route}) {
           missinG_TIME: convertToDateTime(formValues.missinG_TIME).toJSON(),
           location: formValues.location,
 
-          latitude: formValues.latitude || '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
-          longitude: formValues.longitude || '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          latitude: formValues?.latitude?.toString() || '0.00',
+          longitude: formValues?.longitude?.toString() || '0.00',
           fulL_NAME: formValues.fulL_NAME,
           missingpersoN_DETAILS: formValues.missingpersoN_DETAILS,
           // "expirY_DATE": formValues.missinG_DATE,
@@ -384,8 +387,9 @@ function MissingPersonsScreen({route}) {
           MISSING_DATE: formValues.missinG_DATE,
           MISSING_TIME: convertToDateTime(formValues.missinG_TIME),
           LOCATION: formValues.location,
-          LATITUDE: formValues.latitude || '0.00',
-          LONGITUDE: formValues.longitude || '0.00',
+
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
           FULL_NAME: formValues.fulL_NAME,
           MISSINGPERSON_DETAILS: formValues.missingpersoN_DETAILS,
           EXPIRY_DATE: formValues.missinG_DATE,

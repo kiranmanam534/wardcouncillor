@@ -102,6 +102,7 @@ const AddressModal = ({
 
                       formValues.latitude = item?.location?.x || '0.00';
                       formValues.longitude = item?.location?.y || '0.00';
+                      item.address += `, ${item?.attributes?.City}, ${item?.attributes?.CntryName}`;
                       handleInputChange('location', item.address);
                       closeModal();
                       // setAutoLocation('');

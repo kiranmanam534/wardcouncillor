@@ -113,6 +113,8 @@ function WardMeetingScreen({route}) {
           editItem.meetinG_ENDTIME &&
           formatDateTime(editItem.meetinG_ENDTIME, 'time'),
         location: editItem.location,
+        latitude: editItem.latitude || '0.00',
+        longitude: editItem.longitude || '0.00',
         subject: editItem.subject,
         meetinG_DETAILS: editItem.meetinG_DETAILS,
       });
@@ -317,6 +319,7 @@ function WardMeetingScreen({route}) {
 
   // Trigger API call when query changes
   useEffect(() => {
+    setIsaddress(false);
     setCandidates([]);
     if (autoLocation) {
       handleSearch();
@@ -384,8 +387,8 @@ function WardMeetingScreen({route}) {
           MEETING_ENDDATE: formValues.meetinG_ENDDATE,
           MEETING_ENDTIME: convertToDateTime(formValues.meetinG_ENDTIME),
           LOCATION: formValues.location,
-          LATITUDE: formValues.latitude || '0.00',
-          LONGITUDE: formValues.longitude || '0.00',
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
           SUBJECT: formValues.subject,
           MEETING_DETAILS: formValues.meetinG_DETAILS,
           EXPIRY_DATE: formValues.meetinG_ENDDATE,

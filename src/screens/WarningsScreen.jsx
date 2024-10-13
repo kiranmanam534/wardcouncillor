@@ -1,28 +1,48 @@
-
-
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Dimensions, Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { TextInput } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { FormateDate } from '../utility/FormateDate'
-import { Colors } from '../constant/Colors'
-import { convertToDateTime, formatDateTime, getTime } from '../utility/formattedTime';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Dimensions,
+  Image,
+  Platform,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {FormateDate} from '../utility/FormateDate';
+import {Colors} from '../constant/Colors';
+import {
+  convertToDateTime,
+  formatDateTime,
+  getTime,
+} from '../utility/formattedTime';
+import {useDispatch, useSelector} from 'react-redux';
 import ErrorModal from '../components/ErrorModal';
-import { CreateWarningsApi } from '../services/councillorWardApi';
-import { createWarningsActions } from '../redux/createWarningsSlice';
+import {CreateWarningsApi} from '../services/councillorWardApi';
+import {createWarningsActions} from '../redux/createWarningsSlice';
 import CreateWarningsSchema from '../validation/CreateWarningsSchema';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/dist/MaterialIcons';
 import BinaryImageModal from '../components/BinaryImageModal';
 import CameraModal from '../components/CameraModal';
-import { launchImageLibrary as _launchImageLibrary, launchCamera as _launchCamera } from 'react-native-image-picker';
-import { useNavigation } from '@react-navigation/native';
-import { AnnounceViewActions } from '../redux/announcementViewSlice';
+import {
+  launchImageLibrary as _launchImageLibrary,
+  launchCamera as _launchCamera,
+} from 'react-native-image-picker';
+import {useNavigation} from '@react-navigation/native';
+import {AnnounceViewActions} from '../redux/announcementViewSlice';
 import axios from 'axios';
-import { apiUrl } from '../constant/CommonData';
+import {apiUrl} from '../constant/CommonData';
+import AddressModal from '../components/AddressModal';
+import {getGeocode} from '../session/getGeocode';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
@@ -32,477 +52,518 @@ const screenWidth = Dimensions.get('window').width;
 
 // Utility function to chunk the data
 const chunkArray = (array, chunkSize) => {
-    const result = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-        result.push(array.slice(i, i + chunkSize));
-    }
-    return result;
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
 };
 
-function WarningssScreen({ route }) {
+function WarningssScreen({route}) {
+  const {title, type, editItem} = route.params;
+  console.log(title, type, editItem);
+  const navigation = useNavigation();
 
-    const { title, type, editItem } = route.params;
-    console.log(title, type, editItem);
-    const navigation = useNavigation();
+  // Set the maximum date to today
+  const today = new Date();
+  const dispatch = useDispatch();
 
-    // Set the maximum date to today
-    const today = new Date();
-    const dispatch = useDispatch();
+  const [formValues, setFormValues] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const loggedUser = useSelector(state => state.loginReducer.items);
 
-    const [formValues, setFormValues] = useState({});
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const loggedUser = useSelector(state => state.loginReducer.items);
+  // const { data, isLoading, error, statusCode } = useSelector(
+  //     state => state.createWarningsReducer,
+  // );
 
-    // const { data, isLoading, error, statusCode } = useSelector(
-    //     state => state.createWarningsReducer,
-    // );
+  // console.log(statusCode, isLoading);
 
-    // console.log(statusCode, isLoading);
+  const [date, setDate] = useState(new Date());
 
-    const [date, setDate] = useState(new Date())
+  const [showDatePicker, setShowDatePicker] = useState('');
+  const [showTimePicker, setShowTimePicker] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
-    const [showDatePicker, setShowDatePicker] = useState('');
-    const [showTimePicker, setShowTimePicker] = useState('');
-    const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showCameraModal, setShowCameraModal] = useState(false);
+  const [viewBinaryImage, setViewBinaryImage] = useState(null);
+  const [isBinaryImage, setIsBinaryImage] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
 
-    const [showCameraModal, setShowCameraModal] = useState(false);
-    const [viewBinaryImage, setViewBinaryImage] = useState(null);
-    const [isBinaryImage, setIsBinaryImage] = useState(false);
-    const [selectedImages, setSelectedImages] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [Isaddress, setIsaddress] = useState(false);
+  const [candidates, setCandidates] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [autoLocation, setAutoLocation] = useState('');
 
-    const [errors, setErrors] = useState({});
+  const handleInputChange = (fieldName, value) => {
+    console.log(fieldName, value);
+    setFormValues(prevValues => ({
+      ...prevValues,
+      [fieldName]: value,
+    }));
 
-    const handleInputChange = (fieldName, value) => {
-        console.log(fieldName, value)
-        setFormValues(prevValues => ({
+    setErrors(prevValues => ({
+      ...prevValues,
+      [fieldName]: '',
+    }));
+  };
+
+  const toggleDatePicker = value => {
+    setShowDatePicker(value);
+  };
+
+  const toggleTimePicker = value => {
+    setShowTimePicker(value);
+  };
+
+  const onChageDatePicker = (event, selectedDate, fieldName) => {
+    if (event.type == 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+
+      if (Platform.OS == 'android') {
+        toggleDatePicker('NO');
+        setTimeout(() => {
+          setFormValues(prevValues => ({
             ...prevValues,
-            [fieldName]: value,
-        }));
-
-        setErrors(prevValues => ({
+            [fieldName]: FormateDate(currentDate),
+          }));
+          setErrors(prevValues => ({
             ...prevValues,
             [fieldName]: '',
-        }));
+          }));
+        }, 50);
+      }
+    } else {
+      toggleDatePicker('NO');
+    }
+  };
+
+  const onChageTimePicker = (event, selectedDate, fieldName) => {
+    if (event.type == 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+
+      if (Platform.OS == 'android') {
+        toggleTimePicker('no');
+        setTimeout(() => {
+          setFormValues(prevValues => ({
+            ...prevValues,
+            [fieldName]: getTime(currentDate),
+          }));
+          setErrors(prevValues => ({
+            ...prevValues,
+            [fieldName]: '',
+          }));
+        }, 50);
+      }
+    } else {
+      toggleTimePicker('no');
+    }
+  };
+  const confoirmIOSDate = fieldName => {
+    console.log(fieldName);
+    toggleDatePicker('No');
+    setTimeout(() => {
+      setFormValues(prevValues => ({
+        ...prevValues,
+        [fieldName]: FormateDate(date),
+      }));
+      setErrors(prevValues => ({
+        ...prevValues,
+        [fieldName]: '',
+      }));
+    }, 50);
+  };
+
+  const confoirmIOSTime = fieldName => {
+    console.log(fieldName, date);
+    toggleTimePicker('No');
+    setTimeout(() => {
+      setFormValues(prevValues => ({
+        ...prevValues,
+        [fieldName]: getTime(date),
+      }));
+      setErrors(prevValues => ({
+        ...prevValues,
+        [fieldName]: '',
+      }));
+    }, 50);
+  };
+
+  useEffect(() => {
+    if (editItem) {
+      setFormValues({
+        warninG_DATE:
+          editItem.warninG_DATE &&
+          formatDateTime(editItem.warninG_DATE, 'date'),
+        warninG_TIME:
+          editItem.warninG_TIME &&
+          formatDateTime(editItem.warninG_TIME, 'time'),
+        location: editItem.location,
+        latitude: editItem?.latitude?.toString() || '0.00',
+        longitude: editItem?.longitude?.toString() || '0.00',
+        typeofwarning: editItem.typeofwarning,
+        warninG_DETAILS: editItem.warninG_DETAILS,
+      });
+    }
+  }, [editItem]);
+
+  // useEffect(() => {
+  //     if (!isLoading && error) {
+  //         setShowErrorModal(true);
+  //     }
+  // }, [error, isLoading]);
+
+  // const closeModal = () => {
+  //     setShowErrorModal(false);
+
+  //     if (editItem) {
+  //         dispatch(AnnounceViewActions.clearAnnouncementsData())
+
+  //         // navigation.goBack()
+  //         navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
+  //     }
+  // };
+
+  const openImagePicker = () => {
+    const options = {
+      mediaType: 'photo',
+      // includeBase64: true,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
     };
 
+    launchImageLibrary(options, handleResponse);
+  };
 
+  const handleCameraLaunch = () => {
+    const options = {
+      mediaType: 'photo',
+      // includeBase64: true,
+      // maxHeight: 2000,
+      // maxWidth: 2000,
+    };
 
-    const toggleDatePicker = (value) => {
-        setShowDatePicker(value)
+    launchCamera(options, handleResponse);
+  };
 
+  const handleResponse = response => {
+    setShowCameraModal(false);
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('Image picker error: ', response.error);
+    } else {
+      console.log('====================================');
+      setSelectedImages([...selectedImages, response.assets]);
     }
+  };
 
-    const toggleTimePicker = (value) => {
-        setShowTimePicker(value)
+  const removeSelectedImage = index => {
+    setSelectedImages(
+      selectedImages.filter((item, index1) => {
+        return index1 != index;
+      }),
+    );
+  };
 
-    }
+  const viewImageonModal = binaryImg => {
+    setIsBinaryImage(true);
+    setViewBinaryImage(binaryImg);
+  };
 
-    const onChageDatePicker = (event, selectedDate, fieldName) => {
-        if (event.type == 'set') {
-            const currentDate = selectedDate;
-            setDate(currentDate)
+  const onCloseBinaryImageModal = binaryImg => {
+    setIsBinaryImage(false);
+  };
 
-            if (Platform.OS == 'android') {
-                toggleDatePicker('NO');
-                setTimeout(() => {
-                    setFormValues(prevValues => ({
-                        ...prevValues,
-                        [fieldName]: FormateDate(currentDate),
-                    }));
-                    setErrors(prevValues => ({
-                        ...prevValues,
-                        [fieldName]: '',
-                    }));
+  const closeCameraModal = () => {
+    setShowCameraModal(false);
+  };
 
-                }, 50);
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+            if (type === 'Success' && !editItem) {
+              dispatch(createWarningsActions.clear());
+              setFormValues();
+              setSelectedImages([]);
+              setErrors();
+            } else if (editItem) {
+              dispatch(AnnounceViewActions.clearAnnouncementsData());
+              navigation.navigate('ViewAnnouncement', {
+                title: 'Warnings',
+                isEdit: true,
+              });
             }
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
 
-
-        } else {
-            toggleDatePicker('NO');
-        }
+  const handleSearch = async () => {
+    setIsaddress(true);
+    try {
+      const results = await getGeocode(autoLocation);
+      setCandidates(results);
+    } catch (error) {
+      console.log('Error fetching geocode:', error);
+      setIsaddress(false);
     }
+  };
 
-    const onChageTimePicker = (event, selectedDate, fieldName) => {
-        if (event.type == 'set') {
-            const currentDate = selectedDate;
-            setDate(currentDate)
-
-            if (Platform.OS == 'android') {
-                toggleTimePicker("no");
-                setTimeout(() => {
-                    setFormValues(prevValues => ({
-                        ...prevValues,
-                        [fieldName]: getTime(currentDate),
-                    }));
-                    setErrors(prevValues => ({
-                        ...prevValues,
-                        [fieldName]: '',
-                    }));
-                }, 50);
-            }
-
-
-
-        } else {
-            toggleTimePicker('no');
-        }
+  // Trigger API call when query changes
+  useEffect(() => {
+    setCandidates([]);
+    if (autoLocation) {
+      handleSearch();
     }
-    const confoirmIOSDate = (fieldName) => {
-        console.log(fieldName)
-        toggleDatePicker('No');
-        setTimeout(() => {
-            setFormValues(prevValues => ({
-                ...prevValues,
-                [fieldName]: FormateDate(date),
-            }));
-            setErrors(prevValues => ({
-                ...prevValues,
-                [fieldName]: '',
-            }));
-        }, 50);
-    }
+  }, [autoLocation]);
 
-    const confoirmIOSTime = (fieldName) => {
-        console.log(fieldName, date)
-        toggleTimePicker('No');
-        setTimeout(() => {
-            setFormValues(prevValues => ({
-                ...prevValues,
-                [fieldName]: getTime(date),
-            }));
-            setErrors(prevValues => ({
-                ...prevValues,
-                [fieldName]: '',
-            }));
-        }, 50);
-    }
+  // Function to show modal
+  const openModal = () => {
+    setModalVisible(true);
+  };
 
+  // Function to hide modal
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
-    useEffect(() => {
-        if (editItem) {
-            setFormValues({
-                warninG_DATE: editItem.warninG_DATE && formatDateTime(editItem.warninG_DATE, 'date'),
-                warninG_TIME: editItem.warninG_TIME && formatDateTime(editItem.warninG_TIME, 'time'),
-                location: editItem.location,
-                typeofwarning: editItem.typeofwarning,
-                warninG_DETAILS: editItem.warninG_DETAILS
-            })
-        }
-    }, [editItem])
-
-
-    // useEffect(() => {
-    //     if (!isLoading && error) {
-    //         setShowErrorModal(true);
-    //     }
-    // }, [error, isLoading]);
-
-    // const closeModal = () => {
-    //     setShowErrorModal(false);
-
-    //     if (editItem) {
-    //         dispatch(AnnounceViewActions.clearAnnouncementsData())
-
-    //         // navigation.goBack()
-    //         navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
-    //     }
-    // };
-
-
-    const openImagePicker = () => {
-        const options = {
-            mediaType: 'photo',
-            // includeBase64: true,
-            // maxHeight: 2000,
-            // maxWidth: 2000,
+  const handleSubmit = async () => {
+    try {
+      await CreateWarningsSchema.validate(formValues, {abortEarly: false});
+      setIsSubmitted(true);
+      if (editItem) {
+        let data = {
+          id: editItem.id,
+          refnumber: editItem.refnumber,
+          warninG_DATE: formValues.warninG_DATE,
+          warninG_TIME: convertToDateTime(formValues.warninG_TIME),
+          location: formValues.location,
+          latitude: formValues?.latitude?.toString() || '0.00',
+          longitude: formValues?.longitude?.toString() || '0.00',
+          typeofwarning: formValues.typeofwarning,
+          warninG_DETAILS: formValues.warninG_DETAILS,
+          warD_NO: loggedUser?.warD_NO,
         };
 
-        launchImageLibrary(options, handleResponse);
-    };
+        // dispatch(CreateWarningsApi({ data: formdata, type: 'edit' }));
 
-    const handleCameraLaunch = () => {
+        console.log(data);
 
-        const options = {
-            mediaType: 'photo',
-            // includeBase64: true,
-            // maxHeight: 2000,
-            // maxWidth: 2000,
-
-        };
-
-        launchCamera(options, handleResponse);
-    };
-
-    const handleResponse = (response) => {
-        setShowCameraModal(false)
-        if (response.didCancel) {
-            console.log('User cancelled image picker');
-        } else if (response.error) {
-            console.log('Image picker error: ', response.error);
-        } else {
-            console.log('====================================');
-            setSelectedImages([...selectedImages, response.assets]);
-
-        }
-    };
-
-
-
-
-    const removeSelectedImage = (index) => {
-        setSelectedImages(
-            selectedImages.filter((item, index1) => {
-                return index1 != index
-            })
-        );
-    }
-
-
-    const viewImageonModal = (binaryImg) => {
-        setIsBinaryImage(true)
-        setViewBinaryImage(binaryImg)
-    }
-
-
-    const onCloseBinaryImageModal = (binaryImg) => {
-        setIsBinaryImage(false)
-    }
-
-
-
-    const closeCameraModal = () => {
-        setShowCameraModal(false);
-    };
-
-
-    const ShowAlert = (type, mess) => {
-        Alert.alert(
-            type,
-            mess,
-            [
-                {
-                    text: "OK", onPress: () => {
-                        console.log("OK Pressed")
-                        if (type === 'Success' && !editItem) {
-                            dispatch(createWarningsActions.clear());
-                            setFormValues();
-                            setSelectedImages([])
-                            setErrors()
-                        }
-                        else if (editItem) {
-                            dispatch(AnnounceViewActions.clearAnnouncementsData())
-                            navigation.navigate('ViewAnnouncement', { title: "Warnings", isEdit: true })
-                        }
-
-                    }
-                }
-            ],
-            { cancelable: false }
-        );
-    }
-
-
-    const handleSubmit = async () => {
         try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(
+            `${apiUrl}/api/Warning/update-warning-data`,
+            data,
+          );
+          console.log(response.data);
+          setIsSubmitted(false);
 
-            await CreateWarningsSchema.validate(formValues, { abortEarly: false });
-            setIsSubmitted(true);
-            if (editItem) {
-
-                let data = {
-                    "id": editItem.id,
-                    "refnumber": editItem.refnumber,
-                    "warninG_DATE": formValues.warninG_DATE,
-                    "warninG_TIME": convertToDateTime(formValues.warninG_TIME),
-                    "location": formValues.location,
-                    "latitude": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "longitude": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "typeofwarning": formValues.typeofwarning,
-                    "warninG_DETAILS": formValues.warninG_DETAILS,
-                    "warD_NO": loggedUser?.warD_NO
-                }
-
-                // dispatch(CreateWarningsApi({ data: formdata, type: 'edit' }));
-
-                console.log(data)
-
-                try {
-                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-                    const response = await axios.post(`${apiUrl}/api/Warning/update-warning-data`, data);
-                    console.log(response.data);
-                    setIsSubmitted(false);
-
-                    ShowAlert("Success", "Warning has been updated successfully!")
-
-                } catch (error) {
-                    console.log(error);
-                    setIsSubmitted(false);
-                    ShowAlert("Error", "Something went wrong!")
-
-                }
-
-            } else {
-                const formData = new FormData();
-                let postData =
-                {
-                    "WARNING_DATE": formValues.warninG_DATE,
-                    "WARNING_TIME": convertToDateTime(formValues.warninG_TIME),
-                    "LOCATION": formValues.location,
-                    "LATITUDE": "0.00",//Platform.OS == "ios" ? formValues.latitude : "0.00",
-                    "LONGITUDE": "0.00",//Platform.OS == "ios" ? formValues.longitude : "0.00",
-                    "TYPEOFWARNING": formValues.typeofwarning,
-                    "WARNING_DETAILS": formValues.warninG_DETAILS,
-                    "EXPIRY_DATE": formValues.warninG_DATE,
-                    "USERID": loggedUser?.userid,
-                    "WARD_NO": loggedUser?.warD_NO
-                }
-                // let postData = {
-                //     "warningInputData": formData,
-                //     "imG_LIST": selectedImages
-                // }
-
-                console.log('Form data:', postData);
-
-                // dispatch(CreateWarningsApi({ data: postData, type: 'create' }));
-
-                if (selectedImages.length > 0) {
-                    selectedImages.forEach((image, index) => {
-                        console.log(`image===> ${index}`, image)
-                        formData.append(`files`, {
-                            uri: Platform.OS === 'ios' ? image[0].uri.replace('file://', '') : image[0].uri,
-                            type: image[0].type,
-                            name: image[0].fileName || `image_${index}.jpg`
-                        });
-                    });
-                }
-                formData.append("device", Platform.OS);
-                formData.append("warningInputData", JSON.stringify(postData))
-
-                try {
-                    // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
-                    const response = await axios.post(`${apiUrl}/api/Create/save-warning`,
-
-                        formData,
-                        {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-
-
-                        });
-                    console.log(response.data);
-                    setIsSubmitted(false);
-
-                    ShowAlert("Success", "Warning has been saved successfully!")
-
-                } catch (error) {
-                    console.log(error);
-                    setIsSubmitted(false);
-                    ShowAlert("Error", "Something went wrong!")
-
-                }
-            }
-
+          ShowAlert('Success', 'Warning has been updated successfully!');
         } catch (error) {
-            // Validation failed, set errors
-            console.log(error)
-            const validationErrors = {};
-            error.inner.forEach(e => {
-                validationErrors[e.path] = e.message;
-                console.log(e.message);
-            });
-            setErrors(validationErrors);
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert('Error', 'Something went wrong!');
         }
-    };
+      } else {
+        const formData = new FormData();
+        let postData = {
+          WARNING_DATE: formValues.warninG_DATE,
+          WARNING_TIME: convertToDateTime(formValues.warninG_TIME),
+          LOCATION: formValues.location,
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
+          TYPEOFWARNING: formValues.typeofwarning,
+          WARNING_DETAILS: formValues.warninG_DETAILS,
+          EXPIRY_DATE: formValues.warninG_DATE,
+          USERID: loggedUser?.userid,
+          WARD_NO: loggedUser?.warD_NO,
+        };
+        // let postData = {
+        //     "warningInputData": formData,
+        //     "imG_LIST": selectedImages
+        // }
 
+        console.log('Form data:', postData);
 
+        // dispatch(CreateWarningsApi({ data: postData, type: 'create' }));
 
-    return (
+        if (selectedImages.length > 0) {
+          selectedImages.forEach((image, index) => {
+            console.log(`image===> ${index}`, image);
+            formData.append(`files`, {
+              uri:
+                Platform.OS === 'ios'
+                  ? image[0].uri.replace('file://', '')
+                  : image[0].uri,
+              type: image[0].type,
+              name: image[0].fileName || `image_${index}.jpg`,
+            });
+          });
+        }
+        formData.append('device', Platform.OS);
+        formData.append('warningInputData', JSON.stringify(postData));
 
+        try {
+          // const response = await axios.post('http://192.168.1.7:5055/api/CouncillorWard/72')
+          const response = await axios.post(
+            `${apiUrl}/api/Create/save-warning`,
 
-        <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <View style={styles.box}>
-                    <Image source={logo} style={styles.img} />
-                </View>
-                <Text style={styles.title}> {editItem ? 'Edit ' : 'Create '} Warning</Text>
-                <View style={styles.inputView}>
-                    <Pressable onPress={() => { toggleDatePicker('warninG_DATE') }}>
-                        <TextInput
-                            mode="outlined"
-                            label={'Warning Date'}
-                            style={{ backgroundColor: Colors.white }}
-                            placeholder='2024-01-01'
-                            value={
-                                formValues?.warninG_DATE
-                            }
-                            onChangeText={value => handleInputChange('warninG_DATE', value)}
-                            placeholderTextColor={'#11182744'}
-                            editable={false}
-                            onPressIn={() => { toggleDatePicker('warninG_DATE') }}
-                        />
-                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                            <Icon name="calendar" size={25} color={Colors.blue} />
-                        </View>
-                    </Pressable>
-                    {errors?.warninG_DATE && (
-                        <Text style={{ color: 'red' }}>{errors?.warninG_DATE}</Text>
-                    )}
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          );
+          console.log(response.data);
+          setIsSubmitted(false);
 
-                </View>
+          ShowAlert('Success', 'Warning has been saved successfully!');
+        } catch (error) {
+          console.log(error);
+          setIsSubmitted(false);
+          ShowAlert('Error', 'Something went wrong!');
+        }
+      }
+    } catch (error) {
+      // Validation failed, set errors
+      console.log(error);
+      const validationErrors = {};
+      error.inner.forEach(e => {
+        validationErrors[e.path] = e.message;
+        console.log(e.message);
+      });
+      setErrors(validationErrors);
+    }
+  };
 
-                <View style={styles.inputView}>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.box}>
+          <Image source={logo} style={styles.img} />
+        </View>
+        <Text style={styles.title}>
+          {' '}
+          {editItem ? 'Edit ' : 'Create '} Warning
+        </Text>
+        <View style={styles.inputView}>
+          <Pressable
+            onPress={() => {
+              toggleDatePicker('warninG_DATE');
+            }}>
+            <TextInput
+              mode="outlined"
+              label={'Warning Date'}
+              style={{backgroundColor: Colors.white}}
+              placeholder="2024-01-01"
+              value={formValues?.warninG_DATE}
+              onChangeText={value => handleInputChange('warninG_DATE', value)}
+              placeholderTextColor={'#11182744'}
+              editable={false}
+              onPressIn={() => {
+                toggleDatePicker('warninG_DATE');
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Icon name="calendar" size={25} color={Colors.blue} />
+            </View>
+          </Pressable>
+          {errors?.warninG_DATE && (
+            <Text style={{color: 'red'}}>{errors?.warninG_DATE}</Text>
+          )}
+        </View>
 
-                    <Pressable onPress={() => { toggleTimePicker('warninG_TIME') }}>
-                        <TextInput
-                            mode="outlined"
-                            label={'Warning Time'}
-                            style={{ backgroundColor: Colors.white }}
-                            placeholder='10:30 AM/PM'
-                            value={
-                                formValues?.warninG_TIME
-                            }
-                            onChangeText={value => handleInputChange('warninG_TIME', value)}
-                            placeholderTextColor={'#11182744'}
-                            editable={false}
-                            onPressIn={() => { toggleTimePicker('warninG_TIME') }}
-                        />
-                        <View style={{ position: 'absolute', right: 10, top: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                            <MaterialIcon name="timer" size={25} color={Colors.blue} />
-                        </View>
-                    </Pressable>
+        <View style={styles.inputView}>
+          <Pressable
+            onPress={() => {
+              toggleTimePicker('warninG_TIME');
+            }}>
+            <TextInput
+              mode="outlined"
+              label={'Warning Time'}
+              style={{backgroundColor: Colors.white}}
+              placeholder="10:30 AM/PM"
+              value={formValues?.warninG_TIME}
+              onChangeText={value => handleInputChange('warninG_TIME', value)}
+              placeholderTextColor={'#11182744'}
+              editable={false}
+              onPressIn={() => {
+                toggleTimePicker('warninG_TIME');
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 0,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <MaterialIcon name="timer" size={25} color={Colors.blue} />
+            </View>
+          </Pressable>
 
-                    {errors?.warninG_DATE && (
-                        <Text style={{ color: 'red' }}>{errors?.warninG_DATE}</Text>
-                    )}
+          {errors?.warninG_DATE && (
+            <Text style={{color: 'red'}}>{errors?.warninG_DATE}</Text>
+          )}
+        </View>
 
-                </View>
+        <View style={styles.inputView}>
+          {/* {Platform.OS == 'android' && */}
+          <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
+            <TextInput
+              mode="outlined"
+              label={'Location'}
+              style={{backgroundColor: Colors.white}}
+              placeholder="Location"
+              value={formValues?.location ? formValues?.location : ''}
+              autoCorrect={false}
+              keyboardType="default"
+              autoCapitalize="none"
+              multiline
+              editable={false}
+              onChangeText={value => handleInputChange('location', value)}
+              placeholderTextColor={'#11182744'}
+              onFocus={openModal} // Trigger modal when focused
+              onPress={openModal}
+            />
 
+            <View
+              style={{
+                position: 'absolute',
+                right: 10,
+                top: 5,
+                bottom: 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <MaterialIcon name="my-location" size={25} color={Colors.blue} />
+            </View>
+          </TouchableOpacity>
+          {/* } */}
 
-                <View style={styles.inputView}>
-                    {/* {Platform.OS == 'android' && */}
-                    <TextInput
-                        mode="outlined"
-                        label={'Location'}
-                        style={{ backgroundColor: Colors.white }}
-                        placeholder='Location'
-                        value={
-                            formValues?.location ? (formValues?.location) : ''
-                        }
-                        autoCorrect={false}
-                        keyboardType='default'
-                        autoCapitalize="none"
-                        onChangeText={value => handleInputChange('location', value)}
-                        placeholderTextColor={'#11182744'}
-
-                    />
-                    <View style={{ position: 'absolute', right: 30, top: 5, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
-                        <MaterialIcon name="my-location" size={25} color={Colors.blue} />
-                    </View>
-                    {/* } */}
-
-                    {/* {Platform.OS == 'ios' &&
+          {/* {Platform.OS == 'ios' &&
                         <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
                             <GooglePlacesAutocomplete
                                 GooglePlacesDetailsQuery={{ fields: "geometry" }}
@@ -529,373 +590,407 @@ function WarningssScreen({ route }) {
                         </View>
                     } */}
 
-                    {errors?.location && (
-                        <Text style={{ color: 'red' }}>{errors?.location}</Text>
-                    )}
-                </View>
+          {errors?.location && (
+            <Text style={{color: 'red'}}>{errors?.location}</Text>
+          )}
+        </View>
 
-                <View style={styles.inputView}>
-                    <TextInput
-                        mode="outlined"
-                        label={'Warning Type'}
-                        style={{ backgroundColor: Colors.white }}
-                        placeholder='Warning Type'
-                        value={
-                            formValues?.typeofwarning ? (formValues?.typeofwarning) : ''
-                        }
-                        autoCorrect={false}
-                        keyboardType='default'
-                        autoCapitalize="none"
-                        onChangeText={value => handleInputChange('typeofwarning', value)}
-                        placeholderTextColor={'#11182744'}
+        <View style={styles.inputView}>
+          <TextInput
+            mode="outlined"
+            label={'Warning Type'}
+            style={{backgroundColor: Colors.white}}
+            placeholder="Warning Type"
+            value={formValues?.typeofwarning ? formValues?.typeofwarning : ''}
+            autoCorrect={false}
+            keyboardType="default"
+            autoCapitalize="none"
+            onChangeText={value => handleInputChange('typeofwarning', value)}
+            placeholderTextColor={'#11182744'}
+          />
+          {errors?.typeofwarning && (
+            <Text style={{color: 'red'}}>{errors?.typeofwarning}</Text>
+          )}
+        </View>
 
-                    />
-                    {errors?.typeofwarning && (
-                        <Text style={{ color: 'red' }}>{errors?.typeofwarning}</Text>
-                    )}
-                </View>
+        <View style={styles.inputView}>
+          <TextInput
+            mode="outlined"
+            label={'Warning Details'}
+            numberOfLines={5}
+            multiline
+            style={{backgroundColor: Colors.white}}
+            placeholder="Warnings Details"
+            value={
+              formValues?.warninG_DETAILS ? formValues?.warninG_DETAILS : ''
+            }
+            autoCorrect={false}
+            keyboardType="default"
+            autoCapitalize="none"
+            onChangeText={value => handleInputChange('warninG_DETAILS', value)}
+            placeholderTextColor={'#11182744'}
+            height={100}
+            textAlignVertical="top"
+          />
+          {errors?.warninG_DETAILS && (
+            <Text style={{color: 'red'}}>{errors?.warninG_DETAILS}</Text>
+          )}
+        </View>
 
-                <View style={styles.inputView}>
-                    <TextInput
-                        mode="outlined"
-                        label={'Warning Details'}
-                        numberOfLines={5}
-                        multiline
-                        style={{ backgroundColor: Colors.white }}
-                        placeholder='Warnings Details'
-                        value={
-                            formValues?.warninG_DETAILS ? (formValues?.warninG_DETAILS) : ''
-                        }
-                        autoCorrect={false}
-                        keyboardType='default'
-                        autoCapitalize="none"
-                        onChangeText={value => handleInputChange('warninG_DETAILS', value)}
-                        placeholderTextColor={'#11182744'}
-                        height={100}
-                        textAlignVertical='top'
+        {chunkArray(selectedImages, 5).map((item, index1) => (
+          <View key={index1} style={styles.row}>
+            {item.map((subItem, index) => (
+              <View key={index} style={[styles.item, {position: 'relative'}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    viewImageonModal(subItem[0].uri);
+                  }}>
+                  <Image
+                    source={{uri: subItem[0].uri}}
+                    // style={{ flex: 1 }}
+                    width={40}
+                    height={40}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => removeSelectedImage(index)}
+                  style={{position: 'absolute', right: 0}}>
+                  <Ionicon
+                    name={'close-circle-outline'}
+                    size={25}
+                    color={Colors.blue}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        ))}
+        {editItem ? null : (
+          <View style={styles.buttonView}>
+            <Pressable
+              style={styles.CameraButton}
+              onPress={() => setShowCameraModal(true)}>
+              <Icon name="camera" size={25} color={Colors.blue} />
+              <Text style={[styles.CameraText, {paddingLeft: 10}]}>
+                Capture images
+              </Text>
+            </Pressable>
+          </View>
+        )}
 
-                    />
-                    {errors?.warninG_DETAILS && (
-                        <Text style={{ color: 'red' }}>{errors?.warninG_DETAILS}</Text>
-                    )}
-                </View>
+        <View style={styles.buttonView}>
+          <Pressable
+            style={styles.button}
+            onPress={() => {
+              if (!isSubmitted) {
+                handleSubmit();
+              }
+            }}>
+            <Text style={styles.buttonText}>
+              {isSubmitted && (
+                <ActivityIndicator size={20} color={Colors.white} />
+              )}{' '}
+              {editItem ? 'UPDATE' : 'SAVE'}
+            </Text>
+          </Pressable>
+        </View>
 
-                {chunkArray(selectedImages, 5).map((item, index1) => (
-                    <View key={index1} style={styles.row}>
-                        {item.map((subItem, index) => (
-                            <View key={index} style={[styles.item, { position: 'relative' }]}
+        <BinaryImageModal
+          visible={isBinaryImage}
+          isBinary={false}
+          onClose={onCloseBinaryImageModal}
+          binaryImageData={viewBinaryImage}
+        />
 
-                            >
-                                <TouchableOpacity onPress={() => { viewImageonModal(subItem[0].uri) }}>
-                                    <Image
-                                        source={{ uri: subItem[0].uri }}
-                                        // style={{ flex: 1 }}
-                                        width={40}
-                                        height={40}
-                                    />
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => removeSelectedImage(index)} style={{ position: 'absolute', right: 0 }}>
-                                    <Ionicon name={'close-circle-outline'} size={25} color={Colors.blue} />
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
-                ))}
-                {editItem ? null :
-                    <View style={styles.buttonView}>
-                        <Pressable style={styles.CameraButton} onPress={() => setShowCameraModal(true)}>
-                            <Icon name="camera" size={25} color={Colors.blue} />
-                            <Text style={[styles.CameraText, { paddingLeft: 10 }]}>
-                                Capture images
-                            </Text>
-                        </Pressable>
-                    </View>}
+        <CameraModal
+          isVisible={showCameraModal}
+          onClose={closeCameraModal}
+          openCamera={handleCameraLaunch}
+          openGallery={openImagePicker}
+        />
+      </ScrollView>
+      <View
+        style={[
+          {
+            position: 'absolute',
+            bottom: 0,
+            backgroundColor: Colors.white,
+            width: '100%',
+          },
+        ]}>
+        {showDatePicker == 'warninG_DATE' && (
+          <>
+            <DateTimePicker
+              mode="date"
+              display="spinner"
+              value={date}
+              minimumDate={today}
+              onChange={(event, selectedDate) =>
+                onChageDatePicker(event, selectedDate, 'warninG_DATE')
+              }
+              style={Platform.OS == 'ios' && styles.datePicker}
+            />
+            {Platform.OS == 'ios' && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  position: 'absolute',
+                  bottom: 20,
+                  width: '100%',
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.pickerButton,
+                    {backgroundColor: '#11182711'},
+                  ]}
+                  onPress={() => {
+                    toggleDatePicker('No');
+                  }}>
+                  <Text style={[styles.buttonText, {color: '#075985'}]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
 
-                <View style={styles.buttonView}>
-                    <Pressable style={styles.button} onPress={() => {
-                        if (!isSubmitted) { handleSubmit() }
-                    }}>
-                        <Text style={styles.buttonText}>
-                            {isSubmitted && (
-                                <ActivityIndicator size={20} color={Colors.white} />
-                            )}{' '}
-                            {editItem ? 'UPDATE' : 'SAVE'}
-                        </Text>
-                    </Pressable>
-                </View>
+                <TouchableOpacity
+                  style={[styles.button, styles.pickerButton]}
+                  onPress={() => {
+                    confoirmIOSDate('warninG_DATE');
+                  }}>
+                  <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </>
+        )}
 
-                <BinaryImageModal
-                    visible={isBinaryImage}
-                    isBinary={false}
-                    onClose={onCloseBinaryImageModal}
-                    binaryImageData={viewBinaryImage}
-                />
+        {showTimePicker == 'warninG_TIME' && (
+          <>
+            <DateTimePicker
+              mode="time"
+              display="spinner"
+              value={date}
+              onChange={(event, selectedDate) =>
+                onChageTimePicker(event, selectedDate, 'warninG_TIME')
+              }
+              style={Platform.OS == 'ios' && styles.datePicker}
+            />
+            {Platform.OS == 'ios' && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                  position: 'absolute',
+                  bottom: 20,
+                  width: '100%',
+                }}>
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.pickerButton,
+                    {backgroundColor: '#11182711'},
+                  ]}
+                  onPressIn={() => {
+                    toggleTimePicker('No');
+                  }}>
+                  <Text style={[styles.buttonText, {color: '#075985'}]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
 
+                <TouchableOpacity
+                  style={[styles.button, styles.pickerButton]}
+                  onPress={() => {
+                    confoirmIOSTime('warninG_TIME');
+                  }}>
+                  <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </>
+        )}
 
-
-                <CameraModal
-                    isVisible={showCameraModal}
-                    onClose={closeCameraModal}
-                    openCamera={handleCameraLaunch}
-                    openGallery={openImagePicker}
-                />
-
-
-            </ScrollView>
-            <View style={[{ position: 'absolute', bottom: 0, backgroundColor: Colors.white, width: '100%' }]}>
-
-                {showDatePicker == "warninG_DATE" && (
-                    <>
-                        <DateTimePicker
-                            mode='date'
-                            display='spinner'
-                            value={date}
-                            minimumDate={today}
-                            onChange={(event, selectedDate) =>
-                                onChageDatePicker(
-                                    event,
-                                    selectedDate,
-                                    'warninG_DATE'
-                                )
-                            }
-                            style={Platform.OS == 'ios' && styles.datePicker}
-
-
-                        />
-                        {Platform.OS == 'ios' && (
-                            <View style={{
-                                flexDirection: 'row', justifyContent: 'space-evenly', position: 'absolute', bottom: 20,
-                                width: '100%'
-                            }}>
-                                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                                { backgroundColor: '#11182711' }]}
-                                    onPress={() => { toggleDatePicker('No') }}
-                                >
-                                    <Text style={[styles.buttonText, { color: '#075985' }]}>Cancel</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                                ]}
-                                    onPress={() => { confoirmIOSDate('warninG_DATE') }}
-                                >
-                                    <Text style={styles.buttonText}>Confirm</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                    </>
-
-                )}
-
-
-                {showTimePicker == 'warninG_TIME' && (
-                    <>
-                        <DateTimePicker
-                            mode='time'
-                            display='spinner'
-                            value={date}
-                            onChange={(event, selectedDate) =>
-                                onChageTimePicker(
-                                    event,
-                                    selectedDate,
-                                    'warninG_TIME'
-                                )
-                            }
-                            style={Platform.OS == 'ios' && styles.datePicker}
-                        />
-                        {Platform.OS == 'ios' && (
-                            <View style={{
-                                flexDirection: 'row', justifyContent: 'space-evenly', position: 'absolute', bottom: 20,
-                                width: '100%'
-                            }}>
-                                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                                { backgroundColor: '#11182711' }]}
-                                    onPressIn={() => { toggleTimePicker('No') }}
-                                >
-                                    <Text style={[styles.buttonText, { color: '#075985' }]}>Cancel</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={[styles.button, styles.pickerButton,
-                                ]}
-                                    onPress={() => { confoirmIOSTime("warninG_TIME") }}
-                                >
-                                    <Text style={styles.buttonText}>Confirm</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-
-                    </>
-                )}
-
-            </View>
-
-        </SafeAreaView>
-    );
+        {/* Modal Component */}
+        <AddressModal
+          modalVisible={modalVisible}
+          closeModal={closeModal}
+          Isaddress={Isaddress}
+          autoLocation={autoLocation}
+          setAutoLocation={setAutoLocation}
+          candidates={candidates}
+          handleInputChange={handleInputChange}
+          formValues={formValues}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
 
-export default WarningssScreen
+export default WarningssScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        // alignItems: 'center',
-        flex: 1,
-        marginTop: 10,
-        position: 'relative'
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        // textTransform: 'uppercase',
-        textAlign: 'center',
-        paddingVertical: 20,
-        color: Colors.primary,
-    },
-    inputView: {
-        gap: 10,
-        width: '100%',
-        paddingHorizontal: 20,
-        marginBottom: 5,
-    },
-    forgetText: {
-        fontSize: 14,
-        color: Colors.primary,
-    },
-    button: {
-        backgroundColor: Colors.yellow,
-        height: 45,
-        borderColor: Colors.blue,
-        borderWidth: 1,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    buttonText: {
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    buttonView: {
-        width: '100%',
-        paddingHorizontal: 20,
-        marginTop: 10,
-        marginBottom: 20,
-    },
-    optionsText: {
-        textAlign: 'center',
-        paddingVertical: 10,
-        color: Colors.primary,
-        fontSize: 13,
-        marginBottom: 6,
-    },
-    mediaIcons: {
-        flexDirection: 'row',
-        gap: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 23,
-    },
-    icons: {
-        width: 40,
-        height: 40,
-    },
-    footerText: {
-        textAlign: 'center',
-        color: Colors.red,
-        marginTop: 10,
-        marginBottom: 30,
-    },
-    signup: {
-        color: Colors.primary,
-        fontSize: 16,
-    },
+  container: {
+    // alignItems: 'center',
+    flex: 1,
+    marginTop: 10,
+    position: 'relative',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    // textTransform: 'uppercase',
+    textAlign: 'center',
+    paddingVertical: 20,
+    color: Colors.primary,
+  },
+  inputView: {
+    gap: 10,
+    width: '100%',
+    paddingHorizontal: 20,
+    marginBottom: 5,
+  },
+  forgetText: {
+    fontSize: 14,
+    color: Colors.primary,
+  },
+  button: {
+    backgroundColor: Colors.yellow,
+    height: 45,
+    borderColor: Colors.blue,
+    borderWidth: 1,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonView: {
+    width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  optionsText: {
+    textAlign: 'center',
+    paddingVertical: 10,
+    color: Colors.primary,
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  mediaIcons: {
+    flexDirection: 'row',
+    gap: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 23,
+  },
+  icons: {
+    width: 40,
+    height: 40,
+  },
+  footerText: {
+    textAlign: 'center',
+    color: Colors.red,
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  signup: {
+    color: Colors.primary,
+    fontSize: 16,
+  },
 
-    box: {
-        width: screenWidth / 4,
-        height: screenWidth / 4,
-        borderWidth: 1, // Border width in pixels
-        borderColor: Colors.blue,
-        borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.primary,
-        elevation: 1,
-        alignSelf: 'center',
-    },
-    img: {
-        width: screenWidth / 3 - 60,
-        height: screenWidth / 3 - 60,
-        resizeMode: 'contain',
-    },
-    button1: {
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 50,
-        marginTop: 10,
-        marginBottom: 15,
-        backgroundColor: '#075985'
-    },
-    buttonText1: {
-        fontSize: 14,
-        fontWeight: "500",
-        color: "#fff"
-    },
-    pickerButton: {
-        paddingHorizontal: 20
-    },
-    datePicker: {
-        height: 300,
-        bottom: 50
-    },
+  box: {
+    width: screenWidth / 4,
+    height: screenWidth / 4,
+    borderWidth: 1, // Border width in pixels
+    borderColor: Colors.blue,
+    borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    elevation: 1,
+    alignSelf: 'center',
+  },
+  img: {
+    width: screenWidth / 3 - 60,
+    height: screenWidth / 3 - 60,
+    resizeMode: 'contain',
+  },
+  button1: {
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    marginTop: 10,
+    marginBottom: 15,
+    backgroundColor: '#075985',
+  },
+  buttonText1: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#fff',
+  },
+  pickerButton: {
+    paddingHorizontal: 20,
+  },
+  datePicker: {
+    height: 300,
+    bottom: 50,
+  },
 
-    dropdown: {
-        width: '100%',
-        height: 50,
-        paddingLeft: 7,
-        borderColor: Colors.black,
-        borderWidth: 1,
-        borderRadius: 7,
-        color: Colors.black,
-        backgroundColor: Colors.white
-    },
-    itemStyle: {
-        fontSize: 16,
-        color: 'black', // Default text color
-    },
-    input: {
-        width: '100%',
-        height: 50,
-        paddingHorizontal: 20,
-        borderColor: Colors.black,
-        borderWidth: 1,
-        borderRadius: 7,
-        color: Colors.black,
-    },
-    CameraButton: {
-        backgroundColor: Colors.white,
-        height: 45,
-        borderColor: Colors.black,
-        borderWidth: 0.5,
-        borderRadius: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
-        // justifyContent: 'center',
-        paddingLeft: 10
-    },
-    CameraText: {
-        color: Colors.primary,
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: 10,
-    },
-    item: {
-        flex: 1,
-        marginHorizontal: 5,
-        padding: 10,
-        backgroundColor: Colors.white,
-        alignItems: 'center',
-    },
-})
+  dropdown: {
+    width: '100%',
+    height: 50,
+    paddingLeft: 7,
+    borderColor: Colors.black,
+    borderWidth: 1,
+    borderRadius: 7,
+    color: Colors.black,
+    backgroundColor: Colors.white,
+  },
+  itemStyle: {
+    fontSize: 16,
+    color: 'black', // Default text color
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    paddingHorizontal: 20,
+    borderColor: Colors.black,
+    borderWidth: 1,
+    borderRadius: 7,
+    color: Colors.black,
+  },
+  CameraButton: {
+    backgroundColor: Colors.white,
+    height: 45,
+    borderColor: Colors.black,
+    borderWidth: 0.5,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'center',
+    paddingLeft: 10,
+  },
+  CameraText: {
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  item: {
+    flex: 1,
+    marginHorizontal: 5,
+    padding: 10,
+    backgroundColor: Colors.white,
+    alignItems: 'center',
+  },
+});

@@ -7,7 +7,8 @@ export const getGeocode = async address => {
   const params = {
     SingleLine: address,
     f: 'json', // Return response as JSON
-    // outFields: '*', // Fetch all available fields
+    outFields: '*', // Fetch all available fields
+    // outFields: 'Country,Address,Location', // Ensure 'Country' field is included
     // maxLocations: 500, // Set limit for suggestions
     // Optionally include your API key here
     // token: 'YOUR_ESRI_API_KEY'
@@ -15,6 +16,7 @@ export const getGeocode = async address => {
 
   try {
     const response = await axios.get(GEOCODE_URL, {params});
+    console.log(response.data.candidates[0].attributes);
     return response.data.candidates;
   } catch (error) {
     console.log('Error fetching geocode:', error);

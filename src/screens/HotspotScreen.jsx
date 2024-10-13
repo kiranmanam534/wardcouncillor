@@ -123,6 +123,8 @@ function HotspotScreen({route}) {
         crimE_TYPE: editItem.crimE_TYPE,
         location: editItem.location,
         crimE_DETAILS: editItem.crimE_DETAILS,
+        latitude: editItem?.latitude?.toString() || '0.00',
+        longitude: editItem?.longitude?.toString() || '0.00',
       });
     }
   }, [editItem]);
@@ -281,7 +283,9 @@ function HotspotScreen({route}) {
 
   // Trigger API call when query changes
   useEffect(() => {
+    setIsaddress(false);
     setCandidates([]);
+
     if (autoLocation) {
       handleSearch();
     }
@@ -309,8 +313,8 @@ function HotspotScreen({route}) {
           crimE_DATE: formValues.crimE_DATE,
           refnumber: editItem.refnumber,
           location: formValues.location,
-          latitude: formValues.latitude || '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
-          longitude: formValues.longitude || '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          latitude: formValues?.latitude?.toString() || '0.00',
+          longitude: formValues?.longitude?.toString() || '0.00',
           crimE_TYPE: formValues.crimE_TYPE,
           crimE_DETAILS: formValues.crimE_DETAILS,
           // "expirY_DATE": formValues.crimE_DATE,
@@ -347,8 +351,8 @@ function HotspotScreen({route}) {
         let postData = {
           CRIME_DATE: formValues.crimE_DATE,
           LOCATION: formValues.location,
-          LATITUDE: formValues.latitude || '0.00',
-          LONGITUDE: formValues.longitude || '0.00',
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
           CRIME_TYPE: formValues.crimE_TYPE,
           CRIME_DETAILS: formValues.crimE_DETAILS,
           EXPIRY_DATE: formValues.crimE_DATE,

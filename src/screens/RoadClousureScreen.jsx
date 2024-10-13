@@ -218,6 +218,8 @@ function RoadClousureScreen({route}) {
           editItem.roadclouseR_ENDTIME &&
           formatDateTime(editItem.roadclouseR_ENDTIME, 'time'),
         location: editItem.location,
+        latitude: editItem?.latitude?.toString() || '0.00',
+        longitude: editItem?.longitude?.toString() || '0.00',
         roaD_NAME: editItem.roaD_NAME,
         roadclouseR_DETAILS: editItem.roadclouseR_DETAILS,
       });
@@ -336,6 +338,7 @@ function RoadClousureScreen({route}) {
 
   // Trigger API call when query changes
   useEffect(() => {
+    setIsaddress(false);
     setCandidates([]);
     if (autoLocation) {
       handleSearch();
@@ -371,8 +374,8 @@ function RoadClousureScreen({route}) {
             formValues.roadclouseR_ENDTIME,
           ).toJSON(),
           location: formValues.location,
-          latitude: formValues.latitude || '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
-          longitude: formValues.longitude || '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          latitude: formValues?.latitude?.toString() || '0.00',
+          longitude: formValues?.longitude?.toString() || '0.00',
           roaD_NAME: formValues.roaD_NAME,
           roadclouseR_DETAILS: formValues.roadclouseR_DETAILS,
           // "expirY_DATE": formValues.roadclouseR_ENDDATE,
@@ -413,8 +416,8 @@ function RoadClousureScreen({route}) {
             formValues.roadclouseR_ENDTIME,
           ),
           LOCATION: formValues.location,
-          LATITUDE: formValues.latitude || '0.00',
-          LONGITUDE: formValues.longitude || '0.00',
+          LATITUDE: formValues?.latitude?.toString() || '0.00',
+          LONGITUDE: formValues?.longitude?.toString() || '0.00',
           ROAD_NAME: formValues.roaD_NAME,
           ROADCLOUSER_DETAILS: formValues.roadclouseR_DETAILS,
           EXPIRY_DATE: formValues.roadclouseR_ENDDATE,
