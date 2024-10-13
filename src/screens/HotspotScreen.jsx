@@ -43,9 +43,11 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import Ionicon from 'react-native-vector-icons/dist/Ionicons';
 import {AnnounceViewActions} from '../redux/announcementViewSlice';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 
 import {apiUrl} from '../constant/CommonData';
+import {getGeocode} from '../session/getGeocode';
+import axios from 'axios';
+import AddressModal from '../components/AddressModal';
 
 const logo = require('../assets/images/COE_logo_portrait.png');
 
@@ -73,12 +75,13 @@ function HotspotScreen({route}) {
   const [formValues, setFormValues] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [sports1, setSports1] = useState([]);
-  const [autoLocation, setAutoLocation] = useState('');
 
   const [date, setDate] = useState(new Date());
 
   const [Isaddress, setIsaddress] = useState(false);
   const [candidates, setCandidates] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [autoLocation, setAutoLocation] = useState('');
 
   const [showDatePicker, setShowDatePicker] = useState('');
 
@@ -265,35 +268,15 @@ function HotspotScreen({route}) {
     );
   };
 
-  //ersi map
-  const GEOCODE_URL =
-    'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates';
-
-  const getGeocode = async address => {
+  const handleSearch = async () => {
     setIsaddress(true);
-    const params = {
-      SingleLine: address,
-      f: 'json', // Return response as JSON
-      // outFields: '*', // Fetch all available fields
-      // maxLocations: 500, // Set limit for suggestions
-      // Optionally include your API key here
-      // token: 'YOUR_ESRI_API_KEY'
-    };
-
     try {
-      const response = await axios.get(GEOCODE_URL, {params});
-      setIsaddress(false);
-      return response.data.candidates;
+      const results = await getGeocode(autoLocation);
+      setCandidates(results);
     } catch (error) {
       console.log('Error fetching geocode:', error);
       setIsaddress(false);
-      return [];
     }
-  };
-
-  const handleSearch = async () => {
-    const results = await getGeocode(autoLocation);
-    setCandidates(results);
   };
 
   // Trigger API call when query changes
@@ -304,32 +287,19 @@ function HotspotScreen({route}) {
     }
   }, [autoLocation]);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  // const slideAnim = new Animated.Value(Dimensions.get('window').height / 2); // Animation for sliding modal up
-
   // Function to show modal
   const openModal = () => {
-    // Alert.alert('ok ');
     setModalVisible(true);
-    // Animated.timing(slideAnim, {
-    //   toValue: 0,
-    //   duration: 300,
-    //   useNativeDriver: true,
-    // }).start();
   };
 
   // Function to hide modal
   const closeModal = () => {
-    // Animated.timing(slideAnim, {
-    //   toValue: Dimensions.get('window').height,
-    //   duration: 300,
-    //   useNativeDriver: true,
-    // }).start(() => setModalVisible(false));
     setModalVisible(false);
   };
 
   const handleSubmit = async () => {
     try {
+      console.log(formValues);
       await HotspotValidationSchema.validate(formValues, {abortEarly: false});
       if (editItem) {
         setIsSubmitted(true);
@@ -339,8 +309,8 @@ function HotspotScreen({route}) {
           crimE_DATE: formValues.crimE_DATE,
           refnumber: editItem.refnumber,
           location: formValues.location,
-          latitude: '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
-          longitude: '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          latitude: formValues.latitude || '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
+          longitude: formValues.longitude || '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
           crimE_TYPE: formValues.crimE_TYPE,
           crimE_DETAILS: formValues.crimE_DETAILS,
           // "expirY_DATE": formValues.crimE_DATE,
@@ -505,6 +475,7 @@ function HotspotScreen({route}) {
                 autoCorrect={false}
                 keyboardType="default"
                 autoCapitalize="none"
+                multiline
                 editable={false}
                 onChangeText={value => handleInputChange('location', value)}
                 placeholderTextColor={'#11182744'}
@@ -772,127 +743,17 @@ function HotspotScreen({route}) {
           </>
         )}
       </View>
-
       {/* Modal Component */}
-      {modalVisible && (
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={modalVisible}
-          onRequestClose={closeModal} // Handle Android back button
-        >
-          <Pressable style={stylesModal.overlay} onPress={closeModal} />
-          <View
-            style={[
-              stylesModal.modalView,
-              // {transform: [{translateY: slideAnim}]},
-            ]}>
-            <View style={[stylesModal.modalContent, {position: 'relative'}]}>
-              {/* <Text style={stylesModal.modalText}>This is a bottom modal!</Text> */}
-              <View style={[styles.inputView]}>
-                {/* {Platform.OS == 'android' && */}
-                <TextInput
-                  mode="outlined"
-                  label={'Search Location'}
-                  style={{backgroundColor: Colors.white}}
-                  placeholder="Location"
-                  value={autoLocation}
-                  autoCorrect={false}
-                  keyboardType="default"
-                  autoCapitalize="none"
-                  // editable={false}
-                  onChangeText={value => setAutoLocation(value)}
-                  placeholderTextColor={'#11182744'}
-                  // onFocus={openModal} // Trigger modal when focused
-                  // onPress={openModal}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: 30,
-                    top: 5,
-                    bottom: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <MaterialIcon
-                    name="my-location"
-                    size={25}
-                    color={Colors.blue}
-                  />
-                </View>
-              </View>
-              <TouchableOpacity
-                onPress={closeModal}
-                style={[
-                  stylesModal.button,
-                  {position: 'absolute', right: 10, bottom: 10},
-                ]}>
-                <Text style={stylesModal.buttonText}>Close</Text>
-              </TouchableOpacity>
-              {candidates && candidates.length > 0 && (
-                <View
-                  style={[
-                    {
-                      width: '100%',
-                      position: 'absolute',
-                      top: 50,
-                      backgroundColor: Colors.primary,
-                      // margin: 15,
-                      padding: 10,
-                      marginTop: 15,
-                      marginBottom: 200,
-                    },
-                  ]}>
-                  <FlatList
-                    data={candidates}
-                    keyExtractor={item => item.address + item.location.x}
-                    renderItem={({item}) => (
-                      <TouchableOpacity
-                        onPress={() => {
-                          handleInputChange('location', item.address);
-
-                          closeModal();
-                          // setAutoLocation('');
-                        }}
-                        style={{
-                          padding: 5,
-                          borderBottomWidth: 1,
-                          borderBottomColor: Colors.white,
-                        }}>
-                        <Text style={{color: Colors.white}}>
-                          {item.address}
-                        </Text>
-                        <Text style={{color: Colors.white}}>
-                          {item.location.x}, {item.location.y}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  />
-                </View>
-              )}
-
-              {Isaddress && candidates.length == 0 && (
-                <View
-                  style={[
-                    {
-                      width: '100%',
-                      position: 'absolute',
-                      top: 50,
-                      // backgroundColor: Colors.primary,
-                      // margin: 15,
-                      padding: 10,
-                      marginTop: 15,
-                      marginBottom: 200,
-                    },
-                  ]}>
-                  <ActivityIndicator size={30} color={Colors.primary} />
-                </View>
-              )}
-            </View>
-          </View>
-        </Modal>
-      )}
+      <AddressModal
+        modalVisible={modalVisible}
+        closeModal={closeModal}
+        Isaddress={Isaddress}
+        autoLocation={autoLocation}
+        setAutoLocation={setAutoLocation}
+        candidates={candidates}
+        handleInputChange={handleInputChange}
+        formValues={formValues}
+      />
     </SafeAreaView>
   );
 }
@@ -1084,62 +945,5 @@ const pickerSelectStyles = StyleSheet.create({
     color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
     backgroundColor: Colors.white,
-  },
-});
-
-// Styles
-const stylesModal = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  modalView: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 500,
-    backgroundColor: Colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    flex: 1,
-    // justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  button: {
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
   },
 });
