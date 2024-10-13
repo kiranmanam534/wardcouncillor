@@ -347,8 +347,8 @@ function HotspotScreen({route}) {
         let postData = {
           CRIME_DATE: formValues.crimE_DATE,
           LOCATION: formValues.location,
-          LATITUDE: '0.00', //Platform.OS == "ios" ? formValues.latitude : "0.00",
-          LONGITUDE: '0.00', //Platform.OS == "ios" ? formValues.longitude : "0.00",
+          LATITUDE: formValues.latitude || '0.00',
+          LONGITUDE: formValues.longitude || '0.00',
           CRIME_TYPE: formValues.crimE_TYPE,
           CRIME_DETAILS: formValues.crimE_DETAILS,
           EXPIRY_DATE: formValues.crimE_DATE,
