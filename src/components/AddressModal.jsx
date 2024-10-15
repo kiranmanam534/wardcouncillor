@@ -164,6 +164,7 @@ const stylesModal = StyleSheet.create({
   modalView: {
     position: 'absolute',
     left: 0,
+    top: 100,
     right: 0,
     bottom: 0,
     height: 500,
