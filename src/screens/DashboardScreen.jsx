@@ -540,10 +540,15 @@ const DashboardScreen = () => {
                   </Card.Actions>
                 </Card>
 
-                {/* <Card
+                <Card
                   onPress={() => {
+                    // handleDetailsNavigation(
+                    //   'CouncillorDetails',
+                    //   'Indigent',
+                    //   'Indigent',
+                    // );
                     handleDetailsNavigation(
-                      'CouncillorDetails',
+                      'IndegentDashboard',
                       'Indigent',
                       'Indigent',
                     );
@@ -565,7 +570,7 @@ const DashboardScreen = () => {
                       <Text style={styles.buttonText}>View</Text>
                     </View>
                   </Card.Actions>
-                </Card> */}
+                </Card>
               </View>
             </View>
           </ScrollView>

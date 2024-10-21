@@ -26,6 +26,7 @@ import AnnouncementViewSlice from './announcementViewSlice';
 import AnnouncementImagesSlice from './AnnouncementImagesSlice';
 import AnnouncementDeleteSlice from './AnnouncementDeleteSlice';
 import visibilityAIIconSlice from './visibilityAIIconSlice';
+import IndegentConsumptionSlice from './indegent/IndegentConsumptionSlice';
 
 const store = configureStore({
   reducer: {
@@ -37,27 +38,27 @@ const store = configureStore({
     loginReducer: loginSlice.reducer,
     wardMemberReducer: wardMemberSlice.reducer,
     smsReducer: smsSlice.reducer,
-    communityMemberRegisterReducer:communityMemberRegisterSlice.reducer,
-    createHotspotReducer:createHotspotSlice.reducer,
-    createRoadClosureReducer:createRoadClosureSlice.reducer,
-    createMeetingReducer:createMeetingsSlice.reducer,
-    createWorkhopReducer:createWorkshopSlice.reducer,
-    createMissingPersonReducer:createMissingPersonSlice.reducer,
-    createWarningsReducer:createWarningsSlice.reducer,
-    createHealthCareReducer:createHealthCareSlice.reducer,
-    CategoriesReducer:CategoriesSlice.reducer,
-    CouncillorAllWardsReducer:councillorAllWardsSlice.reducer,
-    MayorSelectedWardReducer:MayorSelectedWardSlice.reducer,
-    MeterImageReducer:MeterImageSlice.reducer,
-    OustandingCategoriesReducer:OustandingCategoriesSlice.reducer,
-    DataLoadDetailsReducer:DataLoadDetailsSlice.reducer,
-    customer360Reducer:customer360Slice.reducer,
-    PaymentHistoryReducer:PaymentHistorySlice.reducer,
-    announcementViewReducer:AnnouncementViewSlice.reducer,
-    AnnouncementImagesReducer:AnnouncementImagesSlice.reducer,
+    communityMemberRegisterReducer: communityMemberRegisterSlice.reducer,
+    createHotspotReducer: createHotspotSlice.reducer,
+    createRoadClosureReducer: createRoadClosureSlice.reducer,
+    createMeetingReducer: createMeetingsSlice.reducer,
+    createWorkhopReducer: createWorkshopSlice.reducer,
+    createMissingPersonReducer: createMissingPersonSlice.reducer,
+    createWarningsReducer: createWarningsSlice.reducer,
+    createHealthCareReducer: createHealthCareSlice.reducer,
+    CategoriesReducer: CategoriesSlice.reducer,
+    CouncillorAllWardsReducer: councillorAllWardsSlice.reducer,
+    MayorSelectedWardReducer: MayorSelectedWardSlice.reducer,
+    MeterImageReducer: MeterImageSlice.reducer,
+    OustandingCategoriesReducer: OustandingCategoriesSlice.reducer,
+    DataLoadDetailsReducer: DataLoadDetailsSlice.reducer,
+    customer360Reducer: customer360Slice.reducer,
+    PaymentHistoryReducer: PaymentHistorySlice.reducer,
+    announcementViewReducer: AnnouncementViewSlice.reducer,
+    AnnouncementImagesReducer: AnnouncementImagesSlice.reducer,
     // AnnouncementDeleteReducer:AnnouncementDeleteSlice.reducer,
     visibilityAI: visibilityAIIconSlice.reducer,
-
+    indegentConsumptions: IndegentConsumptionSlice.reducer,
   },
   middleware: getDefaultMiddleware => {
     // Disable serializable state invariant middleware

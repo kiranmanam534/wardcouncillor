@@ -160,3 +160,24 @@ export const CollectionsDashboardList = [
     name: 'WardBillingCollections',
   },
 ];
+
+export const IndegentDashboardList = [
+  {
+    id: 1,
+    title: 'Status Wise',
+    icon: (
+      <MaterialCommunityIcons
+        name="tablet-dashboard"
+        size={50}
+        color={Colors.blue}
+      />
+    ),
+    name: 'StatusWise',
+  },
+  {
+    id: 2,
+    title: 'Consumptions',
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    name: 'WardConsumptionsList',
+  },
+];

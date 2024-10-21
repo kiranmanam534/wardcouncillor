@@ -47,6 +47,8 @@ import WardsWiseComparisonScreen from '../screens/WardsWiseComparisonScreen';
 import WardsDBAIScreen from '../screens/WardsDBAIScreen';
 import WardBillingCollectionsScreen from '../screens/WardBillingCollectionsScreen';
 import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_BarChartScreen';
+import IndegentDashboardScreen from '../screens/IndegentDashboardScreen';
+import IndegentConsumptionsScreen from '../screens/IndegentConsumptionsScreen';
 const AI_Icon = require('../assets/images/AI_Icon.jpeg');
 const screenWidth = Dimensions.get('window').width;
 
@@ -355,6 +357,25 @@ const PrivateNavigation = () => {
             headerShown: true,
           })}
         />
+
+        <PrivateStack.Screen
+          name="IndegentDashboard"
+          component={IndegentDashboardScreen}
+          options={({navigation, route}) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+        <PrivateStack.Screen
+          name="IndegentConsumptions"
+          component={IndegentConsumptionsScreen}
+          options={({navigation, route}) => ({
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
         <PrivateStack.Screen
           name="AIChatBot"
           component={WardsDBAIScreen}
