@@ -215,9 +215,9 @@ const IndegentConsumptionsScreen = () => {
     setSelectedCoontentID(id);
   };
 
-  const renderMenuList = item => {
+  const renderMenuList = (item, index) => {
     // console.log(item);
-    let id = item.meter_No + '_' + item.municipalAccount;
+    let id = item.meter_No + '_' + item.municipalAccount + '_' + index;
     return (
       <TouchableOpacity key={id} onPress={() => handleDetailsNavigation(id)}>
         <View style={styles.card}>
@@ -278,7 +278,7 @@ const IndegentConsumptionsScreen = () => {
   return (
     <FlatList
       data={IndegentConsumptions}
-      renderItem={({item, index}) => renderMenuList(item)}
+      renderItem={({item, index}) => renderMenuList(item, index)}
       keyExtractor={item => item.actionType}
     />
   );
