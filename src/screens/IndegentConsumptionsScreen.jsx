@@ -9,19 +9,20 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {Colors} from '../constant/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {IndegentDashboardList} from '../constant/MainDashboardList';
+import BottomSearchBox from '../components/BottomSearchBox';
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-
+  const [searchVisible, setSearchVisible] = useState(false);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
-
+  const [searchText, setSearchText] = useState('');
   const {warD_NO} = useSelector(state => state.loginReducer.items);
-
+  let searchPlaceHoder = 'Serach...';
   const IndegentConsumptions = [
     {
       address: '2, KWIKSTERT, BIRCH ACRES 1619',
@@ -40,6 +41,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'VOLSCHENK',
       wardno: '104',
+      Latitude: '-26.1270685',
+      Longitude: '28.484952',
     },
     {
       address: '15,SILVER OAK STREET,ESTERPARK, 1619',
@@ -58,6 +61,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'PRONTO',
       wardno: '104',
+      Latitude: '-26.127141',
+      Longitude: '28.4848585',
     },
     {
       address:
@@ -77,6 +82,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'Matshego',
       wardno: '104',
+      Latitude: '-26.25304029',
+      Longitude: '28.10918636',
     },
     {
       address: '44 Green Avenue, KEMPTON PARK X5, KEMPTON PARK X5 1619',
@@ -95,6 +102,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'Van Baalen',
       wardno: '104',
+      Latitude: '-26.12721371',
+      Longitude: '28.48475841',
     },
     {
       address: '34,BULTOPRIT STREET,KEMPTON PARK-WES,KEMPTON 1619',
@@ -113,6 +122,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: 'No Income',
       surname: 'JOOSTE',
       wardno: '104',
+      Latitude: '-26.12701855',
+      Longitude: '28.48474641',
     },
     {
       address: '89, KILDARE EST,LIMPOPO STR, TERENURE X32 1619',
@@ -131,6 +142,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'LETSIE H H M AND C N',
       wardno: '104',
+      Latitude: '-26.12694598',
+      Longitude: '28.48483516',
     },
     {
       address: '10 Korner Avenue, KEMPTON PARK WEST, KEMPTON PARK WEST 1619',
@@ -149,6 +162,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'Manilal O And Pillay D',
       wardno: '104',
+      Latitude: '-26.25304029',
+      Longitude: '28.10918636',
     },
     {
       address: '24, CAROL VAN DER WALT, EDLEEN EXT 3 1619',
@@ -167,6 +182,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'NTINI',
       wardno: '104',
+      Latitude: '-26.10784349',
+      Longitude: '28.471064',
     },
     {
       address: '52,PARKLAND DRIVE,ESTERPARK,KEMPTON 1619',
@@ -185,6 +202,8 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'MOLEFE',
       wardno: '104',
+      Latitude: '-26.107745',
+      Longitude: '28.471053',
     },
     {
       address: '8, WEIVELD, KEMPTON PARK WEST 1619',
@@ -203,9 +222,55 @@ const IndegentConsumptionsScreen = () => {
       sourceOfIncome: null,
       surname: 'SIBINDI',
       wardno: '104',
+      Latitude: '-26.1076465',
+      Longitude: '28.471042',
     },
   ];
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{flexDirection: 'row'}}>
+          {/* <TouchableOpacity
+            onPress={toggleSearchBar}
+            style={styles.searchButton}>
+            <Icon name="search" size={20} color={Colors.white} />
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('IndegentConsumptionsMap', {
+                title: warD_NO + ' - Indegent Consumption Map',
+              });
+            }}
+            style={styles.searchButton}>
+            {/* <Text style={styles.searchButtonText}>Search</Text> */}
+            <FontAwesome5
+              name="map-marked-alt"
+              size={20}
+              color={Colors.white}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation, searchVisible]);
+
+  const toggleSearchBar = () => {
+    setSearchVisible(!searchVisible);
+  };
+
+  const handleBottomSearchBox = value => {
+    // dispatch(AnnounceViewActions.clearAnnouncementsData())
+    console.log('Searching for:', value);
+    setSearchText(value);
+  };
+
+  const handleSearch = () => {
+    // dispatch(AnnounceViewActions.clearAnnouncementsData());
+    console.log('Searching for:', searchText);
+    setPage(1);
+    LoadAnouncements(1);
+  };
   // const {loading, error, indegentConsumptions} =
   //   useIndegentConsumptiionsByWardNo(warD_NO);
 
@@ -276,11 +341,23 @@ const IndegentConsumptionsScreen = () => {
   };
 
   return (
-    <FlatList
-      data={IndegentConsumptions}
-      renderItem={({item, index}) => renderMenuList(item, index)}
-      keyExtractor={item => item.actionType}
-    />
+    <>
+      {searchVisible && (
+        <BottomSearchBox
+          onChangeText={handleBottomSearchBox}
+          onPress={handleSearch}
+          value={searchText}
+          // setSearchText={setSearchText}
+          placeholder={searchPlaceHoder}
+          // isLoading={isLoading}
+        />
+      )}
+      <FlatList
+        data={IndegentConsumptions}
+        renderItem={({item, index}) => renderMenuList(item, index)}
+        keyExtractor={item => item.actionType}
+      />
+    </>
   );
 
   // return (
@@ -339,5 +416,26 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     padding: 3,
+  },
+
+  toggleButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 30,
+    backgroundColor: Colors.red,
+    borderRadius: 25,
+    padding: 10,
+    elevation: 10,
+  },
+  searchButton: {
+    marginRight: 10,
+  },
+  searchButtonText: {
+    fontSize: 16,
+    color: 'blue',
+  },
+  searchBar: {
+    marginBottom: 16,
+    // backgroundColor:Colors.
   },
 });

@@ -1002,7 +1002,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-maps (1.15.1):
+  - react-native-maps (1.18.2):
     - React-Core
   - react-native-netinfo (11.3.2):
     - React-Core
@@ -1608,7 +1608,7 @@ SPEC CHECKSUMS:
   react-native-floating-label-input: 87443ecddba939a8d37b1917573a958cbef28162
   react-native-geolocation: 67d909c955daedea3f8c30d912f004f806edff64
   react-native-image-picker: c3afe5472ef870d98a4b28415fc0b928161ee5f7
-  react-native-maps: 4c07b21deac3ac3579558956b63e288efb8725bb
+  react-native-maps: d7c0974353b8a495642d7ce3b80f239fc6b87bfb
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
   react-native-simple-toast: 1f1cc551d419bc0ab05dcb0136554006c274789d

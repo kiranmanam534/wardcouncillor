@@ -49,6 +49,7 @@ import WardBillingCollectionsScreen from '../screens/WardBillingCollectionsScree
 import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_BarChartScreen';
 import IndegentDashboardScreen from '../screens/IndegentDashboardScreen';
 import IndegentConsumptionsScreen from '../screens/IndegentConsumptionsScreen';
+import IndegentConsumptionsMapScreen from '../screens/IndegentConsumptionsMapScreen';
 const AI_Icon = require('../assets/images/AI_Icon.jpeg');
 const screenWidth = Dimensions.get('window').width;
 
@@ -371,6 +372,17 @@ const PrivateNavigation = () => {
           name="IndegentConsumptions"
           component={IndegentConsumptionsScreen}
           options={({navigation, route}) => ({
+            headerTitleAlign: 'left',
+            title: route.params.title,
+            headerShown: true,
+          })}
+        />
+
+        <PrivateStack.Screen
+          name="IndegentConsumptionsMap"
+          component={IndegentConsumptionsMapScreen}
+          options={({navigation, route}) => ({
+            headerTitleAlign: 'left',
             title: route.params.title,
             headerShown: true,
           })}
