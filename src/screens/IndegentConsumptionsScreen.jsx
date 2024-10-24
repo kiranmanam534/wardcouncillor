@@ -240,6 +240,7 @@ const IndegentConsumptionsScreen = () => {
             onPress={() => {
               navigation.navigate('IndegentConsumptionsMap', {
                 title: warD_NO + ' - Indegent Consumption Map',
+                IndegentConsumptions: IndegentConsumptions,
               });
             }}
             style={styles.searchButton}>
@@ -295,22 +296,33 @@ const IndegentConsumptionsScreen = () => {
               />
             </View> */}
             <View style={styles.content}>
-              <Text style={styles.title}>
-                Account No : {item.municipalAccount}
-              </Text>
+              <View
+                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <Text style={styles.title}>
+                  Account No : {item.municipalAccount}
+                </Text>
+                <TouchableOpacity
+                  style={{textAlign: 'right', marginRight: 5}}
+                  onPress={() => {
+                    navigation.navigate('IndegentConsumptionsMap', {
+                      title: warD_NO + ' - Indegent Consumption Map',
+                      IndegentConsumptions: [item],
+                    });
+                  }}>
+                  <FontAwesome5
+                    name="map-marked-alt"
+                    size={25}
+                    color={Colors.blue}
+                  />
+                </TouchableOpacity>
+              </View>
+
               <Text style={styles.description}>Meter No : {item.meter_No}</Text>
               <Text style={styles.description}>
                 Previous Consumption :{' '}
                 {parseInt(item.previouS_CONSUMPTION || 0)}
               </Text>
             </View>
-            {/* <View style={[styles.iconContainer, {marginRight: 0}]}>
-              <Icon
-                name={id === selectedCoontentID ? 'angle-up' : 'angle-down'}
-                size={50}
-                color={Colors.yellow}
-              />
-            </View> */}
           </View>
 
           {id === selectedCoontentID && (

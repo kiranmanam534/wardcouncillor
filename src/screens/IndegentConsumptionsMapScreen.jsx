@@ -1,8 +1,23 @@
 import React, {useRef, useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import MapView, {Marker, Callout, PROVIDER_GOOGLE} from 'react-native-maps';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {Colors} from '../constant/Colors';
 
-const IndegentConsumptionsMapScreen = () => {
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
+const IndegentConsumptionsMapScreen = ({route}) => {
+  const IndegentConsumptions = route.params.IndegentConsumptions;
+  console.log(IndegentConsumptions);
   const [region, setRegion] = useState({
     latitude: -26.1778844,
     longitude: 27.9667214,
@@ -28,7 +43,7 @@ const IndegentConsumptionsMapScreen = () => {
     });
   };
   // Define multiple marker locations
-  const IndegentConsumptions = [
+  const IndegentConsumptions1 = [
     {
       address: '2, KWIKSTERT, BIRCH ACRES 1619',
       cell: '0729072975',
@@ -231,26 +246,7 @@ const IndegentConsumptionsMapScreen = () => {
       Longitude: '28.471042',
     },
   ];
-  const markers = [
-    {
-      id: 1,
-      title: 'Marker 1',
-      description: 'This is marker 1',
-      coordinate: {latitude: 37.78825, longitude: -122.4324},
-    },
-    {
-      id: 2,
-      title: 'Marker 2',
-      description: 'This is marker 2',
-      coordinate: {latitude: 37.78865, longitude: -122.4321},
-    },
-    {
-      id: 3,
-      title: 'Marker 3',
-      description: 'This is marker 3',
-      coordinate: {latitude: 37.78905, longitude: -122.4318},
-    },
-  ];
+
   return (
     <View style={styles.container}>
       <MapView
@@ -275,21 +271,78 @@ const IndegentConsumptionsMapScreen = () => {
             // provider={PROVIDER_GOOGLE} // Use Google Maps for both platforms
             title={marker.municipalAccount}
             description={marker.meter_No}>
+            <Icon name="map-pin" size={60} color={Colors.blue} />
             {/* Custom callout content */}
             <Callout>
-              <View>
-                <Text style={styles.calloutTitle}>
-                  {marker.municipalAccount}
-                </Text>
-                <Text>{marker.meter_No}</Text>
+              <View style={{width: screenWidth - 100, padding: 5}}>
+                <View style={styles.card}>
+                  <View style={styles.flex_row_card}>
+                    <View style={styles.content}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text style={styles.title}>
+                          Account No : {marker.municipalAccount}
+                        </Text>
+                      </View>
+
+                      <Text style={styles.description}>
+                        Meter No : {marker.meter_No}
+                      </Text>
+                      <Text style={styles.description}>
+                        Previous Consumption :{' '}
+                        {parseInt(marker.previouS_CONSUMPTION || 0)}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={[
+                      styles.content,
+                      {
+                        marginTop: 10,
+                        marginHorizontal: 0,
+                        marginBottom: 0,
+                        borderTopWidth: 1,
+                        padding: 10,
+                      },
+                    ]}>
+                    <Text style={styles.description}>
+                      Name : {marker.name} {marker.surname}
+                    </Text>
+                    <Text style={styles.description}>Cell : {marker.cell}</Text>
+                    <Text style={styles.description}>
+                      Reading Taken Date : {marker.readinG_TAKEN_DATE}
+                    </Text>
+                    <Text style={styles.description}>
+                      Address : {marker.address}
+                    </Text>
+                  </View>
+                </View>
               </View>
             </Callout>
           </Marker>
         ))}
       </MapView>
       <View style={styles.zoomContainer}>
-        <Button title="Zoom In" onPress={zoomIn} />
-        <Button title="Zoom Out" onPress={zoomOut} />
+        <TouchableOpacity
+          onPress={zoomIn}
+          style={{backgroundColor: Colors.white, borderRadius: 50}}>
+          <AntDesign name="pluscircle" size={50} color={Colors.blue} />
+          {/* <Button title="Zoom In" onPress={zoomIn} /> */}
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={zoomOut}
+          style={{
+            marginTop: 20,
+            backgroundColor: Colors.white,
+            borderRadius: 50,
+          }}>
+          <AntDesign name="minuscircle" size={50} color={Colors.blue} />
+          {/* <Button title="Zoom Out" onPress={zoomOut} /> */}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -310,8 +363,64 @@ const styles = StyleSheet.create({
   },
   zoomContainer: {
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 50,
+    left: 20,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flex_row_card: {
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    // backgroundColor: '#f1f1f2',
+    borderRadius: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    // margin: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  iconContainer: {
+    marginRight: 10,
+  },
+  content: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: Colors.blue,
+  },
+  description: {
+    fontSize: 16,
+    padding: 3,
+  },
+
+  toggleButton: {
+    position: 'absolute',
+    bottom: 100,
+    right: 30,
+    backgroundColor: Colors.red,
+    borderRadius: 25,
+    padding: 10,
+    elevation: 10,
+  },
+  searchButton: {
+    marginRight: 10,
+  },
+  searchButtonText: {
+    fontSize: 16,
+    color: 'blue',
+  },
+  searchBar: {
+    marginBottom: 16,
+    // backgroundColor:Colors.
   },
 });
