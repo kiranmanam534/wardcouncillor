@@ -262,9 +262,9 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         //   longitudeDelta: 0.02,
         // }}
       >
-        {IndegentConsumptions.map(marker => (
+        {IndegentConsumptions.map((marker, index) => (
           <Marker
-            key={marker.municipalAccount}
+            key={marker.municipalAccount + '_' + index}
             coordinate={{
               latitude: parseFloat(marker.latitude),
               longitude: parseFloat(marker.longitude),
