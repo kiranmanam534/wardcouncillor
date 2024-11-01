@@ -11,6 +11,7 @@ import MapView, {Marker, Callout, PROVIDER_GOOGLE} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Colors} from '../constant/Colors';
+import {formattedAmount} from '../utility/FormattedAmmount';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -265,13 +266,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           <Marker
             key={marker.municipalAccount}
             coordinate={{
-              latitude: parseFloat(marker.Latitude),
-              longitude: parseFloat(marker.Longitude),
+              latitude: parseFloat(marker.latitude),
+              longitude: parseFloat(marker.longitude),
             }}
             // provider={PROVIDER_GOOGLE} // Use Google Maps for both platforms
             title={marker.municipalAccount}
             description={marker.meter_No}>
-            <Icon name="map-pin" size={60} color={Colors.blue} />
+            <Icon name="map-pin" size={40} color={Colors.blue} />
             {/* Custom callout content */}
             <Callout>
               <View style={{width: screenWidth - 100, padding: 5}}>
@@ -294,6 +295,15 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                       <Text style={styles.description}>
                         Previous Consumption :{' '}
                         {parseInt(marker.previouS_CONSUMPTION || 0)}
+                      </Text>
+                      <Text style={styles.description}>
+                        Total Outstanding Amount :{' '}
+                        {formattedAmount(
+                          parseFloat(marker.totalOutstandingAmount || 0),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
                       </Text>
                     </View>
                   </View>
@@ -319,6 +329,9 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                     <Text style={styles.description}>
                       Address : {marker.address}
                     </Text>
+                    <Text style={styles.description}>
+                      Source Of Income : {marker.sourceOfIncome}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -330,7 +343,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         <TouchableOpacity
           onPress={zoomIn}
           style={{backgroundColor: Colors.white, borderRadius: 50}}>
-          <AntDesign name="pluscircle" size={50} color={Colors.blue} />
+          <AntDesign name="pluscircle" size={40} color={Colors.blue} />
           {/* <Button title="Zoom In" onPress={zoomIn} /> */}
         </TouchableOpacity>
         <TouchableOpacity
@@ -340,7 +353,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             backgroundColor: Colors.white,
             borderRadius: 50,
           }}>
-          <AntDesign name="minuscircle" size={50} color={Colors.blue} />
+          <AntDesign name="minuscircle" size={40} color={Colors.blue} />
           {/* <Button title="Zoom Out" onPress={zoomOut} /> */}
         </TouchableOpacity>
       </View>
