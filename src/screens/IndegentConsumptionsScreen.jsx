@@ -246,7 +246,7 @@ const IndegentConsumptionsScreen = () => {
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('IndegentConsumptionsMap', {
-                title: warD_NO + ' - Indegent Consumption Map',
+                title: warD_NO + ' - Indigent Consumption Map',
                 IndegentConsumptions: indegentConsumptions,
               });
             }}
@@ -308,7 +308,7 @@ const IndegentConsumptionsScreen = () => {
                   style={{textAlign: 'right', marginRight: 5}}
                   onPress={() => {
                     navigation.navigate('IndegentConsumptionsMap', {
-                      title: warD_NO + ' - Indegent Consumption Map',
+                      title: warD_NO + ' - Indigent Consumption Map',
                       IndegentConsumptions: [item],
                     });
                   }}>
