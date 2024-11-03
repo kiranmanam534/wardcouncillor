@@ -45,8 +45,8 @@ const IndegentDashboardScreen = () => {
           loggedUser?.warD_NO != 0
             ? loggedUser?.warD_NO +
               ' - ' +
-              GetwardHeaderTitle('Indigent', 'Indegent Consumptions')
-            : GetwardHeaderTitle('Indigent', 'Indegent Consumptions'),
+              GetwardHeaderTitle('Indigent', 'Indigent Consumptions')
+            : GetwardHeaderTitle('Indigent', 'Indigent Consumptions'),
         wardType: 'Indigent',
       });
     }
