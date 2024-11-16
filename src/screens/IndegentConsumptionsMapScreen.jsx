@@ -12,13 +12,19 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Colors} from '../constant/Colors';
 import {formattedAmount} from '../utility/FormattedAmmount';
+import {useSelector} from 'react-redux';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const IndegentConsumptionsMapScreen = ({route}) => {
-  const IndegentConsumptions = route.params.IndegentConsumptions;
-  console.log(IndegentConsumptions);
+  const {indegentConsumptions, loading, error} = useSelector(
+    state => state.indegentConsumptions,
+  );
+  const IndegentConsumptions =
+    route.params.IndegentConsumptions || indegentConsumptions;
+
+  // console.log(IndegentConsumptions);
   const [region, setRegion] = useState({
     latitude: -26.1778844,
     longitude: 27.9667214,
@@ -265,10 +271,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         {IndegentConsumptions.map((marker, index) => (
           <Marker
             key={marker.municipalAccount + '_' + index}
-            coordinate={{
-              latitude: parseFloat(marker.latitude),
-              longitude: parseFloat(marker.longitude),
-            }}
+            coordinate={
+              marker.latitude &&
+              marker.longitude && {
+                latitude: parseFloat(marker.latitude),
+                longitude: parseFloat(marker.longitude),
+              }
+            }
             // provider={PROVIDER_GOOGLE} // Use Google Maps for both platforms
             title={marker.municipalAccount}
             description={marker.meter_No}>

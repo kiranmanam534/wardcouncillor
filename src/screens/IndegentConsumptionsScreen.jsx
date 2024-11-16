@@ -1,7 +1,9 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,14 +23,14 @@ import {formattedAmount} from '../utility/FormattedAmmount';
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(true);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
   const [searchText, setSearchText] = useState('');
   const {warD_NO} = useSelector(state => state.loginReducer.items);
-  const {loading, error, indegentConsumptions} =
-    useIndegentConsumptiionsByWardNo(warD_NO);
+  const {loading, error, indegentConsumptions, LoadIndegentConsumptions} =
+    useIndegentConsumptiionsByWardNo(warD_NO, searchText);
 
-  console.log(loading, error, indegentConsumptions);
+  console.log(loading, error);
   let searchPlaceHoder = 'Serach...';
   // const IndegentConsumptions = [
   //   {
@@ -234,34 +236,49 @@ const IndegentConsumptionsScreen = () => {
   //   },
   // ];
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={{flexDirection: 'row'}}>
-          {/* <TouchableOpacity
-            onPress={toggleSearchBar}
-            style={styles.searchButton}>
-            <Icon name="search" size={20} color={Colors.white} />
-          </TouchableOpacity> */}
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('IndegentConsumptionsMap', {
-                title: warD_NO + ' - Indigent Consumption Map',
-                IndegentConsumptions: indegentConsumptions,
-              });
-            }}
-            style={styles.searchButton}>
-            {/* <Text style={styles.searchButtonText}>Search</Text> */}
-            <FontAwesome5
-              name="map-marked-alt"
-              size={20}
-              color={Colors.white}
-            />
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation, searchVisible]);
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  // React.useEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <View style={{flexDirection: 'row'}}>
+  //         <TouchableOpacity
+  //           onPress={toggleSearchBar}
+  //           style={styles.searchButton}>
+  //           <Icon name="search" size={20} color={Colors.white} />
+  //         </TouchableOpacity>
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             navigation.navigate('IndegentConsumptionsMap', {
+  //               title: warD_NO + ' - Indigent Consumption Map',
+  //               IndegentConsumptions: null,
+  //             });
+  //           }}
+  //           style={styles.searchButton}>
+  //           <FontAwesome5
+  //             name="map-marked-alt"
+  //             size={20}
+  //             color={Colors.white}
+  //           />
+  //         </TouchableOpacity>
+  //       </View>
+  //     ),
+  //   });
+  // }, [navigation, searchVisible]);
 
   const toggleSearchBar = () => {
     setSearchVisible(!searchVisible);
@@ -276,8 +293,12 @@ const IndegentConsumptionsScreen = () => {
   const handleSearch = () => {
     // dispatch(AnnounceViewActions.clearAnnouncementsData());
     console.log('Searching for:', searchText);
-    setPage(1);
-    LoadAnouncements(1);
+    // setPage(1);
+    let fomData = {
+      warD_NO,
+      searchText,
+    };
+    LoadIndegentConsumptions(fomData);
   };
 
   const handleDetailsNavigation = id => {
@@ -388,6 +409,26 @@ const IndegentConsumptionsScreen = () => {
           keyExtractor={(item, index) => item.actionType + '_' + index}
         />
       )}
+
+      <Pressable
+        style={[styles1.toggleButton1, {backgroundColor: Colors.blue}]}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('IndegentConsumptionsMap', {
+              title: warD_NO + ' - Indigent Consumption Map',
+              IndegentConsumptions: null,
+            });
+          }}
+          style={{}}>
+          <FontAwesome5 name="map-marked-alt" size={20} color={Colors.white} />
+        </TouchableOpacity>
+      </Pressable>
+      {/* 
+      <Pressable style={styles1.toggleButton1}>
+        <TouchableOpacity onPress={toggleSearchBar} style={{}}>
+          <Icon name="search" size={25} color={Colors.white} />
+        </TouchableOpacity>
+      </Pressable> */}
     </>
   );
 
@@ -468,5 +509,33 @@ const styles = StyleSheet.create({
   searchBar: {
     marginBottom: 16,
     // backgroundColor:Colors.
+  },
+});
+
+const styles1 = StyleSheet.create({
+  toggleButton1: {
+    position: 'absolute',
+    bottom: 200,
+    right: 30,
+    // top: Dimensions.get('screen').height/2,
+    backgroundColor: Colors.primary,
+    borderRadius: 30,
+    height: 60,
+    width: 60,
+    // padding: 10,
+    elevation: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: Colors.black, // For iOS
+    shadowOffset: {width: 0, height: 2}, // For iOS
+    shadowOpacity: 0.8, // For iOS
+    shadowRadius: 20, // For iOS
+    cursor: 'pointer',
+  },
+  img1: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    // resizeMode: 'stretch',
   },
 });

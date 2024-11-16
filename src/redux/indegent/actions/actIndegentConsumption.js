@@ -4,12 +4,13 @@ import isAxiosErrorHandler from '../../../utility/isAxiosErrorHandler';
 
 const actGetIndegentConsumptionsApi = createAsyncThunk(
   'get/getIndegentConsumptionsByWardNo',
-  async (wardNo, thunkAPI) => {
+  async (formData, thunkAPI) => {
     const {rejectWithValue, signal} = thunkAPI;
-    console.log('wardNo', wardNo);
+    const {wardNo, search} = formData;
+    console.log('wardNo', wardNo, search);
 
     try {
-      const response = await getIndegentConsumptionsByWardNo(wardNo);
+      const response = await getIndegentConsumptionsByWardNo(wardNo, search);
       // console.log('get/getIndegentConsumptionsByWardNo', response);
       return response.data;
     } catch (error) {
