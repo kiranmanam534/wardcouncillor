@@ -426,6 +426,14 @@ const IndegentConsumptionsScreen = () => {
           }}
           style={{}}>
           <FontAwesome5 name="map-marked-alt" size={20} color={Colors.white} />
+          <Text
+            style={{
+              color: Colors.white,
+              // paddingTop: 0,
+              fontWeight: '700',
+            }}>
+            ALL
+          </Text>
         </TouchableOpacity>
       </Pressable>
       {loading === 'failed' && (
