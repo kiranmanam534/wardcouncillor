@@ -27,6 +27,7 @@ import AnnouncementImagesSlice from './AnnouncementImagesSlice';
 import AnnouncementDeleteSlice from './AnnouncementDeleteSlice';
 import visibilityAIIconSlice from './visibilityAIIconSlice';
 import IndegentConsumptionSlice from './indegent/IndegentConsumptionSlice';
+import AllIndegentConsumptionSlice from './indegent/AllIndegentConsumptionSlice';
 
 const store = configureStore({
   reducer: {
@@ -59,6 +60,7 @@ const store = configureStore({
     // AnnouncementDeleteReducer:AnnouncementDeleteSlice.reducer,
     visibilityAI: visibilityAIIconSlice.reducer,
     indegentConsumptions: IndegentConsumptionSlice.reducer,
+    AllIndegentConsumptions: AllIndegentConsumptionSlice.reducer,
   },
   middleware: getDefaultMiddleware => {
     // Disable serializable state invariant middleware

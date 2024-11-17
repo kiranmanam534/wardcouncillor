@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -13,16 +13,51 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Colors} from '../constant/Colors';
 import {formattedAmount} from '../utility/FormattedAmmount';
 import {useSelector} from 'react-redux';
+import LoaderModal from '../components/LoaderModal';
+import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 const IndegentConsumptionsMapScreen = ({route}) => {
-  const {indegentConsumptions, loading, error} = useSelector(
-    state => state.indegentConsumptions,
+  // const {indegentConsumptions, loading, error} = useSelector(
+  //   state => state.indegentConsumptions,
+  // );
+
+  const mapRef = useRef(null);
+
+  console.log(
+    'route.params.IndegentConsumptions',
+    route.params.IndegentConsumptions,
   );
+
+  const {warD_NO} = useSelector(state => state.loginReducer.items);
+
+  const {loading, error, allIndegentConsumptions} =
+    useAllIndegentConsumptiionsByWardNo(
+      warD_NO,
+      route.params.IndegentConsumptions ? 'Not All' : 'All',
+    );
+
   const IndegentConsumptions =
-    route.params.IndegentConsumptions || indegentConsumptions;
+    route.params.IndegentConsumptions || allIndegentConsumptions;
+
+  console.log('IndegentConsumptions', IndegentConsumptions?.length);
+
+  // useEffect(() => {
+  //   if (!IndegentConsumptions){
+  //     let fomData = {
+  //       warD_NO: warD_NO,
+  //       searchText: '',
+  //       type: 'No All',
+  //     };
+  //     LoadIndegentConsumptions()
+  //   }
+
+  //   return () => {
+  //     second
+  //   }
+  // }, [third])
 
   // console.log(IndegentConsumptions);
   const [region, setRegion] = useState({
@@ -31,8 +66,6 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     latitudeDelta: 1,
     longitudeDelta: 1,
   });
-
-  const mapRef = useRef(null);
 
   const zoomIn = () => {
     setRegion({
@@ -256,6 +289,11 @@ const IndegentConsumptionsMapScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <LoaderModal
+        visible={loading === 'pending' && !route.params?.IndegentConsumptions}
+        loadingText="Loading..."
+      />
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -268,7 +306,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         //   longitudeDelta: 0.02,
         // }}
       >
-        {IndegentConsumptions.map((marker, index) => (
+        {IndegentConsumptions?.map((marker, index) => (
           <Marker
             key={marker.municipalAccount + '_' + index}
             coordinate={
@@ -284,7 +322,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             <Icon name="map-pin" size={40} color={Colors.blue} />
             {/* Custom callout content */}
             <Callout>
-              <View style={{width: screenWidth - 100, padding: 5}}>
+              <View style={{width: screenWidth - 100}}>
                 <View style={styles.card}>
                   <View style={styles.flex_row_card}>
                     <View style={styles.content}>
@@ -397,7 +435,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    // backgroundColor: '#f1f1f2',
+    backgroundColor: Colors.white,
     borderRadius: 10,
     paddingVertical: 20,
     paddingHorizontal: 10,

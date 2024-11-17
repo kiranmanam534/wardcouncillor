@@ -2,18 +2,18 @@ import {createSlice} from '@reduxjs/toolkit';
 import actGetIndegentConsumptionsApi from './actions/actIndegentConsumption';
 
 const initialState = {
-  indegentConsumptions: null,
+  allIndegentConsumptions: null,
   loading: 'idle',
   error: null,
 };
 
-const IndegentConsumptionSlice = createSlice({
+const AllIndegentConsumptionSlice = createSlice({
   name: 'IndegentConsumptions',
   initialState,
   reducers: {
-    clearErrorIndegentConsumptions(state) {
+    clearAllErrorIndegentConsumptions(state) {
       state.error = null;
-      state.indegentConsumptions = null;
+      state.allIndegentConsumptions = null;
     },
   },
   extraReducers: builder => {
@@ -26,7 +26,7 @@ const IndegentConsumptionSlice = createSlice({
       (state, action) => {
         state.loading = 'succeeded';
         // console.log('actGetIndegentConsumptionsApi', action.payload);
-        state.indegentConsumptions = action.payload?.data;
+        state.allIndegentConsumptions = action.payload?.data;
       },
     );
     builder.addCase(actGetIndegentConsumptionsApi.rejected, (state, action) => {
@@ -36,7 +36,7 @@ const IndegentConsumptionSlice = createSlice({
   },
 });
 
-export const {clearErrorIndegentConsumptions} =
-  IndegentConsumptionSlice.actions;
+export const {clearAllErrorIndegentConsumptions} =
+  AllIndegentConsumptionSlice.actions;
 
-export default IndegentConsumptionSlice;
+export default AllIndegentConsumptionSlice;

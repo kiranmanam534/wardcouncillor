@@ -18,8 +18,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {IndegentDashboardList} from '../constant/MainDashboardList';
 import BottomSearchBox from '../components/BottomSearchBox';
-import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo';
 import {formattedAmount} from '../utility/FormattedAmmount';
+import ShowMessageCenter from '../components/ShowMessageCenter';
+import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
+import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -28,10 +30,10 @@ const IndegentConsumptionsScreen = () => {
   const [searchText, setSearchText] = useState('');
   const {warD_NO} = useSelector(state => state.loginReducer.items);
   const {loading, error, indegentConsumptions, LoadIndegentConsumptions} =
-    useIndegentConsumptiionsByWardNo(warD_NO, searchText);
+    useIndegentConsumptiionsByWardNo(warD_NO, searchText, 'No All');
 
   console.log(loading, error);
-  let searchPlaceHoder = 'Serach...';
+  let searchPlaceHoder = 'Serach by account or meter number...';
   // const IndegentConsumptions = [
   //   {
   //     address: '2, KWIKSTERT, BIRCH ACRES 1619',
@@ -295,9 +297,11 @@ const IndegentConsumptionsScreen = () => {
     console.log('Searching for:', searchText);
     // setPage(1);
     let fomData = {
-      warD_NO,
-      searchText,
+      warD_NO: warD_NO,
+      searchText: searchText,
+      type: 'No All',
     };
+    console.log(fomData);
     LoadIndegentConsumptions(fomData);
   };
 
@@ -414,6 +418,7 @@ const IndegentConsumptionsScreen = () => {
         style={[styles1.toggleButton1, {backgroundColor: Colors.blue}]}>
         <TouchableOpacity
           onPress={() => {
+            dispatch(clearAllErrorIndegentConsumptions());
             navigation.navigate('IndegentConsumptionsMap', {
               title: warD_NO + ' - Indigent Consumption Map',
               IndegentConsumptions: null,
@@ -423,6 +428,15 @@ const IndegentConsumptionsScreen = () => {
           <FontAwesome5 name="map-marked-alt" size={20} color={Colors.white} />
         </TouchableOpacity>
       </Pressable>
+      {loading === 'failed' && (
+        <ShowMessageCenter
+          message={
+            error == 'No data found.'
+              ? 'No data found.'
+              : 'Something went wrong!'
+          }
+        />
+      )}
       {/* 
       <Pressable style={styles1.toggleButton1}>
         <TouchableOpacity onPress={toggleSearchBar} style={{}}>

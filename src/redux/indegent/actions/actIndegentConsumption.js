@@ -6,11 +6,15 @@ const actGetIndegentConsumptionsApi = createAsyncThunk(
   'get/getIndegentConsumptionsByWardNo',
   async (formData, thunkAPI) => {
     const {rejectWithValue, signal} = thunkAPI;
-    const {wardNo, search} = formData;
-    console.log('wardNo', wardNo, search);
+    const {wardNo, search, type} = formData;
+    console.log('wardNo', wardNo, search, type);
 
     try {
-      const response = await getIndegentConsumptionsByWardNo(wardNo, search);
+      const response = await getIndegentConsumptionsByWardNo(
+        wardNo,
+        search,
+        type,
+      );
       // console.log('get/getIndegentConsumptionsByWardNo', response);
       return response.data;
     } catch (error) {
