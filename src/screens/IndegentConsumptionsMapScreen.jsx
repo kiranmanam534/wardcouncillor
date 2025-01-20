@@ -67,18 +67,45 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       ShowAlert('Required', 'All feilds are required!');
     } else {
       console.log(searchText, searchText1);
-      filteredConsumptions = IndegentConsumptions.filter(item => {
-        const consumption = parseFloat(item.previouS_CONSUMPTION); // Convert to a number
-        return (
-          consumption >= parseFloat(searchText) &&
-          consumption <= parseFloat(searchText1)
-        );
-      });
 
-      console.log('filteredConsumptions', filteredConsumptions);
-      setIndegentConsumptions(filteredConsumptions);
+      // Add a new key-value pair to each object
+      // IndegentConsumptions.forEach(item => {
+      //   const consumption = parseFloat(item.previouS_CONSUMPTION);
+      //   if (
+      //     consumption >= parseFloat(searchText) &&
+      //     consumption <= parseFloat(searchText1)
+      //   ) {
+      //     item.color = Colors.red; // Replace 'newKey' and 'newValue' with your desired key and value
+      //   } else {
+      //     item.color = Colors.blue;
+      //   }
+      // });
+
+      // Add a new key `status` to each object
+      const updatedConsumptions = IndegentConsumptions.map(item => ({
+        ...item,
+        color:
+          parseFloat(item.previouS_CONSUMPTION) >= parseFloat(searchText) &&
+          parseFloat(item.previouS_CONSUMPTION) <= parseFloat(searchText1)
+            ? Colors.red
+            : Colors.blue,
+      }));
+
+      // setIndigentConsumptions(updatedConsumptions); // Update state
+
+      // filteredConsumptions = IndegentConsumptions.filter(item => {
+      //   const consumption = parseFloat(item.previouS_CONSUMPTION); // Convert to a number
+      //   item['color'] = 'red';
+      //   return (
+      //     consumption >= parseFloat(searchText) &&
+      //     consumption <= parseFloat(searchText1)
+      //   );
+      // });
+      setIndegentConsumptions(updatedConsumptions);
     }
   };
+
+  console.log('filteredConsumptions', IndegentConsumptions);
 
   const ShowAlert = (type, mess) => {
     Alert.alert(type, mess, [
@@ -366,7 +393,11 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             // provider={PROVIDER_GOOGLE} // Use Google Maps for both platforms
             title={marker.municipalAccount}
             description={marker.meter_No}>
-            <Icon name="map-pin" size={40} color={Colors.blue} />
+            <Icon
+              name="map-pin"
+              size={40}
+              color={marker.color || Colors.blue}
+            />
             {/* Custom callout content */}
             <Callout>
               <View style={{width: screenWidth - 100}}>
