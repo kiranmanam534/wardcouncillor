@@ -134,11 +134,12 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // }, [third])
 
   // console.log(IndegentConsumptions);
+  //Location EKURHULENI METROPOLITAN MUNICIPALITY    Latitude  -26.19890000    Longitude  28.31262000
   const [region, setRegion] = useState({
-    latitude: -26.1778844,
-    longitude: 27.9667214,
-    latitudeDelta: 1,
-    longitudeDelta: 1,
+    latitude: -26.1989,
+    longitude: 28.31262,
+    latitudeDelta: 0.2,
+    longitudeDelta: 0.2,
   });
 
   const zoomIn = () => {
