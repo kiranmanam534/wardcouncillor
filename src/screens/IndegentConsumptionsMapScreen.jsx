@@ -6,15 +6,20 @@ import {
   Button,
   Dimensions,
   TouchableOpacity,
+  TextInput,
+  Alert,
 } from 'react-native';
 import MapView, {Marker, Callout, PROVIDER_GOOGLE} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import Ionicons from 'react-native-vector-icons/dist/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Colors} from '../constant/Colors';
 import {formattedAmount} from '../utility/FormattedAmmount';
 import {useSelector} from 'react-redux';
 import LoaderModal from '../components/LoaderModal';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
+import CustomButton from '../components/CustomButton';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -23,7 +28,12 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // const {indegentConsumptions, loading, error} = useSelector(
   //   state => state.indegentConsumptions,
   // );
-
+  const [searchText, setSearchText] = useState('');
+  const [searchText1, setSearchText1] = useState('');
+  const [IsSubmitted, setIsSubmitted] = useState(false);
+  const [IndegentConsumptions, setIndegentConsumptions] = useState(
+    route.params.IndegentConsumptions || allIndegentConsumptions,
+  );
   const mapRef = useRef(null);
 
   console.log(
@@ -39,10 +49,47 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       route.params.IndegentConsumptions ? 'Not All' : 'All',
     );
 
-  const IndegentConsumptions =
-    route.params.IndegentConsumptions || allIndegentConsumptions;
+  // let IndegentConsumptions =
+  //   route.params.IndegentConsumptions || allIndegentConsumptions;
 
-  console.log('IndegentConsumptions', IndegentConsumptions?.length);
+  useEffect(() => {
+    if (route.params.IndegentConsumptions) {
+      setIndegentConsumptions(route.params.IndegentConsumptions);
+    } else {
+      setIndegentConsumptions(allIndegentConsumptions);
+    }
+  }, [allIndegentConsumptions, route.params.IndegentConsumptions]);
+
+  // console.log('IndegentConsumptions', IndegentConsumptions);
+
+  const SearchCollections = () => {
+    if (!searchText || !searchText1) {
+      ShowAlert('Required', 'All feilds are required!');
+    } else {
+      console.log(searchText, searchText1);
+      filteredConsumptions = IndegentConsumptions.filter(item => {
+        const consumption = parseFloat(item.previouS_CONSUMPTION); // Convert to a number
+        return (
+          consumption >= parseFloat(searchText) &&
+          consumption <= parseFloat(searchText1)
+        );
+      });
+
+      console.log('filteredConsumptions', filteredConsumptions);
+      setIndegentConsumptions(filteredConsumptions);
+    }
+  };
+
+  const ShowAlert = (type, mess) => {
+    Alert.alert(type, mess, [
+      {
+        text: 'OK',
+        onPress: () => {
+          console.log('OK Pressed');
+        },
+      },
+    ]);
+  };
 
   // useEffect(() => {
   //   if (!IndegentConsumptions){
@@ -404,6 +451,49 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           {/* <Button title="Zoom Out" onPress={zoomOut} /> */}
         </TouchableOpacity>
       </View>
+
+      <View style={{position: 'absolute', top: 0}}>
+        <View style={{flexDirection: 'row', width: '100%'}}>
+          <View style={[styles2.container2, {width: '50%'}]}>
+            <Text style={styles2.label}>Consumption Start</Text>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles1.input}
+                keyboardType="numeric"
+                value={searchText}
+                onChangeText={text => setSearchText(text)}
+                placeholder={'Consumption Start'}
+                placeholderTextColor={Colors.blue}
+                autoCorrect={false}
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
+          <View style={[styles2.container2, {width: '50%'}]}>
+            <Text style={styles2.label}>Consumption End</Text>
+            <View style={styles.inputView}>
+              <TextInput
+                keyboardType="numeric"
+                style={styles1.input}
+                value={searchText1}
+                onChangeText={text => setSearchText1(text)}
+                placeholder={'Consumption End'}
+                placeholderTextColor={Colors.blue}
+                autoCorrect={false}
+                autoCapitalize="none"
+              />
+            </View>
+          </View>
+        </View>
+        <View style={[styles2.container2]}>
+          <CustomButton
+            title={IsSubmitted ? 'Loading...' : 'Search'}
+            onPress={SearchCollections}
+            iconName="search-outline"
+            isClicked={IsSubmitted}
+          />
+        </View>
+      </View>
     </View>
   );
 };
@@ -482,5 +572,64 @@ const styles = StyleSheet.create({
   searchBar: {
     marginBottom: 16,
     // backgroundColor:Colors.
+  },
+});
+
+const styles1 = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+    //   paddingBottom: 20,
+    backgroundColor: Colors.lightgray,
+    // borderWidth:1,
+    // borderColor:Colors.blue,
+    // borderTopLeftRadius:30,
+    // borderTopRightRadius:30
+  },
+  input: {
+    flex: 1,
+    height: 50,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    marginRight: 5,
+    position: 'relative',
+    borderWidth: 0.7,
+    borderColor: Colors.blue,
+  },
+  searchButton: {
+    width: 50,
+    height: 50,
+    // borderRadius: 25,
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 15,
+    bottom: 0,
+    top: 10,
+  },
+});
+
+const styles2 = StyleSheet.create({
+  container2: {
+    //   flex: 1,
+    justifyContent: 'center',
+    //   alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingTop: 16,
+    backgroundColor: Colors.white,
+  },
+  label: {
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  selectedText: {
+    // marginTop: 16,
+    fontSize: 16,
   },
 });
