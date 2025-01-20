@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ekurhuleni"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [28.15, -26.05],
+            [28.3, -26.05],
+            [28.3, -26.2],
+            [28.15, -26.2],
+            [28.15, -26.05]
+          ]
+        ]
+      }
+    }
+  ]
+}

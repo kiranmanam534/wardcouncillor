@@ -9,7 +9,12 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import MapView, {Marker, Callout, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {
+  Marker,
+  Callout,
+  PROVIDER_GOOGLE,
+  Geojson,
+} from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
@@ -21,8 +26,31 @@ import LoaderModal from '../components/LoaderModal';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 import CustomButton from '../components/CustomButton';
 
+// const ekurhuleniGeoJSON = require('../assets/ekurhuleni-boundaries.json');
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+const ekurhuleniGeoJSON = {
+  type: 'FeatureCollection',
+  features: [
+    {
+      type: 'Feature',
+      properties: {},
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [28.1904, -26.2527], // Example coordinates, replace with real data
+            [28.3204, -26.1307],
+            [28.3304, -26.2207],
+            [28.1904, -26.2527],
+          ],
+        ],
+      },
+    },
+  ],
+};
 
 const IndegentConsumptionsMapScreen = ({route}) => {
   // const {indegentConsumptions, loading, error} = useSelector(
@@ -399,6 +427,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               size={40}
               color={marker.color || Colors.blue}
             />
+
             {/* Custom callout content */}
             <Callout>
               <View style={{width: screenWidth - 100}}>
@@ -462,6 +491,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                 </View>
               </View>
             </Callout>
+            {/* 
+            <Geojson
+              geojson={ekurhuleniGeoJSON}
+              strokeColor="blue"
+              fillColor="rgba(0, 0, 255, 0.3)"
+              strokeWidth={2}
+            /> */}
           </Marker>
         ))}
       </MapView>
@@ -485,9 +521,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       </View>
 
       <View style={{position: 'absolute', top: 0}}>
+        <View style={[styles2.container2, {width: '100%'}]}>
+          <Text style={[styles2.label, {textAlign: 'center'}]}>
+            Consumption Range From & To
+          </Text>
+        </View>
         <View style={{flexDirection: 'row', width: '100%'}}>
           <View style={[styles2.container2, {width: '50%'}]}>
-            <Text style={styles2.label}>Consumption Start</Text>
             <View style={styles.inputView}>
               <TextInput
                 style={styles1.input}
@@ -502,7 +542,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             </View>
           </View>
           <View style={[styles2.container2, {width: '50%'}]}>
-            <Text style={styles2.label}>Consumption End</Text>
+            {/* <Text style={styles2.label}>Consumption To</Text> */}
             <View style={styles.inputView}>
               <TextInput
                 keyboardType="numeric"
