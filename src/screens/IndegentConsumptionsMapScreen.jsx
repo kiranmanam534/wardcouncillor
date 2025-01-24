@@ -116,7 +116,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           parseFloat(item.previouS_CONSUMPTION) >= parseFloat(searchText) &&
           parseFloat(item.previouS_CONSUMPTION) <= parseFloat(searchText1)
             ? Colors.red
-            : Colors.blue,
+            : Colors.primary,
       }));
 
       // setIndigentConsumptions(updatedConsumptions); // Update state
@@ -425,7 +425,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             <Icon
               name="map-pin"
               size={40}
-              color={marker.color || Colors.blue}
+              color={marker.color || Colors.primary}
             />
 
             {/* Custom callout content */}
