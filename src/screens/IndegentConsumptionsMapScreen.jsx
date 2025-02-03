@@ -23,8 +23,9 @@ import {Colors} from '../constant/Colors';
 import {formattedAmount} from '../utility/FormattedAmmount';
 import {useSelector} from 'react-redux';
 import LoaderModal from '../components/LoaderModal';
-import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 import CustomButton from '../components/CustomButton';
+import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
+import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
 
 // const ekurhuleniGeoJSON = require('../assets/ekurhuleni-boundaries.json');
 
@@ -56,29 +57,32 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // const {indegentConsumptions, loading, error} = useSelector(
   //   state => state.indegentConsumptions,
   // );
-  const [searchText, setSearchText] = useState('');
-  const [searchText1, setSearchText1] = useState('');
+  const [startConsumption, setStartConsumption] = useState(0);
+  const [endConsumption, setEndConsumption] = useState(0);
   const [IsSubmitted, setIsSubmitted] = useState(false);
+
+  const {warD_NO} = useSelector(state => state.loginReducer.items);
+
+  const {loading, error, allIndegentConsumptions, LoadIndegentConsumptions} =
+    useAllIndegentConsumptiionsByWardNo(
+      warD_NO,
+      route.params.IndegentConsumptions ? 'Not All' : 'All',
+      startConsumption,
+      endConsumption,
+    );
+
   const [IndegentConsumptions, setIndegentConsumptions] = useState(
     route.params.IndegentConsumptions || allIndegentConsumptions,
   );
   const mapRef = useRef(null);
 
-  console.log(
-    'route.params.IndegentConsumptions',
-    route.params.IndegentConsumptions,
-  );
-
-  const {warD_NO} = useSelector(state => state.loginReducer.items);
-
-  const {loading, error, allIndegentConsumptions} =
-    useAllIndegentConsumptiionsByWardNo(
-      warD_NO,
-      route.params.IndegentConsumptions ? 'Not All' : 'All',
-    );
+  // console.log(
+  //   'route.params.IndegentConsumptions',
+  //   route.params.IndegentConsumptions,
+  // );
 
   // let IndegentConsumptions =
-  //   route.params.IndegentConsumptions || allIndegentConsumptions;
+  //   route.params.IndegentConsumptions || indegentConsumptions;
 
   useEffect(() => {
     if (route.params.IndegentConsumptions) {
@@ -91,45 +95,31 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // console.log('IndegentConsumptions', IndegentConsumptions);
 
   const SearchCollections = () => {
-    if (!searchText || !searchText1) {
-      ShowAlert('Required', 'All feilds are required!');
+    console.log('SearchCollections===>', startConsumption, endConsumption);
+    if (
+      (startConsumption && endConsumption) ||
+      (startConsumption == 0 && endConsumption == 0)
+    ) {
+      console.log(startConsumption, endConsumption);
+      setIndegentConsumptions([]);
+      let fomData = {
+        warD_NO: warD_NO,
+        searchText: '',
+        type: route.params.IndegentConsumptions ? 'Not All' : 'All',
+        startConsumption,
+        endConsumption,
+      };
+      console.log('2=>', fomData);
+      LoadIndegentConsumptions(fomData);
+    } else if (startConsumption > endConsumption) {
+      ShowAlert(
+        'Invalid',
+        'Start Consumption should be less than End Consumption!',
+      );
+      return;
     } else {
-      console.log(searchText, searchText1);
-
-      // Add a new key-value pair to each object
-      // IndegentConsumptions.forEach(item => {
-      //   const consumption = parseFloat(item.previouS_CONSUMPTION);
-      //   if (
-      //     consumption >= parseFloat(searchText) &&
-      //     consumption <= parseFloat(searchText1)
-      //   ) {
-      //     item.color = Colors.red; // Replace 'newKey' and 'newValue' with your desired key and value
-      //   } else {
-      //     item.color = Colors.blue;
-      //   }
-      // });
-
-      // Add a new key `status` to each object
-      const updatedConsumptions = IndegentConsumptions.map(item => ({
-        ...item,
-        color:
-          parseFloat(item.previouS_CONSUMPTION) >= parseFloat(searchText) &&
-          parseFloat(item.previouS_CONSUMPTION) <= parseFloat(searchText1)
-            ? Colors.red
-            : Colors.primary,
-      }));
-
-      // setIndigentConsumptions(updatedConsumptions); // Update state
-
-      // filteredConsumptions = IndegentConsumptions.filter(item => {
-      //   const consumption = parseFloat(item.previouS_CONSUMPTION); // Convert to a number
-      //   item['color'] = 'red';
-      //   return (
-      //     consumption >= parseFloat(searchText) &&
-      //     consumption <= parseFloat(searchText1)
-      //   );
-      // });
-      setIndegentConsumptions(updatedConsumptions);
+      ShowAlert('Required', 'Start and End Consumptions feilds are required!');
+      return;
     }
   };
 
@@ -425,7 +415,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             <Icon
               name="map-pin"
               size={40}
-              color={marker.color || Colors.primary}
+              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             />
 
             {/* Custom callout content */}
@@ -488,6 +478,14 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                       Source Of Income : {marker.sourceOfIncome}
                     </Text>
                   </View>
+                  <View style={[styles2.container2]}>
+                    <CustomButton
+                      title={IsSubmitted ? 'Loading...' : 'Send Notification'}
+                      onPress={''}
+                      iconName="send"
+                      isClicked={IsSubmitted}
+                    />
+                  </View>
                 </View>
               </View>
             </Callout>
@@ -532,8 +530,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               <TextInput
                 style={styles1.input}
                 keyboardType="numeric"
-                value={searchText}
-                onChangeText={text => setSearchText(text)}
+                value={startConsumption}
+                onChangeText={text => setStartConsumption(text)}
                 placeholder={'Consumption Start'}
                 placeholderTextColor={Colors.blue}
                 autoCorrect={false}
@@ -547,8 +545,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               <TextInput
                 keyboardType="numeric"
                 style={styles1.input}
-                value={searchText1}
-                onChangeText={text => setSearchText1(text)}
+                value={endConsumption}
+                onChangeText={text => setEndConsumption(text)}
                 placeholder={'Consumption End'}
                 placeholderTextColor={Colors.blue}
                 autoCorrect={false}
