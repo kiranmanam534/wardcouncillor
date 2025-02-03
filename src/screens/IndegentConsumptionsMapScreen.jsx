@@ -478,14 +478,16 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                       Source Of Income : {marker.sourceOfIncome}
                     </Text>
                   </View>
-                  <View style={[styles2.container2]}>
-                    <CustomButton
-                      title={IsSubmitted ? 'Loading...' : 'Send Notification'}
-                      onPress={''}
-                      iconName="send"
-                      isClicked={IsSubmitted}
-                    />
-                  </View>
+                  {marker.color == 'RED' && (
+                    <View style={[styles2.container2]}>
+                      <CustomButton
+                        title={IsSubmitted ? 'Loading...' : 'Send Notification'}
+                        onPress={''}
+                        iconName="send"
+                        isClicked={IsSubmitted}
+                      />
+                    </View>
+                  )}
                 </View>
               </View>
             </Callout>

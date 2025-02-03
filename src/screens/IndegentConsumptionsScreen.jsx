@@ -156,6 +156,16 @@ const IndegentConsumptionsScreen = () => {
                     color={item.color == 'GREEN' ? Colors.primary : Colors.red}
                   />
                 </TouchableOpacity>
+                {item.color == 'RED' && (
+                  <View style={[styles2.container2]}>
+                    <CustomButton
+                      title={IsSubmitted ? 'Loading...' : 'Send Notification'}
+                      onPress={''}
+                      iconName="send"
+                      isClicked={IsSubmitted}
+                    />
+                  </View>
+                )}
               </View>
 
               <Text style={styles.description}>Meter No : {item.meter_No}</Text>

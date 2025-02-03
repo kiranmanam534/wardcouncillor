@@ -7,7 +7,14 @@ export const getIndegentConsumptionsByWardNo = async (
   startConsumption,
   endConsumption,
 ) => {
-  console.log('getIndegentConsumptionsBy');
+  console.log(
+    'getIndegentConsumptionsBy=====>',
+    wardNo,
+    search,
+    type,
+    startConsumption,
+    end,
+  );
   let url = `/api/Indigent/get-indigent-consumption-data?wardNo=${wardNo}&StartConsumption=${startConsumption}&EndConsumption=${endConsumption}&page=1&limit=1000&search=${search}`;
   if (type === 'All') {
     url = `/api/Indigent/get-all-approved-indigent-consumption-data?wardNo=${wardNo}&StartConsumption=${startConsumption}&EndConsumption=${endConsumption}&search=${search}`;
