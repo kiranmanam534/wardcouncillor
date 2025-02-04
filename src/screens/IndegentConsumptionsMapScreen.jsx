@@ -182,8 +182,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     COE Team`;
 
       const requestBody = {
-        //recipientNumber: item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
-        recipientNumber: '0739007893',
+        recipientNumber: item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
+        // recipientNumber: '0739007893',
         message: message.toString(),
         // campaign: 'Interims',
       };
