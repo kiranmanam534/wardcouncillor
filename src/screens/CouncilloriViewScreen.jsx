@@ -280,7 +280,7 @@ Regards *City of Ekurhuleni.*`;
     console.log('Searching for:', searchText);
     dispatch(
       GetCouncillorWardTownshipMemberInfo({
-        wardNo: mayorSelectedWardNo ? mayorSelectedWardNo : loggedUser?.warD_NO,
+        wardNo: mayorSelectedWardNo || loggedUser?.warD_NO,
         wardType: wardType,
         name: name,
         search: searchText,
@@ -315,7 +315,9 @@ Regards *City of Ekurhuleni.*`;
   }, [smsMessage, isSMSLoading]);
 
   const renderFooter = () => {
-    if (!isLoading) return null;
+    if (!isLoading) {
+      return null;
+    }
     // return <LoaderModal visible={isLoading} loadingText="Loading..." />;
     return (
       <FlatList

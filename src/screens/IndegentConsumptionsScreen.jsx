@@ -25,6 +25,10 @@ import ShowMessageCenter from '../components/ShowMessageCenter';
 import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
 import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
 import CustomButton from '../components/CustomButton';
+import {smsApi} from '../services/smsApi';
+import {smdSliceActions} from '../redux/smsSlice';
+import Toast from 'react-native-toast-message';
+
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -33,7 +37,7 @@ const IndegentConsumptionsScreen = () => {
   const [StartConsumption, setStartConsumption] = useState(0);
   const [EndConsumption, setEndConsumption] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [IsSubmitted, setIsSubmitted] = useState(false);
+  const [IsSubmitted, setIsSubmitted] = useState(null);
   const {warD_NO} = useSelector(state => state.loginReducer.items);
   const {loading, error, indegentConsumptions, LoadIndegentConsumptions} =
     useIndegentConsumptiionsByWardNo(
@@ -44,9 +48,19 @@ const IndegentConsumptionsScreen = () => {
       EndConsumption,
     );
 
+  const {
+    isLoading: isSMSLoading,
+    isSMSsent,
+    message: smsMessage,
+    error: smsError,
+    statusCode,
+  } = useSelector(state => state.smsReducer);
+
+  console.log('SMSLoading====>', isSMSLoading, smsMessage, smsError);
   const toggleSearchBar = () => {
     setSearchVisible(!searchVisible);
   };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -61,16 +75,6 @@ const IndegentConsumptionsScreen = () => {
       ),
     });
   }, [navigation, searchVisible]);
-
-  useEffect(() => {
-    return navigation.addListener('focus', () => {
-      // Refresh or reload screen
-      SearchCollections();
-    });
-  }, [navigation]);
-
-  console.log(loading, error, 'indegentConsumptions');
-  let searchPlaceHoder = 'Serach by account or meter number...';
 
   const ShowAlert = (type, mess) => {
     Alert.alert(
@@ -88,6 +92,77 @@ const IndegentConsumptionsScreen = () => {
     );
   };
 
+  const showToast = (text1, text2, type, color) => {
+    Toast.show({
+      type: type,
+      position: 'bottom',
+      text1: text1,
+      text2: text2,
+      visibilityTime: 3000,
+      text1Style: {color: color, fontSize: 15},
+      text2Style: {color: Colors.blue, fontSize: 13},
+    });
+    dispatch(smdSliceActions.smsClear());
+    setIsSubmitted(null);
+  };
+
+  useEffect(() => {
+    if (!isSMSLoading && smsError) {
+      // showToast('Error', 'Something went wrong!', 'error', Colors.red);
+      setIsSubmitted(null);
+      dispatch(smdSliceActions.smsClear());
+      ShowAlert('Error', 'Something went wrong!');
+    }
+  }, [smsError, isSMSLoading]);
+
+  useEffect(() => {
+    if (!isSMSLoading && smsMessage) {
+      // ShowAlert('Warning!', 'Mobile number should not be empty!');
+      // showToast('Success', smsMessage, 'success', Colors.primary);
+      setIsSubmitted(null);
+      dispatch(smdSliceActions.smsClear());
+      ShowAlert('Success', smsMessage);
+    }
+  }, [smsMessage, isSMSLoading]);
+
+  const handleSMS = item => {
+    console.log(warD_NO + ' ==> ', item);
+
+    if (item.cell && item.cell != 'Not Available') {
+      setIsSubmitted(item.idNumber);
+      let message = `Dear ${item.name} ${item.surname}
+
+Your monthly consumption on ${item.meter_No} has exceed the limit of 180 Litres.
+Please limit your consumption or your indigent status will be cancelled. 
+
+Thanks
+COE Team`;
+
+      const requestBody = {
+        //recipientNumber: item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
+        recipientNumber: '0739007893',
+        message: message.toString(),
+        // campaign: 'Interims',
+      };
+      console.log(requestBody);
+
+      dispatch(smsApi({requestBody: requestBody}));
+    } else {
+      ShowAlert('Warning!', 'Mobile number should not be empty!');
+    }
+
+    // setShowErrorModal(true);
+  };
+  useEffect(() => {
+    return navigation.addListener('focus', () => {
+      // Refresh or reload screen
+      SearchCollections();
+    });
+  }, [navigation]);
+
+  console.log(loading, error, 'indegentConsumptions');
+  let searchPlaceHoder = 'Serach by account or meter number...';
+
   const SearchCollections = () => {
     let fomData = {
       warD_NO: warD_NO,
@@ -99,9 +174,9 @@ const IndegentConsumptionsScreen = () => {
     if (StartConsumption == 0 && EndConsumption == 0) {
       console.log('1=>', fomData);
       LoadIndegentConsumptions(fomData);
-    } else if (StartConsumption == 0 || !EndConsumption == 0) {
+    } else if (StartConsumption == 0 || EndConsumption == 0) {
       ShowAlert('Required', 'Start and End Consumptions feilds are required!');
-    } else if (StartConsumption > EndConsumption) {
+    } else if (parseInt(StartConsumption) > parseInt(EndConsumption)) {
       ShowAlert(
         'Invalid',
         'Start Consumption should be less than End Consumption!',
@@ -199,10 +274,16 @@ const IndegentConsumptionsScreen = () => {
           {item.color == 'RED' && (
             <View style={[styles2.container2, {alignSelf: 'flex-end'}]}>
               <CustomButton
-                title={IsSubmitted ? 'Loading...' : 'Send Notification'}
-                onPress={''}
+                title={
+                  IsSubmitted == item.idNumber
+                    ? 'Loading...'
+                    : 'Send Notification'
+                }
+                onPress={() => {
+                  handleSMS(item);
+                }}
                 iconName="send"
-                isClicked={IsSubmitted}
+                isClicked={!!(IsSubmitted == item.idNumber)}
               />
             </View>
           )}
@@ -308,10 +389,10 @@ const IndegentConsumptionsScreen = () => {
               </View>
               <View style={[styles2.container2]}>
                 <CustomButton
-                  title={IsSubmitted ? 'Loading...' : 'Search'}
+                  title={'Search'}
                   onPress={SearchCollections}
                   iconName="search-outline"
-                  isClicked={IsSubmitted}
+                  // isClicked={IsSubmitted}
                 />
               </View>
             </View>

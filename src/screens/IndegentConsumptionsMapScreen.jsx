@@ -31,6 +31,8 @@ import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumpt
 import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
 import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
 import {useNavigation} from '@react-navigation/native';
+import {smsApi} from '../services/smsApi';
+import {smdSliceActions} from '../redux/smsSlice';
 
 // const ekurhuleniGeoJSON = require('../assets/ekurhuleni-boundaries.json');
 
@@ -68,7 +70,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   const [startConsumption, setStartConsumption] = useState(0);
   const [endConsumption, setEndConsumption] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [IsSubmitted, setIsSubmitted] = useState(false);
+  const [IsSubmitted, setIsSubmitted] = useState(null);
   const [IsZoom, setZoom] = useState(false);
 
   const mapRef = useRef(null);
@@ -106,6 +108,94 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   //     }
   //   }
   // }, [allIndegentConsumptions, route.params.IndegentConsumptions]);
+
+  const {
+    isLoading: isSMSLoading,
+    isSMSsent,
+    message: smsMessage,
+    error: smsError,
+    statusCode,
+  } = useSelector(state => state.smsReducer);
+
+  console.log('SMSLoading====>', isSMSLoading, smsMessage, smsError);
+
+  const ShowAlert = (type, mess) => {
+    Alert.alert(
+      type,
+      mess,
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed');
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const showToast = (text1, text2, type, color) => {
+    Toast.show({
+      type: type,
+      position: 'bottom',
+      text1: text1,
+      text2: text2,
+      visibilityTime: 3000,
+      text1Style: {color: color, fontSize: 15},
+      text2Style: {color: Colors.blue, fontSize: 13},
+    });
+    dispatch(smdSliceActions.smsClear());
+    setIsSubmitted(null);
+  };
+
+  useEffect(() => {
+    if (!isSMSLoading && smsError) {
+      // showToast('Error', 'Something went wrong!', 'error', Colors.red);
+      setIsSubmitted(null);
+      dispatch(smdSliceActions.smsClear());
+      ShowAlert('Error', 'Something went wrong!');
+    }
+  }, [smsError, isSMSLoading]);
+
+  useEffect(() => {
+    if (!isSMSLoading && smsMessage) {
+      // ShowAlert('Warning!', 'Mobile number should not be empty!');
+      // showToast('Success', smsMessage, 'success', Colors.primary);
+      setIsSubmitted(null);
+      dispatch(smdSliceActions.smsClear());
+      ShowAlert('Success', smsMessage);
+    }
+  }, [smsMessage, isSMSLoading]);
+
+  const handleSMS = item => {
+    console.log(warD_NO + ' ==> ', item);
+
+    if (item.cell && item.cell != 'Not Available') {
+      setIsSubmitted(item.idNumber);
+      let message = `Dear ${item.name} ${item.surname}
+    
+    Your monthly consumption on ${item.meter_No} has exceed the limit of 180 Litres.
+    Please limit your consumption or your indigent status will be cancelled. 
+    
+    Thanks
+    COE Team`;
+
+      const requestBody = {
+        //recipientNumber: item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
+        recipientNumber: '0739007893',
+        message: message.toString(),
+        // campaign: 'Interims',
+      };
+      console.log(requestBody);
+
+      dispatch(smsApi({requestBody: requestBody}));
+    } else {
+      ShowAlert('Warning!', 'Mobile number should not be empty!');
+    }
+
+    // setShowErrorModal(true);
+  };
 
   const toggleSearchBar = () => {
     setSearchVisible(!searchVisible);
@@ -227,17 +317,6 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   };
 
   console.log('filteredConsumptions', IndegentConsumptions);
-
-  const ShowAlert = (type, mess) => {
-    Alert.alert(type, mess, [
-      {
-        text: 'OK',
-        onPress: () => {
-          console.log('OK Pressed');
-        },
-      },
-    ]);
-  };
 
   // useEffect(() => {
   //   if (!IndegentConsumptions){
@@ -601,10 +680,16 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                   {marker.color == 'RED' && (
                     <View style={[styles2.container2]}>
                       <CustomButton
-                        title={IsSubmitted ? 'Loading...' : 'Send Notification'}
-                        onPress={''}
+                        title={
+                          marker.idNumber == IsSubmitted
+                            ? 'Loading...'
+                            : 'Send Notification'
+                        }
+                        onPress={() => {
+                          handleSMS(marker);
+                        }}
                         iconName="send"
-                        isClicked={IsSubmitted}
+                        isClicked={!!(marker.idNumber == IsSubmitted)}
                       />
                     </View>
                   )}
@@ -705,10 +790,10 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           </View>
           <View style={[styles2.container2]}>
             <CustomButton
-              title={IsSubmitted ? 'Loading...' : 'Search'}
+              title={'Search'}
               onPress={SearchCollections}
               iconName="search-outline"
-              isClicked={IsSubmitted}
+              // isClicked={IsSubmitted}
             />
           </View>
         </View>
