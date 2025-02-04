@@ -76,7 +76,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   const [startConsumption, setStartConsumption] = useState(0);
   const [endConsumption, setEndConsumption] = useState(0);
   const [searchText, setSearchText] = useState('');
-  const [IsSubmitted, setIsSubmitted] = useState(null);
+  const [submittedMarkers, setSubmittedMarkers] = useState({});
   const [IsZoom, setZoom] = useState(false);
 
   const mapRef = useRef(null);
@@ -152,43 +152,48 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       text2Style: {color: Colors.blue, fontSize: 13},
     });
     dispatch(smdSliceActions.smsClear());
-    setIsSubmitted(null);
+    // setSubmittedMarkers(null);
   };
 
   useEffect(() => {
     if (!isSMSLoading && smsError) {
       // showToast('Error', 'Something went wrong!', 'error', Colors.red);
-      setIsSubmitted(null);
+
       dispatch(smdSliceActions.smsClear());
       ShowAlert('Error', 'Something went wrong!');
+      // setSubmittedMarkers(prev => ({...prev, [marker.idNumber]: false}));
     }
   }, [smsError, isSMSLoading]);
 
   useEffect(() => {
     if (!isSMSLoading && smsMessage) {
-      // ShowAlert('Warning!', 'Mobile number should not be empty!');
-      // showToast('Success', smsMessage, 'success', Colors.primary);
-      setIsSubmitted(null);
       dispatch(smdSliceActions.smsClear());
       ShowAlert('Success', smsMessage);
+      // setSubmittedMarkers(prev => ({...prev, [marker.idNumber]: false}));
     }
   }, [smsMessage, isSMSLoading]);
 
   const handleSMS = item => {
     console.log(warD_NO + ' ==> ', item);
+    // setSubmittedMarkers(item.idNumber);
 
     if (item.cell && item.cell != 'Not Available') {
-      setIsSubmitted(item.idNumber);
+      // Update the state for this specific marker
+      setSubmittedMarkers(prev => ({
+        ...prev,
+        [item.idNumber]: true, // Mark this ID as submitted
+      }));
+
       let message = `Dear ${item.name} ${item.surname}
-    
+
     Your monthly consumption on ${item.meter_No} has exceed the limit of 180 Litres.
-    Please limit your consumption or your indigent status will be cancelled. 
-    
+    Please limit your consumption or your indigent status will be cancelled.
+
     Thanks
     COE Team`;
 
       const requestBody = {
-        recipientNumber: item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
+        recipientNumber: '0722409624', //item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
         // recipientNumber: '0739007893',
         message: message.toString(),
         // campaign: 'Interims',
@@ -196,6 +201,14 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       console.log(requestBody);
 
       dispatch(smsApi({requestBody: requestBody}));
+
+      // After SMS is sent, update UI
+      setTimeout(() => {
+        setSubmittedMarkers(prev => ({
+          ...prev,
+          [item.idNumber]: false, // Mark this ID as submitted
+        }));
+      }, 5000); // Reset after 5 seconds (or when API confirms)
     } else {
       ShowAlert('Warning!', 'Mobile number should not be empty!');
     }
@@ -342,6 +355,12 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // }, [third])
 
   // console.log(IndegentConsumptions);
+  const regionRef = useRef({
+    latitude: -26.1989,
+    longitude: 28.31262,
+    latitudeDelta: 0.2,
+    longitudeDelta: 0.2,
+  });
   //Location EKURHULENI METROPOLITAN MUNICIPALITY    Latitude  -26.19890000    Longitude  28.31262000
   const [region, setRegion] = useState({
     latitude: -26.1989,
@@ -350,24 +369,47 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     longitudeDelta: 0.2,
   });
 
+  // const zoomIn = () => {
+  //   setZoom(true);
+  //   // setRegion({
+  //   //   ...region,
+  //   //   latitudeDelta: region.latitudeDelta / 2,
+  //   //   longitudeDelta: region.longitudeDelta / 2,
+  //   // });
+  // };
+
+  // const zoomOut = () => {
+  //   setZoom(true);
+  //   // setRegion({
+  //   //   ...region,
+  //   //   latitudeDelta: region.latitudeDelta * 2,
+  //   //   longitudeDelta: region.longitudeDelta * 2,
+  //   // });
+  // };
+  // Define multiple marker locations
+
+  // 🔍 Function to zoom in
   const zoomIn = () => {
-    setZoom(true);
-    setRegion({
-      ...region,
-      latitudeDelta: region.latitudeDelta / 2,
-      longitudeDelta: region.longitudeDelta / 2,
-    });
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        ...regionRef.current,
+        latitudeDelta: regionRef.current.latitudeDelta / 2, // Zoom in
+        longitudeDelta: regionRef.current.longitudeDelta / 2,
+      });
+    }
   };
 
+  // 🔍 Function to zoom out
   const zoomOut = () => {
-    setZoom(true);
-    setRegion({
-      ...region,
-      latitudeDelta: region.latitudeDelta * 2,
-      longitudeDelta: region.longitudeDelta * 2,
-    });
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        ...regionRef.current,
+        latitudeDelta: regionRef.current.latitudeDelta * 2, // Zoom out
+        longitudeDelta: regionRef.current.longitudeDelta * 2,
+      });
+    }
   };
-  // Define multiple marker locations
+
   const IndegentConsumptions1 = [
     {
       address: '2, KWIKSTERT, BIRCH ACRES 1619',
@@ -577,8 +619,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       <MapView
         ref={mapRef}
         style={styles.map}
-        region={region}
-        onRegionChangeComplete={region => setRegion(region)}
+        initialRegion={regionRef.current}
+        // initialRegion={regionRef.current} // Use initialRegion instead of region
+        // onRegionChangeComplete={newRegion => {
+        //   regionRef.current = newRegion; // Store in ref (prevents re-render)
+        // }}
+        // region={region}
+        // onRegionChangeComplete={region => setRegion(region)}
         // initialRegion={{
         //   latitude: -26.1076465,
         //   longitude: 28.471042,
@@ -678,13 +725,26 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                     </Text>
                     <Text style={styles.description}>
                       Source Of Income : {marker.sourceOfIncome}
+                      {/* {submittedMarkers?.toString()} - {marker.idNumber.toString()}
+                      {marker.idNumber.toString() ==
+                        submittedMarkers?.toString() && <Text>asaa asas</Text>} */}
                     </Text>
                   </View>
                   {marker.color == 'RED' && (
                     <View style={[styles2.container2]}>
                       <CustomButton
                         title={
-                          marker.idNumber == IsSubmitted
+                          submittedMarkers[marker.idNumber]
+                            ? 'Loading...'
+                            : 'Send Notification'
+                        }
+                        onPress={() => handleSMS(marker)}
+                        iconName="send"
+                        isClicked={submittedMarkers[marker.idNumber]}
+                      />
+                      {/* <CustomButton
+                        title={
+                          marker.idNumber == submittedMarkers
                             ? 'Loading...'
                             : 'Send Notification'
                         }
@@ -692,8 +752,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                           handleSMS(marker);
                         }}
                         iconName="send"
-                        isClicked={!!(marker.idNumber == IsSubmitted)}
-                      />
+                        isClicked={!!(marker.idNumber == submittedMarkers)}
+                      /> */}
                     </View>
                   )}
                 </View>
@@ -710,7 +770,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         ))}
       </MapView>
     );
-  }, [IndegentConsumptions]);
+  }, [IndegentConsumptions, submittedMarkers]);
 
   return (
     <View style={styles.container}>
@@ -807,7 +867,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               title={'Search'}
               onPress={SearchCollections}
               iconName="search-outline"
-              // isClicked={IsSubmitted}
+              // isClicked={submittedMarkers}
             />
           </View>
         </View>
