@@ -4,6 +4,7 @@ import actGetIndegentConsumptionsApi from '../redux/indegent/actions/actIndegent
 
 const useAllIndegentConsumptiionsByWardNo = (
   warD_NO,
+  searchText,
   type,
   startConsumption,
   endConsumption,
@@ -14,14 +15,14 @@ const useAllIndegentConsumptiionsByWardNo = (
   );
 
   useEffect(() => {
-    console.log('AllIndegentConsumptions', warD_NO, type);
+    console.log('AllIndegentConsumptions', warD_NO, type, searchText);
     if (type !== 'All') {
       return;
     }
     dispatch(
       actGetIndegentConsumptionsApi({
         wardNo: warD_NO,
-        search: '',
+        search: searchText,
         type: type,
         startConsumption,
         endConsumption,

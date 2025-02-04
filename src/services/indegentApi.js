@@ -13,7 +13,7 @@ export const getIndegentConsumptionsByWardNo = async (
     search,
     type,
     startConsumption,
-    end,
+    endConsumption,
   );
   let url = `/api/Indigent/get-indigent-consumption-data?wardNo=${wardNo}&StartConsumption=${startConsumption}&EndConsumption=${endConsumption}&page=1&limit=1000&search=${search}`;
   if (type === 'All') {

@@ -11,9 +11,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Colors} from '../constant/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -27,7 +28,7 @@ import CustomButton from '../components/CustomButton';
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const [searchVisible, setSearchVisible] = useState(true);
+  const [searchVisible, setSearchVisible] = useState(false);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
   const [StartConsumption, setStartConsumption] = useState(0);
   const [EndConsumption, setEndConsumption] = useState(0);
@@ -42,6 +43,31 @@ const IndegentConsumptionsScreen = () => {
       StartConsumption,
       EndConsumption,
     );
+
+  const toggleSearchBar = () => {
+    setSearchVisible(!searchVisible);
+  };
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleSearchBar}>
+          {!searchVisible && (
+            <Icon name="search" size={20} color={Colors.white} />
+          )}
+          {searchVisible && (
+            <AntDesign name="closecircle" size={20} color={Colors.white} />
+          )}
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, searchVisible]);
+
+  useEffect(() => {
+    return navigation.addListener('focus', () => {
+      // Refresh or reload screen
+      SearchCollections();
+    });
+  }, [navigation]);
 
   console.log(loading, error, 'indegentConsumptions');
   let searchPlaceHoder = 'Serach by account or meter number...';
@@ -62,10 +88,6 @@ const IndegentConsumptionsScreen = () => {
     );
   };
 
-  const toggleSearchBar = () => {
-    setSearchVisible(!searchVisible);
-  };
-
   const SearchCollections = () => {
     let fomData = {
       warD_NO: warD_NO,
@@ -77,7 +99,7 @@ const IndegentConsumptionsScreen = () => {
     if (StartConsumption == 0 && EndConsumption == 0) {
       console.log('1=>', fomData);
       LoadIndegentConsumptions(fomData);
-    } else if (!StartConsumption || !EndConsumption) {
+    } else if (StartConsumption == 0 || !EndConsumption == 0) {
       ShowAlert('Required', 'Start and End Consumptions feilds are required!');
     } else if (StartConsumption > EndConsumption) {
       ShowAlert(
@@ -156,16 +178,6 @@ const IndegentConsumptionsScreen = () => {
                     color={item.color == 'GREEN' ? Colors.primary : Colors.red}
                   />
                 </TouchableOpacity>
-                {item.color == 'RED' && (
-                  <View style={[styles2.container2]}>
-                    <CustomButton
-                      title={IsSubmitted ? 'Loading...' : 'Send Notification'}
-                      onPress={''}
-                      iconName="send"
-                      isClicked={IsSubmitted}
-                    />
-                  </View>
-                )}
               </View>
 
               <Text style={styles.description}>Meter No : {item.meter_No}</Text>
@@ -184,6 +196,16 @@ const IndegentConsumptionsScreen = () => {
               </Text>
             </View>
           </View>
+          {item.color == 'RED' && (
+            <View style={[styles2.container2, {alignSelf: 'flex-end'}]}>
+              <CustomButton
+                title={IsSubmitted ? 'Loading...' : 'Send Notification'}
+                onPress={''}
+                iconName="send"
+                isClicked={IsSubmitted}
+              />
+            </View>
+          )}
 
           {id === selectedCoontentID && (
             <View
@@ -231,73 +253,76 @@ const IndegentConsumptionsScreen = () => {
         </View>
       )}
       {loading === 'succeeded' && (
-        <>
-          <FlatList
-            data={indegentConsumptions}
-            renderItem={({item, index}) => renderMenuList(item, index)}
-            keyExtractor={(item, index) => item.actionType + '_' + index}
-          />
-          <View style={{position: 'absolute', top: 0}}>
-            <View style={[styles2.container2]}>
-              <View style={styles.inputView}>
-                <TextInput
-                  style={styles1.input}
-                  keyboardType="numeric"
-                  value={searchText}
-                  onChangeText={text => setSearchText(text)}
-                  placeholder={searchPlaceHoder}
-                  placeholderTextColor={Colors.blue}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                />
+        <View>
+          {searchVisible && (
+            <View>
+              <View style={[styles2.container2]}>
+                <View style={styles.inputView}>
+                  <TextInput
+                    style={styles1.input}
+                    keyboardType="numeric"
+                    value={searchText}
+                    onChangeText={text => setSearchText(text)}
+                    placeholder={searchPlaceHoder}
+                    placeholderTextColor={Colors.blue}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                  />
+                </View>
               </View>
-            </View>
-            {/* <View style={[styles2.container2, {width: '100%'}]}>
+              {/* <View style={[styles2.container2, {width: '100%'}]}>
               <Text style={[styles2.label, {textAlign: 'center'}]}>
                 Consumption Range From & To
               </Text>
             </View> */}
-            <View style={{flexDirection: 'row', width: '100%'}}>
-              <View style={[styles2.container2, {width: '50%'}]}>
-                <View style={styles.inputView}>
-                  <TextInput
-                    style={styles1.input}
-                    keyboardType="numeric"
-                    value={StartConsumption}
-                    onChangeText={text => setStartConsumption(text)}
-                    placeholder={'Consumption Start'}
-                    placeholderTextColor={Colors.blue}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                  />
+              <View style={{flexDirection: 'row', width: '100%'}}>
+                <View style={[styles2.container2, {width: '50%'}]}>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      style={styles1.input}
+                      keyboardType="numeric"
+                      value={StartConsumption}
+                      onChangeText={text => setStartConsumption(text)}
+                      placeholder={'Consumption Start'}
+                      placeholderTextColor={Colors.blue}
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                    />
+                  </View>
+                </View>
+                <View style={[styles2.container2, {width: '50%'}]}>
+                  {/* <Text style={styles2.label}>Consumption To</Text> */}
+                  <View style={styles.inputView}>
+                    <TextInput
+                      keyboardType="numeric"
+                      style={styles1.input}
+                      value={EndConsumption}
+                      onChangeText={text => setEndConsumption(text)}
+                      placeholder={'Consumption End'}
+                      placeholderTextColor={Colors.blue}
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                    />
+                  </View>
                 </View>
               </View>
-              <View style={[styles2.container2, {width: '50%'}]}>
-                {/* <Text style={styles2.label}>Consumption To</Text> */}
-                <View style={styles.inputView}>
-                  <TextInput
-                    keyboardType="numeric"
-                    style={styles1.input}
-                    value={EndConsumption}
-                    onChangeText={text => setEndConsumption(text)}
-                    placeholder={'Consumption End'}
-                    placeholderTextColor={Colors.blue}
-                    autoCorrect={false}
-                    autoCapitalize="none"
-                  />
-                </View>
+              <View style={[styles2.container2]}>
+                <CustomButton
+                  title={IsSubmitted ? 'Loading...' : 'Search'}
+                  onPress={SearchCollections}
+                  iconName="search-outline"
+                  isClicked={IsSubmitted}
+                />
               </View>
             </View>
-            <View style={[styles2.container2]}>
-              <CustomButton
-                title={IsSubmitted ? 'Loading...' : 'Search'}
-                onPress={SearchCollections}
-                iconName="search-outline"
-                isClicked={IsSubmitted}
-              />
-            </View>
-          </View>
-        </>
+          )}
+          <FlatList
+            data={indegentConsumptions}
+            renderItem={({item, index}) => renderMenuList(item, index)}
+            keyExtractor={(item, index) => item.actionType + '_' + index}
+            contentContainerStyle={{paddingBottom: 500}} // Adds padding at the bottom
+          />
+        </View>
       )}
 
       <Pressable
@@ -447,7 +472,7 @@ const styles1 = StyleSheet.create({
     // resizeMode: 'stretch',
   },
   input: {
-    flex: 1,
+    // flex: 1,
     height: 50,
     backgroundColor: Colors.white,
     borderRadius: 20,
@@ -480,7 +505,7 @@ const styles2 = StyleSheet.create({
     //   alignItems: 'center',
     paddingHorizontal: 10,
     paddingTop: 16,
-    backgroundColor: Colors.white,
+    // backgroundColor: Colors.white,
   },
   label: {
     fontSize: 18,

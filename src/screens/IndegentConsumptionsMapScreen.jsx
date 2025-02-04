@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -16,16 +16,21 @@ import MapView, {
   Geojson,
 } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Octicon from 'react-native-vector-icons/Octicons';
 import {Colors} from '../constant/Colors';
 import {formattedAmount} from '../utility/FormattedAmmount';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import LoaderModal from '../components/LoaderModal';
 import CustomButton from '../components/CustomButton';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
+import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
+import {useNavigation} from '@react-navigation/native';
 
 // const ekurhuleniGeoJSON = require('../assets/ekurhuleni-boundaries.json');
 
@@ -57,57 +62,93 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // const {indegentConsumptions, loading, error} = useSelector(
   //   state => state.indegentConsumptions,
   // );
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [searchVisible, setSearchVisible] = useState(false);
   const [startConsumption, setStartConsumption] = useState(0);
   const [endConsumption, setEndConsumption] = useState(0);
+  const [searchText, setSearchText] = useState('');
   const [IsSubmitted, setIsSubmitted] = useState(false);
+  const [IsZoom, setZoom] = useState(false);
+
+  const mapRef = useRef(null);
 
   const {warD_NO} = useSelector(state => state.loginReducer.items);
 
   const {loading, error, allIndegentConsumptions, LoadIndegentConsumptions} =
     useAllIndegentConsumptiionsByWardNo(
       warD_NO,
+      searchText,
       route.params.IndegentConsumptions ? 'Not All' : 'All',
       startConsumption,
       endConsumption,
     );
 
-  const [IndegentConsumptions, setIndegentConsumptions] = useState(
-    route.params.IndegentConsumptions || allIndegentConsumptions,
-  );
-  const mapRef = useRef(null);
+  // const [IndegentConsumptions, setIndegentConsumptions] = useState(
+  //   route.params.IndegentConsumptions || allIndegentConsumptions,
+  // );
 
+  let searchPlaceHoder = 'Serach by account or meter number...';
   // console.log(
   //   'route.params.IndegentConsumptions',
   //   route.params.IndegentConsumptions,
   // );
 
-  // let IndegentConsumptions =
-  //   route.params.IndegentConsumptions || indegentConsumptions;
+  let IndegentConsumptions =
+    route.params.IndegentConsumptions || allIndegentConsumptions;
+
+  // useEffect(() => {
+  //   if (!IsZoom) {
+  //     if (route.params.IndegentConsumptions) {
+  //       setIndegentConsumptions(route.params.IndegentConsumptions);
+  //     } else {
+  //       setIndegentConsumptions(allIndegentConsumptions);
+  //     }
+  //   }
+  // }, [allIndegentConsumptions, route.params.IndegentConsumptions]);
+
+  const toggleSearchBar = () => {
+    setSearchVisible(!searchVisible);
+  };
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleSearchBar}>
+          {!searchVisible && (
+            <Icon name="search" size={20} color={Colors.white} />
+          )}
+          {searchVisible && (
+            <AntDesign name="closecircle" size={20} color={Colors.white} />
+          )}
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, searchVisible]);
 
   useEffect(() => {
-    if (route.params.IndegentConsumptions) {
-      setIndegentConsumptions(route.params.IndegentConsumptions);
-    } else {
-      setIndegentConsumptions(allIndegentConsumptions);
-    }
-  }, [allIndegentConsumptions, route.params.IndegentConsumptions]);
+    return () => {
+      console.log('route.param');
+      dispatch(clearAllErrorIndegentConsumptions());
+    };
+  }, [dispatch]);
 
   // console.log('IndegentConsumptions', IndegentConsumptions);
 
-  const SearchCollections = () => {
+  const SearchCollections1 = () => {
+    setZoom(false);
     console.log('SearchCollections===>', startConsumption, endConsumption);
     if (
       (startConsumption && endConsumption) ||
       (startConsumption == 0 && endConsumption == 0)
     ) {
       console.log(startConsumption, endConsumption);
-      setIndegentConsumptions([]);
+      // setIndegentConsumptions([]);
       let fomData = {
         warD_NO: warD_NO,
-        searchText: '',
+        searchText: searchText,
         type: route.params.IndegentConsumptions ? 'Not All' : 'All',
-        startConsumption,
-        endConsumption,
+        startConsumption: startConsumption,
+        endConsumption: endConsumption,
       };
       console.log('2=>', fomData);
       LoadIndegentConsumptions(fomData);
@@ -120,6 +161,68 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     } else {
       ShowAlert('Required', 'Start and End Consumptions feilds are required!');
       return;
+    }
+  };
+
+  const SearchCollections = () => {
+    setZoom(false);
+
+    console.log(parseInt(startConsumption) > parseInt(endConsumption));
+    // if (startConsumption == 0 && endConsumption == 0) {
+    //   // setIndegentConsumptions([]);
+    //   let fomData = {
+    //     warD_NO: warD_NO,
+    //     searchText: searchText,
+    //     type: route.params.IndegentConsumptions ? 'Not All' : 'All',
+    //     startConsumption: 0,
+    //     endConsumption: 0,
+    //   };
+    //   console.log('1=>', fomData);
+    //   LoadIndegentConsumptions(fomData);
+    // } else
+    if (searchText && startConsumption == 0 && endConsumption == 0) {
+      // setIndegentConsumptions([]);
+      let fomData = {
+        warD_NO: warD_NO,
+        searchText: searchText,
+        type: route.params.IndegentConsumptions ? 'Not All' : 'All',
+        startConsumption: startConsumption,
+        endConsumption: endConsumption,
+      };
+      console.log('2=>', fomData);
+      LoadIndegentConsumptions(fomData);
+    } else if (searchText && startConsumption !== 0 && endConsumption !== 0) {
+      // setIndegentConsumptions([]);
+      let fomData = {
+        warD_NO: warD_NO,
+        searchText: searchText,
+        type: route.params.IndegentConsumptions ? 'Not All' : 'All',
+        startConsumption: startConsumption,
+        endConsumption: endConsumption,
+      };
+      console.log('2=>', fomData);
+      LoadIndegentConsumptions(fomData);
+    } else if (startConsumption == 0 || endConsumption == 0) {
+      ShowAlert(
+        'Required',
+        'Search keyword or (Start and End Consumptions) feilds are required!',
+      );
+    } else if (parseInt(startConsumption) > parseInt(endConsumption)) {
+      ShowAlert(
+        'Invalid',
+        'Start Consumption should be less than End Consumption!',
+      );
+    } else {
+      // setIndegentConsumptions([]);
+      let fomData = {
+        warD_NO: warD_NO,
+        searchText: searchText,
+        type: route.params.IndegentConsumptions ? 'Not All' : 'All',
+        startConsumption: startConsumption,
+        endConsumption: endConsumption,
+      };
+      console.log('2=>', fomData);
+      LoadIndegentConsumptions(fomData);
     }
   };
 
@@ -161,6 +264,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   });
 
   const zoomIn = () => {
+    setZoom(true);
     setRegion({
       ...region,
       latitudeDelta: region.latitudeDelta / 2,
@@ -169,6 +273,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   };
 
   const zoomOut = () => {
+    setZoom(true);
     setRegion({
       ...region,
       latitudeDelta: region.latitudeDelta * 2,
@@ -412,11 +517,26 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             // provider={PROVIDER_GOOGLE} // Use Google Maps for both platforms
             title={marker.municipalAccount}
             description={marker.meter_No}>
-            <Icon
-              name="map-pin"
-              size={40}
+            {/* <Icon
+              name="dot-circle"
+              size={20}
+              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+            /> */}
+            {/* <FontAwesome
+              name="dot-circle-o"
+              size={30}
+              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+            /> */}
+            <Entypo
+              name="dot-single"
+              size={70}
               color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             />
+            {/* <Octicon
+              name="dot-fill"
+              size={40}
+              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+            /> */}
 
             {/* Custom callout content */}
             <Callout>
@@ -519,53 +639,80 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           {/* <Button title="Zoom Out" onPress={zoomOut} /> */}
         </TouchableOpacity>
       </View>
-
-      <View style={{position: 'absolute', top: 0}}>
-        <View style={[styles2.container2, {width: '100%'}]}>
-          <Text style={[styles2.label, {textAlign: 'center'}]}>
-            Consumption Range From & To
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row', width: '100%'}}>
-          <View style={[styles2.container2, {width: '50%'}]}>
+      {searchVisible && (
+        <View style={{position: 'absolute', top: 0}}>
+          <View style={[styles2.container2]}>
             <View style={styles.inputView}>
               <TextInput
                 style={styles1.input}
                 keyboardType="numeric"
-                value={startConsumption}
-                onChangeText={text => setStartConsumption(text)}
-                placeholder={'Consumption Start'}
+                value={searchText}
+                onChangeText={text => setSearchText(text)}
+                placeholder={searchPlaceHoder}
                 placeholderTextColor={Colors.blue}
                 autoCorrect={false}
                 autoCapitalize="none"
               />
             </View>
           </View>
-          <View style={[styles2.container2, {width: '50%'}]}>
-            {/* <Text style={styles2.label}>Consumption To</Text> */}
-            <View style={styles.inputView}>
-              <TextInput
-                keyboardType="numeric"
-                style={styles1.input}
-                value={endConsumption}
-                onChangeText={text => setEndConsumption(text)}
-                placeholder={'Consumption End'}
-                placeholderTextColor={Colors.blue}
-                autoCorrect={false}
-                autoCapitalize="none"
-              />
+          <View style={[styles2.container2, {width: '100%'}]}>
+            <Text style={[styles2.label, {textAlign: 'center'}]}>
+              Consumption Range From & To
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', width: '100%'}}>
+            <View style={[styles2.container2, {width: '50%'}]}>
+              <View style={styles.inputView}>
+                <TextInput
+                  style={styles1.input}
+                  keyboardType="numeric"
+                  value={startConsumption}
+                  onChangeText={text => {
+                    if (!text) {
+                      setStartConsumption(0);
+                    } else {
+                      setStartConsumption(text);
+                    }
+                  }}
+                  placeholder={'Consumption Start'}
+                  placeholderTextColor={Colors.blue}
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+              </View>
+            </View>
+            <View style={[styles2.container2, {width: '50%'}]}>
+              {/* <Text style={styles2.label}>Consumption To</Text> */}
+              <View style={styles.inputView}>
+                <TextInput
+                  keyboardType="numeric"
+                  style={styles1.input}
+                  value={endConsumption}
+                  onChangeText={text => {
+                    if (!text) {
+                      setEndConsumption(0);
+                    } else {
+                      setEndConsumption(text);
+                    }
+                  }}
+                  placeholder={'Consumption End'}
+                  placeholderTextColor={Colors.blue}
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+              </View>
             </View>
           </View>
+          <View style={[styles2.container2]}>
+            <CustomButton
+              title={IsSubmitted ? 'Loading...' : 'Search'}
+              onPress={SearchCollections}
+              iconName="search-outline"
+              isClicked={IsSubmitted}
+            />
+          </View>
         </View>
-        <View style={[styles2.container2]}>
-          <CustomButton
-            title={IsSubmitted ? 'Loading...' : 'Search'}
-            onPress={SearchCollections}
-            iconName="search-outline"
-            isClicked={IsSubmitted}
-          />
-        </View>
-      </View>
+      )}
     </View>
   );
 };
