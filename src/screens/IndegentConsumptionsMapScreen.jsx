@@ -1,4 +1,10 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -215,12 +221,12 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     });
   }, [navigation, searchVisible]);
 
-  useEffect(() => {
-    return () => {
-      console.log('route.param');
-      dispatch(clearAllErrorIndegentConsumptions());
-    };
-  }, [dispatch]);
+  // useEffect(() => {
+  //   return () => {
+  //     console.log('route.param');
+  //     dispatch(clearAllErrorIndegentConsumptions());
+  //   };
+  // }, [dispatch]);
 
   // console.log('IndegentConsumptions', IndegentConsumptions);
 
@@ -564,13 +570,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     },
   ];
 
-  return (
-    <View style={styles.container}>
-      <LoaderModal
-        visible={loading === 'pending' && !route.params?.IndegentConsumptions}
-        loadingText="Loading..."
-      />
-
+  const mapComponent = useMemo(() => {
+    return (
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -597,25 +598,25 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             title={marker.municipalAccount}
             description={marker.meter_No}>
             {/* <Icon
-              name="dot-circle"
-              size={20}
-              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
-            /> */}
+            name="dot-circle"
+            size={20}
+            color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+          /> */}
             {/* <FontAwesome
-              name="dot-circle-o"
-              size={30}
-              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
-            /> */}
+            name="dot-circle-o"
+            size={30}
+            color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+          /> */}
             <Entypo
               name="dot-single"
               size={70}
               color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             />
             {/* <Octicon
-              name="dot-fill"
-              size={40}
-              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
-            /> */}
+            name="dot-fill"
+            size={40}
+            color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+          /> */}
 
             {/* Custom callout content */}
             <Callout>
@@ -686,14 +687,10 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                             : 'Send Notification'
                         }
                         onPress={() => {
-                          if (marker.idNumber !== IsSubmitted) {
-                            handleSMS(marker);
-                          }
+                          handleSMS(marker);
                         }}
                         iconName="send"
-                        isClicked={
-                          marker.idNumber == IsSubmitted ? true : false
-                        }
+                        isClicked={!!(marker.idNumber == IsSubmitted)}
                       />
                     </View>
                   )}
@@ -701,15 +698,26 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               </View>
             </Callout>
             {/* 
-            <Geojson
-              geojson={ekurhuleniGeoJSON}
-              strokeColor="blue"
-              fillColor="rgba(0, 0, 255, 0.3)"
-              strokeWidth={2}
-            /> */}
+          <Geojson
+            geojson={ekurhuleniGeoJSON}
+            strokeColor="blue"
+            fillColor="rgba(0, 0, 255, 0.3)"
+            strokeWidth={2}
+          /> */}
           </Marker>
         ))}
       </MapView>
+    );
+  }, [IndegentConsumptions]);
+
+  return (
+    <View style={styles.container}>
+      <LoaderModal
+        visible={loading === 'pending' && !route.params?.IndegentConsumptions}
+        loadingText="Loading..."
+      />
+
+      {mapComponent}
       <View style={styles.zoomContainer}>
         <TouchableOpacity
           onPress={zoomIn}

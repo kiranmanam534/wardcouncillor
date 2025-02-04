@@ -174,9 +174,11 @@ COE Team`;
     if (StartConsumption == 0 && EndConsumption == 0) {
       console.log('1=>', fomData);
       LoadIndegentConsumptions(fomData);
-    } else if (StartConsumption == 0 || EndConsumption == 0) {
-      ShowAlert('Required', 'Start and End Consumptions feilds are required!');
-    } else if (parseInt(StartConsumption) > parseInt(EndConsumption)) {
+    }
+    // else if (StartConsumption == 0 || EndConsumption == 0) {
+    //   ShowAlert('Required', 'Start and End Consumptions feilds are required!');
+    // } else
+    if (parseInt(StartConsumption) > parseInt(EndConsumption)) {
       ShowAlert(
         'Invalid',
         'Start Consumption should be less than End Consumption!',
