@@ -686,10 +686,14 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                             : 'Send Notification'
                         }
                         onPress={() => {
-                          handleSMS(marker);
+                          if (marker.idNumber !== IsSubmitted) {
+                            handleSMS(marker);
+                          }
                         }}
                         iconName="send"
-                        isClicked={!!(marker.idNumber == IsSubmitted)}
+                        isClicked={
+                          marker.idNumber == IsSubmitted ? true : false
+                        }
                       />
                     </View>
                   )}
