@@ -298,12 +298,14 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       };
       console.log('2=>', fomData);
       LoadIndegentConsumptions(fomData);
-    } else if (startConsumption == 0 || endConsumption == 0) {
-      ShowAlert(
-        'Required',
-        'Search keyword or (Start and End Consumptions) feilds are required!',
-      );
-    } else if (parseInt(startConsumption) > parseInt(endConsumption)) {
+    }
+    // else if (startConsumption == 0 || endConsumption == 0) {
+    //   ShowAlert(
+    //     'Required',
+    //     'Search keyword or (Start and End Consumptions) feilds are required!',
+    //   );
+    // }
+    else if (parseInt(startConsumption) > parseInt(endConsumption)) {
       ShowAlert(
         'Invalid',
         'Start Consumption should be less than End Consumption!',
