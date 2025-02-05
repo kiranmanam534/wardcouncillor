@@ -20,6 +20,7 @@ const IndegentConsumptionSlice = createSlice({
     builder.addCase(actGetIndegentConsumptionsApi.pending, state => {
       state.loading = 'pending';
       state.error = null;
+      state.indegentConsumptions = null;
     });
     builder.addCase(
       actGetIndegentConsumptionsApi.fulfilled,
@@ -32,6 +33,7 @@ const IndegentConsumptionSlice = createSlice({
     builder.addCase(actGetIndegentConsumptionsApi.rejected, (state, action) => {
       state.loading = 'failed';
       state.error = action.payload;
+      state.indegentConsumptions = null;
     });
   },
 });

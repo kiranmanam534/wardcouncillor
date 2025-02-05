@@ -6,13 +6,14 @@ import React, {
   useState,
 } from 'react';
 import {
+  Dimensions,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, {Marker, UrlTile} from 'react-native-maps';
+import MapView, {Callout, Marker, UrlTile} from 'react-native-maps';
 import ClusteredMapView from 'react-native-map-clustering';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -31,6 +32,10 @@ import {smsApi} from '../services/smsApi';
 import {smdSliceActions} from '../redux/smsSlice';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 import CustomButton from '../components/CustomButton';
+import ShowMessageCenter from '../components/ShowMessageCenter';
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const IndegentConsumptionsMapScreen = ({route}) => {
   const navigation = useNavigation();
@@ -68,7 +73,11 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   let IndegentConsumptions =
     route.params.IndegentConsumptions || allIndegentConsumptions;
 
-  console.log(IndegentConsumptions?.length);
+  // if (loading === 'failed') {
+  //   IndegentConsumptions = [];
+  // }
+
+  console.log('IndegentConsumptions', IndegentConsumptions?.length);
 
   const ShowAlert = (type, mess) => {
     Alert.alert(
@@ -278,9 +287,106 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               latitude: parseFloat(marker.latitude),
               longitude: parseFloat(marker.longitude),
             }}
+            // pinColor={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             title={marker.name}
-            description={marker.address}
-          />
+            description={marker.address}>
+            {/* <Entypo
+              name="dot-single"
+              size={70}
+              color={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+            /> */}
+            <Callout>
+              <View style={{width: screenWidth - 100}}>
+                <View style={styles.card}>
+                  <View style={styles.flex_row_card}>
+                    <View style={styles.content}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text style={styles.title}>
+                          Account No : {marker.municipalAccount}
+                        </Text>
+                      </View>
+
+                      <Text style={styles.description}>
+                        Meter No : {marker.meter_No}
+                      </Text>
+                      <Text style={styles.description}>
+                        Previous Consumption :{' '}
+                        {parseInt(marker.previouS_CONSUMPTION || 0)}
+                      </Text>
+                      <Text style={styles.description}>
+                        Total Outstanding Amount :{' '}
+                        {formattedAmount(
+                          parseFloat(marker.totalOutstandingAmount || 0),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View
+                    style={[
+                      styles.content,
+                      {
+                        marginTop: 10,
+                        marginHorizontal: 0,
+                        marginBottom: 0,
+                        borderTopWidth: 1,
+                        padding: 10,
+                      },
+                    ]}>
+                    <Text style={styles.description}>
+                      Name : {marker.name} {marker.surname}
+                    </Text>
+                    <Text style={styles.description}>Cell : {marker.cell}</Text>
+                    <Text style={styles.description}>
+                      Reading Taken Date : {marker.readinG_TAKEN_DATE}
+                    </Text>
+                    <Text style={styles.description}>
+                      Address : {marker.address}
+                    </Text>
+                    <Text style={styles.description}>
+                      Source Of Income : {marker.sourceOfIncome}
+                      {/* {submittedMarkers?.toString()} - {marker.idNumber.toString()}
+                      {marker.idNumber.toString() ==
+                        submittedMarkers?.toString() && <Text>asaa asas</Text>} */}
+                    </Text>
+                  </View>
+                  {marker.color == 'RED' && (
+                    <View style={[styles2.container2]}>
+                      <CustomButton
+                        title={
+                          submittedMarkers[marker.idNumber]
+                            ? 'Loading...'
+                            : 'Send Notification'
+                        }
+                        onPress={() => handleSMS(marker)}
+                        iconName="send"
+                        isClicked={submittedMarkers[marker.idNumber]}
+                      />
+                      {/* <CustomButton
+                        title={
+                          marker.idNumber == submittedMarkers
+                            ? 'Loading...'
+                            : 'Send Notification'
+                        }
+                        onPress={() => {
+                          handleSMS(marker);
+                        }}
+                        iconName="send"
+                        isClicked={!!(marker.idNumber == submittedMarkers)}
+                      /> */}
+                    </View>
+                  )}
+                </View>
+              </View>
+            </Callout>
+          </Marker>
         ))}
       </ClusteredMapView>
     );
@@ -292,9 +398,6 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         visible={loading === 'pending' && !route?.params?.IndegentConsumptions}
         loadingText="Loading..."
       />
-      {/* {IndegentConsumptions && IndegentConsumptions?.length > 0 && ( */}
-      {/* <> */}
-
       {mapComponent}
 
       {/* Search Control */}
@@ -381,8 +484,18 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           <Text style={styles.buttonText}>-</Text>
         </TouchableOpacity>
       </View>
-      {/* </>
-      )} */}
+
+      {loading === 'failed' && (
+        <View style={styles.MessageConatiner}>
+          <ShowMessageCenter
+            message={
+              error == 'No data found.'
+                ? 'No Consumptions found!'
+                : 'Something went wrong!'
+            }
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -390,23 +503,39 @@ const IndegentConsumptionsMapScreen = ({route}) => {
 const styles = StyleSheet.create({
   zoomControls: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 60,
     left: 20,
     flexDirection: 'column',
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 10,
     overflow: 'hidden',
   },
+  MessageConatiner: {
+    position: 'absolute',
+    height: 150,
+    bottom: '50%',
+    left: 0,
+    right: 0,
+    top: '50%',
+    flexDirection: 'column',
+    // backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 10,
+    // overflow: 'hidden',
+  },
   button: {
-    padding: 10,
+    padding: 5,
+    height: 50,
+    width: 50,
+    borderRadius: 50,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#007AFF',
-    marginBottom: 2,
+    backgroundColor: Colors.blue,
+    marginBottom: 10,
   },
   buttonText: {
-    fontSize: 22,
-    color: 'white',
+    fontSize: 30,
+    color: Colors.white,
     fontWeight: 'bold',
   },
 });

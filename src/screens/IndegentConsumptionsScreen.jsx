@@ -22,7 +22,7 @@ import {IndegentDashboardList} from '../constant/MainDashboardList';
 import BottomSearchBox from '../components/BottomSearchBox';
 import {formattedAmount} from '../utility/FormattedAmmount';
 import ShowMessageCenter from '../components/ShowMessageCenter';
-import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
+import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo';
 import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
 import CustomButton from '../components/CustomButton';
 import {smsApi} from '../services/smsApi';
@@ -153,12 +153,13 @@ COE Team`;
 
     // setShowErrorModal(true);
   };
-  useEffect(() => {
-    return navigation.addListener('focus', () => {
-      // Refresh or reload screen
-      SearchCollections();
-    });
-  }, [navigation]);
+
+  // useEffect(() => {
+  //   return navigation.addListener('focus', () => {
+  //     // Refresh or reload screen
+  //     SearchCollections();
+  //   });
+  // }, [navigation]);
 
   console.log(loading, error, 'indegentConsumptions');
   let searchPlaceHoder = 'Serach by account or meter number...';

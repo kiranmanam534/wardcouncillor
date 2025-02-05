@@ -1,6 +1,6 @@
 import {useCallback, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import actGetIndegentConsumptionsApi from '../redux/indegent/actions/actIndegentConsumption';
+import actIndegentMapConsumption from '../redux/indegent/actions/actIndegentMapConsumption';
 
 const useAllIndegentConsumptiionsByWardNo = (
   warD_NO,
@@ -20,7 +20,7 @@ const useAllIndegentConsumptiionsByWardNo = (
       return;
     }
     dispatch(
-      actGetIndegentConsumptionsApi({
+      actIndegentMapConsumption({
         wardNo: warD_NO,
         search: searchText,
         type: type,
@@ -46,7 +46,7 @@ const useAllIndegentConsumptiionsByWardNo = (
       endConsumption,
     );
     return dispatch(
-      actGetIndegentConsumptionsApi({
+      actIndegentMapConsumption({
         wardNo: warD_NO,
         search: searchText,
         type: type,

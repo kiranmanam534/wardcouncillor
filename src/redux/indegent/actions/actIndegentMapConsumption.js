@@ -2,13 +2,13 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import {getIndegentConsumptionsByWardNo} from '../../../services/indegentApi';
 import isAxiosErrorHandler from '../../../utility/isAxiosErrorHandler';
 
-const actGetIndegentConsumptionsApi = createAsyncThunk(
-  'get/getIndegentConsumptionsByWardNo',
+const actIndegentMapConsumption = createAsyncThunk(
+  'get/getIndegentMapConsumption sByWardNo',
   async (formData, thunkAPI) => {
     const {rejectWithValue, signal} = thunkAPI;
     const {wardNo, search, type, startConsumption, endConsumption} = formData;
     console.log(
-      'get/getIndegentConsumptionsByWardNo',
+      'get/getIndegentMapConsumption ByWardNo',
       wardNo,
       search,
       type,
@@ -33,4 +33,4 @@ const actGetIndegentConsumptionsApi = createAsyncThunk(
   },
 );
 
-export default actGetIndegentConsumptionsApi;
+export default actIndegentMapConsumption;

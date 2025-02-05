@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import actGetIndegentConsumptionsApi from './actions/actIndegentConsumption';
+import actIndegentMapConsumption from './actions/actIndegentMapConsumption';
 
 const initialState = {
   allIndegentConsumptions: null,
@@ -17,21 +17,19 @@ const AllIndegentConsumptionSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    builder.addCase(actGetIndegentConsumptionsApi.pending, state => {
+    builder.addCase(actIndegentMapConsumption.pending, state => {
       state.loading = 'pending';
       state.error = null;
     });
-    builder.addCase(
-      actGetIndegentConsumptionsApi.fulfilled,
-      (state, action) => {
-        state.loading = 'succeeded';
-        // console.log('actGetIndegentConsumptionsApi', action.payload);
-        state.allIndegentConsumptions = action.payload?.data;
-      },
-    );
-    builder.addCase(actGetIndegentConsumptionsApi.rejected, (state, action) => {
+    builder.addCase(actIndegentMapConsumption.fulfilled, (state, action) => {
+      state.loading = 'succeeded';
+      // console.log('actIndegentMapConsumption', action.payload);
+      state.allIndegentConsumptions = action.payload?.data;
+    });
+    builder.addCase(actIndegentMapConsumption.rejected, (state, action) => {
       state.loading = 'failed';
       state.error = action.payload;
+      state.allIndegentConsumptions = null;
     });
   },
 });

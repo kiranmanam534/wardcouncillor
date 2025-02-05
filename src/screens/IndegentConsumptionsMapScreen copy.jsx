@@ -34,7 +34,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import LoaderModal from '../components/LoaderModal';
 import CustomButton from '../components/CustomButton';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
-import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo copy';
+import useIndegentConsumptiionsByWardNo from '../hooks/useIndegentConsumptiionsByWardNo';
 import {clearAllErrorIndegentConsumptions} from '../redux/indegent/AllIndegentConsumptionSlice';
 import {useNavigation} from '@react-navigation/native';
 import {smsApi} from '../services/smsApi';
