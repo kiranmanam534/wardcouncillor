@@ -10,12 +10,16 @@ import EsriMap from './src/TestGIS';
 import EsriAutocomplete from './src/EsriAutocomplete';
 import GoogleAutocompleteScreen from './GoogleAutocompleteScreen';
 import EsriAutocomplete1 from './src/EsriAutocomplete1';
+import EsriMapView from './Sample/EsriMapView';
+import ClusteringMap from './Sample/ClusteringMap';
 
 const App = () => {
   return (
     <StrictMode>
       <Provider store={store}>
         <Navigation />
+        {/* <EsriMapView /> */}
+        {/* <ClusteringMap /> */}
         {/* <MyComponent/> */}
         {/* <TestMapView/> */}
         {/* <PhotoCaptureScreen/> */}
