@@ -287,7 +287,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
               latitude: parseFloat(marker.latitude),
               longitude: parseFloat(marker.longitude),
             }}
-            // pinColor={marker.color == 'GREEN' ? Colors.primary : Colors.red}
+            pinColor={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             title={marker.name}
             description={marker.address}>
             {/* <Entypo
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     bottom: 60,
     left: 20,
     flexDirection: 'column',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    // backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderRadius: 10,
     overflow: 'hidden',
   },
