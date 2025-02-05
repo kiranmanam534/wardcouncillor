@@ -402,76 +402,84 @@ const IndegentConsumptionsMapScreen = ({route}) => {
 
       {/* Search Control */}
       {searchVisible && (
-        <View style={{position: 'absolute', top: 0}}>
-          <View style={[styles2.container2]}>
-            <View style={styles.inputView}>
-              <TextInput
-                style={styles1.input}
-                keyboardType="numeric"
-                value={searchText}
-                onChangeText={text => setSearchText(text)}
-                placeholder={searchPlaceHoder}
-                placeholderTextColor={Colors.blue}
-                autoCorrect={false}
-                autoCapitalize="none"
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            // paddingHorizontal: 30,
+            // paddingVertical: 10,
+          }}>
+          <View>
+            <View style={[styles2.container2]}>
+              <View style={styles.inputView}>
+                <TextInput
+                  style={styles1.input}
+                  keyboardType="numeric"
+                  value={searchText}
+                  onChangeText={text => setSearchText(text)}
+                  placeholder={searchPlaceHoder}
+                  placeholderTextColor={Colors.blue}
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+              </View>
+            </View>
+            <View style={[styles2.container2, {width: '100%'}]}>
+              <Text style={[styles2.label, {textAlign: 'center'}]}>
+                Consumption Range From & To
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row', width: '100%'}}>
+              <View style={[styles2.container2, {width: '50%'}]}>
+                <View style={styles.inputView}>
+                  <TextInput
+                    style={styles1.input}
+                    keyboardType="numeric"
+                    value={startConsumption}
+                    onChangeText={text => {
+                      if (!text) {
+                        setStartConsumption(0);
+                      } else {
+                        setStartConsumption(text);
+                      }
+                    }}
+                    placeholder={'Consumption Start'}
+                    placeholderTextColor={Colors.blue}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                  />
+                </View>
+              </View>
+              <View style={[styles2.container2, {width: '50%'}]}>
+                {/* <Text style={styles2.label}>Consumption To</Text> */}
+                <View style={styles.inputView}>
+                  <TextInput
+                    keyboardType="numeric"
+                    style={styles1.input}
+                    value={endConsumption}
+                    onChangeText={text => {
+                      if (!text) {
+                        setEndConsumption(0);
+                      } else {
+                        setEndConsumption(text);
+                      }
+                    }}
+                    placeholder={'Consumption End'}
+                    placeholderTextColor={Colors.blue}
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={[styles2.container2, {paddingBottom: 10}]}>
+              <CustomButton
+                title={'Search'}
+                onPress={SearchCollections}
+                iconName="search-outline"
+                // isClicked={submittedMarkers}
               />
             </View>
-          </View>
-          <View style={[styles2.container2, {width: '100%'}]}>
-            <Text style={[styles2.label, {textAlign: 'center'}]}>
-              Consumption Range From & To
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', width: '100%'}}>
-            <View style={[styles2.container2, {width: '50%'}]}>
-              <View style={styles.inputView}>
-                <TextInput
-                  style={styles1.input}
-                  keyboardType="numeric"
-                  value={startConsumption}
-                  onChangeText={text => {
-                    if (!text) {
-                      setStartConsumption(0);
-                    } else {
-                      setStartConsumption(text);
-                    }
-                  }}
-                  placeholder={'Consumption Start'}
-                  placeholderTextColor={Colors.blue}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                />
-              </View>
-            </View>
-            <View style={[styles2.container2, {width: '50%'}]}>
-              {/* <Text style={styles2.label}>Consumption To</Text> */}
-              <View style={styles.inputView}>
-                <TextInput
-                  keyboardType="numeric"
-                  style={styles1.input}
-                  value={endConsumption}
-                  onChangeText={text => {
-                    if (!text) {
-                      setEndConsumption(0);
-                    } else {
-                      setEndConsumption(text);
-                    }
-                  }}
-                  placeholder={'Consumption End'}
-                  placeholderTextColor={Colors.blue}
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                />
-              </View>
-            </View>
-          </View>
-          <View style={[styles2.container2]}>
-            <CustomButton
-              title={'Search'}
-              onPress={SearchCollections}
-              iconName="search-outline"
-              // isClicked={submittedMarkers}
-            />
           </View>
         </View>
       )}
@@ -588,6 +596,7 @@ const styles2 = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 16,
     backgroundColor: Colors.white,
+    // borderRadius: 20,
   },
   label: {
     fontSize: 18,
