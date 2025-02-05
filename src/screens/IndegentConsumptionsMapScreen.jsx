@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, {Callout, Marker, UrlTile} from 'react-native-maps';
+import MapView, {Callout, Marker, Polygon, UrlTile} from 'react-native-maps';
 import ClusteredMapView from 'react-native-map-clustering';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -33,6 +33,8 @@ import {smdSliceActions} from '../redux/smsSlice';
 import useAllIndegentConsumptiionsByWardNo from '../hooks/useAllIndegentConsumptiionsByWardNo';
 import CustomButton from '../components/CustomButton';
 import ShowMessageCenter from '../components/ShowMessageCenter';
+
+import ekuJson from '../assets/eku.json';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -76,6 +78,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // if (loading === 'failed') {
   //   IndegentConsumptions = [];
   // }
+  console.log('ekuJson', ekuJson.features);
 
   console.log('IndegentConsumptions', IndegentConsumptions?.length);
 
@@ -264,7 +267,15 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         clusterColor={Colors.primary} // Customize cluster color
         clusterTextColor={Colors.white} // Cluster text color
         clusterFontSize={15}
-        // minZoom={3}
+        // Enable clustering
+        clusterMinZoom={5} // Min zoom level for clustering
+        clusterMaxZoom={12} // Max zoom level for clustering
+        onRegionChangeComplete={region => {
+          console.log('region changed', region);
+        }}
+        onClusterPress={cluster => {
+          console.log('cluster pressed', cluster);
+        }}
         animationEnabled
         showsUserLocation>
         {/* Esri Tile Layer */}
@@ -388,6 +399,28 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             </Callout>
           </Marker>
         ))}
+
+        {ekuJson.features.map((feature, index) => {
+          if (feature.geometry.type === 'Polygon') {
+            return (
+              <Polygon
+                key={index}
+                coordinates={feature.geometry.coordinates[0].map(
+                  ([longitude, latitude]) => ({
+                    latitude,
+                    longitude,
+                  }),
+                )}
+                strokeColor={Colors.blue} // Red border
+                fillColor="rgba(255,0,0,0.2)" // Transparent red fill
+                // strokeColor={Colors.red} // Red border
+                // fillColor={Colors.yellow} // Transparent red fill
+                strokeWidth={2}
+              />
+            );
+          }
+          return null;
+        })}
       </ClusteredMapView>
     );
   }, [IndegentConsumptions, submittedMarkers]);
