@@ -189,6 +189,22 @@ COE Team`;
     // setShowErrorModal(true);
   };
 
+  const handleSendSMSEmail = marker => {
+    Alert.alert(
+      'Alert',
+      'Notification will be sent to ' + marker.cell,
+      [
+        {text: 'Yes', onPress: () => handleSMS(marker)},
+        {
+          text: 'No',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
   // useEffect(() => {
   //   return navigation.addListener('focus', () => {
   //     // Refresh or reload screen
@@ -318,7 +334,7 @@ COE Team`;
                     : 'Send Notification'
                 }
                 onPress={() => {
-                  handleSMS(item);
+                  handleSendSMSEmail(item);
                 }}
                 iconName="send"
                 isClicked={!!(IsSubmitted == item.idNumber)}

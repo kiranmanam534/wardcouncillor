@@ -1,8 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AxiosInstance} from './api';
-import {useDispatch} from 'react-redux';
-
-const dispatch = useDispatch();
 
 export const SendEmailApi = createAsyncThunk(
   'api/SendEmailApi',

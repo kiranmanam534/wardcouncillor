@@ -6,7 +6,9 @@ import React, {
   useState,
 } from 'react';
 import {
+  Alert,
   Dimensions,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -110,6 +112,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   }, [smsError, isSMSLoading]);
 
   useEffect(() => {
+    console.log('Sending smsMessage', smsMessage);
     if (!isSMSLoading && smsMessage) {
       dispatch(smdSliceActions.smsClear());
       ShowAlert('Success', smsMessage);
@@ -135,6 +138,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   const handleSMS = item => {
     console.log(warD_NO + ' ==> ', item);
     // setSubmittedMarkers(item.idNumber);
+    // setSearchText(item.idNumber);
 
     if (item.cell && item.cell != 'Not Available') {
       // Update the state for this specific marker
@@ -178,7 +182,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
 
       handleSendEmail(email_request_body);
 
-      // dispatch(smsApi({requestBody: requestBody}));
+      dispatch(smsApi({requestBody: requestBody}));
 
       // After SMS is sent, update UI
       setTimeout(() => {
@@ -192,6 +196,22 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     }
 
     // setShowErrorModal(true);
+  };
+
+  const handleSendSMSEmail = marker => {
+    Alert.alert(
+      'Alert',
+      'Notification will be sent to ' + marker.cell,
+      [
+        {text: 'Yes', onPress: () => handleSMS(marker)},
+        {
+          text: 'No',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   const toggleSearchBar = () => {
@@ -359,7 +379,13 @@ const IndegentConsumptionsMapScreen = ({route}) => {
             }}
             pinColor={marker.color == 'GREEN' ? Colors.primary : Colors.red}
             title={marker.name}
-            description={marker.address}>
+            description={marker.address}
+            onCalloutPress={() => {
+              if (Platform.OS === 'android') {
+                handleSendSMSEmail(marker);
+              }
+            }} // Trigger SMS when Callout is clicked
+          >
             {/* <Entypo
               name="dot-single"
               size={70}
@@ -421,7 +447,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                       Address : {marker.address}
                     </Text>
                     <Text style={styles.description}>
-                      Source Of Income : {marker.sourceOfIncome}
+                      Source Of Income : {marker.sourceOfIncome}{' '}
+                      submittedMarkers : {JSON.stringify(submittedMarkers)}
                       {/* {submittedMarkers?.toString()} - {marker.idNumber.toString()}
                       {marker.idNumber.toString() ==
                         submittedMarkers?.toString() && <Text>asaa asas</Text>} */}
@@ -430,12 +457,17 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                   {marker.color == 'RED' && (
                     <View style={[styles2.container2]}>
                       <CustomButton
+                        key={
+                          submittedMarkers[marker.idNumber]
+                            ? 'loading'
+                            : 'normal'
+                        }
                         title={
                           submittedMarkers[marker.idNumber]
                             ? 'Loading...'
                             : 'Send Notification'
                         }
-                        onPress={() => handleSMS(marker)}
+                        onPress={() => handleSendSMSEmail(marker)}
                         iconName="send"
                         isClicked={submittedMarkers[marker.idNumber]}
                       />
