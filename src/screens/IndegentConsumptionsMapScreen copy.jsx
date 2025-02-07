@@ -337,7 +337,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     }
   };
 
-  console.log('filteredConsumptions', IndegentConsumptions);
+  // console.log('filteredConsumptions', IndegentConsumptions);
 
   // useEffect(() => {
   //   if (!IndegentConsumptions){
@@ -358,15 +358,15 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   const regionRef = useRef({
     latitude: -26.1989,
     longitude: 28.31262,
-    latitudeDelta: 0.2,
-    longitudeDelta: 0.2,
+    latitudeDelta: 0.7518893467526873,
+    longitudeDelta: 28.413692000000058,
   });
   //Location EKURHULENI METROPOLITAN MUNICIPALITY    Latitude  -26.19890000    Longitude  28.31262000
   const [region, setRegion] = useState({
     latitude: -26.1989,
     longitude: 28.31262,
-    latitudeDelta: 0.2,
-    longitudeDelta: 0.2,
+    latitudeDelta: 1.0,
+    longitudeDelta: 1.0,
   });
 
   // const zoomIn = () => {
@@ -407,6 +407,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         latitudeDelta: regionRef.current.latitudeDelta * 2, // Zoom out
         longitudeDelta: regionRef.current.longitudeDelta * 2,
       });
+
+      console.log(regionRef.current.latitudeDelta * 2);
     }
   };
 

@@ -35,6 +35,7 @@ import CustomButton from '../components/CustomButton';
 import ShowMessageCenter from '../components/ShowMessageCenter';
 
 import ekuJson from '../assets/eku.json';
+import {SendEmailApi} from '../services/SendEmailApi';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -78,9 +79,9 @@ const IndegentConsumptionsMapScreen = ({route}) => {
   // if (loading === 'failed') {
   //   IndegentConsumptions = [];
   // }
-  console.log('ekuJson', ekuJson.features);
+  // console.log('ekuJson', ekuJson.features);
 
-  console.log('IndegentConsumptions', IndegentConsumptions?.length);
+  // console.log('IndegentConsumptions', IndegentConsumptions?.length);
 
   const ShowAlert = (type, mess) => {
     Alert.alert(
@@ -116,6 +117,21 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     }
   }, [smsMessage, isSMSLoading]);
 
+  // Function to handle button press
+  const handleSendEmail = async request_data => {
+    try {
+      const response = await dispatch(
+        SendEmailApi(request_data), // Pass query params
+      ).unwrap(); // Use `.unwrap()` to handle response easily
+
+      // Alert.alert('Success', 'Email sent successfully!');
+      console.log('API Response:', response);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send email.');
+      console.error('API Error:', error);
+    }
+  };
+
   const handleSMS = item => {
     console.log(warD_NO + ' ==> ', item);
     // setSubmittedMarkers(item.idNumber);
@@ -136,14 +152,33 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       COE Team`;
 
       const requestBody = {
-        recipientNumber: '0722409624', //item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
-        // recipientNumber: '0739007893',
+        // recipientNumber: '0722409624', //item.cell, //'0739007893', //'0722409624', //'0792360234', //'0739007893'
+        recipientNumber: item.cell,
         message: message.toString(),
         // campaign: 'Interims',
       };
       console.log(requestBody);
 
-      dispatch(smsApi({requestBody: requestBody}));
+      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname}</b>
+      
+      Your monthly consumption on <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
+      </b>
+      Please limit your consumption or your indigent status will be cancelled. 
+      
+      <br/><br/><br/>
+      
+      Thanks,<br/>
+      COE Team`;
+
+      let email_request_body = {
+        email: 'kiran.manam.km@gmail.com',
+        subject: 'From Kiran',
+        body: email_message,
+      };
+
+      handleSendEmail(email_request_body);
+
+      // dispatch(smsApi({requestBody: requestBody}));
 
       // After SMS is sent, update UI
       setTimeout(() => {
@@ -228,10 +263,10 @@ const IndegentConsumptionsMapScreen = ({route}) => {
 
   // Set initial region using ref
   regionRef.current = {
-    latitude: validLocation ? parseFloat(validLocation.latitude) : -26.1989,
-    longitude: validLocation ? parseFloat(validLocation.longitude) : 28.31262,
-    latitudeDelta: 0.9,
-    longitudeDelta: 0.9,
+    latitude: -26.1989,
+    longitude: 28.31262,
+    latitudeDelta: 0.736529590527114,
+    longitudeDelta: 0.2001998287253286,
   };
 
   // Zoom In Function
@@ -254,6 +289,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         latitudeDelta: regionRef.current.latitudeDelta * 2,
         longitudeDelta: regionRef.current.longitudeDelta * 2,
       };
+      console.log(regionRef.current.value);
       mapRef.current.animateToRegion(regionRef.current, 500);
     }
   };
@@ -268,8 +304,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         clusterTextColor={Colors.white} // Cluster text color
         clusterFontSize={15}
         // Enable clustering
-        clusterMinZoom={5} // Min zoom level for clustering
-        clusterMaxZoom={12} // Max zoom level for clustering
+        // clusterMinZoom={12} // Min zoom level for clustering
+        // clusterMaxZoom={12} // Max zoom level for clustering
         onRegionChangeComplete={region => {
           console.log('region changed', region);
         }}
@@ -277,10 +313,33 @@ const IndegentConsumptionsMapScreen = ({route}) => {
           console.log('cluster pressed', cluster);
         }}
         animationEnabled
+        showsBuildings={true}
+        // initialCamera={{
+        //   center: {latitude: 37.78825, longitude: -122.4324},
+        //   pitch: 45, // Tilt for a 3D effect
+        //   heading: 0,
+        //   altitude: 1000,
+        //   zoom: 15,
+        // }}
         showsUserLocation>
         {/* Esri Tile Layer */}
-        <UrlTile
+        {/* <UrlTile
           urlTemplate="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+          zIndex={-1}
+        /> */}
+        {/* <UrlTile
+          urlTemplate="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          zIndex={-1}
+        /> */}
+        {/* <UrlTile urlTemplate="https://api.mapbox.com/styles/v1/{username}/{style_id}/tiles/256/{z}/{x}/{y}?access_token={your_access_token}" /> */}
+
+        {/* <UrlTile
+          urlTemplate="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+          zIndex={1}
+        /> */}
+
+        <UrlTile
+          urlTemplate={'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
           zIndex={-1}
         />
 
@@ -412,9 +471,10 @@ const IndegentConsumptionsMapScreen = ({route}) => {
                   }),
                 )}
                 strokeColor={Colors.blue} // Red border
-                fillColor="rgba(255,0,0,0.2)" // Transparent red fill
+                fillColor="rgba(30, 43, 222, 0.26)" // Transparent red fill
                 // strokeColor={Colors.red} // Red border
                 // fillColor={Colors.yellow} // Transparent red fill
+
                 strokeWidth={2}
               />
             );

@@ -28,14 +28,15 @@ import CustomButton from '../components/CustomButton';
 import {smsApi} from '../services/smsApi';
 import {smdSliceActions} from '../redux/smsSlice';
 import Toast from 'react-native-toast-message';
+import {SendEmailApi} from '../services/SendEmailApi';
 
 const IndegentConsumptionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [searchVisible, setSearchVisible] = useState(false);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
-  const [StartConsumption, setStartConsumption] = useState(0);
-  const [EndConsumption, setEndConsumption] = useState(0);
+  const [StartConsumption, setStartConsumption] = useState(180);
+  const [EndConsumption, setEndConsumption] = useState(190);
   const [searchText, setSearchText] = useState('');
   const [IsSubmitted, setIsSubmitted] = useState(null);
   const {warD_NO} = useSelector(state => state.loginReducer.items);
@@ -125,6 +126,21 @@ const IndegentConsumptionsScreen = () => {
     }
   }, [smsMessage, isSMSLoading]);
 
+  // Function to handle button press
+  const handleSendEmail = async request_data => {
+    try {
+      const response = await dispatch(
+        SendEmailApi(request_data), // Pass query params
+      ).unwrap(); // Use `.unwrap()` to handle response easily
+
+      // Alert.alert('Success', 'Email sent successfully!');
+      console.log('API Response:', response);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to send email.');
+      console.error('API Error:', error);
+    }
+  };
+
   const handleSMS = item => {
     console.log(warD_NO + ' ==> ', item);
 
@@ -145,6 +161,25 @@ COE Team`;
         // campaign: 'Interims',
       };
       console.log(requestBody);
+
+      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname}</b>
+
+Your monthly consumption on <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
+</b>
+Please limit your consumption or your indigent status will be cancelled. 
+
+<br/><br/><br/>
+
+Thanks,<br/>
+COE Team`;
+
+      let email_request_body = {
+        email: 'kiran.manam.km@gmail.com',
+        subject: 'From Kiran',
+        body: email_message,
+      };
+
+      handleSendEmail(email_request_body);
 
       dispatch(smsApi({requestBody: requestBody}));
     } else {
