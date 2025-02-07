@@ -147,9 +147,9 @@ const IndegentConsumptionsMapScreen = ({route}) => {
         [item.idNumber]: true, // Mark this ID as submitted
       }));
 
-      let message = `Dear ${item.name} ${item.surname}
+      let message = `Dear ${item.name} ${item.surname},
   
-      Your monthly consumption on ${item.meter_No} has exceed the limit of 180 Litres.
+      Your monthly consumption on Meter No: ${item.meter_No} has exceed the limit of 180 Litres.
       Please limit your consumption or your indigent status will be cancelled.
   
       Thanks
@@ -163,9 +163,11 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       };
       console.log(requestBody);
 
-      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname}</b>
-      
-      Your monthly consumption on <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
+      // if(item.)
+
+      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname},</b>
+      <br/><br/>
+      Your monthly consumption on Meter No: <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
       </b>
       Please limit your consumption or your indigent status will be cancelled. 
       

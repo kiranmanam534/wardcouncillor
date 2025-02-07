@@ -35,8 +35,8 @@ const IndegentConsumptionsScreen = () => {
   const dispatch = useDispatch();
   const [searchVisible, setSearchVisible] = useState(false);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
-  const [StartConsumption, setStartConsumption] = useState(0);
-  const [EndConsumption, setEndConsumption] = useState(0);
+  const [StartConsumption, setStartConsumption] = useState(180);
+  const [EndConsumption, setEndConsumption] = useState(190);
   const [searchText, setSearchText] = useState('');
   const [IsSubmitted, setIsSubmitted] = useState(null);
   const {warD_NO} = useSelector(state => state.loginReducer.items);
@@ -146,9 +146,9 @@ const IndegentConsumptionsScreen = () => {
 
     if (item.cell && item.cell != 'Not Available') {
       setIsSubmitted(item.idNumber);
-      let message = `Dear ${item.name} ${item.surname}
+      let message = `Dear ${item.name} ${item.surname},
 
-Your monthly consumption on ${item.meter_No} has exceed the limit of 180 Litres.
+Your monthly consumption on Meter No: ${item.meter_No} has exceed the limit of 180 Litres.
 Please limit your consumption or your indigent status will be cancelled. 
 
 Thanks
@@ -162,9 +162,9 @@ COE Team`;
       };
       console.log(requestBody);
 
-      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname}</b>
-
-Your monthly consumption on <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
+      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname},</b>
+<br/><br/>
+Your monthly consumption on Meter No: <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
 </b>
 Please limit your consumption or your indigent status will be cancelled. 
 
