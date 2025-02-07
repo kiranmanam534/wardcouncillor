@@ -140,7 +140,7 @@ const IndegentConsumptionsMapScreen = ({route}) => {
     // setSubmittedMarkers(item.idNumber);
     // setSearchText(item.idNumber);
 
-    if (item.cell && item.cell != 'Not Available') {
+    if ((item.cell && item.cell != 'Not Available') || item.email) {
       // Update the state for this specific marker
       setSubmittedMarkers(prev => ({
         ...prev,
@@ -163,9 +163,8 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       };
       console.log(requestBody);
 
-      // if(item.)
-
-      let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname},</b>
+      if (item.email) {
+        let email_message = `Dear <b style='color:${Colors.primary}'>${item.name} ${item.surname},</b>
       <br/><br/>
       Your monthly consumption on Meter No: <b style='color:${Colors.red}'>${item.meter_No} has exceed the limit of 180 Litres.
       </b>
@@ -176,13 +175,16 @@ const IndegentConsumptionsMapScreen = ({route}) => {
       Thanks,<br/>
       COE Team`;
 
-      let email_request_body = {
-        email: 'kiran.manam.km@gmail.com',
-        subject: 'From Kiran',
-        body: email_message,
-      };
+        subject = `Notification for Excess Consumption (Meter No: ${item.meter_No})`;
 
-      handleSendEmail(email_request_body);
+        let email_request_body = {
+          email: item.email, //'kiran.manam.km@gmail.com',
+          subject: subject,
+          body: email_message,
+        };
+
+        handleSendEmail(email_request_body);
+      }
 
       dispatch(smsApi({requestBody: requestBody}));
 
