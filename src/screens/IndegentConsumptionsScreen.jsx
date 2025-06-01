@@ -35,8 +35,8 @@ const IndegentConsumptionsScreen = () => {
   const dispatch = useDispatch();
   const [searchVisible, setSearchVisible] = useState(false);
   const [selectedCoontentID, setSelectedCoontentID] = useState(0);
-  const [StartConsumption, setStartConsumption] = useState(180);
-  const [EndConsumption, setEndConsumption] = useState(190);
+  const [StartConsumption, setStartConsumption] = useState(0);
+  const [EndConsumption, setEndConsumption] = useState(0);
   const [searchText, setSearchText] = useState('');
   const [IsSubmitted, setIsSubmitted] = useState(null);
   const {warD_NO} = useSelector(state => state.loginReducer.items);
