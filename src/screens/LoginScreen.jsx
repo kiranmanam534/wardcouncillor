@@ -23,7 +23,7 @@ import {loginApi} from '../services/loginApi';
 import LoaderModal from '../components/LoaderModal';
 import ErrorModal from '../components/ErrorModal';
 import {authSliceActions} from '../redux/loginSlice';
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/sixtep-logo.jpeg');
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -61,6 +61,9 @@ export default function LoginScreen({route}) {
         username: username,
         password: password,
         usertype: title === 'community member' ? 'U' : 'C',
+        device: 'string',
+        userlattitude: 'string',
+        userlongitude: 'string',
       }),
     );
   };
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    color: Colors.white,
+    color: Colors.indigo,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -328,12 +331,12 @@ const styles = StyleSheet.create({
   box: {
     width: screenWidth / 2,
     height: screenWidth / 2,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
+    // borderWidth: 1, // Border width in pixels
+    // borderColor: Colors.blue,
+    // borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary,
+    // backgroundColor: Colors.white,
     alignSelf: 'center',
     elevation: 1,
     marginTop: 50,

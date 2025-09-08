@@ -11,7 +11,7 @@ import {Colors} from '../constant/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {err} from 'react-native-svg';
 
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/sixtep-logo.jpeg');
 
 const screenWidth = Dimensions.get('window').width;
 

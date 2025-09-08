@@ -50,7 +50,7 @@ import Collections_Billing_BarChartScreen from '../screens/Collections_Billing_B
 import IndegentDashboardScreen from '../screens/IndegentDashboardScreen';
 import IndegentConsumptionsScreen from '../screens/IndegentConsumptionsScreen';
 import IndegentConsumptionsMapScreen from '../screens/IndegentConsumptionsMapScreen';
-const AI_Icon = require('../assets/images/AI_Icon.jpeg');
+const AI_Icon = require('../assets/images/AI-chat2.jpeg');
 const screenWidth = Dimensions.get('window').width;
 
 const PrivateNavigation = () => {
@@ -70,7 +70,7 @@ const PrivateNavigation = () => {
   };
 
   const goToAIChatBot = () => {
-    navigation.navigate('AIChatBot', {title: 'I AM TSEBO'});
+    navigation.navigate('AIChatBot', {title: 'I AM SIXTEP AI CHAT BOT'});
   };
 
   return (
@@ -429,9 +429,9 @@ const styles = StyleSheet.create({
     cursor: 'pointer',
   },
   img: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 50,
     // resizeMode: 'stretch',
   },
 });

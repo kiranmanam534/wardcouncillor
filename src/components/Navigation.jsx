@@ -1,14 +1,14 @@
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import {Dimensions, Pressable, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect} from 'react';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import PrivateNavigation from './PrivateNavigation';
 import PubllicNavigation from './PubllicNavigation';
-import { authSliceActions } from '../redux/loginSlice';
+import {authSliceActions} from '../redux/loginSlice';
 import CMPrivateNavigation from './CMPrivateNavigation';
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 
 const Navigation = () => {
   const dispatch = useDispatch();
@@ -19,8 +19,8 @@ const Navigation = () => {
   console.log('Navigation', user);
 
   const goToAIChatBot = () => {
-    navigation.navigate("", { title: "AI Chat Bot" })
-  }
+    navigation.navigate('', {title: 'AI Chat Bot'});
+  };
 
   // useEffect(() => {
   //   const bootstrapAsync = async () => {
@@ -49,15 +49,12 @@ const Navigation = () => {
               <Text style={{ color: Colors.white, fontSize: 30, textAlign: 'center' }}>AI</Text>
             </Pressable> */}
           </>
-
-
         ) : (
           <CMPrivateNavigation />
         )
       ) : (
         <PubllicNavigation />
       )}
-
     </NavigationContainer>
   );
 };
@@ -79,7 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: Colors.black, // For iOS
-    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOffset: {width: 0, height: 2}, // For iOS
     shadowOpacity: 0.8, // For iOS
     shadowRadius: 20, // For iOS
   },

@@ -11,7 +11,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {Card, Title, Paragraph, Divider} from 'react-native-paper';
 
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/sixtep-logo.jpeg');
 import {Colors} from '../constant/Colors';
 
 const screenWidth = Dimensions.get('window').width;

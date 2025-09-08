@@ -46,7 +46,7 @@ import {getGeocode} from '../session/getGeocode';
 let launchImageLibrary = _launchImageLibrary;
 let launchCamera = _launchCamera;
 
-const logo = require('../assets/images/COE_logo_portrait.png');
+const logo = require('../assets/images/sixtep-logo.jpeg');
 
 const screenWidth = Dimensions.get('window').width;
 

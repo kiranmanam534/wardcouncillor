@@ -24,7 +24,7 @@ import {Buffer} from 'buffer';
 
 import {Colors} from './src/constant/Colors';
 const banner = require('./src/assets/images/germiston-lake-banner.jpg');
-const logo = require('./src/assets/images/COE_logo_portrait.png');
+const logo = require('./src/assets/images/sixtep-logo.jpeg');
 
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
@@ -245,7 +245,7 @@ const TestHomeScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      <ImageBackground source={banner} style={styles.imageBackground}>
+      <ImageBackground source={null} style={styles.imageBackground}>
         <TouchableOpacity
           // onPress={() => {
           //   handleNavigation('Mayor / Councillor');
@@ -253,13 +253,13 @@ const TestHomeScreen = () => {
           style={{
             position: 'absolute',
             bottom: screenHeight / 25,
-            backgroundColor: Colors.primary,
+            backgroundColor: Colors.yellow,
             padding: 5,
             borderRadius: 5,
             borderWidth: 1,
             borderColor: Colors.white,
           }}>
-          <Text style={{color: Colors.white}}>V.1.0-beta</Text>
+          <Text style={{color: Colors.indigo}}>V.1.0-beta</Text>
         </TouchableOpacity>
 
         <View style={styles.box}>
@@ -276,7 +276,7 @@ const TestHomeScreen = () => {
           WELCOME
         </Text>
         <Text style={{fontSize: 15, color: Colors.white, paddingTop: 10}}>
-          Ekurhuleni, a Tsonga word that means “place of peace”
+          Powered by Sixtep Technologies
         </Text>
         {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
 
@@ -286,13 +286,13 @@ const TestHomeScreen = () => {
             {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
           ]}
           onPress={() => {
-            !isIAMAuthenticate ? handleIAMLogin() : null;
-            // handleNavigation("Mayor / Councillor")
+            // !isIAMAuthenticate ? handleIAMLogin() : null;
+            handleNavigation('Mayor / Councillor');
           }}>
           {isIAMAuthenticate ? (
             <ActivityIndicator animatin color={Colors.white} size="small" />
           ) : (
-            <Icon name="user-circle" size={20} color={Colors.white} />
+            <Icon name="user-circle" size={20} color={Colors.indigo} />
           )}
 
           <Text style={styles.text}>
@@ -313,11 +313,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    backgroundColor: Colors.royalBlue,
   },
 
   box: {
-    width: screenWidth / 2,
-    height: screenWidth / 2,
+    width: screenWidth / 1.5,
+    height: screenWidth / 1.5,
     borderWidth: 1, // Border width in pixels
     borderColor: Colors.blue,
     borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.yellow,
     padding: 15,
     borderRadius: 10,
     borderWidth: 1,
@@ -354,7 +355,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 10,
-    color: Colors.yellow,
+    color: Colors.indigo,
     fontFamily: 'open sans',
     fontSize: 16,
     fontWeight: '800',
