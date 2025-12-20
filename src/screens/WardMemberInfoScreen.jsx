@@ -1,5 +1,7 @@
 import {
   Alert,
+  Dimensions,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -94,85 +96,131 @@ const WardMemberInfoScreen = () => {
     );
   }
   return (
-    <>
+    <View style={styles.container}>
       {!filteredData && (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{color: Colors.red}}>
-            Something went wrong on profile loadig...
-          </Text>
+        <View style={styles.errorContainer}>
+          <View style={styles.errorCard}>
+            <Text style={styles.errorIcon}>⚠️</Text>
+            <Text style={styles.errorTitle}>Profile Loading Error</Text>
+            <Text style={styles.errorText}>
+              Something went wrong while loading your profile.
+            </Text>
 
-          <View style={{padding: 20}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text>Please click on</Text>
+            <View style={styles.actionContainer}>
+              <Text style={styles.actionText}>Please navigate to</Text>
               <TouchableOpacity
                 onPress={goToDashboard}
-                style={{
-                  backgroundColor: Colors.primary,
-                  padding: 5,
-                  borderRadius: 5,
-                  marginHorizontal: 10,
-                }}>
-                <Text style={{color: Colors.white, marginHorizontal: 5}}>
-                  Dashboard
-                </Text>
+                style={styles.dashboardButton}
+                activeOpacity={0.7}>
+                <Text style={styles.dashboardButtonText}>Dashboard</Text>
               </TouchableOpacity>
-              <Text>to navigate dashboard.</Text>
             </View>
           </View>
         </View>
       )}
       {filteredData && (
-        <ScrollView>
-          {/* {filteredData &&
-            filteredData.map(item => (
-              <WardMemberCard
-                key={item.ID}
-                wardMember={item}
-                onPress={goToDashboard}
-              />
-            ))} */}
-
-          {filteredData && (
-            <WardMemberCard
-              // key={item.ID}
-              wardMember={filteredData}
-              onPress={goToDashboard}
-            />
-          )}
-
-          {/* <View style={{ padding: 20 }}>
-
-            <View>
-              <Text>
-                Please wait until complete
-                <Text style={{ color: Colors.red }}>
-                  {' '}
-                  Time Left:
-                  {minutes >= 0 ? (minutes + ":" + (remainingSeconds < 10 ? '0' : '') + remainingSeconds) : "00:00"}
-                </Text>
-              </Text>
-            </View>
-            <View style={{justifyContent:'center',alignItems:'center',marginVertical:10}}><Text>OR</Text></View>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <Text>Please click on</Text>
-              <TouchableOpacity onPress={goToDashboard} style={{ backgroundColor: Colors.primary, padding: 5, borderRadius: 5, marginHorizontal: 10 }}>
-                <Text style={{ color: Colors.white, marginHorizontal: 5 }}>Dashboard</Text>
-              </TouchableOpacity>
-              <Text>to navigate dashboard.</Text>
-            </View>
-
-          </View> */}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}>
+          <WardMemberCard wardMember={filteredData} onPress={goToDashboard} />
         </ScrollView>
       )}
-    </>
+    </View>
   );
 };
 
 export default WardMemberInfoScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 0,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: Colors.white,
+  },
+  errorCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 30,
+    alignItems: 'center',
+    maxWidth: 400,
+    borderWidth: 2,
+    borderColor: Colors.red,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  errorIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: Colors.red,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: 15,
+    color: Colors.black,
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  actionText: {
+    fontSize: 15,
+    color: Colors.black,
+    marginRight: 8,
+  },
+  dashboardButton: {
+    backgroundColor: Colors.yellow,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: Colors.blue,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  dashboardButtonText: {
+    color: Colors.indigo,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});

@@ -246,60 +246,44 @@ const TestHomeScreen = () => {
   return (
     <View style={{flex: 1}}>
       <ImageBackground source={null} style={styles.imageBackground}>
-        <TouchableOpacity
-          // onPress={() => {
-          //   handleNavigation('Mayor / Councillor');
-          // }}
-          style={{
-            position: 'absolute',
-            bottom: screenHeight / 25,
-            backgroundColor: Colors.yellow,
-            padding: 5,
-            borderRadius: 5,
-            borderWidth: 1,
-            borderColor: Colors.white,
-          }}>
-          <Text style={{color: Colors.indigo}}>V.1.0-beta</Text>
+        <View style={styles.overlay} />
+
+        <TouchableOpacity style={styles.versionBadge}>
+          <Text style={styles.versionText}>V.1.0-beta</Text>
         </TouchableOpacity>
 
-        <View style={styles.box}>
-          <Image source={logo} style={styles.img} />
+        <View style={styles.contentContainer}>
+          <View style={styles.logoContainer}>
+            <View style={styles.box}>
+              <Image source={logo} style={styles.img} />
+            </View>
+          </View>
+
+          <View style={styles.welcomeSection}>
+            <Text style={styles.welcomeText}>WELCOME</Text>
+            <View style={styles.divider} />
+            <Text style={styles.poweredByText}>
+              Powered by Sixtep Technologies
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.btn, {width: isIAMAuthenticate ? 220 : 200}]}
+            activeOpacity={0.8}
+            onPress={() => {
+              // !isIAMAuthenticate ? handleIAMLogin() : null;
+              handleNavigation('Mayor / Councillor');
+            }}>
+            {isIAMAuthenticate ? (
+              <ActivityIndicator animating color={Colors.indigo} size="small" />
+            ) : (
+              <Icon name="user-circle" size={22} color={Colors.indigo} />
+            )}
+            <Text style={styles.text}>
+              {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}
+            </Text>
+          </TouchableOpacity>
         </View>
-
-        <Text
-          style={{
-            fontSize: 20,
-            color: Colors.yellow,
-            paddingTop: 10,
-            fontWeight: 'bold',
-          }}>
-          WELCOME
-        </Text>
-        <Text style={{fontSize: 15, color: Colors.white, paddingTop: 10}}>
-          Powered by Sixtep Technologies
-        </Text>
-        {/* <Text style={{ fontSize: 15, color: Colors.white, paddingTop: 10 }}>You can now submit your meter readings online</Text> */}
-
-        <TouchableOpacity
-          style={[
-            styles.btn,
-            {width: isIAMAuthenticate ? 200 : 150, justifyContent: 'center'},
-          ]}
-          onPress={() => {
-            // !isIAMAuthenticate ? handleIAMLogin() : null;
-            handleNavigation('Mayor / Councillor');
-          }}>
-          {isIAMAuthenticate ? (
-            <ActivityIndicator animatin color={Colors.white} size="small" />
-          ) : (
-            <Icon name="user-circle" size={20} color={Colors.indigo} />
-          )}
-
-          <Text style={styles.text}>
-            {' '}
-            {isIAMAuthenticate ? 'Authenticating...' : 'LOGIN'}
-          </Text>
-        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
@@ -315,49 +299,114 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: Colors.royalBlue,
   },
-
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    zIndex: 1,
+  },
+  logoContainer: {
+    marginBottom: 40,
+  },
   box: {
-    width: screenWidth / 1.5,
-    height: screenWidth / 1.5,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
+    width: screenWidth / 1.8,
+    height: screenWidth / 1.8,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
+    borderRadius: screenWidth / 1.8 / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: Colors.primary,
-    // ...Platform.select({
-    //     ios: {
-    //       shadowColor: Colors.blue,
-    //       shadowOffset: { width: 0, height: 0 },
-    //       shadowOpacity: 0.2,
-    //       shadowRadius: 1.41,
-    //     },
-    //     android: {
-    //       elevation: 1,
-    //     },
-    //   }),
-    alignSelf: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 8},
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
   },
   img: {
-    width: screenWidth / 2 - 60,
-    height: screenWidth / 2 - 60,
-    resizeMode: 'contain',
+    width: screenWidth / 2.2,
+    height: screenWidth / 2.2,
+    resizeMode: 'cover',
+    borderRadius: screenWidth / 2.2 / 2,
+  },
+  welcomeSection: {
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  welcomeText: {
+    fontSize: 32,
+    color: Colors.yellow,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    marginBottom: 15,
+  },
+  divider: {
+    width: 80,
+    height: 3,
+    backgroundColor: Colors.yellow,
+    borderRadius: 2,
+    marginBottom: 15,
+  },
+  poweredByText: {
+    fontSize: 14,
+    color: Colors.white,
+    opacity: 0.9,
   },
   btn: {
-    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.yellow,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    borderWidth: 2,
     borderColor: Colors.white,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   text: {
     marginLeft: 10,
     color: Colors.indigo,
-    fontFamily: 'open sans',
     fontSize: 16,
     fontWeight: '800',
+    letterSpacing: 1,
+  },
+  versionBadge: {
+    position: 'absolute',
+    bottom: screenHeight / 20,
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: Colors.yellow,
+    zIndex: 2,
+  },
+  versionText: {
+    color: Colors.yellow,
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

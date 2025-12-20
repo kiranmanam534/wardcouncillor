@@ -3,6 +3,7 @@ import {
   Alert,
   Dimensions,
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -113,120 +114,114 @@ export default function LoginScreen({route}) {
           closeModal();
         }}
       />
-      <ScrollView>
-        <View style={styles.box}>
-          <Image source={logo} style={styles.img} />
-        </View>
-        {/* <Image source={logo} style={styles.image} resizeMode="contain" /> */}
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.inputView}>
-          <View>
-            <TextInput
-              mode="outlined"
-              label={'EMAIL OR USERNAME'}
-              style={[styles.input, {position: 'relative'}]}
-              // placeholder="EMAIL OR USERNAME"
-              // placeholderTextColor={Colors.black}
-              value={username}
-              onChangeText={text => setUsername(text)}
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            <Text
-              style={{
-                position: 'absolute',
-                paddingVertical: 17,
-                right: 10,
-              }}>
-              {' '}
-              <Icon name="envelope-o" size={25} color={Colors.blue} />
-            </Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.headerSection}>
+          <View style={styles.logoWrapper}>
+            <View style={styles.box}>
+              <Image source={logo} style={styles.img} />
+            </View>
           </View>
-          <View>
-            <TextInput
-              mode="outlined"
-              label={'PASSWORD'}
-              style={styles.input}
-              // placeholder="PASSWORD"
-              // placeholderTextColor={Colors.black}
-              secureTextEntry={isShowPwd}
-              value={password}
-              onChangeText={setPassword}
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            {isShowPwd && (
-              <TouchableOpacity
-                onPress={showPwd}
-                style={{
-                  position: 'absolute',
-                  paddingVertical: 17,
-                  right: 10,
-                }}>
-                <Icon name="eye" size={25} color={Colors.blue} />
-              </TouchableOpacity>
-            )}
-            {!isShowPwd && (
-              <TouchableOpacity
-                onPress={showPwd}
-                style={{
-                  position: 'absolute',
-                  paddingVertical: 17,
-                  right: 10,
-                }}>
-                <Icon name="eye-slash" size={25} color={Colors.blue} />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-        <View style={styles.rememberView}>
-          <View style={styles.switch}>
-            <Switch
-              value={click}
-              onValueChange={setClick}
-              trackColor={{true: Colors.primary, false: Colors.blue}}
-            />
-            <Text style={styles.rememberText}>Remember Me</Text>
-          </View>
-          <View>
-            {/* <Pressable onPress={() => Alert.alert('Forget Password!')}>
-              <Text style={styles.forgetText}>Forgot Password?</Text>
-            </Pressable> */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
+            <View style={styles.titleUnderline} />
           </View>
         </View>
 
-        <View style={styles.buttonView}>
+        <View style={styles.formCard}>
+          <View style={styles.inputView}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                mode="outlined"
+                label="Email or Username"
+                style={styles.input}
+                value={username}
+                onChangeText={text => setUsername(text)}
+                autoCorrect={false}
+                autoCapitalize="none"
+                outlineColor={Colors.blue}
+                activeOutlineColor={Colors.primary}
+                theme={{
+                  colors: {
+                    primary: Colors.primary,
+                    text: Colors.black,
+                  },
+                  roundness: 12,
+                }}
+              />
+              <View style={styles.inputIcon}>
+                <Icon name="envelope-o" size={22} color={Colors.blue} />
+              </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <TextInput
+                mode="outlined"
+                label="Password"
+                style={styles.input}
+                secureTextEntry={isShowPwd}
+                value={password}
+                onChangeText={setPassword}
+                autoCorrect={false}
+                autoCapitalize="none"
+                outlineColor={Colors.blue}
+                activeOutlineColor={Colors.primary}
+                theme={{
+                  colors: {
+                    primary: Colors.primary,
+                    text: Colors.black,
+                  },
+                  roundness: 12,
+                }}
+              />
+              <TouchableOpacity
+                onPress={showPwd}
+                style={styles.inputIcon}
+                activeOpacity={0.7}>
+                <Icon
+                  name={isShowPwd ? 'eye' : 'eye-slash'}
+                  size={22}
+                  color={Colors.blue}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.rememberView}>
+            <View style={styles.switch}>
+              <Switch
+                value={click}
+                onValueChange={setClick}
+                trackColor={{true: Colors.primary, false: Colors.blue}}
+                thumbColor={click ? Colors.yellow : Colors.white}
+              />
+              <Text style={styles.rememberText}>Remember Me</Text>
+            </View>
+          </View>
+
           <Pressable
-            style={styles.button}
-            onPress={() =>
-              // Alert.alert(
-              //   'Login Successfuly!',
-              //   'see you in my instagram if you have questions : must_ait6',
-              // )
-              handleLogin()
-            }>
+            style={({pressed}) => [
+              styles.button,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={() => handleLogin()}>
+            <Icon name="sign-in" size={20} color={Colors.indigo} />
             <Text style={styles.buttonText}>SIGN IN</Text>
           </Pressable>
-          {/* <Text style={styles.optionsText}>OR LOGIN WITH</Text> */}
         </View>
 
-        {/* <View style={styles.mediaIcons}>
-                <Image source={facebook} style={styles.icons}   />
-                <Image source={tiktok} style={styles.icons}  />
-                <Image source={linkedin} style={styles.icons}  />
-        </View> */}
         {title === 'community member' && (
-          <Text style={styles.footerText}>
-            Don't Have Account?
-            <Text
-              style={styles.signup}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Don't have an account?</Text>
+            <TouchableOpacity
               onPress={() => {
                 navigation.navigate('SignUp', {title: title});
-              }}>
-              {' '}
-              Sign Up
-            </Text>
-          </Text>
+              }}
+              activeOpacity={0.7}>
+              <Text style={styles.signup}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -235,115 +230,167 @@ export default function LoginScreen({route}) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#F5F7FA',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 30,
+  },
+  headerSection: {
     alignItems: 'center',
-    paddingTop: 10,
+    paddingTop: 30,
+    paddingBottom: 20,
+    backgroundColor: Colors.white,
+  },
+  logoWrapper: {
+    marginBottom: 20,
+  },
+  box: {
+    width: screenWidth / 3,
+    height: screenWidth / 3,
+    borderWidth: 3,
+    borderColor: Colors.yellow,
+    borderRadius: screenWidth / 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.white,
+    overflow: 'hidden',
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.blue,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  img: {
+    width: screenWidth / 3.2,
+    height: screenWidth / 3.2,
+    resizeMode: 'cover',
+    borderRadius: screenWidth / 6.4,
+  },
+  titleContainer: {
+    alignItems: 'center',
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    textAlign: 'center',
-    paddingVertical: 20,
     color: Colors.primary,
+    letterSpacing: 1.5,
+  },
+  titleUnderline: {
+    width: 60,
+    height: 3,
+    backgroundColor: Colors.yellow,
+    borderRadius: 2,
+    marginTop: 8,
+  },
+  formCard: {
+    backgroundColor: Colors.white,
+    marginHorizontal: 20,
+    marginTop: 24,
+    borderRadius: 16,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   inputView: {
-    gap: 10,
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 5,
+    gap: 20,
+    marginBottom: 16,
+  },
+  inputContainer: {
+    position: 'relative',
   },
   input: {
-    height: 50,
-    paddingHorizontal: 5,
-    borderColor: Colors.black,
-    // borderWidth: 1,
-    borderRadius: 7,
-    color: Colors.black,
+    height: 56,
+    backgroundColor: Colors.white,
+    fontSize: 15,
+  },
+  inputIcon: {
+    position: 'absolute',
+    right: 15,
+    top: 17,
+    zIndex: 1,
   },
   rememberView: {
-    width: '100%',
-    paddingHorizontal: 20,
-    justifyContent: 'space-between',
-    alignItems: 'center',
     flexDirection: 'row',
-    marginBottom: 8,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 24,
   },
   switch: {
     flexDirection: 'row',
-    gap: 1,
-    justifyContent: 'center',
+    gap: 8,
     alignItems: 'center',
   },
   rememberText: {
     fontSize: 14,
-    color: Colors.red,
-  },
-  forgetText: {
-    fontSize: 14,
-    color: Colors.primary,
+    color: Colors.black,
+    fontWeight: '500',
   },
   button: {
     backgroundColor: Colors.yellow,
-    height: 45,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 2,
     borderColor: Colors.blue,
-    borderWidth: 1,
-    borderRadius: 5,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  buttonPressed: {
+    opacity: 0.8,
+    transform: [{scale: 0.98}],
   },
   buttonText: {
     color: Colors.indigo,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: 'bold',
+    letterSpacing: 1.5,
   },
-  buttonView: {
-    width: '100%',
-    paddingHorizontal: 20,
-  },
-  optionsText: {
-    textAlign: 'center',
-    paddingVertical: 10,
-    color: Colors.primary,
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  mediaIcons: {
+  footer: {
     flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 23,
-  },
-  icons: {
-    width: 40,
-    height: 40,
+    alignItems: 'center',
+    marginTop: 24,
+    gap: 6,
   },
   footerText: {
-    textAlign: 'center',
-    color: Colors.red,
-    marginTop: 10,
+    color: Colors.black,
+    fontSize: 15,
   },
   signup: {
     color: Colors.primary,
     fontSize: 16,
-  },
-
-  box: {
-    width: screenWidth / 2,
-    height: screenWidth / 2,
-    // borderWidth: 1, // Border width in pixels
-    // borderColor: Colors.blue,
-    // borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: Colors.white,
-    alignSelf: 'center',
-    elevation: 1,
-    marginTop: 50,
-  },
-  img: {
-    width: screenWidth / 2 - 60,
-    height: screenWidth / 2 - 60,
-    resizeMode: 'contain',
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
 });

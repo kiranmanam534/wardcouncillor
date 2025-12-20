@@ -115,7 +115,7 @@ const PrivateNavigation = () => {
           }
           options={({navigation, route}) => ({
             title: 'HOME',
-            headerShown: loggedUser?.warD_NO != 0 ? false : true,
+            headerShown: !(loggedUser?.warD_NO != 0),
             navigationBarHidden: true,
             headerRight: () => (
               <Pressable onPress={handleLogout}>
@@ -398,8 +398,18 @@ const PrivateNavigation = () => {
         />
       </PrivateStack.Navigator>
       {isVisible && (
-        <Pressable style={styles.toggleButton} onPress={goToAIChatBot}>
-          <Image source={AI_Icon} style={styles.img} />
+        <Pressable
+          style={({pressed}) => [
+            styles.toggleButton,
+            pressed && styles.toggleButtonPressed,
+          ]}
+          onPress={goToAIChatBot}>
+          <View style={styles.iconWrapper}>
+            <Image source={AI_Icon} style={styles.img} />
+          </View>
+          <View style={styles.badge}>
+            <Icon name="comments" size={14} color={Colors.white} />
+          </View>
         </Pressable>
       )}
     </>
@@ -412,26 +422,49 @@ const styles = StyleSheet.create({
   toggleButton: {
     position: 'absolute',
     bottom: 100,
-    right: 30,
-    // top: Dimensions.get('screen').height/2,
-    backgroundColor: Colors.primary,
-    borderRadius: 25,
-    height: 50,
-    width: 50,
-    // padding: 10,
-    elevation: 20,
+    right: 20,
+    backgroundColor: Colors.yellow,
+    borderRadius: 35,
+    height: 70,
+    width: 70,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Colors.black, // For iOS
-    shadowOffset: {width: 0, height: 2}, // For iOS
-    shadowOpacity: 0.8, // For iOS
-    shadowRadius: 20, // For iOS
-    cursor: 'pointer',
+    borderWidth: 3,
+    borderColor: Colors.blue,
+    shadowColor: Colors.black,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  toggleButtonPressed: {
+    transform: [{scale: 0.95}],
+    opacity: 0.9,
+  },
+  iconWrapper: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: Colors.white,
   },
   img: {
-    width: 80,
-    height: 80,
-    borderRadius: 50,
-    // resizeMode: 'stretch',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  badge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.white,
   },
 });

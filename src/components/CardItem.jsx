@@ -1,10 +1,10 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import { Card, Title, Paragraph, Divider } from 'react-native-paper';
+import {Card, Title, Paragraph, Divider} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import { Colors } from '../constant/Colors';
-import { formattedAmount } from '../utility/FormattedAmmount';
-import { wardTitle, wardValue } from '../utility/Commom';
+import {Colors} from '../constant/Colors';
+import {formattedAmount} from '../utility/FormattedAmmount';
+import {wardTitle, wardValue} from '../utility/Commom';
 
 const CardItem = ({
   title,
@@ -15,7 +15,7 @@ const CardItem = ({
   isTownship = false,
   name,
   billing,
-  collection
+  collection,
 }) => {
   if (wardType == 'WardBillingCollections') {
     return (
@@ -32,7 +32,7 @@ const CardItem = ({
           <Card.Content>
             <View style={styles.cardContent}>
               <Text>Billing Amount</Text>
-              <Title style={[styles.title,{fontSize:15}]}>
+              <Title style={[styles.title, {fontSize: 15}]}>
                 {isAmount && ['WardBillingCollections'].includes(wardType)
                   ? ': ' + formattedAmount(billing, 'en-ZA', 'ZAR', 'currency')
                   : ': ' + wardValue(wardType, billing)}
@@ -42,9 +42,10 @@ const CardItem = ({
           <Card.Content>
             <View style={styles.cardContent}>
               <Text>Collection Amount</Text>
-              <Title  style={[styles.title,{fontSize:15}]}>
+              <Title style={[styles.title, {fontSize: 15}]}>
                 {isAmount && ['WardBillingCollections'].includes(wardType)
-                  ? ': ' + formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
+                  ? ': ' +
+                    formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
                   : ': ' + wardValue(wardType, collection)}
                 {/* {wardTitle(wardType, collection, isTownship)} */}
               </Title>
@@ -63,14 +64,14 @@ const CardItem = ({
               },
             ]}>
             {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
-            <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
+            <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 8}]}>
               {/* {wardType=='Outstanding' && } */}
               {/* {isAmount && ['WardBillingCollections'].includes(wardType)
                 ? formattedAmount(collection, 'en-ZA', 'ZAR', 'currency')
                 : wardValue(wardType, collection)} */}
             </Paragraph>
-            {name != 'N/A' &&
-              <View style={{ marginTop: 15 }}>
+            {name != 'N/A' && (
+              <View style={{marginTop: 15}}>
                 <TouchableOpacity
                   style={[
                     styles.btn,
@@ -90,24 +91,38 @@ const CardItem = ({
                       alignSelf: 'center',
                       flexDirection: 'row',
                     }}>
-                    <Icon name={wardType == 'WardBillingCollections' ? "bar-chart-o" : "info-circle"} size={20} color={Colors.blue} />
+                    <Icon
+                      name={
+                        wardType == 'WardBillingCollections'
+                          ? 'bar-chart-o'
+                          : 'info-circle'
+                      }
+                      size={20}
+                      color={Colors.blue}
+                    />
                     <Text
                       style={[
                         styles.text,
-                        { fontSize: 16, color: Colors.blue, paddingLeft: wardType == 'WardBillingCollections' ? 5 : 10 },
+                        {
+                          fontSize: 16,
+                          color: Colors.blue,
+                          paddingLeft:
+                            wardType == 'WardBillingCollections' ? 5 : 10,
+                        },
                       ]}>
-                      {wardType == 'WardBillingCollections' ? 'View Chart' : 'View'}
+                      {wardType == 'WardBillingCollections'
+                        ? 'View Chart'
+                        : 'View'}
                     </Text>
                   </View>
                 </TouchableOpacity>
               </View>
-            }
+            )}
           </Card.Content>
         </Card>
       </View>
     );
-  }
-  else {
+  } else {
     return (
       <View style={styles.container}>
         <Card style={styles.card}>
@@ -133,14 +148,17 @@ const CardItem = ({
               },
             ]}>
             {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
-            <Paragraph style={[styles.text, { fontSize: 15, paddingTop: 8 }]}>
+            <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 8}]}>
               {/* {wardType=='Outstanding' && } */}
-              {isAmount && ['Outstanding', 'OutstandingCategory', 'Collections'].includes(wardType)
+              {isAmount &&
+              ['Outstanding', 'OutstandingCategory', 'Collections'].includes(
+                wardType,
+              )
                 ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
                 : wardValue(wardType, value)}
             </Paragraph>
-            {name != 'N/A' &&
-              <View style={{ marginTop: 15 }}>
+            {name != 'N/A' && (
+              <View style={{marginTop: 15}}>
                 <TouchableOpacity
                   style={[
                     styles.btn,
@@ -148,7 +166,11 @@ const CardItem = ({
                       height: 30,
                       width: wardType == 'Collections' ? 130 : 100,
                       backgroundColor: Colors.white,
-                      borderRadius: 20,
+                      // borderRadius: 20,
+                      borderTopRightRadius: 15,
+                      borderBottomRightRadius: 2,
+                      borderTopLeftRadius: 2,
+                      borderBottomLeftRadius: 15,
                     },
                   ]}
                   onPress={onPress}>
@@ -161,18 +183,30 @@ const CardItem = ({
                       flexDirection: 'row',
                       // marginHorizontal: -20,
                     }}>
-                    <Icon name={wardType == 'Collections' ? "bar-chart-o" : "info-circle"} size={20} color={Colors.blue} />
+                    <Icon
+                      name={
+                        wardType == 'Collections'
+                          ? 'bar-chart-o'
+                          : 'info-circle'
+                      }
+                      size={20}
+                      color={Colors.blue}
+                    />
                     <Text
                       style={[
                         styles.text,
-                        { fontSize: 16, color: Colors.blue, paddingLeft: wardType == 'Collections' ? 5 : 10 },
+                        {
+                          fontSize: 16,
+                          color: Colors.blue,
+                          paddingLeft: wardType == 'Collections' ? 5 : 10,
+                        },
                       ]}>
                       {wardType == 'Collections' ? 'View Chart' : 'View'}
                     </Text>
                   </View>
                 </TouchableOpacity>
               </View>
-            }
+            )}
           </Card.Content>
         </Card>
       </View>
@@ -208,7 +242,7 @@ const styles = StyleSheet.create({
     paddingRight: 2,
     fontSize: 18,
     color: Colors.blue,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   footer: {
     flex: 1,

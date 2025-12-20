@@ -23,6 +23,7 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Colors} from '../constant/Colors';
 import LoadingDots from '../components/LoadingDots';
+import TypingIndicator from '../components/TypingIndicator';
 import {useDispatch} from 'react-redux';
 import Voice from '@react-native-community/voice';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
@@ -65,6 +66,7 @@ const WardsDBAIScreen = () => {
 
   const [searchVisible, setSearchVisible] = useState(false);
   const [Language, setLanguage] = useState('English');
+  const [isTyping, setIsTyping] = useState(false);
 
   // const dd = {
   //   MaxMarketValue: 6691000000,
@@ -102,13 +104,17 @@ const WardsDBAIScreen = () => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <TouchableOpacity onPress={toggleSearchBar}>
-          <Text style={styles.searchButtonText}>{Language}</Text>
-          {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
+        <TouchableOpacity
+          onPress={toggleSearchBar}
+          activeOpacity={0.7}
+          style={styles.languageHeaderButton}>
+          <Icon name="globe-outline" size={18} color={Colors.yellow} />
+          <Text style={styles.languageHeaderText}>{Language}</Text>
+          <Icon name="chevron-down" size={16} color={Colors.yellow} />
         </TouchableOpacity>
       ),
     });
-  }, [navigation, searchVisible]);
+  }, [navigation, searchVisible, Language]);
 
   const translateText = async (text, targetLanguage) => {
     const apiKey = 'AIzaSyCcbjNrLyNtA-sjHpQl0OUfwKBXLspdWqs';
@@ -290,7 +296,7 @@ const WardsDBAIScreen = () => {
           }}>
           {Object.entries(data).map(([key, value], index) => (
             <View
-              key={index}
+              key={`header-${key}-${index}`}
               style={{
                 width: '50%',
                 // borderBottomWidth: 0,
@@ -312,7 +318,7 @@ const WardsDBAIScreen = () => {
           }}>
           {Object.entries(data).map(([key, value], index) => (
             <View
-              key={index}
+              key={`value-${key}-${index}`}
               style={{
                 width: '50%',
                 // borderBottomWidth: 0,
@@ -331,7 +337,7 @@ const WardsDBAIScreen = () => {
   const DynamicKeyValueDisplayBody1 = ({data}) => {
     return (
       <View
-        key={data['key'] + Math.random(1, 10)}
+        key={`body1-${data['key']}`}
         style={{
           paddingHorizontal: 10,
           paddingVertical: 5,
@@ -348,7 +354,7 @@ const WardsDBAIScreen = () => {
   const DynamicKeyValueDisplayBody2 = ({data, keyId}) => {
     return (
       <View
-        key={data}
+        key={`body2-${JSON.stringify(data)}`}
         style={{
           // width: '50%',
           // borderBottomWidth: 0,
@@ -369,9 +375,9 @@ const WardsDBAIScreen = () => {
   const DynamicKeyValueDisplayBody3 = ({data, keys}) => {
     return (
       <>
-        {data.map((item, index) => (
+        {data.map((item, itemIndex) => (
           <View
-            key={item}
+            key={`item-${itemIndex}`}
             style={{
               borderWidth: 0,
               borderColor: Colors.white,
@@ -380,10 +386,10 @@ const WardsDBAIScreen = () => {
               paddingHorizontal: 10,
               marginTop: -10,
             }}>
-            {Object.entries(item['items']).map(([key, value], index) =>
-              keys.map(k1 => (
+            {Object.entries(item['items']).map(([key, value], entryIndex) =>
+              keys.map((k1, keyIndex) => (
                 <View
-                  key={index}
+                  key={`entry-${itemIndex}-${entryIndex}-${keyIndex}`}
                   style={{
                     // width: '50%',
                     // borderBottomWidth: 0,
@@ -394,7 +400,7 @@ const WardsDBAIScreen = () => {
                     // borderRightWidth: 0,
                     borderColor: Colors.white,
                   }}>
-                  <Text key={k1} style={{color: Colors.white, fontSize: 11}}>
+                  <Text style={{color: Colors.white, fontSize: 11}}>
                     {item['items'][k1['key']]}
                   </Text>
                 </View>
@@ -451,12 +457,17 @@ const WardsDBAIScreen = () => {
       setInput('');
       setIsLoading(true);
 
+      // Simulate typing with slight delay
+      setTimeout(() => {
+        setIsTyping(true);
+      }, 300);
+
       try {
         const postData = {query: lanRes.toString(), tables: []};
         // console.log(postData);
         // const result = await axios.post('http://102.130.114.194:10000/api/getdata', postData);
         const result = await axios.post(
-          'http://102.130.119.148:3344/api/getdata',
+          'http://102.130.114.194:3344/api/getdata',
           postData,
         );
         // console.log(result.data[0].SQL)
@@ -484,7 +495,7 @@ const WardsDBAIScreen = () => {
                 // console.log(index);
                 if (index == 0) {
                   // console.log(key);
-                  keysList.push({key: key});
+                  keysList.push({key: `${key}_${index}`});
                 }
               }
 
@@ -554,6 +565,7 @@ const WardsDBAIScreen = () => {
           },
         ]);
 
+        setIsTyping(false);
         setIsLoading(false);
         // setToBeDisplay(result.data);
         setInput('');
@@ -573,6 +585,7 @@ const WardsDBAIScreen = () => {
             question: lanRes.toString(),
           },
         ]);
+        setIsTyping(false);
         setIsLoading(false);
         setInput('');
         // setResults([]);
@@ -586,123 +599,65 @@ const WardsDBAIScreen = () => {
 
   if (searchVisible)
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-          <Text>Choose your desire language.</Text>
-          <View style={{flexDirection: 'row'}}>
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('en');
-                }}
-                style={{
-                  backgroundColor: Colors.primary,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>English</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('zu');
-                }}
-                style={{
-                  backgroundColor: Colors.blue,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>Zulu</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('af');
-                }}
-                style={{
-                  backgroundColor: Colors.yellow,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>Afrikaans</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('xh');
-                }}
-                style={{
-                  backgroundColor: Colors.red,
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>Xhosa</Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('nso');
-                }}
-                style={{
-                  backgroundColor: '#987822',
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>
-                  Sepedi/Northern Sotho
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('tn');
-                }}
-                style={{
-                  backgroundColor: '#693622',
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>Setswana</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  toggleSearchBar('st');
-                }}
-                style={{
-                  backgroundColor: '#273622',
-                  padding: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  marginLeft: 5,
-                }}>
-                {/* <MaterialIcon name="language" size={20} color={Colors.white} /> */}
-                <Text style={styles.searchButtonText}>Sesotho</Text>
-              </TouchableOpacity>
-            </View>
-            {/* <Button title="English" />
-            <Button title="Zulu" />
-            <Button title="Affricans" /> */}
+      <SafeAreaView style={styles.languageContainer}>
+        <View style={styles.languageContent}>
+          <View style={styles.languageHeader}>
+            <Icon name="language" size={40} color={Colors.primary} />
+            <Text style={styles.languageTitle}>Choose Your Language</Text>
+            <Text style={styles.languageSubtitle}>
+              Select your preferred language for AI assistance
+            </Text>
+          </View>
+          <View style={styles.languageGrid}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('en')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>English</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('zu')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Zulu</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('af')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Afrikaans</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('xh')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Xhosa</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('nso')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Sepedi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('tn')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Setswana</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => toggleSearchBar('st')}
+              style={styles.languageOption}>
+              <Icon name="checkmark-circle" size={24} color={Colors.yellow} />
+              <Text style={styles.languageOptionText}>Sesotho</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </SafeAreaView>
@@ -735,7 +690,7 @@ const WardsDBAIScreen = () => {
   //   );
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Colors.lightgray2}}>
       <View style={{flex: 1}}>
         {/* {Platform.OS == 'ios' && (
           <View
@@ -799,17 +754,8 @@ const WardsDBAIScreen = () => {
                 <>
                   {item.role === 'user' &&
                     isLoading &&
-                    item.count == loadingCount && (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          right: 0,
-                          left: 0,
-                          top: 50,
-                        }}>
-                        <LoadingDots />
-                      </View>
-                    )}
+                    item.count == loadingCount &&
+                    isTyping && <TypingIndicator />}
                   {/* {item.sqlQuery && (
                   <View
                     style={[
@@ -842,114 +788,125 @@ const WardsDBAIScreen = () => {
                         ? styles.userMessage
                         : styles.botMessage
                     }>
-                    {item.role === 'bot' && (
-                      <View>
-                        <Text
-                          style={{
-                            color: Colors.yellow,
-                            // textDecorationLine: 'underline',
-                            fontSize: 15,
-                            paddingHorizontal: 20,
-                            paddingVertical: 20,
-                            // paddingTop: 5,
-                          }}>
-                          {/* #Result: */}
-                          {item.question?.replace(/"/g, '')}
-                        </Text>
-                        {/* <Text style={[styles.itemText, {padding: 10}]}>
-                        {item.question?.replace(/"/g, '')}
-                      </Text> */}
+                    {item.role === 'user' && (
+                      <View style={styles.userMessageContent}>
+                        {item?.content?.map((item1, index) => (
+                          <View
+                            key={`user-content-${index}`}
+                            style={styles.itemContainer}>
+                            <Text style={styles.itemText}>
+                              {JSON.stringify(item1)?.replace(/"/g, '')}
+                            </Text>
+                          </View>
+                        ))}
                       </View>
                     )}
                     {item?.content?.map((item1, index) => (
                       <>
-                        {isLoading &&
-                          item.count == loadingCount &&
-                          item.role === 'user' && (
-                            <View style={styles.itemContainer}>
-                              <Text style={styles.itemText}>
-                                {JSON.stringify(item1)?.replace(/"/g, '')}
-                              </Text>
-                            </View>
-                          )}
                         <View key={index}>
                           {item.role === 'bot' && (
                             <View style={styles.itemContainer}>
-                              {item.error && (
-                                <Text style={styles.itemText}>
-                                  {JSON.stringify(item1?.toString())?.replace(
-                                    /"/g,
-                                    '',
-                                  )}
-                                </Text>
-                              )}
-
-                              {!item.error && (
-                                <ScrollView
-                                  horizontal={true}
-                                  style={{marginBottom: 20, marginTop: -25}}>
-                                  <View style={{flex: 1}}>
-                                    <View
-                                      style={{
-                                        borderWidth: 0,
-                                        borderColor: Colors.white,
-                                        flexDirection: 'row',
-                                        borderColor: Colors.white,
-                                        padding: 10,
-                                        marginBottom: 0,
-                                      }}>
-                                      {item?.keysList?.map((col, index) => (
-                                        <View
-                                          key={index}
-                                          style={[
-                                            styles.itemContainer,
-                                            {padding: 0},
-                                          ]}>
-                                          <Text style={styles.itemText}>
-                                            {/* {item.role === 'bot' && (
+                              {item.error ? (
+                                <View style={styles.errorContainer}>
+                                  <MaterialIcon
+                                    name="error-outline"
+                                    size={20}
+                                    color={Colors.red}
+                                  />
+                                  <Text style={styles.errorText}>
+                                    {JSON.stringify(item1?.toString())?.replace(
+                                      /"/g,
+                                      '',
+                                    )}
+                                  </Text>
+                                </View>
+                              ) : (
+                                <>
+                                  <View style={styles.answerHeader}>
+                                    <Icon
+                                      name="checkmark-circle"
+                                      size={18}
+                                      color={Colors.green}
+                                    />
+                                    <Text style={styles.answerLabel}>
+                                      Answer
+                                    </Text>
+                                  </View>
+                                  <ScrollView
+                                    horizontal={true}
+                                    style={{marginBottom: 20, marginTop: -25}}>
+                                    <View style={{flex: 1}}>
+                                      <View
+                                        style={{
+                                          borderWidth: 0,
+                                          borderColor: Colors.white,
+                                          flexDirection: 'row',
+                                          borderColor: Colors.white,
+                                          padding: 10,
+                                          marginBottom: 0,
+                                        }}>
+                                        {item?.keysList?.map(
+                                          (col, colIndex) => (
+                                            <View
+                                              key={`keyslist-${item.count}-${colIndex}`}
+                                              style={[
+                                                styles.itemContainer,
+                                                {padding: 0},
+                                              ]}>
+                                              <Text style={styles.itemText}>
+                                                {/* {item.role === 'bot' && (
                                             <>{JSON.stringify(col)}</>
                                           )} */}
-                                            {item.role === 'bot' && (
-                                              <DynamicKeyValueDisplayBody1
-                                                data={col}
-                                              />
-                                            )}
-                                          </Text>
-                                        </View>
-                                      ))}
-                                    </View>
-                                    <View
-                                      style={{
-                                        borderWidth: 0,
-                                        borderColor: Colors.white,
-                                        borderColor: Colors.white,
-                                        paddingHorizontal: 10,
-                                        marginTop: -10,
-                                      }}>
-                                      {item?.ValuesList?.map((val, index) => (
-                                        <View
-                                          key={index}
-                                          style={[
-                                            styles.itemContainer,
-                                            {padding: 0},
-                                          ]}>
-                                          <Text style={styles.itemText}>
-                                            {item.role === 'bot' &&
-                                              Object.entries(val['items']).map(
-                                                ([key, value], index) => (
-                                                  <DynamicKeyValueDisplayBody2
-                                                    key={index}
-                                                    data={value}
-                                                    keyId={item?.keysList}
+                                                {item.role === 'bot' && (
+                                                  <DynamicKeyValueDisplayBody1
+                                                    data={col}
                                                   />
-                                                ),
-                                              )}
-                                          </Text>
-                                        </View>
-                                      ))}
+                                                )}
+                                              </Text>
+                                            </View>
+                                          ),
+                                        )}
+                                      </View>
+                                      <View
+                                        style={{
+                                          borderWidth: 0,
+                                          borderColor: Colors.white,
+                                          borderColor: Colors.white,
+                                          paddingHorizontal: 10,
+                                          marginTop: -10,
+                                        }}>
+                                        {item?.ValuesList?.map(
+                                          (val, valIndex) => (
+                                            <View
+                                              key={`valueslist-${item.count}-${valIndex}`}
+                                              style={[
+                                                styles.itemContainer,
+                                                {padding: 0},
+                                              ]}>
+                                              <Text style={styles.itemText}>
+                                                {item.role === 'bot' &&
+                                                  Object.entries(
+                                                    val['items'],
+                                                  ).map(
+                                                    (
+                                                      [key, value],
+                                                      entryIdx,
+                                                    ) => (
+                                                      <DynamicKeyValueDisplayBody2
+                                                        key={`entry-${item.count}-${valIndex}-${entryIdx}-${key}`}
+                                                        data={value}
+                                                        keyId={item?.keysList}
+                                                      />
+                                                    ),
+                                                  )}
+                                              </Text>
+                                            </View>
+                                          ),
+                                        )}
+                                      </View>
                                     </View>
-                                  </View>
-                                </ScrollView>
+                                  </ScrollView>
+                                </>
                               )}
                             </View>
                           )}
@@ -1030,30 +987,34 @@ const WardsDBAIScreen = () => {
                 )} */}
                 </>
               )}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) =>
+                index.toString() + Math.random(1, 10).toString()
+              }
             />
             {/* {Platform.OS == 'android' && ( */}
-            <View style={styles.container1}>
+            <View style={styles.inputWrapper}>
               {isListening ? (
-                <View style={styles.recordingContainer}>
-                  <Text style={styles.timerText}>
-                    <Text style={styles.statusText}>Recording...</Text>
-                  </Text>
+                <View style={styles.recordingIndicator}>
+                  <View style={styles.recordingPulse} />
+                  <MaterialIcon name="mic" size={20} color={Colors.red} />
+                  <Text style={styles.recordingText}>Recording...</Text>
                 </View>
               ) : (
                 <>
-                  <View style={{flexDirection: 'row', width: '87%'}}>
+                  <View style={styles.inputContainer}>
                     <TextInput
-                      style={styles.textInput}
-                      placeholder="Type or Speak..."
+                      style={styles.messageInput}
+                      placeholder="Ask me anything..."
+                      placeholderTextColor={Colors.gray}
                       multiline
                       value={input}
                       onChangeText={setInput}
                     />
                     <TouchableOpacity
+                      activeOpacity={0.7}
                       style={styles.sendButton}
                       onPress={sendMessage}>
-                      <Icon name="send" size={24} color={Colors.blue} />
+                      <Icon name="send" size={22} color={Colors.white} />
                     </TouchableOpacity>
                   </View>
                 </>
@@ -1083,6 +1044,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: Colors.lightgray2,
   },
   input: {
     height: 50,
@@ -1092,61 +1054,268 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     borderRadius: 50,
   },
+  languageContainer: {
+    flex: 1,
+    backgroundColor: Colors.lightgray2,
+  },
+  languageContent: {
+    flex: 1,
+    padding: 20,
+  },
+  languageHeader: {
+    alignItems: 'center',
+    marginBottom: 30,
+    marginTop: 20,
+  },
+  languageTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: Colors.primary,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  languageSubtitle: {
+    fontSize: 15,
+    color: Colors.gray,
+    textAlign: 'center',
+  },
+  languageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  languageOption: {
+    width: '48%',
+    backgroundColor: Colors.white,
+    padding: 20,
+    marginBottom: 12,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.black,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+    borderWidth: 1,
+    borderColor: Colors.lightgray1,
+  },
+  languageOptionText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.primary,
+  },
   userMessage: {
     alignSelf: 'flex-end',
     backgroundColor: Colors.primary,
-    // padding: 10,
-    borderRadius: 10,
-    marginVertical: 2,
+    borderRadius: 16,
+    borderBottomRightRadius: 4,
+    marginVertical: 4,
+    maxWidth: '80%',
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   botMessage: {
     justifyContent: 'flex-start',
-    backgroundColor: Colors.blue,
-    // padding: 10,
-    borderRadius: 10,
-    marginVertical: 2,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    borderBottomLeftRadius: 4,
+    marginVertical: 4,
+    maxWidth: '85%',
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.black,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+    borderWidth: 1,
+    borderColor: Colors.lightgray1,
   },
   itemContainer: {
     padding: 10,
-
-    // borderBottomWidth: 1,
-    // borderBottomColor: 'red',
   },
   itemText: {
     fontSize: 14,
     color: Colors.white,
   },
-
-  container1: {
+  userMessageContent: {
+    width: '100%',
+  },
+  questionContainer: {
+    backgroundColor: 'rgba(65, 105, 225, 0.05)',
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 8,
+  },
+  questionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    // padding: 10,
+    gap: 6,
+    marginBottom: 8,
   },
-  textInput: {
+  questionLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  questionText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: Colors.black,
+    lineHeight: 22,
+  },
+  answerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightgray1,
+  },
+  answerLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.green,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(255, 0, 0, 0.05)',
+    padding: 12,
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.red,
+  },
+  errorText: {
     flex: 1,
-    borderColor: Colors.primary,
+    fontSize: 14,
+    color: Colors.red,
+    fontWeight: '500',
+  },
+
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: Colors.white,
+    borderTopWidth: 1,
+    borderTopColor: Colors.lightgray1,
+    gap: 10,
+  },
+  inputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.lightgray2,
+    borderRadius: 25,
+    paddingHorizontal: 4,
     borderWidth: 1,
-    borderRadius: 10,
-    paddingVertical: 15,
+    borderColor: Colors.lightgray1,
+  },
+  messageInput: {
+    flex: 1,
+    paddingVertical: 12,
     paddingHorizontal: 16,
-    marginRight: 10,
-    position: 'relative',
-    height: 50,
-    width: 50,
+    fontSize: 15,
+    color: Colors.black,
+    maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: Colors.lightgray1,
-    borderRadius: 20,
-    // padding: (Platform.OS = 'android' ? 20 : 10),
-    height: 45,
-    width: 45,
-    marginVertical: 2.5,
-    // paddingVertical: 15,
-    // paddingHorizontal: 10,
-    position: 'absolute',
+    backgroundColor: Colors.primary,
+    borderRadius: 22,
+    height: 44,
+    width: 44,
     justifyContent: 'center',
     alignItems: 'center',
-    right: 13,
+    marginRight: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  voiceButtonModern: {
+    backgroundColor: Colors.yellow,
+    borderRadius: 25,
+    height: 50,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.blue,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  recordingActive: {
+    backgroundColor: Colors.red,
+    borderColor: Colors.red,
+  },
+  recordingIndicator: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.lightgray2,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: Colors.red,
+  },
+  recordingPulse: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: Colors.red,
+  },
+  recordingText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.red,
   },
   img: {
     width: screenWidth - 50,
@@ -1171,29 +1340,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   recording: {
-    backgroundColor: 'red',
+    backgroundColor: Colors.red,
   },
   statusText: {
     marginTop: 20,
     fontSize: 16,
   },
-  recordingContainer: {
-    // width: '80%',
-    // height: 40,
-    borderWidth: 0.5,
-    flexDirection: 'row',
-    // justifyContent: 'center',
-    // alignItems: 'center',
 
-    // marginBottom: 20,
-    // gap: 10,
-    width: '85%',
-    padding: 10,
-    marginBottom: 5,
-    marginRight: 10,
-    borderRadius: 10,
-    borderColor: Colors.red,
-  },
   timerText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -1203,6 +1356,35 @@ const styles = StyleSheet.create({
   searchButtonText: {
     fontSize: 16,
     color: Colors.white,
+  },
+  languageHeaderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(238, 175, 44, 0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: Colors.yellow,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  languageHeaderText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.yellow,
+    maxWidth: 80,
   },
   labelTextStyle: {
     color: Colors.primary,

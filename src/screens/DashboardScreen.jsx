@@ -122,92 +122,66 @@ const DashboardScreen = () => {
   const ShowMessageData = () => {
     return (
       <View style={styles.container}>
-        <View
-          style={{
-            marginVertical: 5,
-            borderBottomWidth: 2,
-            width: '100%',
-            // height:40,
-            borderBottomColor: Colors.yellow,
-            backgroundColor: Colors.primary,
-            justifyContent: 'center',
-            borderRadius: 10,
-            padding: 5,
-          }}>
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: '600',
-              color: Colors.white,
-              paddingLeft: 5,
-            }}>
-            <Icon name="user" size={17} color={Colors.yellow} />
-            {'  '}
-            Hello, <Text style={{color: Colors.white}}>{loggedUserNme} </Text>
-          </Text>
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: '600',
-              color: Colors.white,
-              textAlign: 'right',
-              paddingRight: 10,
-            }}>
-            Ward : {loggedUser?.warD_NO}
-          </Text>
+        <View style={styles.headerCard}>
+          <View style={styles.headerTop}>
+            <View style={styles.userSection}>
+              <Icon name="user-circle" size={20} color={Colors.yellow} />
+              <Text style={styles.greetingText}>
+                Hello, <Text style={styles.userName}>{loggedUserNme}</Text>
+              </Text>
+            </View>
+            <View style={styles.wardBadge}>
+              <Text style={styles.wardLabel}>Ward</Text>
+              <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
+            </View>
+          </View>
         </View>
 
-        <View style={[styles1.container]}>
+        <View style={styles1.container}>
           <View style={styles1.card}>
-            <View style={styles1.iconContainer}>
+            <View style={styles1.iconWrapper}>
               <View style={styles1.box}>
                 <Image source={logo} style={styles1.img} />
               </View>
             </View>
-            <View style={{flexDirection: 'row', height: 'auto'}}>
-              <View style={styles1.content}>
-                <Text style={[styles1.title, {paddingTop: 5}]}>
-                  Under Maintenance
-                </Text>
-                <Text style={styles1.description}>
-                  Due to planned system maintenance, application will not be
-                  accessable during the maintenance period.
-                </Text>
-                <Text
-                  style={[
-                    styles1.description,
-                    {color: Colors.primary, paddingTop: 10},
-                  ]}>
+
+            <View style={styles1.contentWrapper}>
+              <MaterialIcon
+                name="build"
+                size={32}
+                color={Colors.yellow}
+                style={{marginBottom: 12}}
+              />
+              <Text style={styles1.title}>Under Maintenance</Text>
+              <Text style={styles1.description}>
+                Due to planned system maintenance, the application will not be
+                accessible during this period.
+              </Text>
+              <View style={styles1.infoBox}>
+                <Icon name="info-circle" size={16} color={Colors.primary} />
+                <Text style={styles1.infoText}>
                   We appreciate your patience during this time!
                 </Text>
               </View>
             </View>
 
-            <View style={{marginTop: 20}}>
-              <TouchableOpacity
-                onPress={RefreshData}
-                style={{
-                  height: 50,
-                  width: 100,
-                  backgroundColor: Colors.primary,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 25,
-                  flexDirection: 'row',
-                }}>
-                {isRefresh ? (
-                  <ActivityIndicator
-                    animating={true}
-                    color="#000"
-                    size="small"
-                  />
-                ) : (
-                  <Text style={{color: Colors.white, fontSize: 15}}>
-                    Refresh
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={RefreshData}
+              style={styles1.refreshButton}>
+              {isRefresh ? (
+                <ActivityIndicator
+                  animating={true}
+                  color={Colors.white}
+                  size="small"
+                />
+              ) : (
+                <>
+                  <MaterialIcon name="refresh" size={20} color={Colors.white} />
+                  <Text style={styles1.refreshButtonText}>Refresh</Text>
+                </>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -220,53 +194,31 @@ const DashboardScreen = () => {
         <ShowMessageData />
       ) : (
         <View style={styles.container}>
-          <View
-            style={{
-              marginVertical: 5,
-              borderBottomWidth: 2,
-              width: '100%',
-              // height:40,
-              borderBottomColor: Colors.yellow,
-              backgroundColor: Colors.primary,
-              justifyContent: 'center',
-              borderRadius: 10,
-              padding: 5,
-            }}>
-            <Text
-              style={{
-                fontSize: 17,
-                fontWeight: '600',
-                color: Colors.white,
-                paddingLeft: 5,
-              }}>
-              <Icon name="user" size={17} color={Colors.yellow} />
-              {'  '}
-              Hello, <Text style={{color: Colors.white}}>{loggedUserNme} </Text>
-            </Text>
-            <Text
-              style={{
-                fontSize: 17,
-                fontWeight: '600',
-                color: Colors.white,
-                textAlign: 'right',
-                paddingRight: 10,
-              }}>
-              Ward : {loggedUser?.warD_NO}
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                // fontWeight: '800',
-                color: Colors.white,
-                textAlign: 'right',
-              }}>
-              Last data refreshed: {DataMaintaince?.value}
-            </Text>
+          <View style={styles.headerCard}>
+            <View style={styles.headerTop}>
+              <View style={styles.userSection}>
+                <Icon name="user-circle" size={20} color={Colors.yellow} />
+                <Text style={styles.greetingText}>
+                  Hello, <Text style={styles.userName}>{loggedUserNme}</Text>
+                </Text>
+              </View>
+              <View style={styles.wardBadge}>
+                <Text style={styles.wardLabel}>Ward</Text>
+                <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
+              </View>
+            </View>
+            <View style={styles.refreshInfo}>
+              <MaterialIcon name="update" size={14} color={Colors.yellow} />
+              <Text style={styles.refreshText}>
+                Last refreshed: {DataMaintaince?.value}
+              </Text>
+            </View>
           </View>
           <ScrollView>
             <View style={{marginBottom: 150}}>
               <View style={styles.row}>
-                <Card
+                <TouchableOpacity
+                  activeOpacity={0.8}
                   onPress={() => {
                     if (loggedUser?.warD_NO == 0) {
                       handleDetailsNavigation(
@@ -282,16 +234,13 @@ const DashboardScreen = () => {
                       );
                     }
                   }}
-                  style={[styles.card, {backgroundColor: Colors.primary}]}
-                  mode="outlined">
-                  <Card.Title
-                    title="Outstanding Debt"
-                    titleNumberOfLines={2}
-                    titleStyle={{color: Colors.white, fontSize: 14}}
-                  />
-                  <Card.Content>
-                    <Text></Text>
-                    <Text variant="titleLarge" style={styles.text}>
+                  style={styles.dashboardCard}>
+                  <View style={styles.cardHeader}>
+                    <Icon name="money" size={24} color={Colors.yellow} />
+                  </View>
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>Outstanding Debt</Text>
+                    <Text style={styles.cardValue}>
                       {formattedAmount(
                         parseFloat(getValueByKey(items, 'Outstanding Amount')),
                         'en-ZA',
@@ -299,14 +248,14 @@ const DashboardScreen = () => {
                         'currency',
                       )}
                     </Text>
-                  </Card.Content>
-                  <Card.Actions>
-                    <View style={styles.button}>
-                      <Text style={[styles.buttonText]}>View</Text>
-                    </View>
-                  </Card.Actions>
-                </Card>
-                <Card
+                  </View>
+                  <View style={styles.cardFooter}>
+                    <Text style={styles.viewButton}>VIEW DETAILS</Text>
+                    <Icon name="angle-right" size={16} color={Colors.yellow} />
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.8}
                   onPress={() => {
                     handleDetailsNavigation(
                       'CouncillorDetails',
@@ -314,24 +263,21 @@ const DashboardScreen = () => {
                       'Interims',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.yellow}]}
-                  mode="outlined">
-                  <Card.Title
-                    title="Interims"
-                    titleStyle={{color: Colors.white, fontSize: 14}}
-                  />
-                  <Card.Content>
-                    <Text></Text>
-                    <Text variant="titleLarge" style={styles.text}>
+                  style={styles.dashboardCard}>
+                  <View style={styles.cardHeader}>
+                    <Icon name="file-text" size={24} color={Colors.yellow} />
+                  </View>
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>Interims</Text>
+                    <Text style={styles.cardValue}>
                       {parseInt(getValueByKey(items, 'Interims'))}
                     </Text>
-                  </Card.Content>
-                  <Card.Actions>
-                    <View style={styles.button}>
-                      <Text style={styles.buttonText}>View</Text>
-                    </View>
-                  </Card.Actions>
-                </Card>
+                  </View>
+                  <View style={styles.cardFooter}>
+                    <Text style={styles.viewButton}>VIEW DETAILS</Text>
+                    <Icon name="angle-right" size={16} color={Colors.yellow} />
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={styles.row}>
                 <Card
@@ -369,7 +315,7 @@ const DashboardScreen = () => {
                       'Meter',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.red}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="Total Water and Electricity Meters"
@@ -400,7 +346,7 @@ const DashboardScreen = () => {
                       'Property',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.primary}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="City’s Total Properties"
@@ -427,7 +373,7 @@ const DashboardScreen = () => {
                       'Customer',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.yellow}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="City’s Total Customers"
@@ -483,7 +429,7 @@ const DashboardScreen = () => {
                       'Customer360',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.red}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="Customer 360"
@@ -523,7 +469,7 @@ const DashboardScreen = () => {
                       // );
                     }
                   }}
-                  style={[styles.card, {backgroundColor: Colors.primary}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="Collections"
@@ -553,7 +499,7 @@ const DashboardScreen = () => {
                       'Indigent',
                     );
                   }}
-                  style={[styles.card, {backgroundColor: Colors.yellow}]}
+                  style={[styles.card, {backgroundColor: Colors.blue}]}
                   mode="outlined">
                   <Card.Title
                     title="Indigent Applications"
@@ -585,90 +531,275 @@ export default DashboardScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 5,
+    backgroundColor: Colors.lightgray2,
+    paddingHorizontal: 12,
+  },
+  headerCard: {
+    backgroundColor: Colors.primary,
+    borderRadius: 16,
+    padding: 16,
+    marginVertical: 12,
+    shadowColor: Colors.black,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.yellow,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  greetingText: {
+    fontSize: 16,
+    color: Colors.white,
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  userName: {
+    fontWeight: '700',
+    color: Colors.yellow,
+  },
+  wardBadge: {
+    backgroundColor: Colors.yellow,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  wardLabel: {
+    fontSize: 10,
+    color: Colors.blue,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  wardNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.blue,
+  },
+  refreshInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  refreshText: {
+    fontSize: 11,
+    color: Colors.white,
+    marginLeft: 6,
+    opacity: 0.9,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  dashboardCard: {
+    width: '48%',
+    backgroundColor: Colors.blue,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: Colors.black,
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(238, 175, 44, 0.2)',
+  },
+  cardHeader: {
+    marginBottom: 12,
+  },
+  cardContent: {
+    marginBottom: 16,
+    minHeight: 60,
+  },
+  cardTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.white,
+    marginBottom: 8,
+    lineHeight: 18,
+  },
+  cardValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.yellow,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    paddingTop: 12,
+  },
+  viewButton: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.yellow,
+    letterSpacing: 0.5,
+  },
+  card1: {
+    width: '48%',
+    marginVertical: 3,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
   card: {
-    width: '48%', // Adjust the width based on your requirement
-    marginVertical: 3,
+    width: '48%',
+    marginVertical: 8,
+    borderRadius: 24,
+    borderWidth: 0.2,
+    borderColor: Colors.orange,
+    backgroundColor: Colors.primary,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: Colors.white,
+    textAlign: 'center',
+    marginVertical: 8,
   },
   button: {
     width: '100%',
+    marginTop: 8,
     borderTopColor: Colors.white,
     borderTopWidth: 1,
-    borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingVertical: 6,
   },
   buttonText: {
     color: Colors.white,
-    fontSize: 14,
+    fontSize: 15,
     textTransform: 'uppercase',
-  },
-  text: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: Colors.white,
+    fontWeight: 'bold',
   },
 });
 
 const styles1 = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
+    padding: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
   },
   card: {
-    flexDirection: 'column',
-    justifyContent: 'center',
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: Colors.black,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: Colors.lightgray1,
     alignItems: 'center',
-    backgroundColor: '#f1f1f2',
-    borderRadius: 10,
-    padding: 20,
-    margin: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
   },
-  iconContainer: {
-    marginRight: 16,
-  },
-  content: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: Colors.red,
-  },
-  description: {
-    fontSize: 16,
-    color: Colors.blue,
+  iconWrapper: {
+    marginBottom: 20,
   },
   box: {
-    width: 70,
-    height: 70,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 2, // Border radius (optional)
+    width: 80,
+    height: 80,
+    borderWidth: 3,
+    borderColor: Colors.yellow,
+    borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
-    alignSelf: 'center',
-    elevation: 1,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+    overflow: 'hidden',
   },
   img: {
     width: 50,
     height: 50,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    borderRadius: 25,
+  },
+  contentWrapper: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: Colors.primary,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 15,
+    color: Colors.darkgray,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  infoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.lightBlue,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    color: Colors.primary,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  refreshButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 25,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+    minWidth: 140,
+  },
+  refreshButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+    marginLeft: 8,
   },
 });

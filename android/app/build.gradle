@@ -76,7 +76,7 @@ android {
 
     namespace "com.wardcouncillor"
     defaultConfig {
-        applicationId "com.wardcouncillor"
+        applicationId "com.wardcouncillor.v2" // Change this to a unique value, e.g. "com.yourappname.v2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
