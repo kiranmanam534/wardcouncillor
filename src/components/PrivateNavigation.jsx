@@ -88,6 +88,7 @@ const PrivateNavigation = () => {
           headerTitleStyle: {
             fontWeight: 'bold',
             color: Colors.white,
+            fontSize: 16,
           },
           headerTintColor: Colors.white,
         }}>

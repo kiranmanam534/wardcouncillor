@@ -5,8 +5,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated,
 } from 'react-native';
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   CollectionsDashboardList,
@@ -21,7 +22,26 @@ const CollectionsScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
   const loggedUser = useSelector(state => state.loginReducer.items);
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 8,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   // const handleDetailsNavigation = (navigationText, title, wardType) => {
   //     navigation.navigate(navigationText, {
@@ -103,56 +123,60 @@ const CollectionsScreen = () => {
       item.name == 'MonthWiseCollections'
     ) {
       return (
-        <TouchableOpacity
+        <Animated.View
           key={item.id}
-          onPress={() => handleDetailsNavigation(item)}>
-          <View style={styles.card}>
-            <View style={styles.iconContainer}>
-              {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
-              {item.icon}
+          style={[
+            {
+              opacity: fadeAnim,
+              transform: [{translateY: slideAnim}],
+            },
+          ]}>
+          <TouchableOpacity onPress={() => handleDetailsNavigation(item)}>
+            <View style={styles.card}>
+              <View style={styles.iconCircle}>{item.icon}</View>
+              <View style={styles.content}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.subtitle}>Tap to view details</Text>
+              </View>
+              <View style={styles.arrowContainer}>
+                <Icon name="chevron-right" size={20} color={Colors.primary} />
+              </View>
             </View>
-            <View style={styles.content}>
-              <Text style={styles.title}>{item.title}</Text>
-              {/* <Text style={styles.description}>
-            This is the description of the card.</Text> */}
-            </View>
-            <View style={[styles.iconContainer, {marginRight: 0}]}>
-              <Icon name="angle-right" size={50} color={Colors.yellow} />
-            </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Animated.View>
       );
     } else if (loggedUser?.warD_NO == 0) {
       return (
-        <TouchableOpacity
+        <Animated.View
           key={item.id}
-          onPress={() => handleDetailsNavigation(item)}>
-          <View style={styles.card}>
-            <View style={styles.iconContainer}>
-              {/* <Icon name="star" size={20} color={Colors.yellow} /> */}
-              {item.icon}
+          style={[
+            {
+              opacity: fadeAnim,
+              transform: [{translateY: slideAnim}],
+            },
+          ]}>
+          <TouchableOpacity onPress={() => handleDetailsNavigation(item)}>
+            <View style={styles.card}>
+              <View style={styles.iconCircle}>{item.icon}</View>
+              <View style={styles.content}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.subtitle}>Tap to view details</Text>
+              </View>
+              <View style={styles.arrowContainer}>
+                <Icon name="chevron-right" size={20} color={Colors.primary} />
+              </View>
             </View>
-            <View style={styles.content}>
-              <Text style={styles.title}>{item.title}</Text>
-              {/* <Text style={styles.description}>
-              This is the description of the card.</Text> */}
-            </View>
-            <View style={[styles.iconContainer, {marginRight: 0}]}>
-              <Icon name="angle-right" size={50} color={Colors.yellow} />
-            </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Animated.View>
       );
     }
   };
 
   return (
-    <ScrollView>
-      <View
-        style={[
-          styles.container,
-          {marginBottom: Platform.OS === 'ios' ? 120 : 120},
-        ]}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}>
+      <View style={{marginBottom: Platform.OS === 'ios' ? 120 : 120}}>
         {CollectionsDashboardList.map(item => renderMenuList(item))}
       </View>
     </ScrollView>
@@ -163,37 +187,56 @@ export default CollectionsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    padding: 5,
-    justifyContent: 'center',
+    flex: 1,
+    padding: 12,
+    backgroundColor: '#F0F4F8',
+  },
+  scrollContent: {
+    paddingTop: 16,
+    paddingBottom: 20,
   },
   card: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f1f1f2',
-    borderRadius: 10,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
     padding: 20,
     margin: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.yellow,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 4,
   },
-  iconContainer: {
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 16,
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: Colors.blue,
-  },
-  description: {
     fontSize: 16,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  arrowContainer: {
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

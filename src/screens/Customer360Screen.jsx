@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
   Alert,
+  Animated,
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
@@ -28,6 +29,9 @@ const Customer360Screen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
   const [isAlertVisible, setAlertVisible] = useState(false);
   const [isAlertErrorVisible, setIsAlertErrorVisible] = useState(false);
   const [searchKey, setSearchKey] = useState();
@@ -41,6 +45,24 @@ const Customer360Screen = () => {
   useEffect(() => {
     dispatch(customer360Actions.clearWards());
   }, [loggedUser?.warD_NO]);
+
+  useEffect(() => {
+    if (items) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [items]);
 
   const handleSerach = () => {
     dispatch(customer360Actions.clearWards());
@@ -84,28 +106,40 @@ const Customer360Screen = () => {
   return (
     <View style={styles1.container}>
       <View style={styles1.header}>
-        <TextInput
-          mode="outlined"
-          label={'Account Number'}
-          style={[styles.textInput, {position: 'relative'}]}
-          value={searchKey}
-          keyboardType="numeric"
-          onChangeText={value => {
-            const numericValue = value.replace(/[^0-9]/g, '');
-            setSearchKey(numericValue);
-          }}
-          placeholder="Search with account number..."
-        />
-        <TouchableOpacity
-          onPress={handleSerach}
-          style={{
-            position: 'absolute',
-            top: 27,
-            right: 25,
-            bottom: 0,
-          }}>
-          <Icon name="search" size={25} color={Colors.blue} />
-        </TouchableOpacity>
+        <View style={styles1.searchContainer}>
+          <View style={styles1.inputWrapper}>
+            <Icon
+              name="credit-card"
+              size={16}
+              color={Colors.primary}
+              style={styles1.inputIcon}
+            />
+            <TextInput
+              mode="flat"
+              style={styles1.textInput}
+              contentStyle={styles1.textInputContent}
+              value={searchKey}
+              keyboardType="numeric"
+              onChangeText={value => {
+                const numericValue = value.replace(/[^0-9]/g, '');
+                setSearchKey(numericValue);
+              }}
+              placeholder="Enter account number..."
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+              theme={{
+                colors: {
+                  primary: Colors.primary,
+                  text: '#1E293B',
+                  placeholder: '#94A3B8',
+                },
+              }}
+            />
+          </View>
+          <TouchableOpacity onPress={handleSerach} style={styles1.searchButton}>
+            <Icon name="search" size={18} color={Colors.white} />
+          </TouchableOpacity>
+        </View>
       </View>
       <LoaderModal
         visible={isLoading}
@@ -115,437 +149,475 @@ const Customer360Screen = () => {
         isVisible={isAlertVisible}
         onClose={closeAlert}
         message="Please enter valid account number!"
-        imageSource={logo} // Replace with your image URL or local image source
+        imageSource={logo}
       />
       {items ? (
         items?.outstandingData.length > 0 ||
         items?.meterData.length > 0 ||
         items?.propertyData.length > 0 ||
         items?.interimsData.length > 0 ? (
-          <ScrollView style={styles.container}>
-            <View style={styles.header}>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  position: 'absolute',
-                  right: 10,
-                  top: 10,
-                }}>
-                <TouchableOpacity
-                  onPress={handlePaymentHistory}
-                  style={{
-                    alignContent: 'center',
-                    backgroundColor: Colors.primary,
-                    padding: 5,
-                    borderRadius: 5,
-                  }}>
-                  <Text style={{textAlign: 'right', color: Colors.white}}>
-                    Payment History
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.scrollContent}>
+            <Animated.View
+              style={[
+                styles.profileCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.profileHeader}>
+                <View style={styles.logoContainer}>
+                  <Image source={logo} style={styles.logo} />
+                </View>
+                <View style={styles.profileInfo}>
+                  <Text style={styles.name}>
+                    {items?.customerData[0]?.firstname}{' '}
+                    {items?.customerData[0]?.lastname}
                   </Text>
-                </TouchableOpacity>
+                  <View style={styles.categoryBadge}>
+                    <Icon name="tag" size={12} color={Colors.primary} />
+                    <Text style={styles.categoryText}>
+                      {items?.customerData[0]?.category}
+                    </Text>
+                  </View>
+                </View>
               </View>
-              <View style={styles.box}>
-                <Image source={logo} style={styles.img} />
+
+              <View style={styles.contactSection}>
+                {items?.customerData[0]?.cellphonenumber && (
+                  <View style={styles.contactRow}>
+                    <View style={styles.iconCircle}>
+                      <Icon name="phone" size={14} color={Colors.primary} />
+                    </View>
+                    <Text style={styles.contactText}>
+                      {items?.customerData[0]?.cellphonenumber}
+                    </Text>
+                  </View>
+                )}
+                <View style={styles.contactRow}>
+                  <View style={styles.iconCircle}>
+                    <Icon name="map-marker" size={14} color={Colors.primary} />
+                  </View>
+                  <Text style={styles.contactText}>
+                    {items?.customerData[0]?.address}
+                  </Text>
+                </View>
+                <View style={styles.contactRow}>
+                  <View style={styles.iconCircle}>
+                    <Icon name="institution" size={12} color={Colors.primary} />
+                  </View>
+                  <Text style={styles.contactText}>
+                    Ward: {items?.outstandingData[0]?.ward}
+                  </Text>
+                </View>
               </View>
-              {/* <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} /> */}
-              <Text style={styles.name}>
-                {items?.customerData[0]?.firstname}{' '}
-                {items?.customerData[0]?.lastname}
-              </Text>
-              <Text style={styles.username}>
-                {items?.customerData[0]?.category}
-              </Text>
-              {items?.customerData[0]?.cellphonenumber && (
-                <Text style={styles.bio}>
-                  {items?.customerData[0]?.cellphonenumber}
-                </Text>
-              )}
-              <Text style={styles.bio}>{items?.customerData[0]?.address}</Text>
-              <Text style={[styles.bio, {fontWeight: '700'}]}>
-                Ward : {items?.outstandingData[0]?.ward}
-              </Text>
-            </View>
-            <View style={[styles.socialMediaSection, {borderBottomWidth: 0}]}>
-              <View style={{flexDirection: 'row', marginLeft: -15}}>
-                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+
+              <TouchableOpacity
+                onPress={handlePaymentHistory}
+                style={styles.paymentButton}>
+                <Icon name="history" size={16} color={Colors.white} />
+                <Text style={styles.paymentButtonText}>Payment History</Text>
+              </TouchableOpacity>
+            </Animated.View>
+
+            <Animated.View
+              style={[
+                styles.sectionCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIconBadge}>
+                  <Icon name="money" size={16} color={Colors.white} />
+                </View>
                 <Text style={styles.sectionTitle}>Outstanding Amount</Text>
               </View>
+
               {items?.outstandingData.length > 0 ? (
                 items?.outstandingData.map((item, index) => (
-                  <View
-                    style={[styles.socialMediaSection, {padding: 0}]}
-                    key={'Outstanding_' + index}>
-                    <Text
-                      style={{
-                        padding: 5,
-                        fontWeight: '600',
-                        fontSize: 15,
-                        color: Colors.white,
-                        backgroundColor: Colors.blue,
-                      }}>
-                      #{index + 1}
-                    </Text>
-                    <InfoRow
-                      icon="info-circle"
-                      label={'30 days'}
-                      text={formattedAmount(
-                        parseFloat(item?.days30Amount),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'60 days'}
-                      text={formattedAmount(
-                        parseFloat(item?.days60Amount),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'90 days'}
-                      text={formattedAmount(
-                        parseFloat(item?.days90Amount),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'120+ days'}
-                      text={formattedAmount(
-                        parseFloat(item?.days120plusAmount),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="envelope"
-                      label={'Levy Amount'}
-                      text={formattedAmount(
-                        parseFloat(item?.levyAmount ? item?.levyAmount : 0.0),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                      type="Levy Amount"
-                    />
-                    <InfoRow
-                      icon="envelope"
-                      label={'Total'}
-                      text={formattedAmount(
-                        parseFloat(item?.totalAmount),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                      type="outstanding total"
-                    />
+                  <View style={styles.dataCard} key={'Outstanding_' + index}>
+                    <View style={styles.cardIndexBadge}>
+                      <Text style={styles.cardIndexText}>#{index + 1}</Text>
+                    </View>
+                    <View style={styles.dataGrid}>
+                      <InfoRow
+                        icon="calendar"
+                        label={'30 days'}
+                        text={formattedAmount(
+                          parseFloat(item?.days30Amount),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="calendar"
+                        label={'60 days'}
+                        text={formattedAmount(
+                          parseFloat(item?.days60Amount),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="calendar"
+                        label={'90 days'}
+                        text={formattedAmount(
+                          parseFloat(item?.days90Amount),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="calendar"
+                        label={'120+ days'}
+                        text={formattedAmount(
+                          parseFloat(item?.days120plusAmount),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="file-text"
+                        label={'Levy Amount'}
+                        text={formattedAmount(
+                          parseFloat(item?.levyAmount ? item?.levyAmount : 0.0),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="calculator"
+                        label={'Total'}
+                        text={formattedAmount(
+                          parseFloat(item?.totalAmount),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                        type="outstanding total"
+                      />
+                    </View>
                   </View>
                 ))
               ) : (
-                <View
-                  style={[
-                    styles.socialMediaSection,
-                    {padding: 0, justifyContent: 'center', alignSelf: 'center'},
-                  ]}>
-                  <Text style={{color: Colors.red}}>
-                    Outstanding data is not found for account No: {searchKey}.
+                <View style={styles.noDataContainer}>
+                  <Icon
+                    name="exclamation-circle"
+                    size={40}
+                    color={Colors.red}
+                  />
+                  <Text style={styles.noDataText}>
+                    Outstanding data not found for account: {searchKey}
                   </Text>
                 </View>
               )}
-            </View>
-            <View style={[styles.socialMediaSection, {borderBottomWidth: 0}]}>
-              <View style={{flexDirection: 'row', marginLeft: -15}}>
-                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.sectionCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIconBadge}>
+                  <Icon name="tachometer" size={16} color={Colors.white} />
+                </View>
                 <Text style={styles.sectionTitle}>Meters</Text>
               </View>
 
               {items?.meterData.length > 0 ? (
                 items?.meterData.map((item, index) => (
-                  <View
-                    style={[styles.socialMediaSection, {padding: 0}]}
-                    key={'Meter_' + index}>
-                    <Text
-                      style={{
-                        padding: 5,
-                        fontWeight: '600',
-                        fontSize: 15,
-                        color: Colors.white,
-                        backgroundColor: Colors.blue,
-                      }}>
-                      #{index + 1}
-                    </Text>
-                    <InfoRow
-                      icon="envelope"
-                      label={'Meter No'}
-                      text={item?.meteR_NO}
-                    />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Status'}
-                      text={item?.poD_STATUS}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Address'}
-                      text={item?.address}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Previous Reading'}
-                      text={item?.previouS_READING}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Previous Reading Date'}
-                      text={item?.readinG_TAKEN_DATE?.split(' ')[0]}
-                    />
+                  <View style={styles.dataCard} key={'Meter_' + index}>
+                    <View style={styles.cardIndexBadge}>
+                      <Text style={styles.cardIndexText}>#{index + 1}</Text>
+                    </View>
+                    <View style={styles.dataGrid}>
+                      <InfoRow
+                        icon="barcode"
+                        label={'Meter No'}
+                        text={item?.meteR_NO}
+                      />
+                      <InfoRow
+                        icon="info-circle"
+                        label={'Status'}
+                        text={item?.poD_STATUS}
+                      />
+                      <InfoRow
+                        icon="map-marker"
+                        label={'Address'}
+                        text={item?.address}
+                      />
+                      <InfoRow
+                        icon="dashboard"
+                        label={'Previous Reading'}
+                        text={item?.previouS_READING}
+                      />
+                      <InfoRow
+                        icon="calendar"
+                        label={'Reading Date'}
+                        text={item?.readinG_TAKEN_DATE?.split(' ')[0]}
+                      />
+                    </View>
                   </View>
                 ))
               ) : (
-                <View
-                  style={[
-                    styles.socialMediaSection,
-                    {padding: 0, justifyContent: 'center', alignSelf: 'center'},
-                  ]}>
-                  <Text style={{color: Colors.red}}>
-                    Meter data is not found for account No: {searchKey}.
+                <View style={styles.noDataContainer}>
+                  <Icon
+                    name="exclamation-circle"
+                    size={40}
+                    color={Colors.red}
+                  />
+                  <Text style={styles.noDataText}>
+                    Meter data not found for account: {searchKey}
                   </Text>
                 </View>
               )}
-            </View>
-            <View style={[styles.socialMediaSection, {borderBottomWidth: 0}]}>
-              <View style={{flexDirection: 'row', marginLeft: -15}}>
-                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.sectionCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIconBadge}>
+                  <Icon name="building" size={16} color={Colors.white} />
+                </View>
                 <Text style={styles.sectionTitle}>Properties</Text>
               </View>
+
               {items?.propertyData.length > 0 ? (
                 items?.propertyData.map((item, index) => (
-                  <View
-                    style={[styles.socialMediaSection, {padding: 0}]}
-                    key={'Property_' + index}>
-                    <Text
-                      style={{
-                        padding: 5,
-                        fontWeight: '600',
-                        fontSize: 15,
-                        color: Colors.white,
-                        backgroundColor: Colors.blue,
-                      }}>
-                      #{index + 1}
-                    </Text>
-                    <InfoRow
-                      icon="envelope"
-                      label={'Name'}
-                      text={item?.accountname}
-                    />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Cell No'}
-                      text={
-                        item?.cellphonenumber ? item?.cellphonenumber : 'N/A'
-                      }
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Address'}
-                      text={item?.addressdetails}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Latitude'}
-                      text={item?.locationlatitude}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Longitude'}
-                      text={item?.locationlongitude}
-                    />
+                  <View style={styles.dataCard} key={'Property_' + index}>
+                    <View style={styles.cardIndexBadge}>
+                      <Text style={styles.cardIndexText}>#{index + 1}</Text>
+                    </View>
+                    <View style={styles.dataGrid}>
+                      <InfoRow
+                        icon="user"
+                        label={'Name'}
+                        text={item?.accountname}
+                      />
+                      <InfoRow
+                        icon="phone"
+                        label={'Cell No'}
+                        text={
+                          item?.cellphonenumber ? item?.cellphonenumber : 'N/A'
+                        }
+                      />
+                      <InfoRow
+                        icon="map-marker"
+                        label={'Address'}
+                        text={item?.addressdetails}
+                      />
+                      <InfoRow
+                        icon="location-arrow"
+                        label={'Latitude'}
+                        text={item?.locationlatitude}
+                      />
+                      <InfoRow
+                        icon="location-arrow"
+                        label={'Longitude'}
+                        text={item?.locationlongitude}
+                      />
+                    </View>
                   </View>
                 ))
               ) : (
-                <View
-                  style={[
-                    styles.socialMediaSection,
-                    {padding: 0, justifyContent: 'center', alignSelf: 'center'},
-                  ]}>
-                  <Text style={{color: Colors.red}}>
-                    Property data is not found for account No: {searchKey}.
+                <View style={styles.noDataContainer}>
+                  <Icon
+                    name="exclamation-circle"
+                    size={40}
+                    color={Colors.red}
+                  />
+                  <Text style={styles.noDataText}>
+                    Property data not found for account: {searchKey}
                   </Text>
                 </View>
               )}
-            </View>
+            </Animated.View>
 
-            <View style={[styles.socialMediaSection, {borderBottomWidth: 0}]}>
-              <View style={{flexDirection: 'row', marginLeft: -15}}>
-                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+            <Animated.View
+              style={[
+                styles.sectionCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIconBadge}>
+                  <Icon name="file-text" size={16} color={Colors.white} />
+                </View>
                 <Text style={styles.sectionTitle}>Interims</Text>
               </View>
 
               {items?.interimsData.length > 0 ? (
                 items?.interimsData.map((item, index) => (
-                  <View
-                    style={[styles.socialMediaSection, {padding: 0}]}
-                    key={'Interims_' + index}>
-                    <Text
-                      style={{
-                        padding: 5,
-                        fontWeight: '600',
-                        fontSize: 15,
-                        color: Colors.white,
-                        backgroundColor: Colors.blue,
-                      }}>
-                      #{index + 1}
-                    </Text>
-                    <InfoRow
-                      icon="envelope"
-                      label={'Meter No'}
-                      text={item?.meterNumber}
-                    />
-                    <InfoRow
-                      icon="envelope"
-                      label={'Name'}
-                      text={item?.debtorName}
-                    />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Service'}
-                      text={item?.serviceGroup}
-                    />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Reason'}
-                      text={item?.interimsReason}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Township'}
-                      text={item?.township}
-                    />
-                    <InfoRow icon="envelope" label={'CCA'} text={item?.cca} />
-                    <InfoRow
-                      icon="envelope"
-                      label={'Cycle'}
-                      text={item?.cycle}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Zone'}
-                      text={item?.zoning}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Cell No'}
-                      text={item?.cellNo ? item?.cellNo : 'N/A'}
-                    />
+                  <View style={styles.dataCard} key={'Interims_' + index}>
+                    <View style={styles.cardIndexBadge}>
+                      <Text style={styles.cardIndexText}>#{index + 1}</Text>
+                    </View>
+                    <View style={styles.dataGrid}>
+                      <InfoRow
+                        icon="barcode"
+                        label={'Meter No'}
+                        text={item?.meterNumber}
+                      />
+                      <InfoRow
+                        icon="user"
+                        label={'Name'}
+                        text={item?.debtorName}
+                      />
+                      <InfoRow
+                        icon="cogs"
+                        label={'Service'}
+                        text={item?.serviceGroup}
+                      />
+                      <InfoRow
+                        icon="info-circle"
+                        label={'Reason'}
+                        text={item?.interimsReason}
+                      />
+                      <InfoRow
+                        icon="map-marker"
+                        label={'Township'}
+                        text={item?.township}
+                      />
+                      <InfoRow icon="bookmark" label={'CCA'} text={item?.cca} />
+                      <InfoRow
+                        icon="refresh"
+                        label={'Cycle'}
+                        text={item?.cycle}
+                      />
+                      <InfoRow
+                        icon="globe"
+                        label={'Zone'}
+                        text={item?.zoning}
+                      />
+                      <InfoRow
+                        icon="phone"
+                        label={'Cell No'}
+                        text={item?.cellNo ? item?.cellNo : 'N/A'}
+                      />
+                    </View>
                   </View>
                 ))
               ) : (
-                <View
-                  style={[
-                    styles.socialMediaSection,
-                    {padding: 0, justifyContent: 'center', alignSelf: 'center'},
-                  ]}>
-                  <Text style={{color: Colors.red}}>
-                    Interims data is not found for account No: {searchKey}.
+                <View style={styles.noDataContainer}>
+                  <Icon
+                    name="exclamation-circle"
+                    size={40}
+                    color={Colors.red}
+                  />
+                  <Text style={styles.noDataText}>
+                    Interims data not found for account: {searchKey}
                   </Text>
                 </View>
               )}
-            </View>
-            <View style={[styles.socialMediaSection, {borderBottomWidth: 0}]}>
-              <View style={{flexDirection: 'row', marginLeft: -15}}>
-                <Icon name={'hand-o-right'} size={20} style={styles.infoIcon} />
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.sectionCard,
+                {
+                  opacity: fadeAnim,
+                  transform: [{translateY: slideAnim}],
+                },
+              ]}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionIconBadge}>
+                  <Icon name="hand-paper-o" size={16} color={Colors.white} />
+                </View>
                 <Text style={styles.sectionTitle}>Indigent</Text>
               </View>
 
               {items?.indigentData.length > 0 ? (
                 items?.indigentData.map((item, index) => (
-                  <View
-                    style={[styles.socialMediaSection, {padding: 0}]}
-                    key={'Indigent_' + index}>
-                    <Text
-                      style={{
-                        padding: 5,
-                        fontWeight: '600',
-                        fontSize: 15,
-                        color: Colors.white,
-                        backgroundColor: Colors.blue,
-                      }}>
-                      #{index + 1}
-                    </Text>
-                    <InfoRow
-                      icon="envelope"
-                      label={'Account'}
-                      text={item?.account}
-                    />
-                    <InfoRow icon="envelope" label={'Name'} text={item?.name} />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Address'}
-                      text={item?.address}
-                    />
-                    <InfoRow
-                      icon="info-circle"
-                      label={'Marital'}
-                      text={item?.maritalStatus}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Source Of Income'}
-                      text={item?.sourceOfIncome}
-                    />
-                    <InfoRow
-                      icon="envelope"
-                      label={'Household Income'}
-                      text={formattedAmount(
-                        parseFloat(item?.householdIncome ?? 0),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="envelope"
-                      label={'No Of Properties'}
-                      text={item?.numberOfProperties}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Property Value'}
-                      text={formattedAmount(
-                        parseFloat(item?.propertyValue ?? 0),
-                        'en-ZA',
-                        'ZAR',
-                        'currency',
-                      )}
-                    />
-                    <InfoRow
-                      icon="map-marker"
-                      label={'Cell No'}
-                      text={item?.cell ? item?.cell : 'N/A'}
-                    />
+                  <View style={styles.dataCard} key={'Indigent_' + index}>
+                    <View style={styles.cardIndexBadge}>
+                      <Text style={styles.cardIndexText}>#{index + 1}</Text>
+                    </View>
+                    <View style={styles.dataGrid}>
+                      <InfoRow
+                        icon="credit-card"
+                        label={'Account'}
+                        text={item?.account}
+                      />
+                      <InfoRow icon="user" label={'Name'} text={item?.name} />
+                      <InfoRow
+                        icon="map-marker"
+                        label={'Address'}
+                        text={item?.address}
+                      />
+                      <InfoRow
+                        icon="heart"
+                        label={'Marital'}
+                        text={item?.maritalStatus}
+                      />
+                      <InfoRow
+                        icon="briefcase"
+                        label={'Source Of Income'}
+                        text={item?.sourceOfIncome}
+                      />
+                      <InfoRow
+                        icon="money"
+                        label={'Household Income'}
+                        text={formattedAmount(
+                          parseFloat(item?.householdIncome ?? 0),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="home"
+                        label={'No Of Properties'}
+                        text={item?.numberOfProperties}
+                      />
+                      <InfoRow
+                        icon="dollar"
+                        label={'Property Value'}
+                        text={formattedAmount(
+                          parseFloat(item?.propertyValue ?? 0),
+                          'en-ZA',
+                          'ZAR',
+                          'currency',
+                        )}
+                      />
+                      <InfoRow
+                        icon="phone"
+                        label={'Cell No'}
+                        text={item?.cell ? item?.cell : 'N/A'}
+                      />
+                    </View>
                   </View>
                 ))
               ) : (
-                <View
-                  style={[
-                    styles.socialMediaSection,
-                    {padding: 0, justifyContent: 'center', alignSelf: 'center'},
-                  ]}>
-                  <Text style={{color: Colors.red}}>
-                    Indigent data is not found for account No: {searchKey}.
+                <View style={styles.noDataContainer}>
+                  <Icon
+                    name="exclamation-circle"
+                    size={40}
+                    color={Colors.red}
+                  />
+                  <Text style={styles.noDataText}>
+                    Indigent data not found for account: {searchKey}
                   </Text>
                 </View>
               )}
-            </View>
+            </Animated.View>
           </ScrollView>
         ) : (
           <CustomAlert
@@ -573,30 +645,19 @@ const Customer360Screen = () => {
 
 const InfoRow = ({icon, text, label, type}) => (
   <View style={styles.infoRow}>
-    {/* <Icon name={icon} size={20} style={styles.infoIcon} /> */}
+    <View style={styles.infoLabelContainer}>
+      <View style={styles.infoIconCircle}>
+        <Icon name={icon} size={12} color={Colors.primary} />
+      </View>
+      <Text style={styles.infoLabel}>{label}</Text>
+    </View>
     <Text
       style={[
-        styles.infoText,
-        {
-          fontWeight: type == 'outstanding total' ? '800' : '500',
-          color: type == 'outstanding total' ? Colors.primary : '',
-        },
-      ]}>
-      {label}
-    </Text>
-    <Text
-      style={[
-        styles.infoText,
-        {
-          fontWeight: type == 'outstanding total' ? '800' : '500',
-          color: type == 'outstanding total' ? Colors.primary : '',
-        },
-      ]}>
-      {label == 'Address'
-        ? text?.length > 20
-          ? text.substring(0, 20) + '...'
-          : text
-        : text}
+        styles.infoValue,
+        type === 'outstanding total' && styles.totalValue,
+      ]}
+      numberOfLines={2}>
+      {text}
     </Text>
   </View>
 );
@@ -611,148 +672,335 @@ const SocialMediaIcon = ({name, handle}) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    marginTop: 80,
+    backgroundColor: '#F0F4F8',
   },
-  header: {
+  scrollContent: {
+    paddingTop: 100,
+    paddingBottom: 20,
+  },
+
+  // Profile Card Styles
+  profileCard: {
+    backgroundColor: Colors.white,
+    margin: 12,
+    marginTop: 0,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+    borderLeftWidth: 5,
+    borderLeftColor: Colors.yellow,
+  },
+  profileHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.primary,
+    marginBottom: 16,
   },
-  profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  logoContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+    overflow: 'hidden',
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    resizeMode: 'cover',
+  },
+  profileInfo: {
+    flex: 1,
   },
   name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  username: {
     fontSize: 18,
-    color: 'gray',
+    fontWeight: '800',
+    color: '#1E3A8A',
+    marginBottom: 6,
   },
-  infoSection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    // alignItems: 'center',
-    justifyContent: 'space-between',
-    // marginBottom: 10,
-    padding: 5,
-    borderWidth: 0,
-    margin: 2,
-    backgroundColor: Colors.lightgray2,
-    borderRadius: 5,
-  },
-  infoIcon: {
-    marginRight: 10,
-  },
-  infoText: {
-    fontSize: 16,
-  },
-  socialMediaSection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 10,
-    // borderBottomWidth: 1,
-    // borderBottomColor: Colors.yellow,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: Colors.blue,
-  },
-  socialMediaIcon: {
+  categoryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
   },
-  socialIcon: {
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.primary,
+    marginLeft: 6,
+  },
+  contactSection: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  iconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 10,
   },
-  socialText: {
-    fontSize: 16,
+  contactText: {
+    fontSize: 13,
+    color: '#475569',
+    fontWeight: '500',
+    flex: 1,
   },
-  activitySection: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  activityItem: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  box: {
-    width: screenWidth / 4,
-    height: screenWidth / 4,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
+  paymentButton: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.primary,
-    alignSelf: 'center',
-    elevation: 1,
-    marginTop: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  img: {
-    width: screenWidth / 3 - 70,
-    height: screenWidth / 3 - 70,
-    resizeMode: 'contain',
+  paymentButtonText: {
+    color: Colors.white,
+    fontSize: 14,
+    fontWeight: '700',
+    marginLeft: 8,
+  },
+
+  // Section Card Styles
+  sectionCard: {
+    backgroundColor: Colors.white,
+    margin: 12,
+    marginTop: 0,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: '#F1F5F9',
+  },
+  sectionIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    letterSpacing: 0.3,
+  },
+
+  // Data Card Styles
+  dataCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.yellow,
+  },
+  cardIndexBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  cardIndexText: {
+    color: Colors.white,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  dataGrid: {
+    gap: 6,
+  },
+
+  // Info Row Styles
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundColor: Colors.white,
+    padding: 10,
+    borderRadius: 8,
+    marginVertical: 2,
+  },
+  infoLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  infoIconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#EFF6FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  infoLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+    flex: 1,
+  },
+  infoValue: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0F172A',
+    textAlign: 'right',
+    flex: 1,
+  },
+  totalValue: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: Colors.primary,
+  },
+
+  // No Data Styles
+  noDataContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+  },
+  noDataText: {
+    color: Colors.red,
+    fontSize: 13,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 12,
+    lineHeight: 20,
+  },
+
+  // Deprecated styles kept for compatibility
+  bio: {
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 4,
   },
 });
 
 const styles1 = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F0F4F8',
   },
   header: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
-    padding: 10,
-    elevation: 1, // for Android shadow
-    shadowColor: '#000', // for iOS shadow
-    shadowOffset: {width: 0, height: 0.5}, // for iOS shadow
-    shadowOpacity: 0.5, // for iOS shadow
-    shadowRadius: 2, // for iOS shadow
-    zIndex: 10, // ensure it is above other components
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+    elevation: 8,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    zIndex: 100,
+    borderBottomWidth: 2,
+    borderBottomColor: Colors.primary,
   },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderWidth: 1,
-    borderRadius: 50,
-    // marginBottom: 10,
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  inputWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    paddingLeft: 16,
+    paddingRight: 12,
+    height: 56,
+    shadowColor: '#64748B',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  inputIcon: {
+    marginRight: 8,
   },
   textInput: {
-    height: 40,
-    // borderColor: 'gray',
-    // borderWidth: 1,
-    paddingHorizontal: 10,
-    // borderRadius:10
+    flex: 1,
+    height: 56,
+    backgroundColor: 'transparent',
+    fontSize: 15,
+    fontWeight: '600',
   },
-  scrollContent: {
-    paddingTop: 60, // make space for the fixed header
-    paddingHorizontal: 10,
+  textInputContent: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    height: 56,
+    justifyContent: 'center',
   },
-  text: {
-    fontSize: 16,
-    paddingVertical: 10,
+  searchButton: {
+    backgroundColor: Colors.primary,
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
 });
 

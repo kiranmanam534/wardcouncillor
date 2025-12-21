@@ -17,6 +17,33 @@ const CardItem = ({
   billing,
   collection,
 }) => {
+  // Function to get appropriate icon based on ward type
+  const getIconName = () => {
+    switch (wardType) {
+      case 'Outstanding':
+      case 'OutstandingCategory':
+        return 'money';
+      case 'Collections':
+        return 'credit-card';
+      case 'Property':
+        return 'building';
+      case 'Customer':
+        return 'users';
+      case 'Meter':
+        return 'tachometer';
+      case 'IMS':
+        return 'warning';
+      case 'Interims':
+        return 'file-text';
+      case 'MetersNotRead':
+        return 'exclamation-triangle';
+      case 'Indigent':
+        return 'hand-paper-o';
+      default:
+        return 'map-marker';
+    }
+  };
+
   if (wardType == 'WardBillingCollections') {
     return (
       <View style={styles.container}>
@@ -124,92 +151,51 @@ const CardItem = ({
     );
   } else {
     return (
-      <View style={styles.container}>
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.cardContent}>
-              <Icon name="users" size={25} color={Colors.blue} />
-              <Title style={styles.title}>
-                {wardTitle(wardType, title, isTownship)}
-              </Title>
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={onPress}
+        style={styles.container}>
+        <View style={styles.card}>
+          <View style={styles.topSection}>
+            <View style={styles.iconCircle}>
+              <Icon name={getIconName()} size={22} color={Colors.white} />
             </View>
-          </Card.Content>
-          <Divider style={styles.divider} />
-          <Card.Content
-            style={[
-              styles.footer,
-              {
-                backgroundColor: Colors.blue,
-                borderBottomLeftRadius: 15,
-                borderBottomRightRadius: 15,
-                height: 50,
-                borderWidth: 2,
-                borderColor: Colors.yellow,
-              },
-            ]}>
-            {/* <View style={[styles.footer, {borderWidth:2,borderColor:'red'}]}> */}
-            <Paragraph style={[styles.text, {fontSize: 15, paddingTop: 8}]}>
-              {/* {wardType=='Outstanding' && } */}
-              {isAmount &&
-              ['Outstanding', 'OutstandingCategory', 'Collections'].includes(
-                wardType,
-              )
-                ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
-                : wardValue(wardType, value)}
-            </Paragraph>
+            <View style={styles.titleSection}>
+              <Text style={styles.title} numberOfLines={2}>
+                {wardTitle(wardType, title, isTownship)}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.dividerLine} />
+
+          <View style={styles.bottomSection}>
+            <View style={styles.valueSection}>
+              <Text style={styles.valueLabel}>Amount</Text>
+              <Text style={styles.value}>
+                {isAmount &&
+                ['Outstanding', 'OutstandingCategory', 'Collections'].includes(
+                  wardType,
+                )
+                  ? formattedAmount(value, 'en-ZA', 'ZAR', 'currency')
+                  : wardValue(wardType, value)}
+              </Text>
+            </View>
+
             {name != 'N/A' && (
-              <View style={{marginTop: 15}}>
-                <TouchableOpacity
-                  style={[
-                    styles.btn,
-                    {
-                      height: 30,
-                      width: wardType == 'Collections' ? 130 : 100,
-                      backgroundColor: Colors.white,
-                      // borderRadius: 20,
-                      borderTopRightRadius: 15,
-                      borderBottomRightRadius: 2,
-                      borderTopLeftRadius: 2,
-                      borderBottomLeftRadius: 15,
-                    },
-                  ]}
-                  onPress={onPress}>
-                  <View
-                    style={{
-                      flex: 1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      alignSelf: 'center',
-                      flexDirection: 'row',
-                      // marginHorizontal: -20,
-                    }}>
-                    <Icon
-                      name={
-                        wardType == 'Collections'
-                          ? 'bar-chart-o'
-                          : 'info-circle'
-                      }
-                      size={20}
-                      color={Colors.blue}
-                    />
-                    <Text
-                      style={[
-                        styles.text,
-                        {
-                          fontSize: 16,
-                          color: Colors.blue,
-                          paddingLeft: wardType == 'Collections' ? 5 : 10,
-                        },
-                      ]}>
-                      {wardType == 'Collections' ? 'View Chart' : 'View'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <View style={styles.actionButton}>
+                <Icon
+                  name={
+                    wardType == 'Collections' ? 'bar-chart-o' : 'chevron-right'
+                  }
+                  size={18}
+                  color={Colors.white}
+                />
               </View>
             )}
-          </Card.Content>
-        </Card>
-      </View>
+          </View>
+        </View>
+      </TouchableOpacity>
     );
   }
 };
@@ -218,15 +204,85 @@ export default CardItem;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    padding: 5,
-    justifyContent: 'center',
+    marginHorizontal: 0,
+    marginVertical: 4,
   },
   card: {
-    elevation: 1, // Add shadow
-    borderRadius: 15, // Add border radius
-    borderWidth: 2,
-    borderColor: Colors.primary,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 16,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.yellow,
+  },
+  topSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  titleSection: {
+    flex: 1,
+    marginLeft: 14,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    letterSpacing: 0.2,
+    lineHeight: 20,
+  },
+  dividerLine: {
+    height: 1,
+    backgroundColor: '#E2E8F0',
+    marginBottom: 16,
+  },
+  bottomSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  valueSection: {
+    flex: 1,
+  },
+  valueLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
+    marginBottom: 6,
+    letterSpacing: 0.2,
+    textTransform: 'uppercase',
+  },
+  value: {
+    fontSize: 17,
+    fontWeight: '800',
+    color: Colors.primary,
+    letterSpacing: 0.2,
+  },
+  actionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
   },
   cardContent: {
     flexDirection: 'row',
@@ -235,14 +291,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginTop: 40,
-    // marginBottom: 15,
-  },
-  title: {
-    paddingLeft: 10,
-    paddingRight: 2,
-    fontSize: 18,
-    color: Colors.blue,
-    fontWeight: '600',
   },
   footer: {
     flex: 1,
@@ -252,7 +300,6 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: Colors.blue,
-    // padding: 5,
   },
   text: {
     color: Colors.white,

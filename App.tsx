@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, LogBox} from 'react-native';
 import React, {StrictMode} from 'react';
 import Navigation from './src/components/Navigation';
 import {Provider} from 'react-redux';
@@ -12,6 +12,9 @@ import GoogleAutocompleteScreen from './GoogleAutocompleteScreen';
 import EsriAutocomplete1 from './src/EsriAutocomplete1';
 import EsriMapView from './Sample/EsriMapView';
 import ClusteringMap from './Sample/ClusteringMap';
+
+// Suppress known warnings from third-party libraries
+LogBox.ignoreLogs(['new NativeEventEmitter', 'EventEmitter.removeListener']);
 
 const App = () => {
   return (

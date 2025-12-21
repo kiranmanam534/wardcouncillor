@@ -13,9 +13,11 @@ import {
   Image,
   Platform,
   KeyboardAvoidingView,
+  Animated,
 } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/dist/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -52,6 +54,8 @@ const CouncilloriViewScreen = ({route}) => {
   const [showImage, setShowImage] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(30)).current;
 
   const {title, wardType, name, township} = route.params;
   console.log(wardType, name, township);
@@ -130,6 +134,24 @@ const CouncilloriViewScreen = ({route}) => {
     page,
     mayorSelectedWardNo,
   ]);
+
+  useEffect(() => {
+    if (!isLoading && items && items.length > 0) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isLoading, items]);
 
   const handleLoadMore = () => {
     if (wardmembersCount != 0 && wardmembersCount == 10) setPage(page + 1);
@@ -329,10 +351,7 @@ Regards *City of Ekurhuleni.*`;
   };
 
   return (
-    <View style={{flex: 1}}>
-      {/* {isImageLoaded &&
-        <Image source={{ uri: 'data:image/jpeg;base64,' + binaryImage }} width={200} height={200} />} */}
-
+    <View style={styles.container}>
       {memberStatusCode && memberStatusCode !== 200 && (
         <ShowMessageCenter
           message={
@@ -343,11 +362,12 @@ Regards *City of Ekurhuleni.*`;
         />
       )}
 
-      {/* <LoaderModal visible={isSMSLoading} loadingText="SMS is sending..." /> */}
       {memberStatusCode &&
         memberStatusCode === 200 &&
         memberMessage === 'Data Not found' &&
-        items?.length == 0 && <ShowMessageCenter message={'No data found!'} />}
+        (!items || items.length === 0) && (
+          <ShowMessageCenter message={'No data found!'} />
+        )}
 
       <ErrorModal
         visible={imageError && imageError != 200}
@@ -377,46 +397,101 @@ Regards *City of Ekurhuleni.*`;
 
       {/* <TestMapView/> */}
       <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS == 'ios' ? 'padding' : undefined}
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={100}>
-        {isLoading && (
-          <FlatList
-            data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
-            renderItem={({item}) => <CardItemLoading />}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        )}
-        {!isLoading && items?.length > 0 && (
-          <FlatList
-            data={items}
-            renderItem={({item}) => (
-              <TownshipCard
-                // key={index}
-                wardType={wardType}
-                item={item}
-                name={name}
-                onPress={() => {
-                  handlePress(item.cellphonenumber);
-                }}
-                showImage={() => {
-                  openMeterImage(item?.id);
-                }}
-                showMap={() => {
-                  openPropertyMap(item);
-                }}
-                imageLoading={imageLoading}
-                ImageId={selectedImageId}
-                sendSMS={() => {
-                  handleSMS(item);
-                }}
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <FlatList
+              data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
+              renderItem={({item}) => <CardItemLoading />}
+              keyExtractor={(item, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.listContent}
+            />
+          </View>
+        ) : (
+          <>
+            {items && items.length > 0 && (
+              <Animated.View
+                style={[
+                  styles.headerInfo,
+                  {
+                    opacity: fadeAnim,
+                    transform: [{translateY: slideAnim}],
+                  },
+                ]}>
+                <View style={styles.headerTopRow}>
+                  <View style={styles.headerIconBadge}>
+                    <Icon name="users" size={18} color={Colors.white} />
+                  </View>
+                  <Text style={styles.headerTitle}>Records Overview</Text>
+                </View>
+
+                <View style={styles.statsContainer}>
+                  <View style={styles.statBox}>
+                    <View style={styles.statIconCircle}>
+                      <Icon name="database" size={14} color={Colors.primary} />
+                    </View>
+                    <View style={styles.statContent}>
+                      <Text style={styles.statLabel}>Total Records</Text>
+                      <Text style={styles.statValue}>{items?.length || 0}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.statDivider} />
+
+                  <View style={styles.statBox}>
+                    <View style={styles.statIconCircle}>
+                      <Icon
+                        name="file-text-o"
+                        size={14}
+                        color={Colors.yellow}
+                      />
+                    </View>
+                    <View style={styles.statContent}>
+                      <Text style={styles.statLabel}>Page Number</Text>
+                      <Text style={styles.statValue}>{page}</Text>
+                    </View>
+                  </View>
+                </View>
+              </Animated.View>
+            )}
+
+            {items && items.length > 0 && (
+              <FlatList
+                data={items}
+                renderItem={({item}) => (
+                  <TownshipCard
+                    // key={index}
+                    wardType={wardType}
+                    item={item}
+                    name={name}
+                    onPress={() => {
+                      handlePress(item.cellphonenumber);
+                    }}
+                    showImage={() => {
+                      openMeterImage(item?.id);
+                    }}
+                    showMap={() => {
+                      openPropertyMap(item);
+                    }}
+                    imageLoading={imageLoading}
+                    ImageId={selectedImageId}
+                    sendSMS={() => {
+                      handleSMS(item);
+                    }}
+                  />
+                )}
+                keyExtractor={(item, index) => index.toString()}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={renderFooter}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContent}
               />
             )}
-            keyExtractor={(item, index) => index.toString()}
-            onEndReached={handleLoadMore}
-            // onEndReachedThreshold={10} // Adjust the threshold as needed
-            ListFooterComponent={renderFooter}
-          />
+          </>
         )}
 
         <View
@@ -453,6 +528,104 @@ Regards *City of Ekurhuleni.*`;
 export default CouncilloriViewScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F0F4F8',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+  },
+  headerInfo: {
+    backgroundColor: Colors.white,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 12,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+    borderLeftWidth: 5,
+    borderLeftColor: Colors.yellow,
+  },
+  headerTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
+  },
+  headerIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    shadowColor: Colors.primary,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  headerTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    letterSpacing: 0.3,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  statBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  statIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F0F9FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  statContent: {
+    flex: 1,
+  },
+  statLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#94A3B8',
+    marginBottom: 3,
+    letterSpacing: 0.3,
+    textTransform: 'uppercase',
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.primary,
+    letterSpacing: 0.2,
+  },
+  statDivider: {
+    width: 2,
+    height: 40,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 1,
+  },
+  listContent: {
+    paddingHorizontal: 8,
+    paddingTop: 4,
+    paddingBottom: 100,
+  },
   toggleButton: {
     position: 'absolute',
     bottom: 100,

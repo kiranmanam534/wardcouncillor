@@ -1,34 +1,32 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
-import { PieChart } from "react-native-gifted-charts";
-import { Colors } from "../constant/Colors";
-import { useEffect, useState } from "react";
-import { formattedAmount, formattedCurrency } from "../utility/FormattedAmmount";
-import { useSelector } from "react-redux";
+import {Alert, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {PieChart} from 'react-native-gifted-charts';
+import {Colors} from '../constant/Colors';
+import {useEffect, useState} from 'react';
+import {formattedAmount, formattedCurrency} from '../utility/FormattedAmmount';
+import {useSelector} from 'react-redux';
 
-const OustandingChartsScreen = ({ route }) => {
-
-  const { items:OutstandingItems} = useSelector(
+const OustandingChartsScreen = ({route}) => {
+  const {items: OutstandingItems} = useSelector(
     state => state.WardOustandingReducer,
   );
 
+  const {title} = route.params;
+  console.log('OutstandingItems----->', title, OutstandingItems);
 
-  const { title } = route.params;
-  console.log("OutstandingItems----->", title, OutstandingItems);
+  const [items, setItems] = useState([]);
 
-  const [items, setItems] = useState([])
-
-  const PieColors = [Colors.red, Colors.black, Colors.yellow, Colors.blue]
+  const PieColors = [Colors.red, Colors.black, Colors.yellow, Colors.blue];
 
   const ddd = [
-    { color: "#C92B22", value: "1706319.36" },
-    { color: "#1F3C80", value: "1357384.69" },
-    { color: "#EEAF2C", value: "1327239.69" },
-    { color: "#047245", value: "58343165.33" }
+    {color: '#C92B22', value: '1706319.36'},
+    {color: '#1F3C80', value: '1357384.69'},
+    {color: '#EEAF2C', value: '1327239.69'},
+    {color: '#047245', value: '58343165.33'},
   ];
 
-
   // Reducer function to calculate sum
-  const sumReducer = (accumulator, currentValue) => accumulator + parseFloat(currentValue.value);
+  const sumReducer = (accumulator, currentValue) =>
+    accumulator + parseFloat(currentValue.value);
 
   // Calculate the sum using reduce()
   const totalSum = OutstandingItems?.reduce(sumReducer, 0); // Initial value is 0
@@ -36,14 +34,15 @@ const OustandingChartsScreen = ({ route }) => {
   console.log('Total Sum:', totalSum); // Output: Total Sum: 60
   useEffect(() => {
     OutstandingItems?.map((item, index) => {
-      console.log(index, item)
-      const newObject = { value: parseInt((parseFloat(item.value) * 100) / totalSum), color: PieColors[index] };
+      console.log(index, item);
+      const newObject = {
+        value: parseInt((parseFloat(item.value) * 100) / totalSum),
+        color: PieColors[index],
+      };
       setItems(prevData => [...prevData, newObject]);
       // setItems([...items,{ value: item.value, color: PieColors[index] }])
     });
-
-  }, [])
-
+  }, []);
 
   const getFocusedIndex = () => {
     let maxIndex = 0;
@@ -57,145 +56,251 @@ const OustandingChartsScreen = ({ route }) => {
     return maxIndex;
   };
 
-  console.log("items-----", items);
+  console.log('items-----', items);
 
   const renderLegend = (text, color, value) => {
-
-    let ItemVal = ` ${formattedAmount(
+    const percentage = parseFloat((parseFloat(value) * 100) / totalSum).toFixed(
+      1,
+    );
+    const amount = formattedAmount(
       parseFloat(value),
       'en-ZA',
       'ZAR',
       'currency',
-    )} ( ${parseFloat((parseFloat(value) * 100) / totalSum).toFixed(2)} `
-    return (
+    );
 
-      <View style={{ flexDirection: 'row', marginBottom: 12 }} key={text}>
-        <View
-          style={{
-            height: 18,
-            width: 18,
-            marginRight: 10,
-            borderRadius: 4,
-            backgroundColor: color || 'white',
-          }}
-        />
-        <Text style={{ color: 'white', fontSize: 13 }}>
-          {text == 'D30_DAYS' && '30 Days : ' + ItemVal + '% ) '}
-          {text == 'D60_DAYS' && '60 Days : ' + ItemVal + '% ) '}
-          {text == 'D90_DAYS' && '90 Days : ' + ItemVal + '% ) '}
-          {text == 'D120_PLUS' && '120+ Days : ' + ItemVal + '% ) '}
-        </Text>
+    let label = '';
+    if (text == 'D30_DAYS') label = '0-30 Days';
+    if (text == 'D60_DAYS') label = '31-60 Days';
+    if (text == 'D90_DAYS') label = '61-90 Days';
+    if (text == 'D120_PLUS') label = '120+ Days';
+
+    return (
+      <View style={styles.legendItem} key={text}>
+        <View style={styles.legendLeft}>
+          <View style={[styles.legendColorBox, {backgroundColor: color}]} />
+          <Text style={styles.legendLabel}>{label}</Text>
+        </View>
+        <View style={styles.legendRight}>
+          <Text style={styles.legendPercentage}>{percentage}%</Text>
+          <Text style={styles.legendAmount}>{amount}</Text>
+        </View>
       </View>
     );
   };
 
   return (
-    <View style={{
-      flex: 1, backgroundColor: Colors.primary, marginTop: 1
-    }}>
-      {items.length > 0 &&
-        <View
-          style={{
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        {items.length > 0 && (
+          <View style={styles.contentWrapper}>
+            {/*********************    Custom Header component      ********************/}
+            <View style={styles.headerCard}>
+              <Text style={styles.headerTitle}>Outstanding Amount</Text>
+              <View style={styles.totalBadge}>
+                <Text style={styles.totalLabel}>Total Outstanding</Text>
+                <Text style={styles.totalAmount}>
+                  {formattedAmount(
+                    parseFloat(totalSum),
+                    'en-ZA',
+                    'ZAR',
+                    'currency',
+                  )}
+                </Text>
+              </View>
+            </View>
+            {/****************************************************************************/}
 
-            // marginVertical: 100,
-            marginHorizontal: 5,
-            borderRadius: 10,
-            paddingVertical: 50,
-            backgroundColor: Colors.primary,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
+            <View style={styles.chartCard}>
+              <PieChart
+                strokeColor="white"
+                strokeWidth={3}
+                donut
+                sectionAutoFocus
+                data={items}
+                innerCircleColor="#F8FAFC"
+                innerCircleBorderWidth={3}
+                innerCircleBorderColor="white"
+                showValuesAsLabels={true}
+                textSize={16}
+                textColor="#1E3A8A"
+                focusOnPress
+                focusIndex={getFocusedIndex()}
+                extraRadiusForFocused={15}
+                showTextBackground={true}
+                textBackgroundColor="white"
+                textBackgroundRadius={20}
+                radius={140}
+                centerLabelComponent={() => {
+                  return (
+                    <View style={styles.centerLabel}>
+                      <Text style={styles.centerPercentage}>100%</Text>
+                      <Text style={styles.centerText}>Total</Text>
+                    </View>
+                  );
+                }}
+              />
+            </View>
 
-
-          {/*********************    Custom Header component      ********************/}
-
-          <View style={{ marginVertical: 10, backgroundColor: Colors.white, padding: 5, borderRadius: 5 }}>
-            <Text
-              style={{
-                color: Colors.blue,
-                fontSize: 25,
-                fontWeight: 'bold',
-                marginBottom: 12,
-              }}>
-              Outstanding Amount
-            </Text>
-            <Text style={{ color: Colors.blue, fontSize: 16, fontWeight: '600',textAlign:'center' }}>
-              Total :  {formattedAmount(
-                parseFloat(totalSum),
-                'en-ZA',
-                'ZAR',
-                'currency',
+            {/*********************    Custom Legend component      ********************/}
+            <View style={styles.legendContainer}>
+              <Text style={styles.legendTitle}>Breakdown by Days</Text>
+              {OutstandingItems.map((item, index) =>
+                renderLegend(item.name, PieColors[index], item.value),
               )}
-            </Text>
+            </View>
+            {/****************************************************************************/}
           </View>
-          {/****************************************************************************/}
-
-
-          <PieChart
-            strokeColor={Colors.white}
-            strokeWidth={2}
-            donut
-            sectionAutoFocus
-            data={
-              items
-              // [
-              //   { value: parseInt((1706319.36 * 100) / (1706319.36 + 1357384.69 + 1327239.69 + 58343165.33)), color: Colors.yellow },
-              //   { value: parseInt((1357384.69 * 100) / (1706319.36 + 1357384.69 + 1327239.69 + 58343165.33)), color: Colors.primary },
-              //   { value: parseInt((1327239.69 * 100) / (1706319.36 + 1357384.69 + 1327239.69 + 58343165.33)), color: Colors.red },
-              //   { value: parseInt((58343165.33 * 100) / (1706319.36 + 1357384.69 + 1327239.69 + 58343165.33)), color: Colors.blue },
-              // ]
-            }
-            innerCircleColor={Colors.lightgray}
-            innerCircleBorderWidth={2}
-            innerCircleBorderColor={Colors.white}
-            showValuesAsLabels={true}
-            // showText
-            // labelsPosition="mid"
-            textSize={18}
-            focusOnPress
-            focusIndex={getFocusedIndex()}
-            // inwardExtraLengthForFocused={70}
-        extraRadiusForFocused={20}
-            
-            // textBackgroundRadius={Colors.blue}
-            showTextBackground={true}
-            centerLabelComponent={() => {
-              return (
-                <View>
-                  <Text style={{ color: Colors.primary, fontSize: 25 }}>100%</Text>
-                  {/* <Text style={{ color: Colors.primary, fontSize: 18, textAlign: 'center' }}>Total</Text> */}
-                </View>
-              );
-            }}
-          />
-
-
-          {/*********************    Custom Legend component      ********************/}
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'column',
-              justifyContent: 'space-evenly',
-              marginTop: 20,
-            }}>
-            {OutstandingItems.map((item, index) => (
-              renderLegend(item.name, PieColors[index], item.value)
-            ))}
-            {/* {renderLegend('60 Days', 'lightgreen')}
-            {renderLegend('90 Days', 'orange')}
-            {renderLegend('120+ Days', Colors.blue)} */}
-          </View>
-          {/****************************************************************************/}
-
-        </View>
-      }
-      {/* {items.map((item,index) => (
-          <Text key={index}>{item.value}</Text>
-        ))} */}
+        )}
+      </ScrollView>
     </View>
   );
-}
+};
 
-export default OustandingChartsScreen
+export default OustandingChartsScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F0F4F8',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  contentWrapper: {
+    padding: 20,
+  },
+  headerCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.yellow,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  totalBadge: {
+    backgroundColor: '#EFF6FF',
+    borderRadius: 10,
+    padding: 12,
+    alignItems: 'center',
+  },
+  totalLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B',
+    marginBottom: 6,
+  },
+  totalAmount: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1E3A8A',
+  },
+  chartCard: {
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    padding: 30,
+    marginBottom: 20,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+    alignItems: 'center',
+  },
+  centerLabel: {
+    alignItems: 'center',
+  },
+  centerPercentage: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#1E3A8A',
+  },
+  centerText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#64748B',
+    marginTop: 4,
+  },
+  legendContainer: {
+    backgroundColor: Colors.white,
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#1E40AF',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  legendTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  legendItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: 'transparent',
+  },
+  legendLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  legendColorBox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  legendLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1E3A8A',
+  },
+  legendRight: {
+    alignItems: 'flex-end',
+  },
+  legendPercentage: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E3A8A',
+    marginBottom: 2,
+  },
+  legendAmount: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+});

@@ -27,7 +27,7 @@ const CMPrivateNavigation = () => {
 
   return (
     <PrivateStack.Navigator
-    initialRouteName='Index'
+      initialRouteName="Index"
       screenOptions={{
         // navigationBarHidden: true,
         navigationBarColor: Colors.primary,
@@ -38,17 +38,17 @@ const CMPrivateNavigation = () => {
         headerTitleStyle: {
           fontWeight: 'bold',
           color: Colors.white,
+          fontSize: 16,
         },
         headerTintColor: Colors.white,
-        headerTitleAlign:'center'
+        headerTitleAlign: 'center',
       }}>
-        <PrivateStack.Screen
+      <PrivateStack.Screen
         name="Index"
-        
         component={CMDashboardScreen}
         options={({navigation, route}) => ({
           title: 'DASHBOARD',
-        //   headerShown: false,
+          //   headerShown: false,
           navigationBarHidden: true,
           headerRight: () => (
             <Pressable onPress={handleLogout}>
@@ -58,7 +58,7 @@ const CMPrivateNavigation = () => {
           // headerLeft: null, // Hide the left navigation icon
         })}
       />
-      
+
       <PrivateStack.Screen
         name="CouncillorDetails"
         component={CouncillorDetailsScreen}

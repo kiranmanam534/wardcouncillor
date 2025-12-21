@@ -1,18 +1,18 @@
 import React from 'react';
-import { View, StatusBar, Platform, Pressable } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {View, StatusBar, Platform, Pressable} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/dist/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import HomeScreen from '../screens/HomeScreen';
-import { Colors } from '../constant/Colors';
+import {Colors} from '../constant/Colors';
 import WardMemberInfoScreen from '../screens/WardMemberInfoScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import MainDashboardScreen from '../screens/MainDashboardScreen';
-import { useDispatch } from 'react-redux';
-import { clearData } from '../session/session';
-import { authSliceActions } from '../redux/loginSlice';
+import {useDispatch} from 'react-redux';
+import {clearData} from '../session/session';
+import {authSliceActions} from '../redux/loginSlice';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +24,7 @@ export default function BottomTabNavigator() {
   };
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
         tabBarHideOnKeyboard: true,
 
         tabBarStyle: {
@@ -43,17 +43,20 @@ export default function BottomTabNavigator() {
           color: Colors.white,
           fontSize: 15,
           paddingBottom: Platform.OS == 'ios' ? 0 : 10,
-          marginTop: 16
+          marginTop: 16,
         },
         headerStyle: {
           backgroundColor: Colors.primary,
+        },
+        headerTitleStyle: {
+          fontSize: 16,
         },
         headerTintColor: Colors.white,
         headerTitleAlign: 'center',
         tabBarShowLabel: true,
         headerShown: true,
         headerRight: () => (
-          <Pressable onPress={handleLogout} style={{ paddingRight: 15 }}>
+          <Pressable onPress={handleLogout} style={{paddingRight: 15}}>
             <FontAwesome name="sign-out" size={25} color={Colors.white} />
           </Pressable>
         ),
@@ -63,20 +66,41 @@ export default function BottomTabNavigator() {
         component={DashboardScreen}
         options={{
           tabBarLabel: 'Dashboard',
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <View
               style={{
-                top: Platform.OS === 'ios' ? focused ? -10 : 0 : focused ? -10 : -5,
-                width: Platform.OS === 'ios' ? focused ? 50 : 30 : focused ? 60 : 30,
-                height: Platform.OS === 'ios' ? focused ? 50 : 30 : focused ? 60 : 30,
+                top:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? -10
+                      : 0
+                    : focused
+                    ? -10
+                    : -5,
+                width:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? 50
+                      : 30
+                    : focused
+                    ? 60
+                    : 30,
+                height:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? 50
+                      : 30
+                    : focused
+                    ? 60
+                    : 30,
                 borderRadius:
                   Platform.OS === 'ios'
                     ? focused
                       ? 25
                       : 15
                     : focused
-                      ? 30
-                      : 15,
+                    ? 30
+                    : 15,
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: focused ? Colors.white : Colors.lightgray,
@@ -89,15 +113,14 @@ export default function BottomTabNavigator() {
                       ? 40
                       : 25
                     : focused
-                      ? 40
-                      : 25
+                    ? 40
+                    : 25
                 }
                 color={focused ? Colors.blue : Colors.red}
               />
             </View>
           ),
           tabBarIconStyle: {},
-
         }}
       />
       <Tab.Screen
@@ -110,12 +133,33 @@ export default function BottomTabNavigator() {
           //   color:Colors.white
           // },
           headerShown: true,
-          tabBarIcon: ({ focused }) => (
+          tabBarIcon: ({focused}) => (
             <View
               style={{
-                top: Platform.OS === 'ios' ? focused ? -10 : 0 : focused ? -10 : -5,
-                width: Platform.OS === 'ios' ? focused ? 50 : 30 : focused ? 60 : 30,
-                height: Platform.OS === 'ios' ? focused ? 50 : 30 : focused ? 60 : 30,
+                top:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? -10
+                      : 0
+                    : focused
+                    ? -10
+                    : -5,
+                width:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? 50
+                      : 30
+                    : focused
+                    ? 60
+                    : 30,
+                height:
+                  Platform.OS === 'ios'
+                    ? focused
+                      ? 50
+                      : 30
+                    : focused
+                    ? 60
+                    : 30,
                 borderRadius: Platform.OS === 'ios' ? 25 : 30,
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -129,8 +173,8 @@ export default function BottomTabNavigator() {
                       ? 40
                       : 25
                     : focused
-                      ? 40
-                      : 25
+                    ? 40
+                    : 25
                 }
                 color={focused ? Colors.blue : Colors.red}
               />

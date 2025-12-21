@@ -95,7 +95,7 @@ export const MayorOustandingDashboardList = [
       <MaterialCommunityIcons
         name="tablet-dashboard"
         size={50}
-        color={Colors.blue}
+        color={Colors.yellow}
       />
     ),
     name: 'Summary',
@@ -103,13 +103,13 @@ export const MayorOustandingDashboardList = [
   {
     id: 2,
     title: 'Ward wise list',
-    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.yellow} />,
     name: 'WardList',
   },
   {
     id: 3,
     title: 'Category wise list',
-    icon: <MaterialIcon name="category" size={50} color={Colors.blue} />,
+    icon: <MaterialIcon name="category" size={50} color={Colors.yellow} />,
     name: 'CategoryList',
   },
 ];
@@ -119,14 +119,14 @@ export const CollectionsDashboardList = [
     id: 1,
     title: 'Month wise collections',
     icon: (
-      <MaterialCommunityIcons name="calendar" size={50} color={Colors.blue} />
+      <MaterialCommunityIcons name="calendar" size={50} color={Colors.yellow} />
     ),
     name: 'MonthWiseCollections',
   },
   {
     id: 2,
     title: 'Ward wise collections',
-    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.yellow} />,
     name: 'WardCollections',
   },
   {
@@ -136,7 +136,7 @@ export const CollectionsDashboardList = [
       <MaterialCommunityIcons
         name="tablet-dashboard"
         size={50}
-        color={Colors.blue}
+        color={Colors.yellow}
       />
     ),
     name: 'CollectionsSummary',
@@ -148,7 +148,7 @@ export const CollectionsDashboardList = [
       <MaterialCommunityIcons
         name="compare-horizontal"
         size={50}
-        color={Colors.blue}
+        color={Colors.yellow}
       />
     ),
     name: 'WardsWiseComparison',
@@ -156,7 +156,7 @@ export const CollectionsDashboardList = [
   {
     id: 5,
     title: 'Billing vs Collections',
-    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.yellow} />,
     name: 'WardBillingCollections',
   },
 ];
@@ -169,7 +169,7 @@ export const IndegentDashboardList = [
       <MaterialCommunityIcons
         name="tablet-dashboard"
         size={50}
-        color={Colors.blue}
+        color={Colors.yellow}
       />
     ),
     name: 'StatusWise',
@@ -177,7 +177,7 @@ export const IndegentDashboardList = [
   {
     id: 2,
     title: 'Consumptions',
-    icon: <MaterialIcon name="list-alt" size={50} color={Colors.blue} />,
+    icon: <MaterialIcon name="list-alt" size={50} color={Colors.yellow} />,
     name: 'WardConsumptionsList',
   },
 ];

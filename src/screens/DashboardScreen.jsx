@@ -102,14 +102,35 @@ const DashboardScreen = () => {
     getDataMaintainceInfo();
   };
 
+  const formatNumber = value => {
+    const parsed = parseFloat(value);
+    if (isNaN(parsed)) return 'N/A';
+
+    const absValue = Math.abs(parsed);
+    const sign = parsed < 0 ? '-' : '';
+
+    if (absValue >= 1000000000) {
+      return (
+        sign + (absValue / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B'
+      );
+    } else if (absValue >= 1000000) {
+      return sign + (absValue / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    } else if (absValue >= 100000) {
+      return sign + (absValue / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
+    } else if (absValue >= 1000) {
+      return sign + (absValue / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+    return parsed.toString();
+  };
+
   const safeParseInt = value => {
     const parsed = parseInt(value);
-    return isNaN(parsed) ? 'N/A' : parsed;
+    return isNaN(parsed) ? 'N/A' : formatNumber(parsed);
   };
 
   const safeParseFloat = value => {
     const parsed = parseFloat(value);
-    return isNaN(parsed) ? 'N/A' : parsed;
+    return isNaN(parsed) ? 'N/A' : formatNumber(parsed);
   };
 
   const handleDetailsNavigation = (navigationText, title, wardType) => {
@@ -261,14 +282,18 @@ const DashboardScreen = () => {
                     <Icon name="money" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Outstanding Debt</Text>
-                  <Text style={styles.gridCardValue}>
-                    {formattedAmount(
-                      parseFloat(getValueByKey(items, 'Outstanding Amount')),
-                      'en-ZA',
-                      'ZAR',
-                      'currency',
-                    )}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {formattedAmount(
+                        parseFloat(getValueByKey(items, 'Outstanding Amount')),
+                        'en-ZA',
+                        'ZAR',
+                        'currency',
+                      )}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -285,9 +310,13 @@ const DashboardScreen = () => {
                     <Icon name="file-text" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Interims</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'Interims'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'Interims'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -304,9 +333,13 @@ const DashboardScreen = () => {
                     <Icon name="warning" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Incidents</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'IMS'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'IMS'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
               </View>
 
@@ -325,11 +358,15 @@ const DashboardScreen = () => {
                     <Icon name="tachometer" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Meters</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseFloat(
-                      getValueByKey(items, 'Water and Electricity Meters'),
-                    )}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseFloat(
+                        getValueByKey(items, 'Water and Electricity Meters'),
+                      )}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -346,9 +383,13 @@ const DashboardScreen = () => {
                     <Icon name="building" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Properties</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'Total Properties'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'Total Properties'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -365,9 +406,13 @@ const DashboardScreen = () => {
                     <Icon name="users" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Customers</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'Total Customers'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'Total Customers'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
               </View>
 
@@ -390,9 +435,13 @@ const DashboardScreen = () => {
                     />
                   </View>
                   <Text style={styles.gridCardTitle}>Not Read</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'Not Read Meters'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'Not Read Meters'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -453,9 +502,13 @@ const DashboardScreen = () => {
                     <Icon name="hand-paper-o" size={24} color={Colors.yellow} />
                   </View>
                   <Text style={styles.gridCardTitle}>Indigent</Text>
-                  <Text style={styles.gridCardValue}>
-                    {safeParseInt(getValueByKey(items, 'Indigent'))}
-                  </Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  ) : (
+                    <Text style={styles.gridCardValue}>
+                      {safeParseInt(getValueByKey(items, 'Indigent'))}
+                    </Text>
+                  )}
                 </TouchableOpacity>
 
                 <View style={[styles.gridCard, {opacity: 0}]}>

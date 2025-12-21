@@ -3,7 +3,6 @@ import {
   Alert,
   Dimensions,
   Image,
-  ImageBackground,
   Platform,
   StyleSheet,
   Text,
@@ -245,7 +244,7 @@ const TestHomeScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      <ImageBackground source={null} style={styles.imageBackground}>
+      <View style={styles.imageBackground}>
         <View style={styles.overlay} />
 
         <TouchableOpacity style={styles.versionBadge}>
@@ -284,7 +283,7 @@ const TestHomeScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
+      </View>
     </View>
   );
 };
