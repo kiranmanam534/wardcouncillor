@@ -305,7 +305,14 @@ const WardsDBAIScreen = () => {
                 // borderRightWidth: 0,
                 borderColor: Colors.white,
               }}>
-              <Text style={{color: Colors.white, fontSize: 11}}>{key}</Text>
+              <Text
+                style={{
+                  color: Colors.primary,
+                  fontSize: 11,
+                  fontWeight: '600',
+                }}>
+                {key}
+              </Text>
             </View>
           ))}
         </View>
@@ -325,47 +332,62 @@ const WardsDBAIScreen = () => {
                 padding: 10,
                 borderWidth: 1,
                 // borderRightWidth: 0,
-                borderColor: Colors.white,
+                borderColor: Colors.lightgray1,
               }}>
-              <Text style={{color: Colors.white, fontSize: 11}}>{value}</Text>
+              <Text style={{color: Colors.black, fontSize: 11}}>{value}</Text>
             </View>
           ))}
         </View>
       </>
     );
   };
-  const DynamicKeyValueDisplayBody1 = ({data}) => {
+  const DynamicKeyValueDisplayBody1 = ({data, totalColumns}) => {
+    const columnWidth = (screenWidth - 40) / totalColumns; // Full screen minus padding
     return (
       <View
         key={`body1-${data['key']}`}
         style={{
-          paddingHorizontal: 10,
-          paddingVertical: 5,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
           borderWidth: 1,
-          width: 300,
-          borderColor: Colors.white,
+          width: columnWidth,
+          borderColor: Colors.lightgray1,
           backgroundColor: Colors.primary,
         }}>
-        <Text style={{color: Colors.white, fontSize: 11}}>{data['key']}</Text>
+        <Text
+          style={{
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: '700',
+            textAlign: 'center',
+          }}>
+          {data['displayName'] || data['key']?.replace('_0', '')}
+        </Text>
       </View>
     );
   };
 
-  const DynamicKeyValueDisplayBody2 = ({data, keyId}) => {
+  const DynamicKeyValueDisplayBody2 = ({data, keyId, index, totalColumns}) => {
+    const isEven = index % 2 === 0;
+    const columnWidth = (screenWidth - 40) / totalColumns; // Full screen minus padding
     return (
       <View
         key={`body2-${JSON.stringify(data)}`}
         style={{
-          // width: '50%',
-          // borderBottomWidth: 0,
-          paddingHorizontal: 10,
-          paddingVertical: 5,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
           borderWidth: 1,
-          width: 300,
-          // borderRightWidth: 0,
-          borderColor: Colors.white,
+          width: columnWidth,
+          borderColor: Colors.lightgray1,
+          backgroundColor: isEven ? '#F8FAFC' : Colors.white,
         }}>
-        <Text style={{color: Colors.white, fontSize: 11}}>
+        <Text
+          style={{
+            color: Colors.black,
+            fontSize: 12,
+            fontWeight: '500',
+            textAlign: 'center',
+          }}>
           {JSON.stringify(data)?.replace(/"/g, '')}
         </Text>
       </View>
@@ -394,13 +416,14 @@ const WardsDBAIScreen = () => {
                     // width: '50%',
                     // borderBottomWidth: 0,
                     paddingHorizontal: 10,
-                    paddingVertical: 5,
+                    paddingVertical: 8,
                     borderWidth: 1,
                     width: 300,
                     // borderRightWidth: 0,
-                    borderColor: Colors.white,
+                    borderColor: Colors.lightgray1,
+                    backgroundColor: Colors.white,
                   }}>
-                  <Text style={{color: Colors.white, fontSize: 11}}>
+                  <Text style={{color: Colors.black, fontSize: 11}}>
                     {item['items'][k1['key']]}
                   </Text>
                 </View>
@@ -495,7 +518,7 @@ const WardsDBAIScreen = () => {
                 // console.log(index);
                 if (index == 0) {
                   // console.log(key);
-                  keysList.push({key: `${key}_${index}`});
+                  keysList.push({key: `${key}_${index}`, displayName: key});
                 }
               }
 
@@ -504,11 +527,15 @@ const WardsDBAIScreen = () => {
                 // console.log(keysList[1]);
                 // console.log(rData[keysList[0]['key']]);
                 // console.log(rData[keysList[1]['key']]);
-                NewChartData.push({
-                  label: rData[keysList[0]['key']],
-                  value: parseFloat(rData[keysList[1]['key']]),
-                  actualValue: rData[keysList[1]['key']],
-                });
+                const numericValue = parseFloat(rData[keysList[1]['key']]);
+                // Only push valid numeric values
+                if (!isNaN(numericValue) && isFinite(numericValue)) {
+                  NewChartData.push({
+                    label: rData[keysList[0]['key']],
+                    value: Math.abs(numericValue), // Use absolute value for negative numbers
+                    actualValue: rData[keysList[1]['key']],
+                  });
+                }
               }
 
               for (let key_index in keysList) {
@@ -750,6 +777,57 @@ const WardsDBAIScreen = () => {
               style={{position: 'relative'}}
               ref={flatListRef}
               data={messages}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyStateContainer}>
+                  <View style={styles.emptyStateIconContainer}>
+                    <Icon
+                      name="chatbubbles-outline"
+                      size={80}
+                      color={Colors.primary}
+                    />
+                  </View>
+                  <Text style={styles.emptyStateTitle}>
+                    Start a Conversation
+                  </Text>
+                  <Text style={styles.emptyStateSubtitle}>
+                    Ask me anything about ward data, billing, collections, or
+                    outstanding amounts
+                  </Text>
+                  <View style={styles.exampleQuestions}>
+                    <Text style={styles.exampleTitle}>Example questions:</Text>
+                    <View style={styles.exampleItem}>
+                      <Icon
+                        name="arrow-forward-circle-outline"
+                        size={16}
+                        color={Colors.yellow}
+                      />
+                      <Text style={styles.exampleText}>
+                        Show me outstanding amount by ward
+                      </Text>
+                    </View>
+                    <View style={styles.exampleItem}>
+                      <Icon
+                        name="arrow-forward-circle-outline"
+                        size={16}
+                        color={Colors.yellow}
+                      />
+                      <Text style={styles.exampleText}>
+                        What is the total billing amount?
+                      </Text>
+                    </View>
+                    <View style={styles.exampleItem}>
+                      <Icon
+                        name="arrow-forward-circle-outline"
+                        size={16}
+                        color={Colors.yellow}
+                      />
+                      <Text style={styles.exampleText}>
+                        Show collections by month
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
               renderItem={({item}) => (
                 <>
                   {item.role === 'user' &&
@@ -832,37 +910,62 @@ const WardsDBAIScreen = () => {
                                       Answer
                                     </Text>
                                   </View>
+                                  <View
+                                    style={{
+                                      backgroundColor: '#F0F4F8',
+                                      paddingHorizontal: 15,
+                                      paddingVertical: 10,
+                                      borderRadius: 8,
+                                      marginBottom: 10,
+                                      marginTop: -15,
+                                    }}>
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                      }}>
+                                      <Icon
+                                        name="list"
+                                        size={16}
+                                        color={Colors.primary}
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 13,
+                                          fontWeight: '600',
+                                          color: Colors.primary,
+                                        }}>
+                                        {item?.ValuesList?.length || 0} Records
+                                        Found
+                                      </Text>
+                                    </View>
+                                  </View>
                                   <ScrollView
                                     horizontal={true}
-                                    style={{marginBottom: 20, marginTop: -25}}>
+                                    style={{marginBottom: 20}}>
                                     <View style={{flex: 1}}>
                                       <View
                                         style={{
-                                          borderWidth: 0,
-                                          borderColor: Colors.white,
                                           flexDirection: 'row',
-                                          borderColor: Colors.white,
-                                          padding: 10,
+                                          paddingHorizontal: 10,
                                           marginBottom: 0,
+                                          borderBottomWidth: 2,
+                                          borderBottomColor: Colors.primary,
                                         }}>
                                         {item?.keysList?.map(
                                           (col, colIndex) => (
                                             <View
                                               key={`keyslist-${item.count}-${colIndex}`}
-                                              style={[
-                                                styles.itemContainer,
-                                                {padding: 0},
-                                              ]}>
-                                              <Text style={styles.itemText}>
-                                                {/* {item.role === 'bot' && (
-                                            <>{JSON.stringify(col)}</>
-                                          )} */}
-                                                {item.role === 'bot' && (
-                                                  <DynamicKeyValueDisplayBody1
-                                                    data={col}
-                                                  />
-                                                )}
-                                              </Text>
+                                              style={{padding: 0}}>
+                                              {item.role === 'bot' && (
+                                                <DynamicKeyValueDisplayBody1
+                                                  data={col}
+                                                  totalColumns={
+                                                    item?.keysList?.length || 2
+                                                  }
+                                                />
+                                              )}
                                             </View>
                                           ),
                                         )}
@@ -870,8 +973,6 @@ const WardsDBAIScreen = () => {
                                       <View
                                         style={{
                                           borderWidth: 0,
-                                          borderColor: Colors.white,
-                                          borderColor: Colors.white,
                                           paddingHorizontal: 10,
                                           marginTop: -10,
                                         }}>
@@ -879,27 +980,29 @@ const WardsDBAIScreen = () => {
                                           (val, valIndex) => (
                                             <View
                                               key={`valueslist-${item.count}-${valIndex}`}
-                                              style={[
-                                                styles.itemContainer,
-                                                {padding: 0},
-                                              ]}>
-                                              <Text style={styles.itemText}>
-                                                {item.role === 'bot' &&
-                                                  Object.entries(
-                                                    val['items'],
-                                                  ).map(
-                                                    (
-                                                      [key, value],
-                                                      entryIdx,
-                                                    ) => (
-                                                      <DynamicKeyValueDisplayBody2
-                                                        key={`entry-${item.count}-${valIndex}-${entryIdx}-${key}`}
-                                                        data={value}
-                                                        keyId={item?.keysList}
-                                                      />
-                                                    ),
-                                                  )}
-                                              </Text>
+                                              style={{
+                                                flexDirection: 'row',
+                                                borderBottomWidth: 1,
+                                                borderBottomColor:
+                                                  Colors.lightgray1,
+                                              }}>
+                                              {item.role === 'bot' &&
+                                                Object.entries(
+                                                  val['items'],
+                                                ).map(
+                                                  ([key, value], entryIdx) => (
+                                                    <DynamicKeyValueDisplayBody2
+                                                      key={`entry-${item.count}-${valIndex}-${entryIdx}-${key}`}
+                                                      data={value}
+                                                      keyId={item?.keysList}
+                                                      index={valIndex}
+                                                      totalColumns={
+                                                        item?.keysList
+                                                          ?.length || 2
+                                                      }
+                                                    />
+                                                  ),
+                                                )}
                                             </View>
                                           ),
                                         )}
@@ -914,77 +1017,139 @@ const WardsDBAIScreen = () => {
                       </>
                     ))}
                   </View>
-                  {item.role === 'bot' && item.chartData.length > 0 && (
+                  {item.role === 'bot' &&
+                    item.chartData &&
+                    item.chartData.length > 0 &&
+                    item.chartData.some(
+                      d => d.value && !isNaN(d.value) && isFinite(d.value),
+                    ) && (
+                      <View
+                        style={{
+                          marginVertical: 15,
+                          backgroundColor: Colors.white,
+                          borderRadius: 16,
+                          padding: 15,
+                          marginHorizontal: 10,
+                          shadowColor: '#1E40AF',
+                          shadowOffset: {width: 0, height: 3},
+                          shadowOpacity: 0.08,
+                          shadowRadius: 8,
+                          elevation: 5,
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            fontWeight: '700',
+                            color: Colors.primary,
+                            marginBottom: 10,
+                            textAlign: 'center',
+                          }}>
+                          Outstanding by Ward (
+                          {
+                            item.chartData.filter(
+                              d =>
+                                d.value && !isNaN(d.value) && isFinite(d.value),
+                            ).length
+                          }{' '}
+                          Wards)
+                        </Text>
+                        <ScrollView
+                          horizontal={true}
+                          showsHorizontalScrollIndicator={true}>
+                          <BarChart
+                            data={item.chartData.filter(
+                              d =>
+                                d.value && !isNaN(d.value) && isFinite(d.value),
+                            )}
+                            barWidth={35}
+                            width={
+                              item.chartData.filter(
+                                d =>
+                                  d.value &&
+                                  !isNaN(d.value) &&
+                                  isFinite(d.value),
+                              ).length * 60
+                            }
+                            spacing={20}
+                            yAxisThickness={1}
+                            xAxisThickness={1}
+                            isAnimated
+                            barBorderRadius={4}
+                            sideWidth={15}
+                            cappedBars
+                            capColor={'rgba(78, 0, 142)'}
+                            capThickness={4}
+                            showGradient
+                            gradientColor={'rgba(200, 100, 244,0.8)'}
+                            frontColor={'rgba(219, 182, 249,0.2)'}
+                            xAxisLabelsVerticalShift={20}
+                            lineConfig={{
+                              color: '#4CAF50',
+                              thickness: 2,
+                              curved: true,
+                            }}
+                            xAxisLabelTextStyle={styles.labelTextStyle}
+                            yAxisLabelContainerStyle={styles.labelTextStyle1}
+                            renderTooltip={(item, index) => {
+                              return (
+                                <View
+                                  style={{
+                                    marginLeft: -6,
+                                    backgroundColor: Colors.primary,
+                                    padding: 5,
+                                    borderRadius: 4,
+                                  }}>
+                                  <Text
+                                    style={{
+                                      color: Colors.white,
+                                      textAlign: 'center',
+                                    }}>
+                                    {formattedAmount(
+                                      parseFloat(item.value),
+                                      'en-ZA',
+                                      'ZAR',
+                                      'currency',
+                                    )}
+                                  </Text>
+                                </View>
+                              );
+                            }}
+                          />
+                        </ScrollView>
+                      </View>
+                    )}
+
+                  {item.role === 'bot' && item.barChatImg && (
                     <View
                       style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
                         marginVertical: 15,
+                        backgroundColor: Colors.white,
+                        borderRadius: 16,
+                        padding: 15,
+                        marginHorizontal: 10,
+                        shadowColor: '#1E40AF',
+                        shadowOffset: {width: 0, height: 3},
+                        shadowOpacity: 0.08,
+                        shadowRadius: 8,
+                        elevation: 5,
                       }}>
-                      <BarChart
-                        data={item.chartData}
-                        barWidth={40}
-                        width={screenWidth}
-                        spacing={20}
-                        yAxisThickness={1}
-                        xAxisThickness={1}
-                        isAnimated
-                        barBorderRadius={4}
-                        sideWidth={15}
-                        cappedBars
-                        capColor={'rgba(78, 0, 142)'}
-                        capThickness={4}
-                        showGradient
-                        gradientColor={'rgba(200, 100, 244,0.8)'}
-                        frontColor={'rgba(219, 182, 249,0.2)'}
-                        xAxisLabelsVerticalShift={20}
-                        lineConfig={{
-                          color: '#4CAF50',
-                          thickness: 2,
-                          curved: true,
-                        }}
-                        xAxisLabelTextStyle={styles.labelTextStyle}
-                        yAxisLabelContainerStyle={styles.labelTextStyle1}
-                        renderTooltip={(item, index) => {
-                          return (
-                            <View
-                              style={{
-                                marginLeft: -6,
-                                backgroundColor: Colors.primary,
-                                padding: 5,
-
-                                borderRadius: 4,
-                              }}>
-                              <Text
-                                style={{
-                                  color: Colors.white,
-                                  textAlign: 'center',
-                                }}>
-                                {formattedAmount(
-                                  parseFloat(item.value),
-                                  'en-ZA',
-                                  'ZAR',
-                                  'currency',
-                                )}
-                              </Text>
-                            </View>
-                          );
-                        }}
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '700',
+                          color: Colors.primary,
+                          marginBottom: 10,
+                          textAlign: 'center',
+                        }}>
+                        Chart Visualization
+                      </Text>
+                      <Image
+                        source={{uri: item.barChatImg}}
+                        style={styles.img}
+                        resizeMode="contain"
                       />
                     </View>
                   )}
-
-                  {/* {item.role === 'bot' && item.barChatImg && (
-                  <View
-                    style={{
-                      backgroundColor: Colors.lightgray,
-                      marginVertical: 10,
-                      padding: 5,
-                    }}>
-                    <Image source={{uri: item.barChatImg}} style={styles.img} />
-                  </View>
-                )} */}
                 </>
               )}
               keyExtractor={(item, index) =>
@@ -1112,6 +1277,68 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.primary,
   },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+    paddingTop: 60,
+  },
+  emptyStateIconContainer: {
+    marginBottom: 24,
+    opacity: 0.6,
+  },
+  emptyStateTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyStateSubtitle: {
+    fontSize: 15,
+    color: Colors.gray,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 30,
+  },
+  exampleQuestions: {
+    width: '100%',
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.black,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  exampleTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginBottom: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  exampleItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+    paddingVertical: 8,
+  },
+  exampleText: {
+    fontSize: 14,
+    color: Colors.black,
+    flex: 1,
+  },
   userMessage: {
     alignSelf: 'flex-end',
     backgroundColor: Colors.primary,
@@ -1137,7 +1364,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderBottomLeftRadius: 4,
     marginVertical: 4,
-    maxWidth: '85%',
+    maxWidth: '100%',
     ...Platform.select({
       ios: {
         shadowColor: Colors.black,
