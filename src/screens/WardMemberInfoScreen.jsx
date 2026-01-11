@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import WardMemberCard from '../components/WardMemberCard';
@@ -16,6 +17,8 @@ import {wardMemberInfo} from '../services/loginApi';
 import LoaderModal from '../components/LoaderModal';
 import {Colors} from '../constant/Colors';
 import {authSliceActions} from '../redux/loginSlice';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 const WardMemberInfoScreen = () => {
   const navigation = useNavigation();
@@ -100,28 +103,28 @@ const WardMemberInfoScreen = () => {
       {!filteredData && (
         <View style={styles.errorContainer}>
           <View style={styles.errorCard}>
-            <Text style={styles.errorIcon}>⚠️</Text>
-            <Text style={styles.errorTitle}>Profile Loading Error</Text>
+            <View style={styles.errorIconCircle}>
+              <MaterialIcon name="warning" size={48} color={Colors.yellow} />
+            </View>
+            <Text style={styles.errorTitle}>Unable to Load Profile</Text>
             <Text style={styles.errorText}>
-              Something went wrong while loading your profile.
+              Your profile information couldn't be loaded at this time.
             </Text>
 
-            <View style={styles.actionContainer}>
-              <Text style={styles.actionText}>Please navigate to</Text>
-              <TouchableOpacity
-                onPress={goToDashboard}
-                style={styles.dashboardButton}
-                activeOpacity={0.7}>
-                <Text style={styles.dashboardButtonText}>Dashboard</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={goToDashboard}
+              style={styles.retryButton}
+              activeOpacity={0.8}>
+              <Text style={styles.retryButtonText}>Go to Dashboard</Text>
+              <Icon name="arrow-right" size={16} color={Colors.white} />
+            </TouchableOpacity>
           </View>
         </View>
       )}
+
       {filteredData && (
         <ScrollView
           style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}>
           <WardMemberCard wardMember={filteredData} onPress={goToDashboard} />
         </ScrollView>
@@ -135,92 +138,86 @@ export default WardMemberInfoScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#F0F4FF',
   },
   scrollView: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingVertical: 0,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: Colors.white,
+    padding: 16,
   },
   errorCard: {
     backgroundColor: Colors.white,
     borderRadius: 16,
-    padding: 30,
+    padding: 24,
     alignItems: 'center',
-    maxWidth: 400,
-    borderWidth: 2,
-    borderColor: Colors.red,
+    maxWidth: 340,
+    width: '100%',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
+        shadowOffset: {width: 0, height: 6},
         shadowOpacity: 0.1,
         shadowRadius: 12,
       },
       android: {
-        elevation: 4,
+        elevation: 6,
       },
     }),
   },
-  errorIcon: {
-    fontSize: 48,
+  errorIconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
+    borderWidth: 3,
+    borderColor: Colors.yellow,
   },
   errorTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: Colors.red,
-    marginBottom: 12,
+    fontSize: 17,
+    fontWeight: '700',
+    color: Colors.blue,
+    marginBottom: 8,
     textAlign: 'center',
   },
   errorText: {
-    fontSize: 15,
-    color: Colors.black,
+    fontSize: 13,
+    color: '#6B7280',
     textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 22,
+    marginBottom: 20,
+    lineHeight: 20,
   },
-  actionContainer: {
+  retryButton: {
     flexDirection: 'row',
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
     alignItems: 'center',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  actionText: {
-    fontSize: 15,
-    color: Colors.black,
-    marginRight: 8,
-  },
-  dashboardButton: {
-    backgroundColor: Colors.yellow,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
+    gap: 6,
     borderWidth: 2,
-    borderColor: Colors.blue,
+    borderColor: Colors.yellow,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.yellow,
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
       },
       android: {
         elevation: 3,
       },
     }),
   },
-  dashboardButtonText: {
-    color: Colors.indigo,
-    fontSize: 16,
-    fontWeight: 'bold',
+  retryButtonText: {
+    color: Colors.white,
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

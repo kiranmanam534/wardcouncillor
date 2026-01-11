@@ -26,38 +26,93 @@ export default function BottomTabNavigator() {
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarHideOnKeyboard: true,
-
         tabBarStyle: {
-          display: 'flex',
           position: 'absolute',
-          bottom: 10,
-          left: 0,
-          right: 0,
-          elevation: 5,
-          backgroundColor: Colors.primary,
-          borderRadius: 50,
-          margin: 20,
-          height: 60,
+          bottom: 20,
+          left: 20,
+          right: 20,
+          height: 70,
+          backgroundColor: Colors.white,
+          borderRadius: 35,
+          paddingBottom: 0,
+          paddingTop: 0,
+          borderWidth: 0,
+          borderColor: 'transparent',
+          ...Platform.select({
+            ios: {
+              shadowColor: Colors.primary,
+              shadowOffset: {width: 0, height: -2},
+              shadowOpacity: 0.1,
+              shadowRadius: 20,
+            },
+            android: {
+              elevation: 10,
+            },
+          }),
         },
+        tabBarActiveTintColor: Colors.white,
+        tabBarInactiveTintColor: '#6B7280',
         tabBarLabelStyle: {
-          color: Colors.white,
-          fontSize: 15,
-          paddingBottom: Platform.OS == 'ios' ? 0 : 10,
-          marginTop: 16,
+          fontSize: 11,
+          fontWeight: '700',
+          marginTop: -5,
+          marginBottom: 8,
+          letterSpacing: 0.3,
         },
         headerStyle: {
           backgroundColor: Colors.primary,
+          borderBottomWidth: 3,
+          borderBottomColor: Colors.yellow,
+          ...Platform.select({
+            ios: {
+              shadowColor: Colors.blue,
+              shadowOffset: {width: 0, height: 3},
+              shadowOpacity: 0.25,
+              shadowRadius: 6,
+            },
+            android: {
+              elevation: 6,
+            },
+          }),
         },
         headerTitleStyle: {
-          fontSize: 16,
+          fontSize: 19,
+          fontWeight: '800',
+          letterSpacing: 0.5,
         },
-        headerTintColor: Colors.white,
+        headerTintColor: Colors.yellow,
         headerTitleAlign: 'center',
         tabBarShowLabel: true,
         headerShown: true,
         headerRight: () => (
-          <Pressable onPress={handleLogout} style={{paddingRight: 15}}>
-            <FontAwesome name="sign-out" size={25} color={Colors.white} />
+          <Pressable
+            onPress={handleLogout}
+            style={({pressed}) => [
+              {
+                marginRight: 12,
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: pressed ? '#FFD700' : Colors.yellow,
+                borderWidth: 2,
+                borderColor: Colors.white,
+                justifyContent: 'center',
+                alignItems: 'center',
+                ...Platform.select({
+                  ios: {
+                    shadowColor: Colors.yellow,
+                    shadowOffset: {width: 0, height: 2},
+                    shadowOpacity: pressed ? 0.5 : 0.3,
+                    shadowRadius: pressed ? 4 : 3,
+                  },
+                  android: {
+                    elevation: pressed ? 5 : 3,
+                  },
+                }),
+                transform: [{scale: pressed ? 0.9 : 1}],
+              },
+            ]}>
+            <FontAwesome name="sign-out" size={16} color={Colors.blue} />
           </Pressable>
         ),
       })}>
@@ -69,58 +124,35 @@ export default function BottomTabNavigator() {
           tabBarIcon: ({focused}) => (
             <View
               style={{
-                top:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? -10
-                      : 0
-                    : focused
-                    ? -10
-                    : -5,
-                width:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 50
-                      : 30
-                    : focused
-                    ? 60
-                    : 30,
-                height:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 50
-                      : 30
-                    : focused
-                    ? 60
-                    : 30,
-                borderRadius:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 25
-                      : 15
-                    : focused
-                    ? 30
-                    : 15,
+                position: 'absolute',
+                top: -30,
+                width: 70,
+                height: 70,
+                borderRadius: 35,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: focused ? Colors.white : Colors.lightgray,
+                backgroundColor: focused ? Colors.yellow : Colors.primary,
+                borderWidth: 5,
+                borderColor: Colors.white,
+                ...Platform.select({
+                  ios: {
+                    shadowColor: focused ? Colors.yellow : Colors.primary,
+                    shadowOffset: {width: 0, height: 4},
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: {
+                    elevation: 8,
+                  },
+                }),
               }}>
               <MaterialCommunityIcons
-                name="view-dashboard-outline"
-                size={
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 40
-                      : 25
-                    : focused
-                    ? 40
-                    : 25
-                }
-                color={focused ? Colors.blue : Colors.red}
+                name="view-dashboard"
+                size={32}
+                color={focused ? Colors.blue : Colors.white}
               />
             </View>
           ),
-          tabBarIconStyle: {},
         }}
       />
       <Tab.Screen
@@ -128,59 +160,39 @@ export default function BottomTabNavigator() {
         component={MainDashboardScreen}
         options={{
           tabBarLabel: 'Home',
-          // tabBarLabelStyle:{
-          //   marginTop:17,
-          //   color:Colors.white
-          // },
           headerShown: true,
           tabBarIcon: ({focused}) => (
             <View
               style={{
-                top:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? -10
-                      : 0
-                    : focused
-                    ? -10
-                    : -5,
-                width:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 50
-                      : 30
-                    : focused
-                    ? 60
-                    : 30,
-                height:
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 50
-                      : 30
-                    : focused
-                    ? 60
-                    : 30,
-                borderRadius: Platform.OS === 'ios' ? 25 : 30,
+                position: 'absolute',
+                top: -30,
+                width: 70,
+                height: 70,
+                borderRadius: 35,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: Colors.lightgray,
+                backgroundColor: focused ? Colors.yellow : Colors.primary,
+                borderWidth: 5,
+                borderColor: Colors.white,
+                ...Platform.select({
+                  ios: {
+                    shadowColor: focused ? Colors.yellow : Colors.primary,
+                    shadowOffset: {width: 0, height: 4},
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                  },
+                  android: {
+                    elevation: 8,
+                  },
+                }),
               }}>
               <MaterialCommunityIcons
                 name="home"
-                size={
-                  Platform.OS === 'ios'
-                    ? focused
-                      ? 40
-                      : 25
-                    : focused
-                    ? 40
-                    : 25
-                }
-                color={focused ? Colors.blue : Colors.red}
+                size={32}
+                color={focused ? Colors.blue : Colors.white}
               />
             </View>
           ),
-          tabBarIconStyle: {},
         }}
       />
     </Tab.Navigator>

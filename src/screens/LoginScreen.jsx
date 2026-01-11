@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   Alert,
+  BackHandler,
   Dimensions,
   Image,
   Platform,
@@ -13,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {TextInput} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -36,27 +37,31 @@ export default function LoginScreen({route}) {
 
   const {items, isLoading, error} = useSelector(state => state.loginReducer);
 
-  const isLoggedIn = useSelector(state => state.loginReducer.isLoggedIn);
   const [isShowPwd, setIsShowPwd] = useState(true);
   const [click, setClick] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(
-    useSelector(state => (state.loginReducer.error ? true : false)),
-  );
-  // const [username, setUsername] = useState(title === 'community member' ? 'kannavenkateswarlu@gmail.com' : 'councillor2@gmail.com');
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [username, setUsername] = useState('COESolarDev08@ekurhuleni.gov.za');
   const [password, setPassword] = useState('#Apps2024!?');
-  // const [username, setUsername] = useState(
-  //   title === 'community member'
-  //     ? 'kannavenkateswarlu29@gmail.com'
-  //     : 'jai1970@gmail.com',
-  // );
-  // const [password, setPassword] = useState('admin');
+  const loginAttemptCount = useRef(0);
 
-  console.log(showErrorModal, error);
+  console.log(
+    '>>> RENDER - showErrorModal:',
+    showErrorModal,
+    'error:',
+    error,
+    'isLoading:',
+    isLoading,
+  );
 
-  const handleLogin = () => {
-    console.log(username);
+  // Handle login button press
+  const handleLogin = async () => {
+    console.log('>>> LOGIN CLICKED - Attempt #', loginAttemptCount.current + 1);
+    // Close any existing error modal
     setShowErrorModal(false);
+    loginAttemptCount.current += 1;
+    console.log('>>> Closed modal, dispatching login API');
+
+    // Dispatch login API
     dispatch(
       loginApi({
         username: username,
@@ -68,162 +73,200 @@ export default function LoginScreen({route}) {
       }),
     );
   };
-  // useEffect(() => {
-  //   if (!items & !isLoading && error) {
-  //     setShowErrorModal(true);
-  //   }
-  // }, [error, isLoading]);
 
+  // Handle successful login
   useEffect(() => {
-    dispatch(authSliceActions.logout());
-    if (items) {
-      // navigation.navigate('Dashboard');
+    if (items && !isLoading) {
+      console.log('Login successful');
       dispatch(authSliceActions.login(items));
     }
-  }, [items]);
+  }, [items, isLoading, dispatch]);
 
+  // Handle login error - show modal immediately when error appears after loading
   useEffect(() => {
-    if (!isLoading && error) {
-      // setShowErrorModal(true);
-      Alert.alert(
-        'Error',
-        error == 'Network error!' ? error : 'username and password wrong.',
-      );
-    }
-  }, [error, isLoading]);
+    console.log('=== ERROR EFFECT ===');
+    console.log('error:', error);
+    console.log('isLoading:', isLoading);
+    console.log('loginAttemptCount:', loginAttemptCount.current);
 
+    if (error && !isLoading) {
+      console.log('✓ Error detected after loading - showing modal immediately');
+      // Use setTimeout to ensure state updates happen after render
+      setTimeout(() => {
+        setShowErrorModal(true);
+        console.log('✓ showErrorModal set to TRUE');
+      }, 100);
+    }
+    console.log('====================');
+  }, [error, isLoading, loginAttemptCount.current]);
+
+  // Close error modal and clear error from Redux
   const closeModal = () => {
-    dispatch(authSliceActions.logout());
-    setTimeout(() => {
-      setShowErrorModal(false);
-    }, 500);
+    console.log('>>> CLOSE MODAL CALLED');
+    setShowErrorModal(false);
+    dispatch(authSliceActions.clearError());
+    console.log('>>> Modal closed and error cleared');
   };
 
   const showPwd = () => {
     setIsShowPwd(!isShowPwd);
   };
+
+  // Disable back button/gesture navigation
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        // Return true to prevent default back behavior
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, []),
+  );
+
+  console.log('>>> ABOUT TO RENDER ErrorModal - visible:', showErrorModal);
   return (
     <SafeAreaView style={styles.container}>
       <LoaderModal visible={isLoading} loadingText="Loading..." />
 
-      <ErrorModal
-        visible={showErrorModal}
-        ErrorModalText={'username and password wrong.'}
-        closeModal={closeModal}
-        onPress={() => {
-          closeModal();
-        }}
-      />
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        <View style={styles.headerSection}>
-          <View style={styles.logoWrapper}>
-            <View style={styles.box}>
-              <Image source={logo} style={styles.img} />
-            </View>
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{title}</Text>
-            <View style={styles.titleUnderline} />
-          </View>
-        </View>
+      {!isLoading && (
+        <ErrorModal
+          key={error ? 'has-error' : 'no-error'}
+          visible={showErrorModal}
+          ErrorModalText={
+            error === 'Network error!'
+              ? 'Network error!'
+              : 'Username and password wrong.'
+          }
+          closeModal={closeModal}
+          onPress={() => {
+            closeModal();
+          }}
+        />
+      )}
 
-        <View style={styles.formCard}>
-          <View style={styles.inputView}>
-            <View style={styles.inputContainer}>
+      <View style={styles.gradientBackground}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          bounces={false}>
+          {/* Compact Header */}
+          <View style={styles.headerSection}>
+            <View style={styles.logoContainer}>
+              <Image source={logo} style={styles.logo} />
+            </View>
+            <Text style={styles.welcomeText}>Welcome Back</Text>
+            <Text style={styles.subtitle}>Sign in to continue as {title}</Text>
+          </View>
+
+          {/* Compact Login Form */}
+          <View style={styles.formCard}>
+            <View style={styles.inputWrapper}>
+              <Icon
+                name="user"
+                size={18}
+                color={Colors.primary}
+                style={styles.inputIconLeft}
+              />
               <TextInput
-                mode="outlined"
-                label="Email or Username"
+                mode="flat"
+                placeholder="Email or Username"
                 style={styles.input}
                 value={username}
                 onChangeText={text => setUsername(text)}
                 autoCorrect={false}
                 autoCapitalize="none"
-                outlineColor={Colors.blue}
-                activeOutlineColor={Colors.primary}
+                underlineColor="transparent"
+                activeUnderlineColor="transparent"
                 theme={{
                   colors: {
-                    primary: Colors.primary,
+                    primary: 'transparent',
                     text: Colors.black,
+                    placeholder: '#9CA3AF',
                   },
-                  roundness: 12,
                 }}
               />
-              <View style={styles.inputIcon}>
-                <Icon name="envelope-o" size={22} color={Colors.blue} />
-              </View>
             </View>
 
-            <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <Icon
+                name="lock"
+                size={18}
+                color={Colors.primary}
+                style={styles.inputIconLeft}
+              />
               <TextInput
-                mode="outlined"
-                label="Password"
+                mode="flat"
+                placeholder="Password"
                 style={styles.input}
                 secureTextEntry={isShowPwd}
                 value={password}
                 onChangeText={setPassword}
                 autoCorrect={false}
                 autoCapitalize="none"
-                outlineColor={Colors.blue}
-                activeOutlineColor={Colors.primary}
+                underlineColor="transparent"
+                activeUnderlineColor="transparent"
                 theme={{
                   colors: {
-                    primary: Colors.primary,
+                    primary: 'transparent',
                     text: Colors.black,
+                    placeholder: '#9CA3AF',
                   },
-                  roundness: 12,
                 }}
               />
               <TouchableOpacity
                 onPress={showPwd}
-                style={styles.inputIcon}
+                style={styles.eyeIcon}
                 activeOpacity={0.7}>
                 <Icon
-                  name={isShowPwd ? 'eye' : 'eye-slash'}
-                  size={22}
-                  color={Colors.blue}
+                  name={isShowPwd ? 'eye-slash' : 'eye'}
+                  size={18}
+                  color="#9CA3AF"
                 />
               </TouchableOpacity>
             </View>
-          </View>
-          <View style={styles.rememberView}>
-            <View style={styles.switch}>
-              <Switch
-                value={click}
-                onValueChange={setClick}
-                trackColor={{true: Colors.primary, false: Colors.blue}}
-                thumbColor={click ? Colors.yellow : Colors.white}
-              />
-              <Text style={styles.rememberText}>Remember Me</Text>
+
+            <View style={styles.optionsRow}>
+              <TouchableOpacity
+                style={styles.rememberMe}
+                onPress={() => setClick(!click)}
+                activeOpacity={0.7}>
+                <View style={[styles.checkbox, click && styles.checkboxActive]}>
+                  {click && <Icon name="check" size={14} color={Colors.blue} />}
+                </View>
+                <Text style={styles.rememberText}>Remember me</Text>
+              </TouchableOpacity>
             </View>
+
+            <Pressable
+              style={({pressed}) => [
+                styles.button,
+                pressed && styles.buttonPressed,
+              ]}
+              onPress={() => handleLogin()}>
+              <Text style={styles.buttonText}>Sign In</Text>
+              <Icon name="arrow-right" size={18} color={Colors.blue} />
+            </Pressable>
           </View>
 
-          <Pressable
-            style={({pressed}) => [
-              styles.button,
-              pressed && styles.buttonPressed,
-            ]}
-            onPress={() => handleLogin()}>
-            <Icon name="sign-in" size={20} color={Colors.indigo} />
-            <Text style={styles.buttonText}>SIGN IN</Text>
-          </Pressable>
-        </View>
-
-        {title === 'community member' && (
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Don't have an account?</Text>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('SignUp', {title: title});
-              }}
-              activeOpacity={0.7}>
-              <Text style={styles.signup}>Sign Up</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </ScrollView>
+          {title === 'community member' && (
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>New here? </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('SignUp', {title: title});
+                }}
+                activeOpacity={0.7}>
+                <Text style={styles.signup}>Create Account</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -231,134 +274,144 @@ export default function LoginScreen({route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#F0F4FF',
+  },
+  gradientBackground: {
+    flex: 1,
+    backgroundColor: '#F0F4FF',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 30,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   headerSection: {
     alignItems: 'center',
-    paddingTop: 30,
-    paddingBottom: 20,
+    paddingTop: 40,
+    paddingBottom: 24,
+  },
+  logoContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: Colors.white,
-  },
-  logoWrapper: {
-    marginBottom: 20,
-  },
-  box: {
-    width: screenWidth / 3,
-    height: screenWidth / 3,
-    borderWidth: 3,
-    borderColor: Colors.yellow,
-    borderRadius: screenWidth / 6,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.white,
-    overflow: 'hidden',
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
     ...Platform.select({
       ios: {
         shadowColor: Colors.blue,
         shadowOffset: {width: 0, height: 4},
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
       },
       android: {
         elevation: 6,
       },
     }),
   },
-  img: {
-    width: screenWidth / 3.2,
-    height: screenWidth / 3.2,
-    resizeMode: 'cover',
-    borderRadius: screenWidth / 6.4,
+  logo: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
-  titleContainer: {
-    alignItems: 'center',
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.blue,
+    marginBottom: 4,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 14,
     color: Colors.primary,
-    letterSpacing: 1.5,
-  },
-  titleUnderline: {
-    width: 60,
-    height: 3,
-    backgroundColor: Colors.yellow,
-    borderRadius: 2,
-    marginTop: 8,
+    fontWeight: '400',
   },
   formCard: {
     backgroundColor: Colors.white,
-    marginHorizontal: 20,
-    marginTop: 24,
-    borderRadius: 16,
-    paddingVertical: 30,
-    paddingHorizontal: 20,
+    borderRadius: 20,
+    padding: 24,
+    marginTop: 8,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.08,
-        shadowRadius: 12,
+        shadowRadius: 16,
       },
       android: {
         elevation: 4,
       },
     }),
   },
-  inputView: {
-    gap: 20,
-    marginBottom: 16,
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8FAFF',
+    borderRadius: 12,
+    marginBottom: 14,
+    paddingHorizontal: 14,
+    height: 54,
+    borderWidth: 1.5,
+    borderColor: '#C8D9F7',
   },
-  inputContainer: {
-    position: 'relative',
+  inputIconLeft: {
+    marginRight: 10,
   },
   input: {
-    height: 56,
-    backgroundColor: Colors.white,
+    flex: 1,
+    backgroundColor: 'transparent',
     fontSize: 15,
+    height: 54,
+    paddingHorizontal: 0,
   },
-  inputIcon: {
-    position: 'absolute',
-    right: 15,
-    top: 17,
-    zIndex: 1,
+  eyeIcon: {
+    padding: 8,
   },
-  rememberView: {
+  optionsRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
-  switch: {
+  rememberMe: {
     flexDirection: 'row',
-    gap: 8,
     alignItems: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  checkboxActive: {
+    backgroundColor: Colors.yellow,
+    borderColor: Colors.yellow,
   },
   rememberText: {
     fontSize: 14,
-    color: Colors.black,
-    fontWeight: '500',
+    color: Colors.blue,
   },
   button: {
     backgroundColor: Colors.yellow,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 2,
-    borderColor: Colors.blue,
+    height: 54,
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 8,
+    borderWidth: 2,
+    borderColor: Colors.blue,
     ...Platform.select({
       ios: {
         shadowColor: Colors.yellow,
         shadowOffset: {width: 0, height: 4},
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.35,
         shadowRadius: 8,
       },
       android: {
@@ -367,30 +420,26 @@ const styles = StyleSheet.create({
     }),
   },
   buttonPressed: {
-    opacity: 0.8,
+    opacity: 0.85,
     transform: [{scale: 0.98}],
   },
   buttonText: {
-    color: Colors.indigo,
-    fontSize: 17,
-    fontWeight: 'bold',
-    letterSpacing: 1.5,
+    color: Colors.blue,
+    fontSize: 16,
+    fontWeight: '700',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 24,
-    gap: 6,
   },
   footerText: {
-    color: Colors.black,
-    fontSize: 15,
+    fontSize: 14,
+    color: Colors.blue,
   },
   signup: {
+    fontSize: 14,
     color: Colors.primary,
-    fontSize: 16,
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
 });

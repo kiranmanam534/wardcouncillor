@@ -425,56 +425,58 @@ function HotspotScreen({route}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.box}>
-          <Image source={logo} style={styles.img} />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        <View style={styles.headerSection}>
+          <View style={styles.iconContainer}>
+            <MaterialIcon name="location-on" size={32} color={Colors.yellow} />
+          </View>
+          <Text style={styles.title}>
+            {editItem ? 'Update' : 'Create'} Hotspot
+          </Text>
+          <Text style={styles.subtitle}>
+            {editItem
+              ? 'Edit hotspot information'
+              : 'Report a new crime hotspot'}
+          </Text>
         </View>
-        <Text style={styles.title}>
-          {editItem ? 'Update' : 'Create'} Hotspot
-        </Text>
-        <View style={styles.inputView}>
-          <Pressable
-            onPress={() => {
-              toggleDatePicker('crimE_DATE');
-            }}>
-            <TextInput
-              mode="outlined"
-              label={'Crime Date'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="2024-01-01"
-              value={formValues?.crimE_DATE}
-              onChangeText={value => handleInputChange('crimE_DATE', value)}
-              placeholderTextColor={'#11182744'}
-              editable={false}
-              onPressIn={() => {
-                toggleDatePicker('crimE_DATE');
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Icon name="calendar" size={25} color={Colors.blue} />
-            </View>
-          </Pressable>
-          {errors?.crimE_DATE && (
-            <Text style={{color: 'red'}}>{errors?.crimE_DATE}</Text>
-          )}
-        </View>
-        <View style={{position: 'relative', zIndex: 1}}>
-          <View style={[styles.inputView]}>
-            {/* {Platform.OS == 'android' && */}
+
+        <View style={styles.formCard}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Crime Date *</Text>
+            <Pressable
+              onPress={() => toggleDatePicker('crimE_DATE')}
+              style={styles.inputWrapper}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Select date"
+                value={formValues?.crimE_DATE}
+                onChangeText={value => handleInputChange('crimE_DATE', value)}
+                placeholderTextColor={'#9CA3AF'}
+                editable={false}
+                onPressIn={() => toggleDatePicker('crimE_DATE')}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <Icon name="calendar" size={20} color={Colors.primary} />
+              </View>
+            </Pressable>
+            {errors?.crimE_DATE && (
+              <Text style={styles.errorText}>{errors?.crimE_DATE}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Location *</Text>
             <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
               <TextInput
                 mode="outlined"
-                label={'Location'}
-                style={{backgroundColor: Colors.white}}
-                placeholder="Location"
+                style={styles.textInput}
+                placeholder="Tap to select location"
                 value={formValues?.location ? formValues?.location : ''}
                 autoCorrect={false}
                 keyboardType="default"
@@ -482,199 +484,153 @@ function HotspotScreen({route}) {
                 multiline
                 editable={false}
                 onChangeText={value => handleInputChange('location', value)}
-                placeholderTextColor={'#11182744'}
-                onFocus={openModal} // Trigger modal when focused
+                placeholderTextColor={'#9CA3AF'}
+                onFocus={openModal}
                 onPress={openModal}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
               />
-
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 10,
-                  top: 5,
-                  bottom: 0,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+              <View style={styles.inputIcon}>
                 <MaterialIcon
                   name="my-location"
-                  size={25}
-                  color={Colors.blue}
+                  size={20}
+                  color={Colors.primary}
                 />
               </View>
             </TouchableOpacity>
-            {/* } */}
-
-            {/* {Platform.OS == 'ios' &&
-            <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
-              <GooglePlacesAutocomplete
-                GooglePlacesDetailsQuery={{ fields: "geometry" }}
-                fetchDetails={true} // you need this to fetch the details object onPress
-                placeholder="Search"
-                query={{
-                  key: "AIzaSyAI6lFoXVFONS76oYT7XmjzOypAvJq6Kb4",
-                  language: "en", // language of the results
-                }}
-                listViewDisplayed={true}
-                onPress={(data, details = null) => {
-                  console.log("data", data);
-                  console.log("details", details);
-                  console.log(JSON.stringify(details?.geometry?.location));
-                  console.log('lat', details?.geometry?.location?.lat);
-                  console.log('lat', details?.geometry?.location?.lng);
-                  formValues.latitude = details?.geometry?.location?.lat.toString();
-                  formValues.longitude = details?.geometry?.location?.lng.toString();
-                  handleInputChange('location', data?.description)
-                }}
-                onFail={(error) => console.error(error)}
-
-              />
-            </View>
-          } */}
-
             {errors?.location && (
-              <Text style={{color: 'red'}}>{errors?.location}</Text>
+              <Text style={styles.errorText}>{errors?.location}</Text>
             )}
           </View>
-        </View>
 
-        <View style={styles.inputView}>
-          <RNPickerSelect
-            placeholder={{label: 'Crime type...', value: null}}
-            items={sports1}
-            onValueChange={value => handleInputChange('crimE_TYPE', value)}
-            style={{
-              ...pickerSelectStyles,
-              iconContainer: {
-                top: 10,
-                right: 12,
-              },
-            }}
-            value={formValues?.crimE_TYPE ? formValues?.crimE_TYPE : null}
-            useNativeAndroidPickerStyle={false}
-            textInputProps={{underlineColor: 'yellow'}}
-            Icon={() => {
-              return (
-                <MaterialIcon
-                  name="keyboard-arrow-down"
-                  size={24}
-                  color="gray"
-                />
-              );
-            }}
-          />
-          {/* {Platform.OS == 'android' &&
-              <Picker
-                selectedValue={formValues.crimE_TYPE}
-                onValueChange={value => handleInputChange('crimE_TYPE', value)}
-                mode="dialog"
-                itemStyle={styles.itemStyle}
-                selectionColor={Colors.primary}>
-                <Picker.Item label={'Crime Type'} value="" />
-                {Categories?.map((category) => (
-                  <Picker.Item key={category.id} label={category.name} value={category.name} />
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Crime Type *</Text>
+            <RNPickerSelect
+              placeholder={{label: 'Select crime type...', value: null}}
+              items={sports1}
+              onValueChange={value => handleInputChange('crimE_TYPE', value)}
+              style={{
+                ...pickerSelectStyles,
+                iconContainer: {
+                  top: 12,
+                  right: 12,
+                },
+              }}
+              value={formValues?.crimE_TYPE ? formValues?.crimE_TYPE : null}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return (
+                  <MaterialIcon
+                    name="keyboard-arrow-down"
+                    size={24}
+                    color={Colors.primary}
+                  />
+                );
+              }}
+            />
+            {errors?.crimE_TYPE && (
+              <Text style={styles.errorText}>{errors?.crimE_TYPE}</Text>
+            )}
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Crime Details *</Text>
+            <TextInput
+              mode="outlined"
+              numberOfLines={4}
+              multiline={true}
+              style={styles.textInput}
+              placeholder="Describe the incident..."
+              value={formValues?.crimE_DETAILS ? formValues?.crimE_DETAILS : ''}
+              autoCorrect={false}
+              keyboardType="default"
+              autoCapitalize="none"
+              onChangeText={value => handleInputChange('crimE_DETAILS', value)}
+              placeholderTextColor={'#9CA3AF'}
+              outlineColor="#E5E7EB"
+              activeOutlineColor={Colors.primary}
+              dense
+            />
+            {errors?.crimE_DETAILS && (
+              <Text style={styles.errorText}>{errors?.crimE_DETAILS}</Text>
+            )}
+          </View>
+
+          {selectedImages.length > 0 && (
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Attached Images</Text>
+              <View style={styles.imageGrid}>
+                {selectedImages.map((subItem, index) => (
+                  <View key={index} style={styles.imageItem}>
+                    <TouchableOpacity
+                      onPress={() => viewImageonModal(subItem[0].uri)}
+                      activeOpacity={0.8}>
+                      <Image
+                        source={{uri: subItem[0].uri}}
+                        style={styles.imagePreview}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => removeSelectedImage(index)}
+                      style={styles.removeImageButton}>
+                      <Ionicon
+                        name={'close-circle'}
+                        size={24}
+                        color={Colors.yellow}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 ))}
-
-              </Picker>
-            } */}
-          {/* <TextInput
-            mode="outlined"
-            label={'Crime Type'}
-            style={{ backgroundColor: Colors.white }}
-            placeholder='Crime Type'
-            value={
-              formValues.crimE_TYPE
-            }
-            autoCorrect={false}
-            keyboardType='default'
-            autoCapitalize="none"
-            onChangeText={value => handleInputChange('crimE_TYPE', value)}
-            placeholderTextColor={'#11182744'}
-
-          /> */}
-          {errors?.crimE_TYPE && (
-            <Text style={{color: 'red'}}>{errors?.crimE_TYPE}</Text>
-          )}
-          {/* </View> */}
-        </View>
-
-        <View style={styles.inputView}>
-          <TextInput
-            mode="outlined"
-            label={'Crime Details'}
-            numberOfLines={5}
-            multiline={true}
-            style={{backgroundColor: Colors.white}}
-            placeholder="Crime Details"
-            value={formValues?.crimE_DETAILS ? formValues?.crimE_DETAILS : ''}
-            autoCorrect={false}
-            keyboardType="default"
-            autoCapitalize="none"
-            onChangeText={value => handleInputChange('crimE_DETAILS', value)}
-            placeholderTextColor={'#11182744'}
-            height={100}
-            textAlignVertical="top"
-          />
-          {errors?.crimE_DETAILS && (
-            <Text style={{color: 'red'}}>{errors?.crimE_DETAILS}</Text>
-          )}
-        </View>
-
-        {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, {position: 'relative'}]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    viewImageonModal(subItem[0].uri);
-                  }}>
-                  <Image
-                    source={{uri: subItem[0].uri}}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => removeSelectedImage(index)}
-                  style={{position: 'absolute', right: 0}}>
-                  <Ionicon
-                    name={'close-circle-outline'}
-                    size={25}
-                    color={Colors.blue}
-                  />
-                </TouchableOpacity>
               </View>
-            ))}
-          </View>
-        ))}
-        {editItem ? null : (
-          <View style={styles.buttonView}>
-            <Pressable
-              style={styles.CameraButton}
-              onPress={() => setShowCameraModal(true)}>
-              <Icon name="camera" size={25} color={Colors.blue} />
-              <Text style={[styles.CameraText, {paddingLeft: 10}]}>
-                Capture images
-              </Text>
-            </Pressable>
-          </View>
-        )}
+            </View>
+          )}
 
-        <View style={styles.buttonView}>
-          <Pressable
-            style={styles.button}
+          {!editItem && (
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={() => setShowCameraModal(true)}
+              activeOpacity={0.8}>
+              <Icon name="camera" size={20} color={Colors.primary} />
+              <Text style={styles.captureButtonText}>Add Photos</Text>
+              <View style={styles.captureBadge}>
+                <Text style={styles.captureBadgeText}>
+                  {selectedImages.length}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              isSubmitted && styles.submitButtonDisabled,
+            ]}
             onPress={() => {
               if (!isSubmitted) {
                 handleSubmit();
               }
-            }}>
-            <Text style={styles.buttonText}>
-              {isSubmitted && (
-                <ActivityIndicator size={20} color={Colors.white} />
-              )}{' '}
-              {editItem ? 'UPDATE' : 'SAVE'}
-            </Text>
-          </Pressable>
+            }}
+            activeOpacity={0.8}
+            disabled={isSubmitted}>
+            {isSubmitted ? (
+              <ActivityIndicator size={22} color={Colors.white} />
+            ) : (
+              <>
+                <MaterialIcon
+                  name={editItem ? 'check-circle' : 'save'}
+                  size={20}
+                  color={Colors.white}
+                />
+                <Text style={styles.submitButtonText}>
+                  {editItem ? 'UPDATE HOTSPOT' : 'SAVE HOTSPOT'}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
         <BinaryImageModal
@@ -767,25 +723,204 @@ export default HotspotScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 10,
-    position: 'relative',
+    backgroundColor: '#F0F4FF',
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  headerSection: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(238, 175, 44, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    borderWidth: 3,
+    borderColor: Colors.yellow,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '800',
+    color: Colors.white,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
-    paddingVertical: 20,
+  },
+  formCard: {
+    backgroundColor: Colors.white,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     color: Colors.primary,
+    marginBottom: 8,
   },
-  inputView: {
-    gap: 10,
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 5,
+  inputWrapper: {
+    position: 'relative',
   },
-  forgetText: {
+  textInput: {
+    backgroundColor: Colors.white,
     fontSize: 14,
+  },
+  inputIcon: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#EF4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  imageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 8,
+  },
+  imageItem: {
+    position: 'relative',
+    width: (screenWidth - 88) / 3,
+    height: (screenWidth - 88) / 3,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+  },
+  captureButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F0F4FF',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderStyle: 'dashed',
+    gap: 8,
+    marginTop: 8,
+  },
+  captureButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: Colors.primary,
+  },
+  captureBadge: {
+    backgroundColor: Colors.yellow,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
+  },
+  captureBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+  actionButtons: {
+    paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  submitButton: {
+    flexDirection: 'row',
+    backgroundColor: Colors.primary,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  submitButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  pickerButton: {
+    paddingHorizontal: 20,
+  },
+  datePicker: {
+    height: 300,
+    bottom: 50,
   },
   button: {
     backgroundColor: Colors.yellow,
@@ -801,153 +936,29 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  buttonView: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  optionsText: {
-    textAlign: 'center',
-    paddingVertical: 10,
-    color: Colors.primary,
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  mediaIcons: {
-    flexDirection: 'row',
-    gap: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 23,
-  },
-  icons: {
-    width: 40,
-    height: 40,
-  },
-  footerText: {
-    textAlign: 'center',
-    color: Colors.red,
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  signup: {
-    color: Colors.primary,
-    fontSize: 16,
-  },
-
-  box: {
-    width: screenWidth / 4,
-    height: screenWidth / 4,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.primary,
-    elevation: 1,
-    alignSelf: 'center',
-  },
-  img: {
-    width: screenWidth / 3 - 60,
-    height: screenWidth / 3 - 60,
-    resizeMode: 'contain',
-  },
-  button1: {
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 50,
-    marginTop: 10,
-    marginBottom: 15,
-    backgroundColor: '#075985',
-  },
-  buttonText1: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#fff',
-  },
-  pickerButton: {
-    paddingHorizontal: 20,
-  },
-  datePicker: {
-    height: 300,
-    bottom: 50,
-  },
-
-  dropdown: {
-    width: '100%',
-    height: 50,
-    paddingLeft: 7,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    borderRadius: 7,
-    color: Colors.black,
-    backgroundColor: Colors.white,
-  },
-  itemStyle: {
-    fontSize: 16,
-    color: 'black', // Default text color
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    paddingHorizontal: 20,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    borderRadius: 7,
-    color: Colors.black,
-  },
-  CameraButton: {
-    backgroundColor: Colors.white,
-    height: 45,
-    borderColor: Colors.black,
-    borderWidth: 0.5,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 10,
-  },
-  CameraText: {
-    color: Colors.primary,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
-  item: {
-    flex: 1,
-    marginHorizontal: 5,
-    padding: 10,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
-  },
 });
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 0.5,
-    borderColor: Colors.black,
-    borderRadius: 4,
+    fontSize: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
     color: Colors.black,
-    paddingRight: 30, // to ensure the text is never behind the icon
+    paddingRight: 40,
     backgroundColor: Colors.white,
   },
   inputAndroid: {
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 0.5,
-    borderColor: Colors.black,
-    borderRadius: 4,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
     color: Colors.black,
-    paddingRight: 30, // to ensure the text is never behind the icon
+    paddingRight: 40,
     backgroundColor: Colors.white,
   },
 });

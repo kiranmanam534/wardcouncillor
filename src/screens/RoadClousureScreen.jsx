@@ -485,213 +485,179 @@ function RoadClousureScreen({route}) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <ErrorModal
-                visible={showErrorModal}
-                ErrorModalText={statusCode && (statusCode !== 200 ? 'Something went wrong!' : error)}
-                closeModal={closeModal}
-                onPress={() => {
-                    dispatch(createRoadClosureActions.clear());
-                    if (statusCode === 200) {
-                        setFormValues();
-                        setSelectedImages([])
-                        setErrors()
-                        closeModal();
-                    } else {
-                        closeModal();
-                    }
-                }}
-            /> */}
-      <ScrollView>
-        <View style={styles.box}>
-          <Image source={logo} style={styles.img} />
-        </View>
-        <Text style={styles.title}>
-          {editItem ? 'Edit ' : 'Create '} Road Closure
-        </Text>
-        <View style={styles.inputView}>
-          <Pressable
-            onPress={() => {
-              toggleDatePicker('roadclouseR_STARTDATE');
-            }}>
-            <TextInput
-              mode="outlined"
-              label={'Start Date'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="2024-01-01"
-              value={formValues?.roadclouseR_STARTDATE}
-              onChangeText={value =>
-                handleInputChange('roadclouseR_STARTDATE', value)
-              }
-              placeholderTextColor={'#11182744'}
-              editable={false}
-              onPressIn={() => {
-                toggleDatePicker('roadclouseR_STARTDATE');
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Icon name="calendar" size={25} color={Colors.blue} />
-            </View>
-          </Pressable>
-          {errors?.roadclouseR_STARTDATE && (
-            <Text style={{color: 'red'}}>{errors?.roadclouseR_STARTDATE}</Text>
-          )}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}>
+        <View style={styles.headerSection}>
+          <View style={styles.iconContainer}>
+            <MaterialIcon name="block" size={32} color={Colors.yellow} />
+          </View>
+          <Text style={styles.title}>
+            {editItem ? 'Update' : 'Create'} Road Closure
+          </Text>
+          <Text style={styles.subtitle}>
+            {editItem
+              ? 'Edit road closure information'
+              : 'Report a new road closure'}
+          </Text>
         </View>
 
-        <View style={styles.inputView}>
-          <Pressable
-            onPress={() => {
-              toggleTimePicker('roadclouseR_STARTTIME');
-            }}>
-            <TextInput
-              mode="outlined"
-              label={'Start Time'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="10:30 AM/PM"
-              value={formValues?.roadclouseR_STARTTIME}
-              onChangeText={value =>
-                handleInputChange('roadclouseR_STARTTIME', value)
-              }
-              placeholderTextColor={'#11182744'}
-              editable={false}
-              onPressIn={() => {
-                toggleTimePicker('roadclouseR_STARTTIME');
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <MaterialIcon name="timer" size={25} color={Colors.blue} />
-            </View>
-          </Pressable>
+        <View style={styles.formCard}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Start Date *</Text>
+            <Pressable
+              onPress={() => toggleDatePicker('roadclouseR_STARTDATE')}
+              style={styles.inputWrapper}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Select start date"
+                value={formValues?.roadclouseR_STARTDATE}
+                onChangeText={value =>
+                  handleInputChange('roadclouseR_STARTDATE', value)
+                }
+                placeholderTextColor={'#9CA3AF'}
+                editable={false}
+                onPressIn={() => toggleDatePicker('roadclouseR_STARTDATE')}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <Icon name="calendar" size={20} color={Colors.primary} />
+              </View>
+            </Pressable>
+            {errors?.roadclouseR_STARTDATE && (
+              <Text style={styles.errorText}>
+                {errors?.roadclouseR_STARTDATE}
+              </Text>
+            )}
+          </View>
 
-          {errors?.roadclouseR_STARTTIME && (
-            <Text style={{color: 'red'}}>{errors?.roadclouseR_STARTTIME}</Text>
-          )}
-        </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Start Time *</Text>
+            <Pressable
+              onPress={() => toggleTimePicker('roadclouseR_STARTTIME')}
+              style={styles.inputWrapper}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Select start time"
+                value={formValues?.roadclouseR_STARTTIME}
+                onChangeText={value =>
+                  handleInputChange('roadclouseR_STARTTIME', value)
+                }
+                placeholderTextColor={'#9CA3AF'}
+                editable={false}
+                onPressIn={() => toggleTimePicker('roadclouseR_STARTTIME')}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <MaterialIcon name="timer" size={20} color={Colors.primary} />
+              </View>
+            </Pressable>
+            {errors?.roadclouseR_STARTTIME && (
+              <Text style={styles.errorText}>
+                {errors?.roadclouseR_STARTTIME}
+              </Text>
+            )}
+          </View>
 
-        <View style={styles.inputView}>
-          <Pressable
-            onPress={() => {
-              toggleDatePicker('roadclouseR_ENDDATE');
-            }}>
-            <TextInput
-              mode="outlined"
-              label={'End Date'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="2024-01-01"
-              value={formValues?.roadclouseR_ENDDATE}
-              onChangeText={value =>
-                handleInputChange('roadclouseR_ENDDATE', value)
-              }
-              placeholderTextColor={'#11182744'}
-              editable={false}
-              onPressIn={() => {
-                toggleDatePicker('roadclouseR_ENDDATE');
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Icon name="calendar" size={25} color={Colors.blue} />
-            </View>
-          </Pressable>
-          {errors?.roadclouseR_ENDDATE && (
-            <Text style={{color: 'red'}}>{errors?.roadclouseR_ENDDATE}</Text>
-          )}
-        </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>End Date *</Text>
+            <Pressable
+              onPress={() => toggleDatePicker('roadclouseR_ENDDATE')}
+              style={styles.inputWrapper}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Select end date"
+                value={formValues?.roadclouseR_ENDDATE}
+                onChangeText={value =>
+                  handleInputChange('roadclouseR_ENDDATE', value)
+                }
+                placeholderTextColor={'#9CA3AF'}
+                editable={false}
+                onPressIn={() => toggleDatePicker('roadclouseR_ENDDATE')}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <Icon name="calendar" size={20} color={Colors.primary} />
+              </View>
+            </Pressable>
+            {errors?.roadclouseR_ENDDATE && (
+              <Text style={styles.errorText}>
+                {errors?.roadclouseR_ENDDATE}
+              </Text>
+            )}
+          </View>
 
-        <View style={styles.inputView}>
-          <Pressable
-            onPress={() => {
-              toggleTimePicker('roadclouseR_ENDTIME');
-            }}>
-            <TextInput
-              mode="outlined"
-              label={'End Time'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="10:30 AM/PM"
-              value={formValues?.roadclouseR_ENDTIME}
-              onChangeText={value =>
-                handleInputChange('roadclouseR_ENDTIME', value)
-              }
-              placeholderTextColor={'#11182744'}
-              editable={false}
-              onPressIn={() => {
-                toggleTimePicker('roadclouseR_ENDTIME');
-              }}
-            />
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 0,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <MaterialIcon name="timer" size={25} color={Colors.blue} />
-            </View>
-          </Pressable>
-          {errors?.roadclouseR_ENDTIME && (
-            <Text style={{color: 'red'}}>{errors?.roadclouseR_ENDTIME}</Text>
-          )}
-        </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>End Time *</Text>
+            <Pressable
+              onPress={() => toggleTimePicker('roadclouseR_ENDTIME')}
+              style={styles.inputWrapper}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Select end time"
+                value={formValues?.roadclouseR_ENDTIME}
+                onChangeText={value =>
+                  handleInputChange('roadclouseR_ENDTIME', value)
+                }
+                placeholderTextColor={'#9CA3AF'}
+                editable={false}
+                onPressIn={() => toggleTimePicker('roadclouseR_ENDTIME')}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <MaterialIcon name="timer" size={20} color={Colors.primary} />
+              </View>
+            </Pressable>
+            {errors?.roadclouseR_ENDTIME && (
+              <Text style={styles.errorText}>
+                {errors?.roadclouseR_ENDTIME}
+              </Text>
+            )}
+          </View>
 
-        <View style={styles.inputView}>
-          {/* {Platform.OS == 'android' && */}
-          <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
-            <TextInput
-              mode="outlined"
-              label={'Location'}
-              style={{backgroundColor: Colors.white}}
-              placeholder="Location"
-              value={formValues?.location ? formValues?.location : ''}
-              autoCorrect={false}
-              keyboardType="default"
-              autoCapitalize="none"
-              multiline
-              editable={false}
-              onChangeText={value => handleInputChange('location', value)}
-              placeholderTextColor={'#11182744'}
-              onFocus={openModal} // Trigger modal when focused
-              onPress={openModal}
-            />
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Location *</Text>
+            <TouchableOpacity onPress={openModal} activeOpacity={0.8}>
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="Tap to select location"
+                value={formValues?.location ? formValues?.location : ''}
+                autoCorrect={false}
+                keyboardType="default"
+                autoCapitalize="none"
+                multiline
+                editable={false}
+                onChangeText={value => handleInputChange('location', value)}
+                placeholderTextColor={'#9CA3AF'}
+                onFocus={openModal}
+                onPress={openModal}
+                outlineColor="#E5E7EB"
+                activeOutlineColor={Colors.primary}
+                dense
+              />
+              <View style={styles.inputIcon}>
+                <MaterialIcon
+                  name="my-location"
+                  size={20}
+                  color={Colors.primary}
+                />
+              </View>
+            </TouchableOpacity>
 
-            <View
-              style={{
-                position: 'absolute',
-                right: 10,
-                top: 5,
-                bottom: 0,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <MaterialIcon name="my-location" size={25} color={Colors.blue} />
-            </View>
-          </TouchableOpacity>
-          {/* } */}
-
-          {/* {Platform.OS == 'ios' &&
+            {/* {Platform.OS == 'ios' &&
                         <View style={{ borderWidth: 0.7, borderRadius: 5, borderColor: Colors.black, flex: 1 }}>
                             <GooglePlacesAutocomplete
                                 GooglePlacesDetailsQuery={{ fields: "geometry" }}
@@ -718,124 +684,136 @@ function RoadClousureScreen({route}) {
                         </View>
                     } */}
 
-          {errors?.location && (
-            <Text style={{color: 'red'}}>{errors?.location}</Text>
-          )}
-        </View>
-
-        <View style={styles.inputView}>
-          <TextInput
-            mode="outlined"
-            label={'Name of the Road'}
-            style={{backgroundColor: Colors.white}}
-            placeholder="Name of the Road"
-            value={formValues?.roaD_NAME ? formValues?.roaD_NAME : ''}
-            autoCorrect={false}
-            keyboardType="default"
-            autoCapitalize="none"
-            onChangeText={value => handleInputChange('roaD_NAME', value)}
-            placeholderTextColor={'#11182744'}
-          />
-          <View
-            style={{
-              position: 'absolute',
-              right: 30,
-              top: 5,
-              bottom: 0,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Icon name="road" size={25} color={Colors.blue} />
+            {errors?.location && (
+              <Text style={styles.errorText}>{errors?.location}</Text>
+            )}
           </View>
-          {errors?.roaD_NAME && (
-            <Text style={{color: 'red'}}>{errors?.roaD_NAME}</Text>
-          )}
-        </View>
 
-        <View style={styles.inputView}>
-          <TextInput
-            mode="outlined"
-            label={'Details'}
-            numberOfLines={5}
-            multiline
-            style={{backgroundColor: Colors.white}}
-            placeholder="Details"
-            value={
-              formValues?.roadclouseR_DETAILS
-                ? formValues?.roadclouseR_DETAILS
-                : ''
-            }
-            autoCorrect={false}
-            keyboardType="default"
-            autoCapitalize="none"
-            onChangeText={value =>
-              handleInputChange('roadclouseR_DETAILS', value)
-            }
-            placeholderTextColor={'#11182744'}
-            textAlignVertical="top"
-            height={100}
-          />
-          {errors?.roadclouseR_DETAILS && (
-            <Text style={{color: 'red'}}>{errors?.roadclouseR_DETAILS}</Text>
-          )}
-        </View>
-
-        {chunkArray(selectedImages, 5).map((item, index1) => (
-          <View key={index1} style={styles.row}>
-            {item.map((subItem, index) => (
-              <View key={index} style={[styles.item, {position: 'relative'}]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    viewImageonModal(subItem[0].uri);
-                  }}>
-                  <Image
-                    source={{uri: subItem[0].uri}}
-                    // style={{ flex: 1 }}
-                    width={40}
-                    height={40}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => removeSelectedImage(index)}
-                  style={{position: 'absolute', right: 0}}>
-                  <Ionicon
-                    name={'close-circle-outline'}
-                    size={25}
-                    color={Colors.blue}
-                  />
-                </TouchableOpacity>
-              </View>
-            ))}
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Road Name *</Text>
+            <TextInput
+              mode="outlined"
+              style={styles.textInput}
+              placeholder="Enter road name"
+              value={formValues?.roaD_NAME ? formValues?.roaD_NAME : ''}
+              autoCorrect={false}
+              keyboardType="default"
+              autoCapitalize="none"
+              onChangeText={value => handleInputChange('roaD_NAME', value)}
+              placeholderTextColor={'#9CA3AF'}
+              outlineColor="#E5E7EB"
+              activeOutlineColor={Colors.primary}
+              dense
+            />
+            {errors?.roaD_NAME && (
+              <Text style={styles.errorText}>{errors?.roaD_NAME}</Text>
+            )}
           </View>
-        ))}
-        {editItem ? null : (
-          <View style={styles.buttonView}>
-            <Pressable
-              style={styles.CameraButton}
-              onPress={() => setShowCameraModal(true)}>
-              <Icon name="camera" size={25} color={Colors.blue} />
-              <Text style={[styles.CameraText, {paddingLeft: 10}]}>
-                Capture images
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.inputLabel}>Closure Details *</Text>
+            <TextInput
+              mode="outlined"
+              numberOfLines={4}
+              multiline
+              style={styles.textInput}
+              placeholder="Describe the reason for closure..."
+              value={
+                formValues?.roadclouseR_DETAILS
+                  ? formValues?.roadclouseR_DETAILS
+                  : ''
+              }
+              autoCorrect={false}
+              keyboardType="default"
+              autoCapitalize="none"
+              onChangeText={value =>
+                handleInputChange('roadclouseR_DETAILS', value)
+              }
+              placeholderTextColor={'#9CA3AF'}
+              outlineColor="#E5E7EB"
+              activeOutlineColor={Colors.primary}
+              dense
+            />
+            {errors?.roadclouseR_DETAILS && (
+              <Text style={styles.errorText}>
+                {errors?.roadclouseR_DETAILS}
               </Text>
-            </Pressable>
+            )}
           </View>
-        )}
 
-        <View style={styles.buttonView}>
-          <Pressable
-            style={styles.button}
+          {selectedImages.length > 0 && (
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Attached Images</Text>
+              <View style={styles.imageGrid}>
+                {selectedImages.map((subItem, index) => (
+                  <View key={index} style={styles.imageItem}>
+                    <TouchableOpacity
+                      onPress={() => viewImageonModal(subItem[0].uri)}
+                      activeOpacity={0.8}>
+                      <Image
+                        source={{uri: subItem[0].uri}}
+                        style={styles.imagePreview}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => removeSelectedImage(index)}
+                      style={styles.removeImageButton}>
+                      <Ionicon
+                        name={'close-circle'}
+                        size={24}
+                        color={Colors.yellow}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {!editItem && (
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={() => setShowCameraModal(true)}
+              activeOpacity={0.8}>
+              <Icon name="camera" size={20} color={Colors.primary} />
+              <Text style={styles.captureButtonText}>Add Photos</Text>
+              <View style={styles.captureBadge}>
+                <Text style={styles.captureBadgeText}>
+                  {selectedImages.length}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        <View style={styles.actionButtons}>
+          <TouchableOpacity
+            style={[
+              styles.submitButton,
+              isSubmitted && styles.submitButtonDisabled,
+            ]}
             onPress={() => {
               if (!isSubmitted) {
                 handleSubmit();
               }
-            }}>
-            <Text style={styles.buttonText}>
-              {isSubmitted && (
-                <ActivityIndicator size={20} color={Colors.white} />
-              )}{' '}
-              {editItem ? 'UPDATE' : 'SAVE'}
-            </Text>
-          </Pressable>
+            }}
+            activeOpacity={0.8}
+            disabled={isSubmitted}>
+            {isSubmitted ? (
+              <ActivityIndicator size={22} color={Colors.white} />
+            ) : (
+              <>
+                <MaterialIcon
+                  name={editItem ? 'check-circle' : 'save'}
+                  size={20}
+                  color={Colors.white}
+                />
+                <Text style={styles.submitButtonText}>
+                  {editItem ? 'UPDATE CLOSURE' : 'SAVE CLOSURE'}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
 
         <BinaryImageModal
@@ -1069,28 +1047,200 @@ export default RoadClousureScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
     flex: 1,
-    marginTop: 10,
-    position: 'relative',
+    backgroundColor: '#F0F4FF',
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  headerSection: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(238, 175, 44, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    borderWidth: 3,
+    borderColor: Colors.yellow,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    // textTransform: 'uppercase',
+    fontSize: 22,
+    fontWeight: '800',
+    color: Colors.white,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
-    paddingVertical: 20,
+  },
+  formCard: {
+    backgroundColor: Colors.white,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     color: Colors.primary,
+    marginBottom: 8,
   },
-  inputView: {
-    gap: 10,
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 5,
+  inputWrapper: {
+    position: 'relative',
   },
-  forgetText: {
+  textInput: {
+    backgroundColor: Colors.white,
     fontSize: 14,
+  },
+  inputIcon: {
+    position: 'absolute',
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#EF4444',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
+  },
+  imageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    marginTop: 8,
+  },
+  imageItem: {
+    position: 'relative',
+    width: (screenWidth - 88) / 3,
+    height: (screenWidth - 88) / 3,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+  },
+  captureButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F0F4FF',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    borderStyle: 'dashed',
+    gap: 8,
+    marginTop: 8,
+  },
+  captureButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: Colors.primary,
+  },
+  captureBadge: {
+    backgroundColor: Colors.yellow,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
+  },
+  captureBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.white,
+  },
+  actionButtons: {
+    paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  submitButton: {
+    flexDirection: 'row',
+    backgroundColor: Colors.primary,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
+  submitButtonText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  pickerButton: {
+    paddingHorizontal: 20,
+  },
+  datePicker: {
+    height: 300,
+    bottom: 50,
   },
   button: {
     backgroundColor: Colors.yellow,
@@ -1105,130 +1255,5 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  buttonView: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  optionsText: {
-    textAlign: 'center',
-    paddingVertical: 10,
-    color: Colors.primary,
-    fontSize: 13,
-    marginBottom: 6,
-  },
-  mediaIcons: {
-    flexDirection: 'row',
-    gap: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 23,
-  },
-  icons: {
-    width: 40,
-    height: 40,
-  },
-  footerText: {
-    textAlign: 'center',
-    color: Colors.red,
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  signup: {
-    color: Colors.primary,
-    fontSize: 16,
-  },
-
-  box: {
-    width: screenWidth / 4,
-    height: screenWidth / 4,
-    borderWidth: 1, // Border width in pixels
-    borderColor: Colors.blue,
-    borderRadius: (screenWidth - 50) / 4, // Border radius (optional)
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.primary,
-    elevation: 1,
-    alignSelf: 'center',
-  },
-  img: {
-    width: screenWidth / 3 - 60,
-    height: screenWidth / 3 - 60,
-    resizeMode: 'contain',
-  },
-  button1: {
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 50,
-    marginTop: 10,
-    marginBottom: 15,
-    backgroundColor: '#075985',
-  },
-  buttonText1: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#fff',
-  },
-  pickerButton: {
-    paddingHorizontal: 20,
-  },
-  datePicker: {
-    height: 300,
-    bottom: 50,
-  },
-
-  dropdown: {
-    width: '100%',
-    height: 50,
-    paddingLeft: 7,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    borderRadius: 7,
-    color: Colors.black,
-    backgroundColor: Colors.white,
-  },
-  itemStyle: {
-    fontSize: 16,
-    color: 'black', // Default text color
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    paddingHorizontal: 20,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    borderRadius: 7,
-    color: Colors.black,
-  },
-  CameraButton: {
-    backgroundColor: Colors.white,
-    height: 45,
-    borderColor: Colors.black,
-    borderWidth: 0.5,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    // justifyContent: 'center',
-    paddingLeft: 10,
-  },
-  CameraText: {
-    color: Colors.primary,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
-  item: {
-    flex: 1,
-    marginHorizontal: 5,
-    padding: 10,
-    backgroundColor: Colors.white,
-    alignItems: 'center',
   },
 });

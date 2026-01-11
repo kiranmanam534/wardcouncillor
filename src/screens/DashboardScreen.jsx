@@ -11,8 +11,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {Card} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -41,6 +42,8 @@ const DashboardScreen = () => {
   const [IsDataMaintaince, setIsDataMaintaince] = useState(false);
   const [DataMaintaince, setDataMaintaince] = useState(null);
   const [IsDataMaintainceLoding, setIsDataMaintainceLoding] = useState(false);
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const lastScrollY = useRef(0);
 
   const loggedUser = useSelector(state => state.loginReducer.items);
 
@@ -57,6 +60,23 @@ const DashboardScreen = () => {
   // console.log("DataLoadedItems", DataLoadedItems)
   // console.log("isDataLoaded", isDataLoaded)
   console.log('items', items);
+
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY}}}],
+    {
+      useNativeDriver: false,
+      listener: event => {
+        const currentScrollY = event.nativeEvent.contentOffset.y;
+        lastScrollY.current = currentScrollY;
+      },
+    },
+  );
+
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 50, 100],
+    outputRange: [1, 0, 0],
+    extrapolate: 'clamp',
+  });
 
   const getDataMaintainceInfo = async () => {
     try {
@@ -154,9 +174,15 @@ const DashboardScreen = () => {
     return (
       <View style={styles.container}>
         <View style={styles.headerCard}>
+          <View style={styles.headerTopRow}>
+            <View style={styles.wardBadge}>
+              <Text style={styles.wardLabel}>Ward </Text>
+              <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
+            </View>
+          </View>
           <View style={styles.userSection}>
             <View style={styles.userIconCircle}>
-              <Icon name="user-circle" size={24} color={Colors.yellow} />
+              <Icon name="user-circle" size={20} color={Colors.yellow} />
             </View>
             <View style={{flex: 1}}>
               <Text style={styles.greetingText}>Hello,</Text>
@@ -165,14 +191,10 @@ const DashboardScreen = () => {
           </View>
           <View style={styles.headerRow}>
             <View style={styles.refreshInfo}>
-              <MaterialIcon name="update" size={16} color={Colors.primary} />
+              <MaterialIcon name="update" size={14} color={Colors.primary} />
               <Text style={styles.refreshText}>
                 Last refreshed: {DataMaintaince?.value ?? 'N/A'}
               </Text>
-            </View>
-            <View style={styles.wardBadge}>
-              <Text style={styles.wardLabel}>Ward </Text>
-              <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
             </View>
           </View>
         </View>
@@ -234,30 +256,45 @@ const DashboardScreen = () => {
         <ShowMessageData />
       ) : (
         <View style={styles.container}>
-          <View style={styles.headerCard}>
-            <View style={styles.userSection}>
-              <View style={styles.userIconCircle}>
-                <Icon name="user-circle" size={24} color={Colors.yellow} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}>
+            <Animated.View
+              style={[
+                styles.headerCard,
+                {
+                  opacity: headerOpacity,
+                },
+              ]}>
+              <View style={styles.headerTopRow}>
+                <View style={styles.wardBadge}>
+                  <Text style={styles.wardLabel}>Ward </Text>
+                  <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
+                </View>
               </View>
-              <View style={{flex: 1}}>
-                <Text style={styles.greetingText}>Hello,</Text>
-                <Text style={styles.userName}>{loggedUserNme}</Text>
+              <View style={styles.userSection}>
+                <View style={styles.userIconCircle}>
+                  <Icon name="user-circle" size={20} color={Colors.yellow} />
+                </View>
+                <View style={{flex: 1}}>
+                  <Text style={styles.greetingText}>Welcome Back</Text>
+                  <Text style={styles.userName}>{loggedUserNme}</Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.headerRow}>
-              <View style={styles.refreshInfo}>
-                <MaterialIcon name="update" size={16} color={Colors.primary} />
-                <Text style={styles.refreshText}>
-                  Last refreshed: {DataMaintaince?.value ?? 'N/A'}
-                </Text>
+              <View style={styles.headerRow}>
+                <View style={styles.refreshInfo}>
+                  <MaterialIcon
+                    name="update"
+                    size={14}
+                    color={Colors.primary}
+                  />
+                  <Text style={styles.refreshText}>
+                    Last refreshed: {DataMaintaince?.value ?? 'N/A'}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.wardBadge}>
-                <Text style={styles.wardLabel}>Ward </Text>
-                <Text style={styles.wardNumber}>{loggedUser?.warD_NO}</Text>
-              </View>
-            </View>
-          </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
+            </Animated.View>
             <View style={{marginBottom: 150}}>
               <View style={styles.gridRow}>
                 <TouchableOpacity
@@ -540,15 +577,26 @@ export default DashboardScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DBEAFE',
-    paddingHorizontal: 10,
+    backgroundColor: '#F0F4FF',
+    paddingHorizontal: 16,
   },
   headerCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    borderRadius: 25,
-    padding: 10,
-    marginTop: 16,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 14,
+    marginTop: 12,
     marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.blue,
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   headerTop: {
     flexDirection: 'row',
@@ -556,54 +604,84 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  headerTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   userSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   userIconCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#DBEAFE',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   greetingText: {
-    fontSize: 13,
-    color: '#9CA3AF',
+    fontSize: 12,
+    color: '#6B7280',
     fontWeight: '500',
-    marginBottom: 3,
-    letterSpacing: 0.3,
+    marginBottom: 2,
+    letterSpacing: 0.2,
   },
   userName: {
     fontWeight: '700',
-    fontSize: 18,
-    color: '#1E3A8A',
-    letterSpacing: 0.2,
+    fontSize: 16,
+    color: Colors.blue,
+    letterSpacing: 0.3,
   },
   wardBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.yellow,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.blue,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.yellow,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   wardLabel: {
-    fontSize: 13,
-    color: Colors.white,
-    fontWeight: '600',
+    fontSize: 11,
+    color: Colors.blue,
+    fontWeight: '700',
     letterSpacing: 0.5,
-    opacity: 0.9,
   },
   wardNumber: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '800',
-    color: Colors.white,
+    color: Colors.blue,
     letterSpacing: 0.5,
   },
   headerRow: {
@@ -615,59 +693,89 @@ const styles = StyleSheet.create({
   refreshInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0F9FF',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
+    backgroundColor: '#F8FAFF',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#C8D9F7',
   },
   refreshText: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginLeft: 8,
-    fontWeight: '500',
+    fontSize: 10,
+    color: Colors.primary,
+    marginLeft: 5,
+    fontWeight: '600',
     letterSpacing: 0.2,
   },
   gridRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 14,
   },
   gridCard: {
-    width: '32%',
-    padding: 12,
+    width: '31.5%',
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 14,
     alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.blue,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   gridCardHeader: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 14,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: Colors.yellow,
+    ...Platform.select({
+      ios: {
+        shadowColor: Colors.primary,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   gridCardTitle: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#1F2937',
+    color: Colors.blue,
     textAlign: 'center',
     marginBottom: 8,
-    lineHeight: 16,
-    letterSpacing: 0.3,
+    lineHeight: 15,
+    letterSpacing: 0.2,
   },
   gridCardValue: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     color: Colors.primary,
     textAlign: 'center',
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
   gridCardSubtext: {
     fontSize: 11,
-    fontWeight: '700',
-    color: '#3B82F6',
+    fontWeight: '600',
+    color: Colors.primary,
     textAlign: 'center',
-    letterSpacing: 0.3,
+    letterSpacing: 0.2,
   },
   fullWidthCard: {
     flexDirection: 'row',
